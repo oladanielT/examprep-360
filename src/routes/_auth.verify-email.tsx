@@ -7,7 +7,7 @@ import { VerifyEmailForm } from "@/feature/auth/components/verify-email-form";
 function VerifyEmailPage() {
   return (
     <section className="space-y-5">
-      <Progress value={66} />
+      <Progress value={60} />
       <GoBack backTo="/register" />
       <div className="flex flex-col gap-10 items-center mt-5 max-w-md mx-auto">
         <Logo />

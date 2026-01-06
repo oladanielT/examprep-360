@@ -7,7 +7,7 @@ import { SelectExamForm } from "@/feature/auth/components/select-exam-form";
 function SelectExamPage() {
   return (
     <section className="space-y-5">
-      <Progress value={90} />
+      <Progress value={80} />
       <GoBack backTo="/verify-email" />
       <div className="flex flex-col gap-10 items-center mt-5 max-w-md mx-auto">
         <Logo />

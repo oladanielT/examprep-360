@@ -1,73 +1,70 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Logo } from "@/components/global/logo";
-import {
-  Item,
-  ItemContent,
-  ItemDescription,
-  ItemMedia,
-  ItemTitle,
-} from "@/components/ui/item";
+import { Progress } from "@/components/ui/progress";
+import { useRegistrationStore } from "@/stores/registrationStore";
+import { useExamCategories } from "@/feature/exams/hooks";
+import { Loader2, ChevronRight } from "lucide-react";
 
 function Welcome() {
+  const navigate = useNavigate();
+  const { setUserType } = useRegistrationStore();
+  const { data: categories, isLoading, error } = useExamCategories();
+
+  const handleSelect = (category: { value: string; label: string }) => {
+    const isUndergraduate =
+      category.value === "UNIVERSITY_COURSE" ||
+      category.label.toLowerCase().includes("university");
+
+    setUserType(isUndergraduate ? "undergraduate" : "secondary");
+    navigate({ to: "/register" });
+  };
+
   return (
-    <section>
+    <section className="space-y-6">
+      <Progress value={25} />
       <Logo />
-      <div className="mt-10 space-y-10">
-        <h2 className="text-2xl font-bold tracking-tighter">
-          Select Your Preferred Option
-        </h2>
-        <div className="flex w-full flex-col gap-4">
-          <Item
-            className="pb-0 group [a]:hover:bg-warning"
-            variant="outline"
-            asChild
-          >
-            <Link to="/register?user=secondary">
-              <ItemContent>
-                <ItemTitle className="text-lg font-medium text-[#101828]">
-                  Junior promotional exam / 0'Level
-                </ItemTitle>
-                <ItemDescription className="text-base text-[#475467]">
-                  Are you preparing for 0'level or junior promotional exams
-                </ItemDescription>
-              </ItemContent>
-              <ItemMedia>
-                <img
-                  src="/auth/welcome-1.svg"
-                  className="object-cover h-30"
-                  alt="Image"
-                  width={104}
-                  height={60}
-                />
-              </ItemMedia>
-            </Link>
-          </Item>
-          <Item
-            className="pb-0 group [a]:hover:bg-warning"
-            variant="outline"
-            asChild
-          >
-            <Link className="" to="/register?user=undergraduate">
-              <ItemContent>
-                <ItemTitle className="text-lg font-medium text-[#101828]">
-                  Undergraduate
-                </ItemTitle>
-                <ItemDescription className="text-base text-[#475467]">
-                  Are you an undergraduate?
-                </ItemDescription>
-              </ItemContent>
-              <ItemMedia>
-                <img
-                  src="/auth/welcome-2.svg"
-                  className="h-30"
-                  alt="Image"
-                  width={104}
-                  height={60}
-                />
-              </ItemMedia>
-            </Link>
-          </Item>
+
+      <div className="mt-8 space-y-6">
+        <div className="space-y-2">
+          <h2 className="text-2xl font-bold tracking-tight text-[#101828]">
+            What are you preparing for?
+          </h2>
+          <p className="text-[#667085]">
+            Select your exam category to get started
+          </p>
         </div>
+
+        {isLoading && (
+          <div className="flex items-center justify-center py-16">
+            <Loader2 className="h-8 w-8 animate-spin text-accent" />
+          </div>
+        )}
+
+        {error && (
+          <div className="text-center py-10 text-red-500">
+            Failed to load categories. Please try again.
+          </div>
+        )}
+
+        {categories && (
+          <div className="grid grid-cols-2 gap-3">
+            {categories
+              .filter((category) => category.value !== "TUTORIAL")
+              .map((category) => (
+              <button
+                key={category.value}
+                type="button"
+                onClick={() => handleSelect(category)}
+                className="group relative flex items-center justify-between p-4 rounded-xl border border-gray-200 bg-white hover:border-warning hover:bg-warning/5 transition-all duration-200 text-left"
+              >
+                <span className="text-sm font-medium text-[#101828] group-hover:text-[#101828] pr-2">
+                  {category.label}
+                </span>
+                <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-warning flex-shrink-0" />
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

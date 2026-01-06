@@ -1,4 +1,5 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { useAuthStore } from "@/stores/authStore";
 
 function AuthLayout() {
   return (
@@ -24,5 +25,14 @@ function AuthLayout() {
 }
 
 export const Route = createFileRoute("/_auth")({
+  beforeLoad: ({ location }) => {
+    const { isAuthenticated } = useAuthStore.getState();
+    // Allow access to verify-email and select-exam even when authenticated
+    // (user might need to complete these steps)
+    const allowedPaths = ["/verify-email", "/select-exam", "/summary"];
+    if (isAuthenticated && !allowedPaths.includes(location.pathname)) {
+      throw redirect({ to: "/" });
+    }
+  },
   component: AuthLayout,
 });

@@ -1,6 +1,4 @@
-
-
-import React from "react";
+import { useEffect } from "react";
 import { useForm } from "@tanstack/react-form";
 import {
   Field,
@@ -8,7 +6,6 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { InputField } from "@/components/custom/custom-form-field";
 import PrimaryButton from "@/components/buttons/primary-button";
 import {
   InputOTP,
@@ -16,8 +13,11 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { Alert } from "@/components/ui/alert";
 import * as z from "zod";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
+import { useVerifyEmail, useResendVerification } from "@/feature/auth/hooks";
+import { useRegistrationStore } from "@/stores/registrationStore";
 
 const verifyEmailSchema = z.object({
   otp: z
@@ -28,6 +28,17 @@ const verifyEmailSchema = z.object({
 
 export const VerifyEmailForm = () => {
   const navigate = useNavigate();
+  const { data: registrationData } = useRegistrationStore();
+  const email = registrationData.email;
+  const verifyMutation = useVerifyEmail();
+  const resendMutation = useResendVerification();
+
+  useEffect(() => {
+    // Redirect to register if no email in registration store
+    if (!email) {
+      navigate({ to: "/register" });
+    }
+  }, [email, navigate]);
 
   const form = useForm({
     defaultValues: {
@@ -38,21 +49,38 @@ export const VerifyEmailForm = () => {
     },
     onSubmit: async ({ value }) => {
       try {
-        // Do something with the form values.
-        console.log("OTP submitted:", value.otp);
-        // TODO: Add your verification API call here
-        // const response = await verifyOTP(value.otp);
-
+        await verifyMutation.mutateAsync({
+          email,
+          otp: value.otp,
+        });
         // Navigate to select exam page
         navigate({ to: "/select-exam" });
-      } catch (error) {
-        console.error("Verification failed:", error);
+      } catch {
+        // Error is handled by the mutation
       }
     },
   });
 
+  const handleResendCode = async () => {
+    if (email) {
+      try {
+        await resendMutation.mutateAsync({ email });
+      } catch {
+        // Error is handled by the mutation
+      }
+    }
+  };
+
+  if (!email) {
+    return null;
+  }
+
   return (
     <div className="w-full">
+      <p className="text-center text-sm text-gray-600 mb-6">
+        We sent a verification code to <span className="font-medium">{email}</span>
+      </p>
+
       <form
         className="w-full"
         onSubmit={(e) => {
@@ -116,11 +144,31 @@ export const VerifyEmailForm = () => {
           />
         </FieldGroup>
 
+        {verifyMutation.isError && (
+          <Alert variant="destructive" className="mt-4">
+            {verifyMutation.error?.response?.data?.message ||
+              "Verification failed. Please check your code."}
+          </Alert>
+        )}
+
+        {resendMutation.isSuccess && (
+          <Alert className="mt-4">
+            Verification code sent successfully!
+          </Alert>
+        )}
+
+        {resendMutation.isError && (
+          <Alert variant="destructive" className="mt-4">
+            {resendMutation.error?.response?.data?.message ||
+              "Failed to resend code. Please try again."}
+          </Alert>
+        )}
+
         <PrimaryButton
           type="submit"
-          disabled={form.state.isSubmitting}
-          className="w-full bg-accent hover:bg-accent/80 mt-10 text-white text-lg"
-          title={form.state.isSubmitting ? "Verifying..." : "Continue"}
+          disabled={verifyMutation.isPending}
+          className="w-full bg-accent hover:bg-accent/80 mt-10 text-white text-lg disabled:opacity-50"
+          title={verifyMutation.isPending ? "Verifying..." : "Continue"}
         />
       </form>
 
@@ -128,13 +176,11 @@ export const VerifyEmailForm = () => {
         Didn't get a code?{" "}
         <button
           type="button"
-          className="text-accent hover:underline font-medium"
-          onClick={() => {
-            // TODO: Implement resend OTP logic
-            console.log("Resend OTP");
-          }}
+          className="text-accent hover:underline font-medium disabled:opacity-50"
+          disabled={resendMutation.isPending}
+          onClick={handleResendCode}
         >
-          Resend Code
+          {resendMutation.isPending ? "Sending..." : "Resend Code"}
         </button>
       </p>
     </div>

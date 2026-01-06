@@ -1,11 +1,8 @@
-
-
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
-import { Eye, EyeClosed, Facebook } from "lucide-react";
+import { Eye, EyeClosed } from "lucide-react";
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -18,9 +15,12 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
-
+import { Switch } from "@/components/ui/switch";
+import { Alert } from "@/components/ui/alert";
 import * as z from "zod";
 import { Link, useNavigate } from "@tanstack/react-router";
+import { useRegistrationStore } from "@/stores/registrationStore";
+import { useRequestEmailOtp } from "@/feature/auth/hooks";
 
 const registerSchema = z
   .object({
@@ -51,12 +51,15 @@ export const RegisterForm = () => {
   const navigate = useNavigate();
   const [seePassword, setSeePassword] = useState(false);
   const [seeConfirmPassword, setSeeConfirmPassword] = useState(false);
+  const [isInstitutional, setIsInstitutionalLocal] = useState(false);
+  const { setBasicInfo, setIsInstitutional, data } = useRegistrationStore();
+  const requestOtpMutation = useRequestEmailOtp();
 
   const form = useForm({
     defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
+      name: data.fullName || "",
+      email: data.email || "",
+      phone: data.phone || "",
       password: "",
       confirmPassword: "",
     },
@@ -64,13 +67,24 @@ export const RegisterForm = () => {
       onSubmit: registerSchema,
     },
     onSubmit: async ({ value }) => {
-      // Do something with the form values.
-      console.log(value);
-      // TODO: Call your registration API here
-      // await registerUser(value);
+      try {
+        // Request OTP to be sent to email
+        await requestOtpMutation.mutateAsync({ email: value.email });
 
-      // Navigate to verify email page
-      navigate({ to: "/verify-email" });
+        // Save to registration store
+        setBasicInfo({
+          fullName: value.name,
+          email: value.email,
+          phone: value.phone,
+          password: value.password,
+        });
+        // Set institutional flag based on switch
+        setIsInstitutional(isInstitutional);
+        // Go to next step: verify email
+        navigate({ to: "/verify-email" });
+      } catch {
+        // Error is handled by the mutation
+      }
     },
   });
 
@@ -246,10 +260,35 @@ export const RegisterForm = () => {
           />
         </FieldGroup>
 
+        {/* Institutional License Toggle */}
+        <div className="flex items-center justify-between py-4 mt-4 border-t border-gray-100">
+          <div className="space-y-0.5">
+            <label htmlFor="institutional-switch" className="text-sm font-medium text-gray-900">
+              Institutional License
+            </label>
+            <p className="text-xs text-gray-500">
+              Register multiple students for your school
+            </p>
+          </div>
+          <Switch
+            id="institutional-switch"
+            checked={isInstitutional}
+            onCheckedChange={setIsInstitutionalLocal}
+          />
+        </div>
+
+        {requestOtpMutation.isError && (
+          <Alert variant="destructive" className="mt-4">
+            {requestOtpMutation.error?.response?.data?.message ||
+              "Failed to send verification code. Please try again."}
+          </Alert>
+        )}
+
         <PrimaryButton
           type="submit"
-          className="w-full bg-accent hover:bg-accent/80 mt-10 text-white text-lg"
-          title="Continue"
+          disabled={form.state.isSubmitting || requestOtpMutation.isPending}
+          className="w-full bg-accent hover:bg-accent/80 mt-6 text-white text-lg disabled:opacity-50"
+          title={requestOtpMutation.isPending ? "Sending code..." : "Continue"}
         />
       </form>
       <PrimaryButton
@@ -297,10 +336,6 @@ export const RegisterForm = () => {
           Sign In
         </Link>
       </p>
-      <PrimaryButton
-        className="w-full hover:bg-gray-200 mt-30 text-lg bg-transparent border text-accent border-gray-300"
-        title="Buy Institutional License"
-      />
     </div>
   );
 };

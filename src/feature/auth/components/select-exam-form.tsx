@@ -12,20 +12,16 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 import { useNavigate } from "@tanstack/react-router";
+import { useRegistrationStore } from "@/stores/registrationStore";
 
-const verifyEmailSchema = z.object({
+const selectExamSchema = z.object({
   examType: z.string().min(1, "Please select an exam type"),
   duration: z.string().min(1, "Please select a duration"),
   subjects: z
     .array(z.string())
     .min(1, "Please select at least one subject")
-    .max(3, "You can select maximum 3 subjects"),
-  students: z
-    .array(z.number())
-    .length(1, "Please set number of students")
-    .refine((val) => val[0] >= 2 && val[0] <= 500, {
-      message: "Number of students must be between 2 and 500",
-    }),
+    .max(9, "You can select maximum 9 subjects"),
+  students: z.array(z.number()).optional(),
 });
 
 const examTypes = [
@@ -56,28 +52,29 @@ export const subjects = [
 
 export const SelectExamForm = () => {
   const navigate = useNavigate();
+  const { setExamSelection, data } = useRegistrationStore();
+  const isInstitutional = data.isInstitutional;
 
   const form = useForm({
     defaultValues: {
-      examType: "",
-      duration: "",
-      subjects: [] as string[],
-      students: [4],
+      examType: data.examType || "",
+      duration: data.duration || "",
+      subjects: data.subjects || ([] as string[]),
+      students: [data.students || 4],
     },
     validators: {
-      onSubmit: verifyEmailSchema,
+      onSubmit: selectExamSchema,
     },
     onSubmit: async ({ value }) => {
-      try {
-        console.log("Form submitted:", value);
-        // TODO: Add your API call here
-        // await saveExamSelection(value);
-
-        // Navigate to summary page
-        navigate({ to: "/summary" });
-      } catch (error) {
-        console.error("Form submission failed:", error);
-      }
+      // Save to registration store
+      setExamSelection({
+        examType: value.examType,
+        duration: value.duration,
+        subjects: value.subjects,
+        students: isInstitutional && value.students ? value.students[0] : 1,
+      });
+      // Navigate to summary page
+      navigate({ to: "/summary" });
     },
   });
 
@@ -203,36 +200,38 @@ export const SelectExamForm = () => {
             }}
           />
 
-          <form.Field
-            name="students"
-            children={(field) => {
-              const isInvalid =
-                field.state.meta.isTouched && !field.state.meta.isValid;
-              return (
-                <Field data-invalid={isInvalid}>
-                  <div className="flex items-center justify-between mb-2">
-                    <FieldLabel className="text-[#6D6D6D] uppercase text-xs">
-                      Number of Students
-                    </FieldLabel>
-                    <span className="text-[14px] font-semibold text-accent">
-                      {field.state.value[0]} Students
-                    </span>
-                  </div>
-                  <Slider
-                    min={2}
-                    max={500}
-                    step={1}
-                    value={field.state.value}
-                    onValueChange={(value) =>
-                      field.handleChange(Array.isArray(value) ? value : [value])
-                    }
-                    className="w-full"
-                  />
-                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                </Field>
-              );
-            }}
-          />
+          {isInstitutional && (
+            <form.Field
+              name="students"
+              children={(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid;
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <div className="flex items-center justify-between mb-2">
+                      <FieldLabel className="text-[#6D6D6D] uppercase text-xs">
+                        Number of Students
+                      </FieldLabel>
+                      <span className="text-[14px] font-semibold text-accent">
+                        {field.state.value[0]} Students
+                      </span>
+                    </div>
+                    <Slider
+                      min={2}
+                      max={500}
+                      step={1}
+                      value={field.state.value}
+                      onValueChange={(value) =>
+                        field.handleChange(Array.isArray(value) ? value : [value])
+                      }
+                      className="w-full"
+                    />
+                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                  </Field>
+                );
+              }}
+            />
+          )}
         </FieldGroup>
 
         <PrimaryButton

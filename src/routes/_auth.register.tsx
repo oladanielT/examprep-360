@@ -7,7 +7,7 @@ import { RegisterForm } from "@/feature/auth/components/register-form";
 function RegisterPage() {
   return (
     <section className="space-y-5">
-      <Progress value={33} />
+      <Progress value={50} />
       <GoBack backTo="/welcome" />
       <div className="flex flex-col gap-10 items-center mt-5 max-w-md mx-auto">
         <Logo />

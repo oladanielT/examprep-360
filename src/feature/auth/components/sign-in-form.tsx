@@ -1,11 +1,8 @@
-
-
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
-import { Eye, EyeClosed, Facebook } from "lucide-react";
+import { Eye, EyeClosed } from "lucide-react";
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -18,14 +15,14 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
-
+import { Alert } from "@/components/ui/alert";
 import * as z from "zod";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useLogin } from "@/feature/auth/hooks";
 
 const signinSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
-
   password: z
     .string()
     .min(8, "Password must be at least 8 characters.")
@@ -33,12 +30,13 @@ const signinSchema = z.object({
     .regex(/[A-Z]/, "Password must contain at least one uppercase letter.")
     .regex(/[a-z]/, "Password must contain at least one lowercase letter.")
     .regex(/[0-9]/, "Password must contain at least one number."),
-  rememberMe: z.boolean().default(false),
+  rememberMe: z.boolean(),
 });
 
 export const SigninForm = () => {
   const navigate = useNavigate();
   const [seePassword, setSeePassword] = useState(false);
+  const loginMutation = useLogin();
 
   const form = useForm({
     defaultValues: {
@@ -50,13 +48,16 @@ export const SigninForm = () => {
       onSubmit: signinSchema,
     },
     onSubmit: async ({ value }) => {
-      // Do something with the form values.
-      console.log(value);
-      // TODO: Call your login API here
-      // await loginUser(value);
-
-      // Navigate to homepage
-      navigate({ to: "/" });
+      try {
+        await loginMutation.mutateAsync({
+          email: value.email,
+          password: value.password,
+          rememberMe: value.rememberMe,
+        });
+        navigate({ to: "/" });
+      } catch {
+        // Error is handled by the mutation
+      }
     },
   });
 
@@ -163,19 +164,31 @@ export const SigninForm = () => {
                 );
               }}
             />
-            <Link
-              className="text-sm font-semibold text-accent shrink-0"
-              to="#"
+            <button
+              type="button"
+              className="text-sm font-semibold text-accent shrink-0 hover:underline"
+              onClick={() => {
+                // TODO: Navigate to forgot password page when implemented
+                console.log("Forgot password clicked");
+              }}
             >
               Forgot Password?
-            </Link>
+            </button>
           </div>
         </FieldGroup>
 
+        {loginMutation.isError && (
+          <Alert variant="destructive" className="mt-4">
+            {loginMutation.error?.response?.data?.message ||
+              "Login failed. Please check your credentials."}
+          </Alert>
+        )}
+
         <PrimaryButton
           type="submit"
-          className="w-full bg-accent hover:bg-accent/80 mt-10 text-white text-lg"
-          title="Continue"
+          disabled={loginMutation.isPending}
+          className="w-full bg-accent hover:bg-accent/80 mt-10 text-white text-lg disabled:opacity-50"
+          title={loginMutation.isPending ? "Signing in..." : "Continue"}
         />
       </form>
       <PrimaryButton
@@ -219,7 +232,7 @@ export const SigninForm = () => {
       </PrimaryButton>
       <p className="text-center mt-7 font-medium">
         Dont have an account?{" "}
-        <Link to="/register" className="text-accent">
+        <Link to="/welcome" className="text-accent">
           Sign Up
         </Link>
       </p>

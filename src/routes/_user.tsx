@@ -1,5 +1,6 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import Nav from "@/components/global/nav";
+import { useAuthStore } from "@/stores/authStore";
 
 function UserLayout() {
   return (
@@ -13,5 +14,11 @@ function UserLayout() {
 }
 
 export const Route = createFileRoute("/_user")({
+  beforeLoad: () => {
+    const { isAuthenticated } = useAuthStore.getState();
+    if (!isAuthenticated) {
+      throw redirect({ to: "/sign-in" });
+    }
+  },
   component: UserLayout,
 });
