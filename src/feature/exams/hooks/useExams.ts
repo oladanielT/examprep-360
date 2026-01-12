@@ -98,12 +98,12 @@ export const useExamCategories = () => {
   });
 };
 
-export const useExamSubtypes = (category: string) => {
+export const useExamTypes = (category: string) => {
   return useQuery<ExamSubtype[]>({
-    queryKey: ["examSelection", "subtypes", category],
+    queryKey: ["examSelection", "examTypes", category],
     queryFn: async () => {
       const { data } = await apiClient.get<ExamSubtype[]>(
-        EXAM_SELECTION_ENDPOINTS.SUBTYPES(category)
+        EXAM_SELECTION_ENDPOINTS.EXAM_TYPES(category)
       );
       return data;
     },

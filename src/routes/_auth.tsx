@@ -27,9 +27,9 @@ function AuthLayout() {
 export const Route = createFileRoute("/_auth")({
   beforeLoad: ({ location }) => {
     const { isAuthenticated } = useAuthStore.getState();
-    // Allow access to verify-email and select-exam even when authenticated
-    // (user might need to complete these steps)
-    const allowedPaths = ["/verify-email", "/select-exam", "/summary"];
+    // Allow access to these paths even when authenticated
+    // (user might need to complete registration or payment)
+    const allowedPaths = ["/verify-email", "/select-exam", "/summary", "/checkout", "/payment-verify"];
     if (isAuthenticated && !allowedPaths.includes(location.pathname)) {
       throw redirect({ to: "/" });
     }

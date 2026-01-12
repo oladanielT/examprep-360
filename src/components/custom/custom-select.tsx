@@ -52,6 +52,20 @@ export function CustomSelect({
   required = false,
   grouped = false,
 }: CustomSelectProps) {
+  // Helper to get label for selected value
+  const getSelectedLabel = (val: string): string | null => {
+    if (grouped) {
+      for (const group of options as SelectGroupOption[]) {
+        const found = group.options.find((opt) => opt.value === val);
+        if (found) return found.label;
+      }
+    } else {
+      const found = (options as SelectOption[]).find((opt) => opt.value === val);
+      if (found) return found.label;
+    }
+    return null;
+  };
+
   return (
     <div className={cn("w-full flex flex-col  space-y-2", className)}>
       {label && (
@@ -75,7 +89,9 @@ export function CustomSelect({
             triggerClassName
           )}
         >
-          <SelectValue placeholder={placeholder} />
+          <SelectValue placeholder={placeholder}>
+            {value ? getSelectedLabel(value) || value : undefined}
+          </SelectValue>
         </SelectTrigger>
 
         <SelectContent className={cn("max-h-[300px]", contentClassName)}>

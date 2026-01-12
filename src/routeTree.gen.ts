@@ -25,6 +25,8 @@ import { Route as AuthSummaryRouteImport } from './routes/_auth.summary'
 import { Route as AuthSignInRouteImport } from './routes/_auth.sign-in'
 import { Route as AuthSelectExamRouteImport } from './routes/_auth.select-exam'
 import { Route as AuthRegisterRouteImport } from './routes/_auth.register'
+import { Route as AuthPaymentVerifyRouteImport } from './routes/_auth.payment-verify'
+import { Route as AuthCheckoutRouteImport } from './routes/_auth.checkout'
 import { Route as UserTestsExamsRouteImport } from './routes/_user.tests.exams'
 
 const UserRoute = UserRouteImport.update({
@@ -105,6 +107,16 @@ const AuthRegisterRoute = AuthRegisterRouteImport.update({
   path: '/register',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthPaymentVerifyRoute = AuthPaymentVerifyRouteImport.update({
+  id: '/payment-verify',
+  path: '/payment-verify',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthCheckoutRoute = AuthCheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => AuthRoute,
+} as any)
 const UserTestsExamsRoute = UserTestsExamsRouteImport.update({
   id: '/exams',
   path: '/exams',
@@ -112,6 +124,8 @@ const UserTestsExamsRoute = UserTestsExamsRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/checkout': typeof AuthCheckoutRoute
+  '/payment-verify': typeof AuthPaymentVerifyRoute
   '/register': typeof AuthRegisterRoute
   '/select-exam': typeof AuthSelectExamRoute
   '/sign-in': typeof AuthSignInRoute
@@ -129,6 +143,8 @@ export interface FileRoutesByFullPath {
   '/tests/exams': typeof UserTestsExamsRoute
 }
 export interface FileRoutesByTo {
+  '/checkout': typeof AuthCheckoutRoute
+  '/payment-verify': typeof AuthPaymentVerifyRoute
   '/register': typeof AuthRegisterRoute
   '/select-exam': typeof AuthSelectExamRoute
   '/sign-in': typeof AuthSignInRoute
@@ -149,6 +165,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_auth': typeof AuthRouteWithChildren
   '/_user': typeof UserRouteWithChildren
+  '/_auth/checkout': typeof AuthCheckoutRoute
+  '/_auth/payment-verify': typeof AuthPaymentVerifyRoute
   '/_auth/register': typeof AuthRegisterRoute
   '/_auth/select-exam': typeof AuthSelectExamRoute
   '/_auth/sign-in': typeof AuthSignInRoute
@@ -168,6 +186,8 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/checkout'
+    | '/payment-verify'
     | '/register'
     | '/select-exam'
     | '/sign-in'
@@ -185,6 +205,8 @@ export interface FileRouteTypes {
     | '/tests/exams'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/checkout'
+    | '/payment-verify'
     | '/register'
     | '/select-exam'
     | '/sign-in'
@@ -204,6 +226,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_auth'
     | '/_user'
+    | '/_auth/checkout'
+    | '/_auth/payment-verify'
     | '/_auth/register'
     | '/_auth/select-exam'
     | '/_auth/sign-in'
@@ -340,6 +364,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRegisterRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/payment-verify': {
+      id: '/_auth/payment-verify'
+      path: '/payment-verify'
+      fullPath: '/payment-verify'
+      preLoaderRoute: typeof AuthPaymentVerifyRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/checkout': {
+      id: '/_auth/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof AuthCheckoutRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_user/tests/exams': {
       id: '/_user/tests/exams'
       path: '/exams'
@@ -351,6 +389,8 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthRouteChildren {
+  AuthCheckoutRoute: typeof AuthCheckoutRoute
+  AuthPaymentVerifyRoute: typeof AuthPaymentVerifyRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
   AuthSelectExamRoute: typeof AuthSelectExamRoute
   AuthSignInRoute: typeof AuthSignInRoute
@@ -360,6 +400,8 @@ interface AuthRouteChildren {
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
+  AuthCheckoutRoute: AuthCheckoutRoute,
+  AuthPaymentVerifyRoute: AuthPaymentVerifyRoute,
   AuthRegisterRoute: AuthRegisterRoute,
   AuthSelectExamRoute: AuthSelectExamRoute,
   AuthSignInRoute: AuthSignInRoute,

@@ -5,9 +5,22 @@ export interface RegisterRequest {
   fullName: string;
   phone?: string;
   gender?: "MALE" | "FEMALE" | "OTHER";
+  country?: string;
+  dateOfBirth?: string;
+  academicLevel?: string;
   examType?: string;
   examCategory?: string;
+  examSubtype?: string;
+  examTypeId?: string;
+  universityId?: string;
+  facultyId?: string;
+  departmentId?: string;
   selectedSubjects?: string[];
+  selectedCourses?: string[];
+  subscriptionPlanId?: string;
+  duration?: number;
+  numberOfStudents?: number;
+  referralCode?: string;
 }
 
 export interface LoginRequest {
@@ -77,7 +90,18 @@ export interface AuthResponse {
 
 export interface RegisterResponse {
   message: string;
-  user: Pick<User, "id" | "email" | "fullName">;
+  student: {
+    id: string;
+    email: string;
+    fullName: string;
+    phone?: string;
+    examType?: string;
+    examCategory?: string;
+    selectedSubjects?: string[];
+    paymentStatus?: string;
+    isEmailVerified?: boolean;
+    createdAt?: string;
+  };
 }
 
 export interface VerifyEmailResponse {

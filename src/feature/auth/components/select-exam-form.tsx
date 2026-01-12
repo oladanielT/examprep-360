@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import {
   Field,
@@ -13,6 +14,9 @@ import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 import { useNavigate } from "@tanstack/react-router";
 import { useRegistrationStore } from "@/stores/registrationStore";
+import { useExamTypes, useExamSubjects } from "@/feature/exams/hooks";
+import { usePaymentPlans } from "@/feature/payment/hooks";
+import { Loader2 } from "lucide-react";
 
 const selectExamSchema = z.object({
   examType: z.string().min(1, "Please select an exam type"),
@@ -24,51 +28,58 @@ const selectExamSchema = z.object({
   students: z.array(z.number()).optional(),
 });
 
-const examTypes = [
-  { label: "JAMB", value: "jamb" },
-  { label: "WAEC", value: "waec" },
-  { label: "NECO", value: "neco" },
-  { label: "Post-UTME", value: "post-utme" },
-  { label: "GCE", value: "gce" },
-];
-
-const durations = [
-  { label: "30 Days", value: "30" },
-  { label: "60 Days", value: "60" },
-  { label: "120 Days", value: "120" },
-  { label: "180 Days", value: "180" },
-];
-
-export const subjects = [
-  { id: "english", label: "English Language" },
-  { id: "mathematics", label: "Mathematics" },
-  { id: "civic", label: "Civic Education" },
-  { id: "biology", label: "Biology" },
-  { id: "chemistry", label: "Chemistry" },
-  { id: "literature", label: "Literature" },
-  { id: "physics", label: "Physics" },
-  { id: "geography", label: "Geography" },
-];
 
 export const SelectExamForm = () => {
   const navigate = useNavigate();
   const { setExamSelection, data } = useRegistrationStore();
   const isInstitutional = data.isInstitutional;
+  const category = data.category;
+
+  // Track selected exam type in state for fetching subjects
+  const [selectedExamType, setSelectedExamType] = useState(data.examType || "");
+  const [selectedExamTypeId, setSelectedExamTypeId] = useState(data.examTypeId || "");
+
+  // Fetch exam types based on selected category
+  const {
+    data: examTypes,
+    isLoading: isLoadingExamTypes
+  } = useExamTypes(category);
+
+  // Fetch subjects based on selected exam type
+  const {
+    data: subjects,
+    isLoading: isLoadingSubjects
+  } = useExamSubjects(selectedExamType);
+
+  // Fetch payment plans based on category (schoolType) and exam type
+  const {
+    data: plans,
+    isLoading: isLoadingPlans
+  } = usePaymentPlans(category, selectedExamType);
+
+  // Transform plans into duration options
+  const durationOptions = plans?.map((plan) => ({
+    label: `${plan.name} - ${plan.duration} Days (${plan.currency} ${plan.basePrice.toLocaleString()})`,
+    value: plan.id,
+  })) || [];
 
   const form = useForm({
     defaultValues: {
       examType: data.examType || "",
       duration: data.duration || "",
       subjects: data.subjects || ([] as string[]),
-      students: [data.students || 4],
-    },
-    validators: {
-      onSubmit: selectExamSchema,
+      students: [data.students || 4] as number[],
     },
     onSubmit: async ({ value }) => {
+      // Validate
+      const result = selectExamSchema.safeParse(value);
+      if (!result.success) {
+        return;
+      }
       // Save to registration store
       setExamSelection({
         examType: value.examType,
+        examTypeId: selectedExamTypeId,
         duration: value.duration,
         subjects: value.subjects,
         students: isInstitutional && value.students ? value.students[0] : 1,
@@ -77,6 +88,12 @@ export const SelectExamForm = () => {
       navigate({ to: "/summary" });
     },
   });
+
+  // Transform exam types for select (use name as both label and value)
+  const examTypeOptions = examTypes?.map((type) => ({
+    label: type.name,
+    value: type.name,
+  })) || [];
 
   return (
     <div className="w-full">
@@ -88,34 +105,6 @@ export const SelectExamForm = () => {
         }}
       >
         <FieldGroup className="w-full">
-          {/* Duration */}
-          <form.Field
-            name="duration"
-            children={(field) => {
-              const isInvalid =
-                field.state.meta.isTouched && !field.state.meta.isValid;
-              return (
-                <Field data-invalid={isInvalid}>
-                  <FieldLabel
-                    className="text-[#6D6D6D] uppercase text-[12px]"
-                    htmlFor="form-duration"
-                  >
-                    Duration
-                  </FieldLabel>
-                  <CustomSelect
-                    name={field.name}
-                    value={field.state.value}
-                    onValueChange={field.handleChange}
-                    options={durations}
-                    placeholder="Choose duration"
-                    required
-                  />
-                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                </Field>
-              );
-            }}
-          />
-
           {/* Exam Type */}
           <form.Field
             name="examType"
@@ -130,20 +119,38 @@ export const SelectExamForm = () => {
                   >
                     Exam Type
                   </FieldLabel>
-                  <CustomSelect
-                    name={field.name}
-                    value={field.state.value}
-                    onValueChange={field.handleChange}
-                    options={examTypes}
-                    placeholder="Choose an exam type"
-                    required
-                  />
+                  {isLoadingExamTypes ? (
+                    <div className="flex items-center gap-2 h-14 px-4 border rounded-4xl">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span className="text-gray-500">Loading exam types...</span>
+                    </div>
+                  ) : (
+                    <CustomSelect
+                      name={field.name}
+                      value={field.state.value}
+                      onValueChange={(value) => {
+                        field.handleChange(value);
+                        // Find the selected exam type to get its ID
+                        const selected = examTypes?.find((type) => type.name === value);
+                        // Update local state for subject fetching
+                        setSelectedExamType(value);
+                        setSelectedExamTypeId(selected?.id || "");
+                        // Clear subjects and duration when exam type changes
+                        form.setFieldValue("subjects", []);
+                        form.setFieldValue("duration", "");
+                      }}
+                      options={examTypeOptions}
+                      placeholder="Choose an exam type"
+                      required
+                    />
+                  )}
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
               );
             }}
           />
 
+          {/* Subjects */}
           <form.Field
             name="subjects"
             mode="array"
@@ -154,47 +161,113 @@ export const SelectExamForm = () => {
                 <Field data-invalid={isInvalid}>
                   <FieldLabel
                     className="text-[#6D6D6D] uppercase text-[12px]"
-                    htmlFor="form-exam-type"
+                    htmlFor="form-subjects"
                   >
                     Subjects
                   </FieldLabel>
-                  <ToggleGroup
-                    multiple={true}
-                    value={field.state.value}
-                    onValueChange={field.handleChange}
-                    className="grid grid-cols-2 sm:grid-cols-3  gap-3 sm:gap-4"
-                  >
-                    {subjects.map((subject) => (
-                      <ToggleGroupItem
-                        key={subject.id}
-                        value={subject.id}
-                        className={cn(
-                          "h-auto py-4 px-3 !rounded-sm border-2",
-                          "flex items-center justify-center",
-                          "text-xs font-medium text-center",
-                          "transition-all duration-200",
-                          "hover:border-accent hover:bg-accent/5",
-                          "data-[state=on]:border-accent/70 data-[state=on]:bg-transparent data-[state=on]:text-black",
-                          field.state.value.includes(subject.id)
-                            ? "border-accent"
-                            : "border-[#E5E5E5] text-black"
-                        )}
-                        aria-label={subject.label}
+
+                  {!selectedExamType ? (
+                    <p className="text-sm text-gray-500 py-4">
+                      Please select an exam type first
+                    </p>
+                  ) : isLoadingSubjects ? (
+                    <div className="flex items-center gap-2 py-4">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span className="text-gray-500">Loading subjects...</span>
+                    </div>
+                  ) : subjects && subjects.length > 0 ? (
+                    <>
+                      <p className="text-sm text-gray-600 mb-3">
+                        Please select your subjects (up to 9)
+                      </p>
+                      <ToggleGroup
+                        multiple={true}
+                        value={field.state.value}
+                        onValueChange={field.handleChange}
+                        className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4"
                       >
-                        <span className="whitespace-nowrap">
-                          {subject.label}
-                        </span>
-                      </ToggleGroupItem>
-                    ))}
-                  </ToggleGroup>
+                        {subjects.map((subject) => (
+                          <ToggleGroupItem
+                            key={subject.id}
+                            value={subject.id}
+                            className={cn(
+                              "h-auto py-4 px-3 !rounded-sm border-2",
+                              "flex items-center justify-center",
+                              "text-xs font-medium text-center",
+                              "transition-all duration-200",
+                              "hover:border-accent hover:bg-accent/5",
+                              "data-[state=on]:border-accent/70 data-[state=on]:bg-transparent data-[state=on]:text-black",
+                              field.state.value.includes(subject.id)
+                                ? "border-accent"
+                                : "border-[#E5E5E5] text-black"
+                            )}
+                            aria-label={subject.name}
+                          >
+                            <span className="whitespace-nowrap">
+                              {subject.name}
+                            </span>
+                          </ToggleGroupItem>
+                        ))}
+                      </ToggleGroup>
+
+                      {field.state.value.length > 0 && (
+                        <div className="mt-3 text-xs text-[#6B7280]">
+                          Selected: {field.state.value.length}/ {subjects.length}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-sm text-gray-500 py-4">
+                      No subjects available for this exam type
+                    </p>
+                  )}
 
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </Field>
+              );
+            }}
+          />
 
-                  {field.state.value.length > 0 && (
-                    <div className="mt-3 text-xs text-[#6B7280]">
-                      Selected: {field.state.value.length}/ {subjects.length}
+          {/* Duration / Subscription Plan */}
+          <form.Field
+            name="duration"
+            children={(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
+              return (
+                <Field data-invalid={isInvalid}>
+                  <FieldLabel
+                    className="text-[#6D6D6D] uppercase text-[12px]"
+                    htmlFor="form-duration"
+                  >
+                    Subscription Plan
+                  </FieldLabel>
+
+                  {!selectedExamType ? (
+                    <p className="text-sm text-gray-500 py-4">
+                      Please select an exam type first
+                    </p>
+                  ) : isLoadingPlans ? (
+                    <div className="flex items-center gap-2 h-14 px-4 border rounded-4xl">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span className="text-gray-500">Loading plans...</span>
                     </div>
+                  ) : durationOptions.length > 0 ? (
+                    <CustomSelect
+                      name={field.name}
+                      value={field.state.value}
+                      onValueChange={field.handleChange}
+                      options={durationOptions}
+                      placeholder="Choose a subscription plan"
+                      required
+                    />
+                  ) : (
+                    <p className="text-sm text-gray-500 py-4">
+                      No plans available for this exam type
+                    </p>
                   )}
+
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
               );
             }}
@@ -236,7 +309,7 @@ export const SelectExamForm = () => {
 
         <PrimaryButton
           type="submit"
-          disabled={form.state.isSubmitting}
+          disabled={form.state.isSubmitting || isLoadingExamTypes || isLoadingPlans}
           className="w-full bg-accent hover:bg-accent/80 mt-10 text-white text-lg"
           title={form.state.isSubmitting ? "Loading..." : "Continue"}
         />

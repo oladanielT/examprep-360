@@ -15,7 +15,8 @@ function Welcome() {
       category.value === "UNIVERSITY_COURSE" ||
       category.label.toLowerCase().includes("university");
 
-    setUserType(isUndergraduate ? "undergraduate" : "secondary");
+    // Save both userType and the actual category value for API calls
+    setUserType(isUndergraduate ? "undergraduate" : "secondary", category.value);
     navigate({ to: "/register" });
   };
 

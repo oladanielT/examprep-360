@@ -6,33 +6,51 @@ import PrimaryButton from "@/components/buttons/primary-button";
 import { Alert } from "@/components/ui/alert";
 import { useRegistrationStore } from "@/stores/registrationStore";
 import { useRegister } from "@/feature/auth/hooks";
-import { subjects } from "@/feature/auth/components/select-exam-form";
+import { useExamSubjects } from "@/feature/exams/hooks";
+import { usePaymentPlans } from "@/feature/payment/hooks";
 
 function SummaryPage() {
   const navigate = useNavigate();
-  const { data, reset } = useRegistrationStore();
+  const { data, reset, setStudentId } = useRegistrationStore();
   const registerMutation = useRegister();
+
+  // Fetch subjects to get names
+  const { data: subjects } = useExamSubjects(data.examType);
+
+  // Fetch plans to get plan details
+  const { data: plans } = usePaymentPlans(data.category, data.examType);
 
   // Get subject labels from IDs
   const selectedSubjectLabels = data.subjects
-    .map((id) => subjects.find((s) => s.id === id)?.label)
+    .map((id) => subjects?.find((s) => s.id === id)?.name)
     .filter(Boolean);
+
+  // Get selected plan details
+  const selectedPlan = plans?.find((p) => p.id === data.duration);
 
   const handleSubmit = async () => {
     try {
-      await registerMutation.mutateAsync({
+      const response = await registerMutation.mutateAsync({
         fullName: data.fullName,
         email: data.email,
         phone: data.phone,
         password: data.password,
-        examType: data.examType.toUpperCase(),
+        examType: data.examType,
+        examTypeId: data.examTypeId,
+        examCategory: data.category,
         selectedSubjects: data.subjects,
+        subscriptionPlanId: data.duration, // This is the plan ID
         ...(data.isInstitutional && { numberOfStudents: data.students }),
       });
-      // Clear registration data
-      reset();
-      // Navigate to home (user is now registered and logged in)
-      navigate({ to: "/" });
+
+      // Save student ID from response
+      if (response.student?.id) {
+        setStudentId(response.student.id);
+      }
+
+      // Navigate to checkout page to complete payment
+      // Don't clear registration data yet - we need it in checkout
+      navigate({ to: "/checkout" });
     } catch {
       // Error is handled by the mutation
     }
@@ -83,8 +101,24 @@ function SummaryPage() {
               <span className="font-medium uppercase">{data.examType}</span>
             </div>
             <div className="flex justify-between">
+              <span className="text-gray-500">Subscription Plan</span>
+              <span className="font-medium">
+                {selectedPlan ? selectedPlan.name : data.duration}
+              </span>
+            </div>
+            <div className="flex justify-between">
               <span className="text-gray-500">Duration</span>
-              <span className="font-medium">{data.duration} Days</span>
+              <span className="font-medium">
+                {selectedPlan ? `${selectedPlan.duration} Days` : "N/A"}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Price</span>
+              <span className="font-medium text-accent">
+                {selectedPlan
+                  ? `${selectedPlan.currency} ${selectedPlan.basePrice.toLocaleString()}`
+                  : "N/A"}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Subjects</span>

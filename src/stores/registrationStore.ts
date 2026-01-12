@@ -4,8 +4,9 @@ import { persist, createJSONStorage } from "zustand/middleware";
 type UserType = "secondary" | "undergraduate" | "";
 
 interface RegistrationData {
-  // Step 1: User Type (from welcome page)
+  // Step 1: User Type & Category (from welcome page)
   userType: UserType;
+  category: string; // API value like "SECONDARY_SCHOOL", "UNIVERSITY_COURSE"
 
   // Step 2: Basic Info
   fullName: string;
@@ -15,12 +16,16 @@ interface RegistrationData {
 
   // Step 3: Exam Selection
   examType: string;
+  examTypeId: string;
   duration: string;
   subjects: string[];
 
   // Institutional license
   isInstitutional: boolean;
   students: number;
+
+  // Student ID (from registration response)
+  studentId: string;
 }
 
 interface RegistrationState {
@@ -29,10 +34,11 @@ interface RegistrationState {
   currentStep: number;
 
   // Actions
-  setUserType: (userType: UserType) => void;
+  setUserType: (userType: UserType, category: string) => void;
   setBasicInfo: (info: Pick<RegistrationData, "fullName" | "email" | "phone" | "password">) => void;
-  setExamSelection: (info: Pick<RegistrationData, "examType" | "duration" | "subjects" | "students">) => void;
+  setExamSelection: (info: Pick<RegistrationData, "examType" | "examTypeId" | "duration" | "subjects" | "students">) => void;
   setIsInstitutional: (isInstitutional: boolean) => void;
+  setStudentId: (studentId: string) => void;
   setStep: (step: number) => void;
   reset: () => void;
 
@@ -42,15 +48,18 @@ interface RegistrationState {
 
 const initialData: RegistrationData = {
   userType: "",
+  category: "",
   fullName: "",
   email: "",
   phone: "",
   password: "",
   examType: "",
+  examTypeId: "",
   duration: "",
   subjects: [],
   isInstitutional: false,
   students: 1,
+  studentId: "",
 };
 
 export const useRegistrationStore = create<RegistrationState>()(
@@ -59,9 +68,9 @@ export const useRegistrationStore = create<RegistrationState>()(
       data: initialData,
       currentStep: 1,
 
-      setUserType: (userType) =>
+      setUserType: (userType, category) =>
         set((state) => ({
-          data: { ...state.data, userType },
+          data: { ...state.data, userType, category },
           currentStep: 2,
         })),
 
@@ -80,6 +89,11 @@ export const useRegistrationStore = create<RegistrationState>()(
       setIsInstitutional: (isInstitutional) =>
         set((state) => ({
           data: { ...state.data, isInstitutional },
+        })),
+
+      setStudentId: (studentId) =>
+        set((state) => ({
+          data: { ...state.data, studentId },
         })),
 
       setStep: (step) => set({ currentStep: step }),

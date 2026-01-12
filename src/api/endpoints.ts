@@ -73,9 +73,20 @@ export const TUTORIALS_ENDPOINTS = {
 // Exam selection endpoints
 export const EXAM_SELECTION_ENDPOINTS = {
   CATEGORIES: "/user/exam-selection/categories",
-  SUBTYPES: (category: string) => `/user/exam-selection/subtypes/${category}`,
+  EXAM_TYPES: (category: string) => `/user/exam-selection/exam-types/${category}`,
   SUBJECTS: (examType: string) => `/user/exam-selection/subjects/${examType}`,
   SAVE: "/user/exam-selection/save",
+} as const;
+
+// Payment endpoints
+export const PAYMENT_ENDPOINTS = {
+  PLANS: "/payment/plans",
+  PRICING_PREVIEW: "/payment/pricing-preview",
+  INITIALIZE: "/payment/initialize",
+  VERIFY: "/payment/verify",
+  REDEEM_LICENSE: "/payment/redeem-license",
+  START_TRIAL: "/payment/trial",
+  INSTITUTIONAL_CODES: "/payment/institutional-codes",
 } as const;
 
 // Referral endpoints
