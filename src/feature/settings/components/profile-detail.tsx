@@ -1,6 +1,3 @@
-
-
-import React from "react";
 import { useForm } from "@tanstack/react-form";
 import { Copy, Check } from "lucide-react";
 import {
@@ -24,7 +21,7 @@ const profileSchema = z.object({
     .string()
     .min(10, "Phone number must be at least 10 characters.")
     .max(15, "Phone number must be at most 15 characters."),
-  referralCode: z.string().optional(),
+  referralCode: z.string(),
 });
 
 export const ProfileSettingsForm = () => {

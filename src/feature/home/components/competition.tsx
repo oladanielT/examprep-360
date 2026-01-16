@@ -3,7 +3,7 @@ import PrimaryButton from '@/components/buttons/primary-button'
 import { CustomDialog } from '@/components/global/custom-dialog'
 import { Card } from '@/components/ui/card'
 // Image converted to img tag
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 export default function Competition() {
     const [open, setOpen] = useState(false)

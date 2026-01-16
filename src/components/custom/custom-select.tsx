@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   Select,
   SelectContent,
@@ -78,7 +77,7 @@ export function CustomSelect({
       <Select
         name={name}
         value={value}
-        onValueChange={onValueChange}
+        onValueChange={(val) => val !== null && onValueChange?.(val)}
         disabled={disabled}
       >
         <SelectTrigger
@@ -89,8 +88,8 @@ export function CustomSelect({
             triggerClassName
           )}
         >
-          <SelectValue placeholder={placeholder}>
-            {value ? getSelectedLabel(value) || value : undefined}
+          <SelectValue>
+            {value ? getSelectedLabel(value) || value : placeholder}
           </SelectValue>
         </SelectTrigger>
 

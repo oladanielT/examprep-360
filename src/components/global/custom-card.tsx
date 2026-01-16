@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { Card } from '../ui/card'
 // Image converted to img tag;
 import { cn } from '@/lib/utils';

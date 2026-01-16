@@ -26,8 +26,8 @@ export const Choicebox = ({ className, ...props }: ChoiceboxProps) => (
 );
 
 type ChoiceboxItemContextValue = {
-  value: ChoiceboxItemProps["value"];
-  id?: ChoiceboxItemProps["id"];
+  value: string;
+  id?: string;
 };
 
 const ChoiceboxItemContext = createContext<ChoiceboxItemContextValue | null>(
@@ -53,15 +53,20 @@ export const ChoiceboxItem = ({
   children,
   value,
   id,
-}: ChoiceboxItemProps) => (
-  <ChoiceboxItemContext.Provider value={{ value, id }}>
-    <FieldLabel htmlFor={id}>
-      <Field className={className} orientation="horizontal">
-        {children}
-      </Field>
-    </FieldLabel>
-  </ChoiceboxItemContext.Provider>
-);
+}: ChoiceboxItemProps) => {
+  const resolvedId = typeof id === 'string' ? id : undefined;
+  const resolvedValue = typeof value === 'string' ? value : '';
+  const resolvedClassName = typeof className === 'string' ? className : undefined;
+  return (
+    <ChoiceboxItemContext.Provider value={{ value: resolvedValue, id: resolvedId }}>
+      <FieldLabel htmlFor={resolvedId}>
+        <Field className={resolvedClassName} orientation="horizontal">
+          {children}
+        </Field>
+      </FieldLabel>
+    </ChoiceboxItemContext.Provider>
+  );
+};
 
 export type ChoiceboxItemHeaderProps = ComponentProps<typeof FieldContent>;
 

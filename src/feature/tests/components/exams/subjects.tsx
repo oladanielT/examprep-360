@@ -8,7 +8,7 @@ import {
 } from '@/components/kibo-ui/choicebox';
 import { DialogStack, DialogStackOverlay, DialogStackTrigger, DialogStackBody, DialogStackContent, DialogStackHeader, DialogStackNext, DialogStackPrevious } from '@/components/kibo-ui/dialog-stack';
 import StepTwo from './step-two';
-import { ArrowLeft, X } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 const options = [
     {

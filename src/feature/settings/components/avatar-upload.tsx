@@ -7,9 +7,7 @@ import {
 } from "@/hooks/use-file-upload";
 import {
   Alert,
-  AlertContent,
   AlertDescription,
-  AlertIcon,
   AlertTitle,
 } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -118,20 +116,16 @@ export default function AvatarUpload({
 
       {/* Error Messages */}
       {errors.length > 0 && (
-        <Alert variant="destructive" appearance="light" className="mt-5">
-          <AlertIcon>
-            <TriangleAlert />
-          </AlertIcon>
-          <AlertContent>
-            <AlertTitle>File upload error(s)</AlertTitle>
-            <AlertDescription>
-              {errors.map((error, index) => (
-                <p key={index} className="last:mb-0">
-                  {error}
-                </p>
-              ))}
-            </AlertDescription>
-          </AlertContent>
+        <Alert variant="destructive" className="mt-5">
+          <TriangleAlert className="h-4 w-4" />
+          <AlertTitle>File upload error(s)</AlertTitle>
+          <AlertDescription>
+            {errors.map((error, index) => (
+              <p key={index} className="last:mb-0">
+                {error}
+              </p>
+            ))}
+          </AlertDescription>
         </Alert>
       )}
     </div>

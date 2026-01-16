@@ -54,7 +54,7 @@ export function CustomDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-     {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
+     {trigger && <DialogTrigger>{trigger}</DialogTrigger>}
       <DialogContent className={cn(sizeClasses[size], className)}>
         <DialogHeader>
           <DialogTitle className="text-center">{title}</DialogTitle>

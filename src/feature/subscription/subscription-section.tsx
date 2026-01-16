@@ -1,15 +1,10 @@
-import React from "react";
-import { Button } from "@/components/ui/button";
 import {
   Item,
-  ItemActions,
   ItemContent,
   ItemDescription,
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
-
-import { Link } from "@tanstack/react-router";
 
 export const SubscriptionSection = () => {
   return (

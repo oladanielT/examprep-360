@@ -101,13 +101,13 @@ export default function Nav() {
           </li>
           <li>
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="focus:outline-none focus:ring-2 focus:ring-primary rounded-full">
-                  <Avatar>
-                    <AvatarImage src={user?.avatarUrl || "/img/avatar.png"} alt="user" />
-                    <AvatarFallback>{getInitials(user?.fullName)}</AvatarFallback>
-                  </Avatar>
-                </button>
+              <DropdownMenuTrigger
+                className="focus:outline-none focus:ring-2 focus:ring-primary rounded-full"
+              >
+                <Avatar>
+                  <AvatarImage src={user?.avatarUrl || "/img/avatar.png"} alt="user" />
+                  <AvatarFallback>{getInitials(user?.fullName)}</AvatarFallback>
+                </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 <div className="px-2 py-1.5">
@@ -115,11 +115,12 @@ export default function Nav() {
                   <p className="text-xs text-muted-foreground">{user?.email}</p>
                 </div>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link to="/settings" className="cursor-pointer">
-                    <User className="mr-2 h-4 w-4" />
-                    Profile
-                  </Link>
+                <DropdownMenuItem
+                  onClick={() => navigate({ to: "/settings" })}
+                  className="cursor-pointer"
+                >
+                  <User className="mr-2 h-4 w-4" />
+                  Profile
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem

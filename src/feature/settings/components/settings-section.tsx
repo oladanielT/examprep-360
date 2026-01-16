@@ -1,5 +1,3 @@
-import React from "react";
-import { Button } from "@/components/ui/button";
 import {
   Item,
   ItemActions,
@@ -22,9 +20,12 @@ export const SettingsSection = () => {
           <ItemDescription>6 Subscriptions</ItemDescription>
         </ItemContent>
         <ItemActions>
-          <Button asChild variant="outline" size="sm">
-            <Link to="/subscription">Manage</Link>
-          </Button>
+          <Link
+            to="/subscription"
+            className="inline-flex items-center justify-center h-8 px-3 text-sm font-medium rounded-4xl border border-border bg-input/30 hover:bg-input/50 transition-colors"
+          >
+            Manage
+          </Link>
         </ItemActions>
       </Item>
     </section>
