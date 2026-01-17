@@ -25,6 +25,8 @@ export const PROFILE_ENDPOINTS = {
 
 // Exam endpoints
 export const EXAM_ENDPOINTS = {
+  AVAILABLE: "/student/exams/available",
+  PREFERENCES: "/student/exams/preferences",
   PRACTICE_START: "/student/exams/practice/start",
   PRACTICE_CONFIGURE: "/student/exams/practice/configure",
   START: (id: string) => `/student/exams/${id}/start`,

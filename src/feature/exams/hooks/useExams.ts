@@ -15,9 +15,9 @@ import type {
   ToggleBookmarkRequest,
   StartExamResponse,
   AttemptResponse,
-  ExamCategory,
-  ExamSubtype,
-  Subject,
+  AvailableExamsParams,
+  AvailableExamsResponse,
+  ExamPreferencesResponse,
 } from "@/api/types";
 import type { AxiosError } from "axios";
 
@@ -27,6 +27,47 @@ interface ApiError {
 }
 
 // ==================== QUERIES ====================
+
+// Fetch exam preferences (for /tests page - list of exam types like JAMB, WAEC, etc.)
+// Uses store to cache preferences - only fetches if not already in store
+export const useExamPreferences = () => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const storedPreferences = useExamStore((state) => state.preferences);
+  const setPreferences = useExamStore((state) => state.setPreferences);
+
+  return useQuery<ExamPreferencesResponse>({
+    queryKey: ["examPreferences"],
+    queryFn: async () => {
+      const { data } = await apiClient.get<ExamPreferencesResponse>(
+        EXAM_ENDPOINTS.PREFERENCES
+      );
+      // Store in Zustand for persistence
+      setPreferences(data);
+      return data;
+    },
+    enabled: isAuthenticated && !storedPreferences, // Only fetch if not in store
+    initialData: storedPreferences || undefined, // Use stored data as initial
+    staleTime: Infinity, // Never refetch automatically since we have it in store
+  });
+};
+
+// Fetch available exams (for /tests/exams page - list of exams filtered by subject, year, etc.)
+export const useAvailableExams = (params: AvailableExamsParams) => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  return useQuery<AvailableExamsResponse>({
+    queryKey: ["availableExams", params],
+    queryFn: async () => {
+      const { data } = await apiClient.get<AvailableExamsResponse>(
+        EXAM_ENDPOINTS.AVAILABLE,
+        { params }
+      );
+      return data;
+    },
+    enabled: isAuthenticated,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+};
 
 // Fetch exam history
 export const useExamHistory = () => {
