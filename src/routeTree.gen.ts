@@ -28,6 +28,7 @@ import { Route as AuthPaymentVerifyRouteImport } from './routes/_auth/payment-ve
 import { Route as AuthCheckoutRouteImport } from './routes/_auth/checkout'
 import { Route as UserTestsIndexRouteImport } from './routes/_user/tests/index'
 import { Route as UserTestsExamsRouteImport } from './routes/_user/tests/exams'
+import { Route as UserTestsExamRouteImport } from './routes/_user/tests/exam'
 
 const UserRoute = UserRouteImport.update({
   id: '/_user',
@@ -122,6 +123,11 @@ const UserTestsExamsRoute = UserTestsExamsRouteImport.update({
   path: '/tests/exams',
   getParentRoute: () => UserRoute,
 } as any)
+const UserTestsExamRoute = UserTestsExamRouteImport.update({
+  id: '/tests/exam',
+  path: '/tests/exam',
+  getParentRoute: () => UserRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/checkout': typeof AuthCheckoutRoute
@@ -139,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/textbooks': typeof UserTextbooksRoute
   '/tutorials': typeof UserTutorialsRoute
   '/': typeof UserIndexRoute
+  '/tests/exam': typeof UserTestsExamRoute
   '/tests/exams': typeof UserTestsExamsRoute
   '/tests': typeof UserTestsIndexRoute
 }
@@ -158,6 +165,7 @@ export interface FileRoutesByTo {
   '/textbooks': typeof UserTextbooksRoute
   '/tutorials': typeof UserTutorialsRoute
   '/': typeof UserIndexRoute
+  '/tests/exam': typeof UserTestsExamRoute
   '/tests/exams': typeof UserTestsExamsRoute
   '/tests': typeof UserTestsIndexRoute
 }
@@ -180,6 +188,7 @@ export interface FileRoutesById {
   '/_user/textbooks': typeof UserTextbooksRoute
   '/_user/tutorials': typeof UserTutorialsRoute
   '/_user/': typeof UserIndexRoute
+  '/_user/tests/exam': typeof UserTestsExamRoute
   '/_user/tests/exams': typeof UserTestsExamsRoute
   '/_user/tests/': typeof UserTestsIndexRoute
 }
@@ -201,6 +210,7 @@ export interface FileRouteTypes {
     | '/textbooks'
     | '/tutorials'
     | '/'
+    | '/tests/exam'
     | '/tests/exams'
     | '/tests'
   fileRoutesByTo: FileRoutesByTo
@@ -220,6 +230,7 @@ export interface FileRouteTypes {
     | '/textbooks'
     | '/tutorials'
     | '/'
+    | '/tests/exam'
     | '/tests/exams'
     | '/tests'
   id:
@@ -241,6 +252,7 @@ export interface FileRouteTypes {
     | '/_user/textbooks'
     | '/_user/tutorials'
     | '/_user/'
+    | '/_user/tests/exam'
     | '/_user/tests/exams'
     | '/_user/tests/'
   fileRoutesById: FileRoutesById
@@ -385,6 +397,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserTestsExamsRouteImport
       parentRoute: typeof UserRoute
     }
+    '/_user/tests/exam': {
+      id: '/_user/tests/exam'
+      path: '/tests/exam'
+      fullPath: '/tests/exam'
+      preLoaderRoute: typeof UserTestsExamRouteImport
+      parentRoute: typeof UserRoute
+    }
   }
 }
 
@@ -420,6 +439,7 @@ interface UserRouteChildren {
   UserTextbooksRoute: typeof UserTextbooksRoute
   UserTutorialsRoute: typeof UserTutorialsRoute
   UserIndexRoute: typeof UserIndexRoute
+  UserTestsExamRoute: typeof UserTestsExamRoute
   UserTestsExamsRoute: typeof UserTestsExamsRoute
   UserTestsIndexRoute: typeof UserTestsIndexRoute
 }
@@ -432,6 +452,7 @@ const UserRouteChildren: UserRouteChildren = {
   UserTextbooksRoute: UserTextbooksRoute,
   UserTutorialsRoute: UserTutorialsRoute,
   UserIndexRoute: UserIndexRoute,
+  UserTestsExamRoute: UserTestsExamRoute,
   UserTestsExamsRoute: UserTestsExamsRoute,
   UserTestsIndexRoute: UserTestsIndexRoute,
 }

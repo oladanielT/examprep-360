@@ -11,7 +11,7 @@ import { DialogStack, DialogStackOverlay, DialogStackTrigger, DialogStackBody, D
 import ConfigurePracticeForm from './step-two';
 import { ArrowLeft } from 'lucide-react';
 import { useExamPreferences, useAvailableExams, useStartPractice } from '@/feature/exams/hooks';
-import { useNavigate } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import type { Subject as SubjectType, AvailableExam, AvailableExamsGrouped } from '@/api/types/exam.types';
 
 const testTypeOptions = [
@@ -43,7 +43,6 @@ const practiceOptions = [
 // Mock selection component that fetches available mocks
 function MockSelection({ subject, onClose }: { subject: SubjectType; onClose?: () => void }) {
     const [selectedMockId, setSelectedMockId] = useState<string>("");
-    const navigate = useNavigate();
     const { data, isLoading, error } = useAvailableExams({
         subjectId: subject.id,
         examTypeEnum: 'MOCK',
@@ -60,7 +59,6 @@ function MockSelection({ subject, onClose }: { subject: SubjectType; onClose?: (
     const handleStartMock = () => {
         if (selectedMockId) {
             onClose?.();
-            navigate({ to: '/exam', search: { examId: selectedMockId } });
         }
     };
 
@@ -81,7 +79,7 @@ function MockSelection({ subject, onClose }: { subject: SubjectType; onClose?: (
             <Choicebox
                 className='my-5'
                 defaultValue={mocks[0]?.id}
-                onValueChange={(value) => setSelectedMockId(value)}
+                onValueChange={(value: unknown) => setSelectedMockId(value as string)}
             >
                 {mocks.map((mock) => (
                     <ChoiceboxItem key={mock.id} value={mock.id}>
@@ -98,11 +96,20 @@ function MockSelection({ subject, onClose }: { subject: SubjectType; onClose?: (
                     </ChoiceboxItem>
                 ))}
             </Choicebox>
-            <PrimaryButton
-                title='Start Mock'
-                onClick={handleStartMock}
-                className='bg-[#F04F54] hover:bg-[#F04F54]/80 max-w-2xs flex justify-self-center text-white'
-            />
+            {selectedMockId ? (
+                <Link to="/tests/exam" search={{ examId: selectedMockId }} onClick={handleStartMock}>
+                    <PrimaryButton
+                        title='Start Mock'
+                        className='bg-[#F04F54] hover:bg-[#F04F54]/80 max-w-2xs flex justify-self-center text-white'
+                    />
+                </Link>
+            ) : (
+                <PrimaryButton
+                    title='Start Mock'
+                    disabled
+                    className='bg-[#F04F54] hover:bg-[#F04F54]/80 max-w-2xs flex justify-self-center text-white opacity-50'
+                />
+            )}
         </>
     );
 }
@@ -124,7 +131,7 @@ function SubjectCard({ subject }: { subject: SubjectType }) {
             {
                 onSuccess: () => {
                     setIsOpen(false);
-                    navigate({ to: '/exam' }); // Navigate to exam page
+                    navigate({ to: '/tests/exam' });
                 },
             }
         );
@@ -155,7 +162,7 @@ function SubjectCard({ subject }: { subject: SubjectType }) {
                     <Choicebox
                         className='my-5'
                         defaultValue="practice"
-                        onValueChange={(value) => setSelectedTestType(value)}
+                        onValueChange={(value: unknown) => setSelectedTestType(value as string)}
                     >
                         {testTypeOptions.map((option) => (
                             <ChoiceboxItem key={option.id} value={option.id}>
@@ -195,7 +202,7 @@ function SubjectCard({ subject }: { subject: SubjectType }) {
                             <Choicebox
                                 className='my-5'
                                 defaultValue="jump"
-                                onValueChange={(value) => setSelectedPracticeOption(value)}
+                                onValueChange={(value: unknown) => setSelectedPracticeOption(value as string)}
                             >
                                 {practiceOptions.map((option) => (
                                     <ChoiceboxItem key={option.id} value={option.id}>

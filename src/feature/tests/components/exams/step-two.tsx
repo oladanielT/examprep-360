@@ -82,7 +82,7 @@ export default function ConfigurePracticeForm({ subject, onClose }: ConfigurePra
                 {
                     onSuccess: () => {
                         onClose?.();
-                        navigate({ to: '/exam' }); // Navigate to exam page
+                        navigate({ to: '/tests/exam' });
                     },
                 }
             );
@@ -120,7 +120,10 @@ export default function ConfigurePracticeForm({ subject, onClose }: ConfigurePra
                                     max={100}
                                     step={5}
                                     value={[field.state.value]}
-                                    onValueChange={(value) => field.handleChange(value[0])}
+                                    onValueChange={(value) => {
+                                        const values = value as number[];
+                                        field.handleChange(values[0]);
+                                    }}
                                     className="w-full"
                                 />
                                 {isInvalid && <FieldError errors={field.state.meta.errors} />}

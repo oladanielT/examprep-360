@@ -18,6 +18,9 @@ import type {
   AvailableExamsParams,
   AvailableExamsResponse,
   ExamPreferencesResponse,
+  ExamCategoryOption,
+  ExamSubtypeOption,
+  SubjectOption,
 } from "@/api/types";
 import type { AxiosError } from "axios";
 
@@ -127,10 +130,10 @@ export const useReports = () => {
 
 // Exam Selection Queries
 export const useExamCategories = () => {
-  return useQuery<ExamCategory[]>({
+  return useQuery<ExamCategoryOption[]>({
     queryKey: ["examSelection", "categories"],
     queryFn: async () => {
-      const { data } = await apiClient.get<ExamCategory[]>(
+      const { data } = await apiClient.get<ExamCategoryOption[]>(
         EXAM_SELECTION_ENDPOINTS.CATEGORIES
       );
       return data;
@@ -140,10 +143,10 @@ export const useExamCategories = () => {
 };
 
 export const useExamTypes = (category: string) => {
-  return useQuery<ExamSubtype[]>({
+  return useQuery<ExamSubtypeOption[]>({
     queryKey: ["examSelection", "examTypes", category],
     queryFn: async () => {
-      const { data } = await apiClient.get<ExamSubtype[]>(
+      const { data } = await apiClient.get<ExamSubtypeOption[]>(
         EXAM_SELECTION_ENDPOINTS.EXAM_TYPES(category)
       );
       return data;
@@ -154,10 +157,10 @@ export const useExamTypes = (category: string) => {
 };
 
 export const useExamSubjects = (examType: string) => {
-  return useQuery<Subject[]>({
+  return useQuery<SubjectOption[]>({
     queryKey: ["examSelection", "subjects", examType],
     queryFn: async () => {
-      const { data } = await apiClient.get<Subject[]>(
+      const { data } = await apiClient.get<SubjectOption[]>(
         EXAM_SELECTION_ENDPOINTS.SUBJECTS(examType)
       );
       return data;
