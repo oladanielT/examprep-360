@@ -4,7 +4,6 @@ import { EXAM_ENDPOINTS, EXAM_SELECTION_ENDPOINTS } from "@/api/endpoints";
 import { useAuthStore } from "@/stores/authStore";
 import { useExamStore } from "@/stores/examStore";
 import type {
-  ExamHistory,
   ExamAttempt,
   Bookmark,
   QuestionReport,
@@ -18,6 +17,10 @@ import type {
   AvailableExamsParams,
   AvailableExamsResponse,
   ExamPreferencesResponse,
+  ExamHistoryResponse,
+  ExamHistoryParams,
+  PausedExam,
+  ExamQuestionsResponse,
   ExamCategoryOption,
   ExamSubtypeOption,
   SubjectOption,
@@ -72,14 +75,33 @@ export const useAvailableExams = (params: AvailableExamsParams) => {
   });
 };
 
-// Fetch exam history
-export const useExamHistory = () => {
+// Fetch exam questions for offline/prefetch (GET /student/exams/:id/questions)
+export const useExamQuestions = (examId: string, enabled = true) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
-  return useQuery<ExamHistory>({
-    queryKey: ["examHistory"],
+  return useQuery<ExamQuestionsResponse>({
+    queryKey: ["examQuestions", examId],
     queryFn: async () => {
-      const { data } = await apiClient.get<ExamHistory>(EXAM_ENDPOINTS.HISTORY);
+      const { data } = await apiClient.get<ExamQuestionsResponse>(
+        EXAM_ENDPOINTS.QUESTIONS(examId)
+      );
+      return data;
+    },
+    enabled: isAuthenticated && !!examId && enabled,
+    staleTime: 1000 * 60 * 10, // 10 minutes - questions don't change often
+  });
+};
+
+// Fetch exam history
+export const useExamHistory = (params: ExamHistoryParams = {}) => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  return useQuery<ExamHistoryResponse>({
+    queryKey: ["examHistory", params],
+    queryFn: async () => {
+      const { data } = await apiClient.get<ExamHistoryResponse>(EXAM_ENDPOINTS.HISTORY, {
+        params,
+      });
       return data;
     },
     enabled: isAuthenticated,
@@ -90,10 +112,10 @@ export const useExamHistory = () => {
 export const usePausedExams = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
-  return useQuery<ExamAttempt[]>({
+  return useQuery<PausedExam[]>({
     queryKey: ["pausedExams"],
     queryFn: async () => {
-      const { data } = await apiClient.get<ExamAttempt[]>(EXAM_ENDPOINTS.PAUSED);
+      const { data } = await apiClient.get<PausedExam[]>(EXAM_ENDPOINTS.PAUSED);
       return data;
     },
     enabled: isAuthenticated,

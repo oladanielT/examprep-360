@@ -153,11 +153,10 @@ function SelectScrollUpButton({
   return (
     <SelectPrimitive.ScrollUpArrow
       data-slot="select-scroll-up-button"
-      className={cn("bg-popover z-10 flex cursor-default items-center justify-center py-1 [&_svg:not([class*='size-'])]:size-4 top-0 w-full", className)}
+      className={cn("bg-popover z-10 cursor-default items-center justify-center py-1 [&_svg:not([class*='size-'])]:size-4 top-0 w-full sticky hidden data-[scrollable]:flex", className)}
       {...props}
     >
-      <CaretUpIcon
-      />
+      <CaretUpIcon />
     </SelectPrimitive.ScrollUpArrow>
   )
 }
@@ -169,11 +168,10 @@ function SelectScrollDownButton({
   return (
     <SelectPrimitive.ScrollDownArrow
       data-slot="select-scroll-down-button"
-      className={cn("bg-popover z-10 flex cursor-default items-center justify-center py-1 [&_svg:not([class*='size-'])]:size-4 bottom-0 w-full", className)}
+      className={cn("bg-popover z-10 cursor-default items-center justify-center py-1 [&_svg:not([class*='size-'])]:size-4 bottom-0 w-full sticky hidden data-[scrollable]:flex", className)}
       {...props}
     >
-      <CaretDownIcon
-      />
+      <CaretDownIcon />
     </SelectPrimitive.ScrollDownArrow>
   )
 }

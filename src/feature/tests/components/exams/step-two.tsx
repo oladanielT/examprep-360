@@ -1,13 +1,12 @@
 'use client'
 import PrimaryButton from '@/components/buttons/primary-button'
-import { CustomSelect } from '@/components/custom/custom-select'
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
-import { Slider } from '@/components/ui/slider'
 import { useForm } from '@tanstack/react-form'
 import { useConfigurePractice } from '@/feature/exams/hooks'
 import { useNavigate } from '@tanstack/react-router'
 import type { Subject } from '@/api/types/exam.types'
 import z from 'zod'
+import { cn } from '@/lib/utils'
 
 const formSchema = z.object({
     questionCount: z.number().min(10).max(100),
@@ -115,16 +114,14 @@ export default function ConfigurePracticeForm({ subject, onClose }: ConfigurePra
                                         {field.state.value} Questions
                                     </span>
                                 </div>
-                                <Slider
+                                <input
+                                    type="range"
                                     min={10}
                                     max={100}
                                     step={5}
-                                    value={[field.state.value]}
-                                    onValueChange={(value) => {
-                                        const values = value as number[];
-                                        field.handleChange(values[0]);
-                                    }}
-                                    className="w-full"
+                                    value={field.state.value}
+                                    onChange={(e) => field.handleChange(Number(e.target.value))}
+                                    className="w-full h-3 bg-muted rounded-full appearance-none cursor-pointer accent-primary [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-primary [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-sm"
                                 />
                                 {isInvalid && <FieldError errors={field.state.meta.errors} />}
                             </Field>
@@ -143,13 +140,24 @@ export default function ConfigurePracticeForm({ subject, onClose }: ConfigurePra
                                     <FieldLabel className="text-[#6D6D6D] uppercase text-[12px]">
                                         Time Limit
                                     </FieldLabel>
-                                    <CustomSelect
+                                    <select
                                         name={field.name}
                                         value={field.state.value}
-                                        onValueChange={field.handleChange}
-                                        options={timeLimitOptions}
-                                        placeholder="Select time limit"
-                                    />
+                                        onChange={(e) => field.handleChange(e.target.value)}
+                                        className={cn(
+                                            "w-full h-14 px-5 rounded-full border border-input bg-input/30",
+                                            "text-sm appearance-none cursor-pointer",
+                                            "focus:outline-none focus:ring-2 focus:ring-ring/50 focus:border-ring",
+                                            "bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%20viewBox%3D%220%200%20256%20256%22%3E%3Cpath%20fill%3D%22%236b7280%22%20d%3D%22m213.66%2C101.66l-80%2C80c-4.69%2C4.69-12.28%2C4.69-16.97%2C0l-80-80c-4.69-4.69-4.69-12.28%2C0-16.97%2C4.69-4.69%2C12.28-4.69%2C16.97%2C0l71.51%2C71.51%2C71.51-71.51c4.69-4.69%2C12.28-4.69%2C16.97%2C0%2C4.69%2C4.69%2C4.69%2C12.28%2C0%2C16.97Z%22%2F%3E%3C%2Fsvg%3E')]",
+                                            "bg-no-repeat bg-[right_1.25rem_center]"
+                                        )}
+                                    >
+                                        {timeLimitOptions.map((option) => (
+                                            <option key={option.value} value={option.value}>
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </select>
                                     {isInvalid && <FieldError errors={field.state.meta.errors} />}
                                 </Field>
                             );
@@ -168,13 +176,24 @@ export default function ConfigurePracticeForm({ subject, onClose }: ConfigurePra
                                     <FieldLabel className="text-[#6D6D6D] uppercase text-[12px]">
                                         Difficulty
                                     </FieldLabel>
-                                    <CustomSelect
+                                    <select
                                         name={field.name}
                                         value={field.state.value}
-                                        onValueChange={field.handleChange}
-                                        options={difficultyOptions}
-                                        placeholder="Select difficulty"
-                                    />
+                                        onChange={(e) => field.handleChange(e.target.value)}
+                                        className={cn(
+                                            "w-full h-14 px-5 rounded-full border border-input bg-input/30",
+                                            "text-sm appearance-none cursor-pointer",
+                                            "focus:outline-none focus:ring-2 focus:ring-ring/50 focus:border-ring",
+                                            "bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%20viewBox%3D%220%200%20256%20256%22%3E%3Cpath%20fill%3D%22%236b7280%22%20d%3D%22m213.66%2C101.66l-80%2C80c-4.69%2C4.69-12.28%2C4.69-16.97%2C0l-80-80c-4.69-4.69-4.69-12.28%2C0-16.97%2C4.69-4.69%2C12.28-4.69%2C16.97%2C0l71.51%2C71.51%2C71.51-71.51c4.69-4.69%2C12.28-4.69%2C16.97%2C0%2C4.69%2C4.69%2C4.69%2C12.28%2C0%2C16.97Z%22%2F%3E%3C%2Fsvg%3E')]",
+                                            "bg-no-repeat bg-[right_1.25rem_center]"
+                                        )}
+                                    >
+                                        {difficultyOptions.map((option) => (
+                                            <option key={option.value} value={option.value}>
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </select>
                                     {isInvalid && <FieldError errors={field.state.meta.errors} />}
                                 </Field>
                             );
@@ -193,13 +212,24 @@ export default function ConfigurePracticeForm({ subject, onClose }: ConfigurePra
                                     <FieldLabel className="text-[#6D6D6D] uppercase text-[12px]">
                                         Question Type
                                     </FieldLabel>
-                                    <CustomSelect
+                                    <select
                                         name={field.name}
                                         value={field.state.value}
-                                        onValueChange={field.handleChange}
-                                        options={questionTypeOptions}
-                                        placeholder="Select question type"
-                                    />
+                                        onChange={(e) => field.handleChange(e.target.value)}
+                                        className={cn(
+                                            "w-full h-14 px-5 rounded-full border border-input bg-input/30",
+                                            "text-sm appearance-none cursor-pointer",
+                                            "focus:outline-none focus:ring-2 focus:ring-ring/50 focus:border-ring",
+                                            "bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%20viewBox%3D%220%200%20256%20256%22%3E%3Cpath%20fill%3D%22%236b7280%22%20d%3D%22m213.66%2C101.66l-80%2C80c-4.69%2C4.69-12.28%2C4.69-16.97%2C0l-80-80c-4.69-4.69-4.69-12.28%2C0-16.97%2C4.69-4.69%2C12.28-4.69%2C16.97%2C0l71.51%2C71.51%2C71.51-71.51c4.69-4.69%2C12.28-4.69%2C16.97%2C0%2C4.69%2C4.69%2C4.69%2C12.28%2C0%2C16.97Z%22%2F%3E%3C%2Fsvg%3E')]",
+                                            "bg-no-repeat bg-[right_1.25rem_center]"
+                                        )}
+                                    >
+                                        {questionTypeOptions.map((option) => (
+                                            <option key={option.value} value={option.value}>
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </select>
                                     {isInvalid && <FieldError errors={field.state.meta.errors} />}
                                 </Field>
                             );
@@ -218,13 +248,24 @@ export default function ConfigurePracticeForm({ subject, onClose }: ConfigurePra
                                     <FieldLabel className="text-[#6D6D6D] uppercase text-[12px]">
                                         Year
                                     </FieldLabel>
-                                    <CustomSelect
+                                    <select
                                         name={field.name}
                                         value={field.state.value}
-                                        onValueChange={field.handleChange}
-                                        options={yearOptions}
-                                        placeholder="Select year"
-                                    />
+                                        onChange={(e) => field.handleChange(e.target.value)}
+                                        className={cn(
+                                            "w-full h-14 px-5 rounded-full border border-input bg-input/30",
+                                            "text-sm appearance-none cursor-pointer",
+                                            "focus:outline-none focus:ring-2 focus:ring-ring/50 focus:border-ring",
+                                            "bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%20viewBox%3D%220%200%20256%20256%22%3E%3Cpath%20fill%3D%22%236b7280%22%20d%3D%22m213.66%2C101.66l-80%2C80c-4.69%2C4.69-12.28%2C4.69-16.97%2C0l-80-80c-4.69-4.69-4.69-12.28%2C0-16.97%2C4.69-4.69%2C12.28-4.69%2C16.97%2C0l71.51%2C71.51%2C71.51-71.51c4.69-4.69%2C12.28-4.69%2C16.97%2C0%2C4.69%2C4.69%2C4.69%2C12.28%2C0%2C16.97Z%22%2F%3E%3C%2Fsvg%3E')]",
+                                            "bg-no-repeat bg-[right_1.25rem_center]"
+                                        )}
+                                    >
+                                        {yearOptions.map((option) => (
+                                            <option key={option.value} value={option.value}>
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </select>
                                     {isInvalid && <FieldError errors={field.state.meta.errors} />}
                                 </Field>
                             );

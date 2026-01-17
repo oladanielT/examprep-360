@@ -12,8 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as UserRouteImport } from './routes/_user'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as UserIndexRouteImport } from './routes/_user/index'
-import { Route as UserTutorialsRouteImport } from './routes/_user/tutorials'
-import { Route as UserTextbooksRouteImport } from './routes/_user/textbooks'
 import { Route as UserSubscriptionRouteImport } from './routes/_user/subscription'
 import { Route as UserSettingsRouteImport } from './routes/_user/settings'
 import { Route as UserLeaderboardRouteImport } from './routes/_user/leaderboard'
@@ -26,7 +24,11 @@ import { Route as AuthSelectExamRouteImport } from './routes/_auth/select-exam'
 import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
 import { Route as AuthPaymentVerifyRouteImport } from './routes/_auth/payment-verify'
 import { Route as AuthCheckoutRouteImport } from './routes/_auth/checkout'
+import { Route as UserTutorialsIndexRouteImport } from './routes/_user/tutorials/index'
+import { Route as UserTextbooksIndexRouteImport } from './routes/_user/textbooks/index'
 import { Route as UserTestsIndexRouteImport } from './routes/_user/tests/index'
+import { Route as UserTutorialsTutorialIdRouteImport } from './routes/_user/tutorials/$tutorialId'
+import { Route as UserTextbooksTextbookIdRouteImport } from './routes/_user/textbooks/$textbookId'
 import { Route as UserTestsExamsRouteImport } from './routes/_user/tests/exams'
 import { Route as UserTestsExamRouteImport } from './routes/_user/tests/exam'
 
@@ -41,16 +43,6 @@ const AuthRoute = AuthRouteImport.update({
 const UserIndexRoute = UserIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => UserRoute,
-} as any)
-const UserTutorialsRoute = UserTutorialsRouteImport.update({
-  id: '/tutorials',
-  path: '/tutorials',
-  getParentRoute: () => UserRoute,
-} as any)
-const UserTextbooksRoute = UserTextbooksRouteImport.update({
-  id: '/textbooks',
-  path: '/textbooks',
   getParentRoute: () => UserRoute,
 } as any)
 const UserSubscriptionRoute = UserSubscriptionRouteImport.update({
@@ -113,9 +105,29 @@ const AuthCheckoutRoute = AuthCheckoutRouteImport.update({
   path: '/checkout',
   getParentRoute: () => AuthRoute,
 } as any)
+const UserTutorialsIndexRoute = UserTutorialsIndexRouteImport.update({
+  id: '/tutorials/',
+  path: '/tutorials/',
+  getParentRoute: () => UserRoute,
+} as any)
+const UserTextbooksIndexRoute = UserTextbooksIndexRouteImport.update({
+  id: '/textbooks/',
+  path: '/textbooks/',
+  getParentRoute: () => UserRoute,
+} as any)
 const UserTestsIndexRoute = UserTestsIndexRouteImport.update({
   id: '/tests/',
   path: '/tests/',
+  getParentRoute: () => UserRoute,
+} as any)
+const UserTutorialsTutorialIdRoute = UserTutorialsTutorialIdRouteImport.update({
+  id: '/tutorials/$tutorialId',
+  path: '/tutorials/$tutorialId',
+  getParentRoute: () => UserRoute,
+} as any)
+const UserTextbooksTextbookIdRoute = UserTextbooksTextbookIdRouteImport.update({
+  id: '/textbooks/$textbookId',
+  path: '/textbooks/$textbookId',
   getParentRoute: () => UserRoute,
 } as any)
 const UserTestsExamsRoute = UserTestsExamsRouteImport.update({
@@ -142,12 +154,14 @@ export interface FileRoutesByFullPath {
   '/leaderboard': typeof UserLeaderboardRoute
   '/settings': typeof UserSettingsRoute
   '/subscription': typeof UserSubscriptionRoute
-  '/textbooks': typeof UserTextbooksRoute
-  '/tutorials': typeof UserTutorialsRoute
   '/': typeof UserIndexRoute
   '/tests/exam': typeof UserTestsExamRoute
   '/tests/exams': typeof UserTestsExamsRoute
+  '/textbooks/$textbookId': typeof UserTextbooksTextbookIdRoute
+  '/tutorials/$tutorialId': typeof UserTutorialsTutorialIdRoute
   '/tests': typeof UserTestsIndexRoute
+  '/textbooks': typeof UserTextbooksIndexRoute
+  '/tutorials': typeof UserTutorialsIndexRoute
 }
 export interface FileRoutesByTo {
   '/checkout': typeof AuthCheckoutRoute
@@ -162,12 +176,14 @@ export interface FileRoutesByTo {
   '/leaderboard': typeof UserLeaderboardRoute
   '/settings': typeof UserSettingsRoute
   '/subscription': typeof UserSubscriptionRoute
-  '/textbooks': typeof UserTextbooksRoute
-  '/tutorials': typeof UserTutorialsRoute
   '/': typeof UserIndexRoute
   '/tests/exam': typeof UserTestsExamRoute
   '/tests/exams': typeof UserTestsExamsRoute
+  '/textbooks/$textbookId': typeof UserTextbooksTextbookIdRoute
+  '/tutorials/$tutorialId': typeof UserTutorialsTutorialIdRoute
   '/tests': typeof UserTestsIndexRoute
+  '/textbooks': typeof UserTextbooksIndexRoute
+  '/tutorials': typeof UserTutorialsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -185,12 +201,14 @@ export interface FileRoutesById {
   '/_user/leaderboard': typeof UserLeaderboardRoute
   '/_user/settings': typeof UserSettingsRoute
   '/_user/subscription': typeof UserSubscriptionRoute
-  '/_user/textbooks': typeof UserTextbooksRoute
-  '/_user/tutorials': typeof UserTutorialsRoute
   '/_user/': typeof UserIndexRoute
   '/_user/tests/exam': typeof UserTestsExamRoute
   '/_user/tests/exams': typeof UserTestsExamsRoute
+  '/_user/textbooks/$textbookId': typeof UserTextbooksTextbookIdRoute
+  '/_user/tutorials/$tutorialId': typeof UserTutorialsTutorialIdRoute
   '/_user/tests/': typeof UserTestsIndexRoute
+  '/_user/textbooks/': typeof UserTextbooksIndexRoute
+  '/_user/tutorials/': typeof UserTutorialsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -207,12 +225,14 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/settings'
     | '/subscription'
-    | '/textbooks'
-    | '/tutorials'
     | '/'
     | '/tests/exam'
     | '/tests/exams'
+    | '/textbooks/$textbookId'
+    | '/tutorials/$tutorialId'
     | '/tests'
+    | '/textbooks'
+    | '/tutorials'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/checkout'
@@ -227,12 +247,14 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/settings'
     | '/subscription'
-    | '/textbooks'
-    | '/tutorials'
     | '/'
     | '/tests/exam'
     | '/tests/exams'
+    | '/textbooks/$textbookId'
+    | '/tutorials/$tutorialId'
     | '/tests'
+    | '/textbooks'
+    | '/tutorials'
   id:
     | '__root__'
     | '/_auth'
@@ -249,12 +271,14 @@ export interface FileRouteTypes {
     | '/_user/leaderboard'
     | '/_user/settings'
     | '/_user/subscription'
-    | '/_user/textbooks'
-    | '/_user/tutorials'
     | '/_user/'
     | '/_user/tests/exam'
     | '/_user/tests/exams'
+    | '/_user/textbooks/$textbookId'
+    | '/_user/tutorials/$tutorialId'
     | '/_user/tests/'
+    | '/_user/textbooks/'
+    | '/_user/tutorials/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -283,20 +307,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof UserIndexRouteImport
-      parentRoute: typeof UserRoute
-    }
-    '/_user/tutorials': {
-      id: '/_user/tutorials'
-      path: '/tutorials'
-      fullPath: '/tutorials'
-      preLoaderRoute: typeof UserTutorialsRouteImport
-      parentRoute: typeof UserRoute
-    }
-    '/_user/textbooks': {
-      id: '/_user/textbooks'
-      path: '/textbooks'
-      fullPath: '/textbooks'
-      preLoaderRoute: typeof UserTextbooksRouteImport
       parentRoute: typeof UserRoute
     }
     '/_user/subscription': {
@@ -383,11 +393,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthCheckoutRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_user/tutorials/': {
+      id: '/_user/tutorials/'
+      path: '/tutorials'
+      fullPath: '/tutorials'
+      preLoaderRoute: typeof UserTutorialsIndexRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/_user/textbooks/': {
+      id: '/_user/textbooks/'
+      path: '/textbooks'
+      fullPath: '/textbooks'
+      preLoaderRoute: typeof UserTextbooksIndexRouteImport
+      parentRoute: typeof UserRoute
+    }
     '/_user/tests/': {
       id: '/_user/tests/'
       path: '/tests'
       fullPath: '/tests'
       preLoaderRoute: typeof UserTestsIndexRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/_user/tutorials/$tutorialId': {
+      id: '/_user/tutorials/$tutorialId'
+      path: '/tutorials/$tutorialId'
+      fullPath: '/tutorials/$tutorialId'
+      preLoaderRoute: typeof UserTutorialsTutorialIdRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/_user/textbooks/$textbookId': {
+      id: '/_user/textbooks/$textbookId'
+      path: '/textbooks/$textbookId'
+      fullPath: '/textbooks/$textbookId'
+      preLoaderRoute: typeof UserTextbooksTextbookIdRouteImport
       parentRoute: typeof UserRoute
     }
     '/_user/tests/exams': {
@@ -436,12 +474,14 @@ interface UserRouteChildren {
   UserLeaderboardRoute: typeof UserLeaderboardRoute
   UserSettingsRoute: typeof UserSettingsRoute
   UserSubscriptionRoute: typeof UserSubscriptionRoute
-  UserTextbooksRoute: typeof UserTextbooksRoute
-  UserTutorialsRoute: typeof UserTutorialsRoute
   UserIndexRoute: typeof UserIndexRoute
   UserTestsExamRoute: typeof UserTestsExamRoute
   UserTestsExamsRoute: typeof UserTestsExamsRoute
+  UserTextbooksTextbookIdRoute: typeof UserTextbooksTextbookIdRoute
+  UserTutorialsTutorialIdRoute: typeof UserTutorialsTutorialIdRoute
   UserTestsIndexRoute: typeof UserTestsIndexRoute
+  UserTextbooksIndexRoute: typeof UserTextbooksIndexRoute
+  UserTutorialsIndexRoute: typeof UserTutorialsIndexRoute
 }
 
 const UserRouteChildren: UserRouteChildren = {
@@ -449,12 +489,14 @@ const UserRouteChildren: UserRouteChildren = {
   UserLeaderboardRoute: UserLeaderboardRoute,
   UserSettingsRoute: UserSettingsRoute,
   UserSubscriptionRoute: UserSubscriptionRoute,
-  UserTextbooksRoute: UserTextbooksRoute,
-  UserTutorialsRoute: UserTutorialsRoute,
   UserIndexRoute: UserIndexRoute,
   UserTestsExamRoute: UserTestsExamRoute,
   UserTestsExamsRoute: UserTestsExamsRoute,
+  UserTextbooksTextbookIdRoute: UserTextbooksTextbookIdRoute,
+  UserTutorialsTutorialIdRoute: UserTutorialsTutorialIdRoute,
   UserTestsIndexRoute: UserTestsIndexRoute,
+  UserTextbooksIndexRoute: UserTextbooksIndexRoute,
+  UserTutorialsIndexRoute: UserTutorialsIndexRoute,
 }
 
 const UserRouteWithChildren = UserRoute._addFileChildren(UserRouteChildren)

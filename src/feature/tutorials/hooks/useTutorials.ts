@@ -3,12 +3,19 @@ import { apiClient } from "@/api/client";
 import { TUTORIALS_ENDPOINTS, TASKS_ENDPOINTS } from "@/api/endpoints";
 import { useAuthStore } from "@/stores/authStore";
 import type {
-  Tutorial,
+  TutorialListItem,
   TutorialListParams,
+  TutorialListResponse,
+  TutorialDetail,
+  BookmarkedTutorial,
+  UpdateTutorialProgressRequest,
+  UpdateTutorialProgressResponse,
+  SubmitTutorialQuestionsRequest,
+  SubmitTutorialQuestionsResponse,
+  MarkTutorialCompleteResponse,
+  ToggleTutorialBookmarkResponse,
   Task,
   TaskListParams,
-  UpdateTutorialProgressRequest,
-  SubmitTutorialQuestionsRequest,
   SubmitTaskRequest,
 } from "@/api/types";
 import type { AxiosError } from "axios";
@@ -23,13 +30,13 @@ interface ApiError {
 export const useTutorials = (params: TutorialListParams = {}) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
-  return useQuery<Tutorial[]>({
+  return useQuery<TutorialListItem[]>({
     queryKey: ["tutorials", params],
     queryFn: async () => {
-      const { data } = await apiClient.get<Tutorial[]>(TUTORIALS_ENDPOINTS.LIST, {
+      const { data } = await apiClient.get<TutorialListResponse>(TUTORIALS_ENDPOINTS.LIST, {
         params,
       });
-      return data;
+      return data.data;
     },
     enabled: isAuthenticated,
   });
@@ -38,13 +45,26 @@ export const useTutorials = (params: TutorialListParams = {}) => {
 export const useTutorial = (id: string) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
-  return useQuery<Tutorial>({
+  return useQuery<TutorialDetail>({
     queryKey: ["tutorials", id],
     queryFn: async () => {
-      const { data } = await apiClient.get<Tutorial>(TUTORIALS_ENDPOINTS.DETAILS(id));
+      const { data } = await apiClient.get<TutorialDetail>(TUTORIALS_ENDPOINTS.DETAILS(id));
       return data;
     },
     enabled: isAuthenticated && !!id,
+  });
+};
+
+export const useBookmarkedTutorials = () => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  return useQuery<BookmarkedTutorial[]>({
+    queryKey: ["tutorials", "bookmarks"],
+    queryFn: async () => {
+      const { data } = await apiClient.get<BookmarkedTutorial[]>(TUTORIALS_ENDPOINTS.BOOKMARKS);
+      return data;
+    },
+    enabled: isAuthenticated,
   });
 };
 
@@ -54,36 +74,62 @@ export const useUpdateTutorialProgress = () => {
   const queryClient = useQueryClient();
 
   return useMutation<
-    Tutorial,
+    UpdateTutorialProgressResponse,
     AxiosError<ApiError>,
     { id: string; progress: UpdateTutorialProgressRequest }
   >({
     mutationFn: async ({ id, progress }) => {
-      const { data } = await apiClient.patch<Tutorial>(
+      const { data } = await apiClient.patch<UpdateTutorialProgressResponse>(
         TUTORIALS_ENDPOINTS.UPDATE_PROGRESS(id),
         progress
       );
       return data;
     },
-    onSuccess: (data, variables) => {
-      queryClient.setQueryData(["tutorials", variables.id], data);
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["tutorials", variables.id] });
       queryClient.invalidateQueries({ queryKey: ["tutorials"] });
     },
   });
 };
 
 export const useSubmitTutorialQuestions = () => {
+  const queryClient = useQueryClient();
+
   return useMutation<
-    { score: number },
+    SubmitTutorialQuestionsResponse,
     AxiosError<ApiError>,
     { id: string; answers: SubmitTutorialQuestionsRequest }
   >({
     mutationFn: async ({ id, answers }) => {
-      const { data } = await apiClient.post(
+      const { data } = await apiClient.post<SubmitTutorialQuestionsResponse>(
         TUTORIALS_ENDPOINTS.SUBMIT_QUESTIONS(id),
         answers
       );
       return data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["tutorials", variables.id] });
+    },
+  });
+};
+
+export const useMarkTutorialComplete = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    MarkTutorialCompleteResponse,
+    AxiosError<ApiError>,
+    string
+  >({
+    mutationFn: async (id) => {
+      const { data } = await apiClient.post<MarkTutorialCompleteResponse>(
+        TUTORIALS_ENDPOINTS.COMPLETE(id)
+      );
+      return data;
+    },
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: ["tutorials", id] });
+      queryClient.invalidateQueries({ queryKey: ["tutorials"] });
     },
   });
 };
@@ -91,13 +137,17 @@ export const useSubmitTutorialQuestions = () => {
 export const useToggleTutorialBookmark = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<{ bookmarked: boolean }, AxiosError<ApiError>, string>({
+  return useMutation<ToggleTutorialBookmarkResponse, AxiosError<ApiError>, string>({
     mutationFn: async (id) => {
-      const { data } = await apiClient.post(TUTORIALS_ENDPOINTS.BOOKMARK(id));
+      const { data } = await apiClient.post<ToggleTutorialBookmarkResponse>(
+        TUTORIALS_ENDPOINTS.BOOKMARK(id)
+      );
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: ["tutorials", id] });
       queryClient.invalidateQueries({ queryKey: ["tutorials"] });
+      queryClient.invalidateQueries({ queryKey: ["tutorials", "bookmarks"] });
     },
   });
 };
