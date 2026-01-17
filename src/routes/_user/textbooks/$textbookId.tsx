@@ -9,7 +9,7 @@ import { Progress, ProgressIndicator, ProgressTrack } from "@/components/ui/prog
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
-import type { TutorialChapter, TutorialQuestion, TutorialAnswer } from "@/api/types/tutorial.types";
+import type { TutorialChapter, TutorialQuestion, TutorialQuizAnswer } from "@/api/types/tutorial.types";
 
 type ViewMode = "lessons" | "lesson-content" | "test";
 
@@ -26,8 +26,6 @@ function ChapterItem({
   isCompleted: boolean;
   onClick: () => void;
 }) {
-  const duration = Math.round((chapter.endTime - chapter.startTime) / 60);
-
   return (
     <button
       onClick={onClick}
@@ -40,9 +38,9 @@ function ChapterItem({
       <span className="font-medium text-gray-500 mt-0.5">{index + 1}.</span>
       <div className="flex-1">
         <p className={cn("font-medium", isActive && "text-[#F04F54]")}>
-          {chapter.title}
+          {chapter.name}
         </p>
-        <p className="text-sm text-gray-400">{duration} Mins</p>
+        <p className="text-sm text-gray-400">Chapter {chapter.order}</p>
       </div>
       {isCompleted && <CheckCircle weight="fill" className="w-5 h-5 text-green-500 mt-1" />}
     </button>
@@ -51,21 +49,23 @@ function ChapterItem({
 
 function TextContent({
   chapter,
-  content,
   onComplete,
 }: {
   chapter: TutorialChapter;
-  content?: string;
   onComplete: () => void;
 }) {
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold">{chapter.title}</h2>
+      <h2 className="text-xl font-semibold">{chapter.name}</h2>
 
-      {/* Text Content */}
+      {/* Text Content from chapter blocks */}
       <div className="prose prose-gray max-w-none">
-        {content ? (
-          <div dangerouslySetInnerHTML={{ __html: content }} />
+        {chapter.content?.blocks && chapter.content.blocks.length > 0 ? (
+          <div className="space-y-4">
+            {chapter.content.blocks.map((block, idx) => (
+              <p key={idx}>{block.text}</p>
+            ))}
+          </div>
         ) : (
           <div className="space-y-4 text-gray-700">
             <p>
@@ -112,6 +112,26 @@ function TextContent({
           </div>
         )}
       </div>
+
+      {/* Documents */}
+      {chapter.documents && chapter.documents.length > 0 && (
+        <div className="mt-4">
+          <h3 className="text-sm font-medium text-gray-700 mb-2">Documents</h3>
+          <div className="space-y-2">
+            {chapter.documents.map((doc, idx) => (
+              <a
+                key={idx}
+                href={doc.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm text-blue-600 hover:underline"
+              >
+                📄 {doc.format.toUpperCase()} Document
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="flex justify-center pt-4">
         <Button
@@ -162,7 +182,7 @@ function QuizQuestion({
       {/* Question Card */}
       <Card className="p-6">
         <p className="text-sm text-gray-500 mb-2">Question {questionNumber}</p>
-        <p className="text-lg font-medium mb-6">{question.text}</p>
+        <p className="text-lg font-medium mb-6">{question.questionText}</p>
 
         {/* Options */}
         <RadioGroup
@@ -273,7 +293,7 @@ function TextbookDetailPage() {
   }
 
   const chapters = textbook.chapters || [];
-  const questions = textbook.questions || [];
+  const questions = textbook.testQuestions || [];
   const progressPercent = chapters.length > 0
     ? Math.round((completedChapters.size / chapters.length) * 100)
     : 0;
@@ -334,7 +354,7 @@ function TextbookDetailPage() {
       </Link>
 
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">{textbook.title}</h1>
+        <h1 className="text-2xl font-bold">{textbook.name}</h1>
         <p className="text-gray-500">400k Students</p>
       </div>
 
@@ -346,8 +366,8 @@ function TextbookDetailPage() {
             {/* Thumbnail */}
             <div className="aspect-[4/3] rounded-lg overflow-hidden mb-4 bg-gray-100">
               <img
-                src={textbook.thumbnailUrl || "/img/algebra.png"}
-                alt={textbook.title}
+                src="/img/algebra.png"
+                alt={textbook.name}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -426,7 +446,6 @@ function TextbookDetailPage() {
           {viewMode === "lesson-content" && selectedChapter && (
             <TextContent
               chapter={selectedChapter}
-              content={textbook.content}
               onComplete={handleCompleteChapter}
             />
           )}
@@ -445,8 +464,8 @@ function TextbookDetailPage() {
                   setCurrentQuestionIndex((i) => i + 1);
                 } else {
                   // Submit all answers
-                  const answersList: TutorialAnswer[] = Object.entries(answers).map(
-                    ([questionId, selectedOptionId]) => ({ questionId, selectedOptionId })
+                  const answersList: TutorialQuizAnswer[] = Object.entries(answers).map(
+                    ([questionId, answer]) => ({ questionId, answer })
                   );
                   submitQuestions.mutate({ id: textbookId, answers: { answers: answersList } });
                 }

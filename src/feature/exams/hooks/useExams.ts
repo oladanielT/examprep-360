@@ -207,7 +207,9 @@ export const useStartPractice = () => {
       return data;
     },
     onSuccess: (data) => {
-      startExam(data.attempt, data.questions, data.timeLimit);
+      // Extract questions from ExamQuestion[] wrapper
+      const questions = data.exam.questions.map((eq) => eq.question);
+      startExam(data as unknown as ExamAttempt, questions, data.exam.durationMinutes);
     },
   });
 };
@@ -237,7 +239,9 @@ export const useStartExam = () => {
       return data;
     },
     onSuccess: (data) => {
-      startExam(data.attempt, data.questions, data.timeLimit);
+      // Extract questions from ExamQuestion[] wrapper
+      const questions = data.exam.questions.map((eq) => eq.question);
+      startExam(data as unknown as ExamAttempt, questions, data.exam.durationMinutes);
     },
   });
 };

@@ -9,7 +9,7 @@ import { Progress, ProgressIndicator, ProgressTrack } from "@/components/ui/prog
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
-import type { TutorialChapter, TutorialQuestion, TutorialAnswer } from "@/api/types/tutorial.types";
+import type { TutorialChapter, TutorialQuestion, TutorialQuizAnswer } from "@/api/types/tutorial.types";
 
 type ViewMode = "lessons" | "lesson-content" | "test";
 
@@ -26,8 +26,6 @@ function ChapterItem({
   isCompleted: boolean;
   onClick: () => void;
 }) {
-  const duration = Math.round((chapter.endTime - chapter.startTime) / 60);
-
   return (
     <button
       onClick={onClick}
@@ -40,9 +38,9 @@ function ChapterItem({
       <span className="font-medium text-gray-500 mt-0.5">{index + 1}.</span>
       <div className="flex-1">
         <p className={cn("font-medium", isActive && "text-[#F04F54]")}>
-          {chapter.title}
+          {chapter.name}
         </p>
-        <p className="text-sm text-gray-400">{duration} Mins</p>
+        <p className="text-sm text-gray-400">Lesson {chapter.order}</p>
       </div>
       {isCompleted && <CheckCircle weight="fill" className="w-5 h-5 text-green-500 mt-1" />}
     </button>
@@ -60,7 +58,7 @@ function VideoPlayer({
 }) {
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold">{chapter.title}</h2>
+      <h2 className="text-xl font-semibold">{chapter.name}</h2>
       <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
         {videoUrl ? (
           <video
@@ -79,6 +77,14 @@ function VideoPlayer({
           </div>
         )}
       </div>
+      {/* Chapter Content */}
+      {chapter.content?.blocks && chapter.content.blocks.length > 0 && (
+        <div className="prose max-w-none">
+          {chapter.content.blocks.map((block, idx) => (
+            <p key={idx}>{block.text}</p>
+          ))}
+        </div>
+      )}
       <div className="flex justify-center">
         <Button
           onClick={onComplete}
@@ -128,7 +134,7 @@ function QuizQuestion({
       {/* Question Card */}
       <Card className="p-6">
         <p className="text-sm text-gray-500 mb-2">Question {questionNumber}</p>
-        <p className="text-lg font-medium mb-6">{question.text}</p>
+        <p className="text-lg font-medium mb-6">{question.questionText}</p>
 
         {/* Options */}
         <RadioGroup
@@ -239,11 +245,16 @@ function TutorialDetailPage() {
   }
 
   const chapters = tutorial.chapters || [];
-  const questions = tutorial.questions || [];
+  const questions = tutorial.testQuestions || [];
   const progressPercent = chapters.length > 0
     ? Math.round((completedChapters.size / chapters.length) * 100)
     : 0;
   const allLessonsComplete = completedChapters.size === chapters.length && chapters.length > 0;
+
+  // Get video URL for video tutorials
+  const videoUrl = tutorial.type === "VIDEO_TUTORIAL" && tutorial.tutorialVideos?.[0]?.url
+    ? tutorial.tutorialVideos[0].url
+    : "";
 
   const handleChapterClick = (chapterId: string) => {
     setSelectedChapterId(chapterId);
@@ -300,7 +311,7 @@ function TutorialDetailPage() {
       </Link>
 
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">{tutorial.title}</h1>
+        <h1 className="text-2xl font-bold">{tutorial.name}</h1>
         <p className="text-gray-500">400k Students</p>
       </div>
 
@@ -312,8 +323,8 @@ function TutorialDetailPage() {
             {/* Thumbnail */}
             <div className="aspect-[4/3] rounded-lg overflow-hidden mb-4 bg-gray-100">
               <img
-                src={tutorial.thumbnailUrl || "/img/algebra.png"}
-                alt={tutorial.title}
+                src="/img/algebra.png"
+                alt={tutorial.name}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -391,7 +402,7 @@ function TutorialDetailPage() {
           {/* Lesson Content (Video) View */}
           {viewMode === "lesson-content" && selectedChapter && (
             <VideoPlayer
-              videoUrl={tutorial.videoUrl || ""}
+              videoUrl={videoUrl}
               chapter={selectedChapter}
               onComplete={handleCompleteChapter}
             />
@@ -411,8 +422,8 @@ function TutorialDetailPage() {
                   setCurrentQuestionIndex((i) => i + 1);
                 } else {
                   // Submit all answers
-                  const answersList: TutorialAnswer[] = Object.entries(answers).map(
-                    ([questionId, selectedOptionId]) => ({ questionId, selectedOptionId })
+                  const answersList: TutorialQuizAnswer[] = Object.entries(answers).map(
+                    ([questionId, answer]) => ({ questionId, answer })
                   );
                   submitQuestions.mutate({ id: tutorialId, answers: { answers: answersList } });
                 }
