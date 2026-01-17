@@ -17,11 +17,21 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
+// Auth endpoints that should NOT trigger redirect on 401
+const AUTH_PATHS = ["/user/auth/login", "/user/auth/register", "/user/auth/refresh"];
+
 // Response interceptor - handles token refresh
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    const requestPath = originalRequest?.url || "";
+
+    // Skip redirect logic for auth endpoints (login, register, refresh)
+    const isAuthEndpoint = AUTH_PATHS.some((path) => requestPath.includes(path));
+    if (isAuthEndpoint) {
+      return Promise.reject(error);
+    }
 
     // If 401 and we haven't tried refreshing yet
     if (error.response?.status === 401 && !originalRequest._retry) {
