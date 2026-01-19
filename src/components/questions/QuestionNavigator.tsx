@@ -7,15 +7,23 @@ interface QuestionNavigatorProps {
   totalQuestions: number;
   currentQuestion: number;
   answeredQuestions: Set<number>; // 0-indexed question numbers that have been answered
+  submittedQuestions: Set<number>; // 0-indexed question numbers that have been submitted
   timeRemaining: number; // in seconds
   isPaused?: boolean;
   isBookmarked?: boolean;
+  isSubmitting?: boolean;
+  canSubmit?: boolean; // Whether current question has an answer to submit
+  isCurrentSubmitted?: boolean; // Whether current question is already submitted
+  canCompleteExam?: boolean; // Whether all questions are handled
+  isCompletingExam?: boolean; // Whether exam completion is in progress
   onQuestionSelect: (questionIndex: number) => void;
   onPrevious: () => void;
   onNext: () => void;
   onPauseToggle?: () => void;
   onBookmark?: () => void;
   onReport?: () => void;
+  onSubmitAnswer?: () => void;
+  onCompleteExam?: () => void;
 }
 
 function formatTime(seconds: number): string {
@@ -33,15 +41,23 @@ export function QuestionNavigator({
   totalQuestions,
   currentQuestion,
   answeredQuestions,
+  submittedQuestions,
   timeRemaining,
   isPaused = false,
   isBookmarked = false,
+  isSubmitting = false,
+  canSubmit = false,
+  isCurrentSubmitted = false,
+  canCompleteExam = false,
+  isCompletingExam = false,
   onQuestionSelect,
   onPrevious,
   onNext,
   onPauseToggle,
   onBookmark,
   onReport,
+  onSubmitAnswer,
+  onCompleteExam,
 }: QuestionNavigatorProps) {
   // Generate array of question numbers
   const questions = Array.from({ length: totalQuestions }, (_, i) => i);
@@ -94,6 +110,7 @@ export function QuestionNavigator({
         {questions.map((qIndex) => {
           const isCurrent = qIndex === currentQuestion;
           const isAnswered = answeredQuestions.has(qIndex);
+          const isSubmitted = submittedQuestions.has(qIndex);
 
           return (
             <button
@@ -103,7 +120,8 @@ export function QuestionNavigator({
                 "w-9 h-9 rounded-full text-sm font-medium transition-colors",
                 "focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#F04F54]/50",
                 isCurrent && "bg-green-500 text-white",
-                !isCurrent && isAnswered && "bg-green-100 text-green-700 border border-green-300",
+                !isCurrent && isSubmitted && "bg-green-500 text-white", // Submitted = solid green
+                !isCurrent && !isSubmitted && isAnswered && "bg-yellow-100 text-yellow-700 border border-yellow-300", // Answered but not submitted = yellow
                 !isCurrent && !isAnswered && "bg-gray-100 text-gray-600 hover:bg-gray-200"
               )}
             >
@@ -112,6 +130,22 @@ export function QuestionNavigator({
           );
         })}
       </div>
+
+      {/* Submit Answer Button */}
+      {onSubmitAnswer && (
+        <Button
+          onClick={onSubmitAnswer}
+          disabled={!canSubmit || isSubmitting || isCurrentSubmitted}
+          className={cn(
+            "w-full rounded-full",
+            isCurrentSubmitted
+              ? "bg-green-500 hover:bg-green-500 cursor-default"
+              : "bg-[#F04F54] hover:bg-[#F04F54]/90"
+          )}
+        >
+          {isSubmitting ? "Submitting..." : isCurrentSubmitted ? "Submitted ✓" : "Submit Answer"}
+        </Button>
+      )}
 
       {/* Navigation Buttons */}
       <div className="flex gap-3">
@@ -141,6 +175,17 @@ export function QuestionNavigator({
           className="w-full rounded-full border-[#F04F54] text-[#F04F54] hover:bg-red-50"
         >
           Report Question
+        </Button>
+      )}
+
+      {/* Complete Exam Button */}
+      {onCompleteExam && (
+        <Button
+          onClick={onCompleteExam}
+          disabled={!canCompleteExam || isCompletingExam}
+          className="w-full rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+        >
+          {isCompletingExam ? "Completing..." : "Complete Exam"}
         </Button>
       )}
     </Card>

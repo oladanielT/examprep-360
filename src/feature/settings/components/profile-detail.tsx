@@ -9,7 +9,9 @@ import {
 import { InputField } from "@/components/custom/custom-form-field";
 import PrimaryButton from "@/components/buttons/primary-button";
 import * as z from "zod";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useProfile, useUpdateProfile } from "@/feature/profile/hooks/useProfile";
+import { toast } from "sonner";
 
 const profileSchema = z.object({
   name: z
@@ -21,26 +23,52 @@ const profileSchema = z.object({
     .string()
     .min(10, "Phone number must be at least 10 characters.")
     .max(15, "Phone number must be at most 15 characters."),
-  referralCode: z.string(),
+  referralCode: z.string().optional(),
 });
 
 export const ProfileSettingsForm = () => {
   const [copied, setCopied] = useState(false);
 
+  const { data: profile, isLoading } = useProfile();
+  const updateProfile = useUpdateProfile();
+
   const form = useForm({
     defaultValues: {
-      name: "John Doe",
-      email: "john@example.com",
-      phone: "+234 708 076 3214",
-      referralCode: "REF123ABC456",
+      name: "",
+      email: "",
+      phone: "",
+      referralCode: "REF123ABC456", // TODO: Get from referral API
     },
     validators: {
       onSubmit: profileSchema,
     },
     onSubmit: async ({ value }) => {
-      console.log(value);
+      updateProfile.mutate(
+        {
+          fullName: value.name,
+          phone: value.phone,
+        },
+        {
+          onSuccess: () => {
+            toast.success("Profile updated successfully!");
+          },
+          onError: (error: any) => {
+            const message = error?.response?.data?.message || error?.message || "Failed to update profile.";
+            toast.error(message);
+          },
+        }
+      );
     },
   });
+
+  // Update form values when profile data loads
+  useEffect(() => {
+    if (profile) {
+      form.setFieldValue("name", profile.fullName || "");
+      form.setFieldValue("email", profile.email || "");
+      form.setFieldValue("phone", profile.phone || "");
+    }
+  }, [profile]);
 
   const handleCopyReferralCode = () => {
     navigator.clipboard.writeText(form.getFieldValue("referralCode") || "");
@@ -174,9 +202,9 @@ export const ProfileSettingsForm = () => {
 
         <PrimaryButton
           type="submit"
-          disabled={form.state.isSubmitting}
+          disabled={updateProfile.isPending || isLoading}
           className="w-full bg-accent hover:bg-accent/80 mt-[32px] text-white text-lg rounded-[8px]"
-          title={form.state.isSubmitting ? "Saving..." : "Save Changes"}
+          title={updateProfile.isPending ? "Saving..." : "Save Changes"}
         />
       </form>
     </div>

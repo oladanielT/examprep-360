@@ -164,16 +164,13 @@ export const SigninForm = () => {
                 );
               }}
             />
-            <button
-              type="button"
+            <Link
+              // @ts-ignore - Route will be available after routes are generated
+              to="/forgot-password"
               className="text-sm font-semibold text-accent shrink-0 hover:underline"
-              onClick={() => {
-                // TODO: Navigate to forgot password page when implemented
-                console.log("Forgot password clicked");
-              }}
             >
               Forgot Password?
-            </button>
+            </Link>
           </div>
         </FieldGroup>
 

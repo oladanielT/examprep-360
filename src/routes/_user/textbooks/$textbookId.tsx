@@ -8,6 +8,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { Progress, ProgressIndicator, ProgressTrack } from "@/components/ui/progress";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
 import type { TutorialChapter, TutorialQuestion, TutorialQuizAnswer } from "@/api/types/tutorial.types";
 
@@ -283,6 +284,7 @@ function TextbookDetailPage() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submittedQuestions, setSubmittedQuestions] = useState<Set<number>>(new Set());
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   if (isLoading) {
     return <div className="py-10 text-center">Loading textbook...</div>;
@@ -306,17 +308,36 @@ function TextbookDetailPage() {
 
   const handleCompleteChapter = () => {
     if (selectedChapterId) {
-      setCompletedChapters((prev) => new Set([...prev, selectedChapterId]));
-      updateProgress.mutate({
-        id: textbookId,
-        progress: {
-          lastWatchTime: 0,
-          lastChapterId: selectedChapterId,
+      const chapterId = selectedChapterId;
+      setCompletedChapters((prev) => new Set([...prev, chapterId]));
+
+      updateProgress.mutate(
+        {
+          id: textbookId,
+          progress: {
+            lastWatchTime: 0,
+            lastChapterId: chapterId,
+          },
         },
-      });
+        {
+          onSuccess: () => {
+            setErrorMessage(""); // Clear any previous errors
+          },
+          onError: (error: any) => {
+            // Revert completion on error
+            setCompletedChapters((prev) => {
+              const newSet = new Set(prev);
+              newSet.delete(chapterId);
+              return newSet;
+            });
+            const message = error?.response?.data?.message || error?.message || "Failed to update progress.";
+            setErrorMessage(message);
+          },
+        }
+      );
 
       // Move to next chapter or back to list
-      const currentIndex = chapters.findIndex((c) => c.id === selectedChapterId);
+      const currentIndex = chapters.findIndex((c) => c.id === chapterId);
       if (currentIndex < chapters.length - 1) {
         setSelectedChapterId(chapters[currentIndex + 1].id);
       } else {
@@ -357,6 +378,13 @@ function TextbookDetailPage() {
         <h1 className="text-2xl font-bold">{textbook.name}</h1>
         <p className="text-gray-500">400k Students</p>
       </div>
+
+      {/* Error Message */}
+      {errorMessage && (
+        <Alert variant="destructive" className="mb-6">
+          <AlertDescription>{errorMessage}</AlertDescription>
+        </Alert>
+      )}
 
       {/* Main Layout */}
       <div className="flex gap-8">
@@ -467,7 +495,19 @@ function TextbookDetailPage() {
                   const answersList: TutorialQuizAnswer[] = Object.entries(answers).map(
                     ([questionId, answer]) => ({ questionId, answer })
                   );
-                  submitQuestions.mutate({ id: textbookId, answers: { answers: answersList } });
+                  setErrorMessage(""); // Clear any previous errors
+                  submitQuestions.mutate(
+                    { id: textbookId, answers: { answers: answersList } },
+                    {
+                      onSuccess: () => {
+                        setErrorMessage("");
+                      },
+                      onError: (error: any) => {
+                        const message = error?.response?.data?.message || error?.message || "Failed to submit quiz. Please try again.";
+                        setErrorMessage(message);
+                      },
+                    }
+                  );
                 }
               }}
               onReport={() => {/* TODO: Implement report */}}

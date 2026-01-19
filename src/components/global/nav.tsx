@@ -12,13 +12,18 @@ import { Bell, Settings, LogOut, User } from "lucide-react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useAuthStore } from "@/stores/authStore";
 import { useLogout } from "@/feature/auth/hooks";
+import { useProfile } from "@/feature/profile/hooks/useProfile";
 
 export default function Nav() {
   const location = useLocation();
   const pathname = location.pathname;
   const navigate = useNavigate();
-  const { user } = useAuthStore();
+  const { user: authUser } = useAuthStore();
+  const { data: profileUser } = useProfile();
   const logoutMutation = useLogout();
+
+  // Use profile data if available, fallback to auth store
+  const user = profileUser || authUser;
 
   const handleLogout = async () => {
     await logoutMutation.mutateAsync();
@@ -105,7 +110,7 @@ export default function Nav() {
                 className="focus:outline-none focus:ring-2 focus:ring-primary rounded-full"
               >
                 <Avatar>
-                  <AvatarImage src={user?.avatarUrl || "/img/avatar.png"} alt="user" />
+                  <AvatarImage src={user?.profilePictureUrl || "/img/avatar.png"} alt="user" />
                   <AvatarFallback>{getInitials(user?.fullName)}</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>

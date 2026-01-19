@@ -21,6 +21,8 @@ export const PROFILE_ENDPOINTS = {
   UPDATE: "/user/profile",
   CHANGE_PASSWORD: "/user/profile/change-password",
   STATISTICS: "/user/profile/statistics",
+  UPLOAD_PICTURE: "/user/profile/picture",
+  REMOVE_PICTURE: "/user/profile/picture",
 } as const;
 
 // Exam endpoints
@@ -39,8 +41,6 @@ export const EXAM_ENDPOINTS = {
   PAUSED: "/student/exams/paused",
   BOOKMARKS: "/student/exams/bookmarks",
   REPORTS: "/student/exams/reports",
-  AVAILABLE: "/student/exams/available",
-  PREFERENCES: "/student/exams/preferences",
 } as const;
 
 // Progress endpoints
@@ -75,8 +75,6 @@ export const TUTORIALS_ENDPOINTS = {
   SUBMIT_QUESTIONS: (id: string) => `/student/tutorials/${id}/submit-questions`,
   COMPLETE: (id: string) => `/student/tutorials/${id}/complete`,
   BOOKMARK: (id: string) => `/student/tutorials/${id}/bookmark`,
-  BOOKMARKS: "/student/tutorials/bookmarks",
-  COMPLETE: (id: string) => `/student/tutorials/${id}/complete`,
 } as const;
 
 // Exam selection endpoints

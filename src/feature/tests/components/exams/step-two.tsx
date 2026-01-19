@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import PrimaryButton from "@/components/buttons/primary-button";
 import {
   Field,
@@ -6,6 +7,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useForm } from "@tanstack/react-form";
 import { useConfigurePractice } from "@/feature/exams/hooks";
 import { useNavigate } from "@tanstack/react-router";
@@ -63,6 +65,7 @@ export default function ConfigurePracticeForm({
 }: ConfigurePracticeFormProps) {
   const navigate = useNavigate();
   const configurePractice = useConfigurePractice();
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const form = useForm({
     defaultValues: {
@@ -76,6 +79,7 @@ export default function ConfigurePracticeForm({
       onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
+      setErrorMessage(""); // Clear any previous errors
       configurePractice.mutate(
         {
           subjectId: subject.id,
@@ -100,6 +104,11 @@ export default function ConfigurePracticeForm({
           onSuccess: () => {
             onClose?.();
             navigate({ to: "/tests/exam" });
+          },
+          onError: (error: any) => {
+            // Handle trial limit error
+            const message = error?.response?.data?.message || error?.message || "Failed to start practice exam";
+            setErrorMessage(message);
           },
         }
       );
@@ -299,6 +308,13 @@ export default function ConfigurePracticeForm({
             }}
           />
         </FieldGroup>
+
+        {/* Error Message */}
+        {errorMessage && (
+          <Alert variant="destructive" className="mt-4">
+            <AlertDescription>{errorMessage}</AlertDescription>
+          </Alert>
+        )}
 
         <PrimaryButton
           type="submit"

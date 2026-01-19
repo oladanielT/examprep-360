@@ -73,18 +73,47 @@ export const useUploadAvatar = () => {
   const queryClient = useQueryClient();
   const { updateUser } = useAuthStore();
 
-  return useMutation<{ avatarUrl: string }, AxiosError<ApiError>, File>({
+  return useMutation<{ url: string }, AxiosError<ApiError>, File>({
     mutationFn: async (file) => {
       const formData = new FormData();
-      formData.append("avatar", file);
-      const { data } = await apiClient.post("/user/profile/avatar", formData, {
+      formData.append("file", file);
+      const { data } = await apiClient.post(PROFILE_ENDPOINTS.UPLOAD_PICTURE, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       return data;
     },
     onSuccess: (data) => {
-      updateUser({ avatarUrl: data.avatarUrl });
-      queryClient.invalidateQueries({ queryKey: ["profile"] });
+      // Update auth store (for navbar)
+      updateUser({ profilePictureUrl: data.url });
+
+      // Update profile query cache (for settings page)
+      queryClient.setQueryData<User>(["profile"], (old) => {
+        if (!old) return old;
+        return { ...old, profilePictureUrl: data.url };
+      });
+    },
+  });
+};
+
+// Mutation: Remove avatar
+export const useRemoveAvatar = () => {
+  const queryClient = useQueryClient();
+  const { updateUser } = useAuthStore();
+
+  return useMutation<{ message: string }, AxiosError<ApiError>, void>({
+    mutationFn: async () => {
+      const { data } = await apiClient.delete(PROFILE_ENDPOINTS.REMOVE_PICTURE);
+      return data;
+    },
+    onSuccess: () => {
+      // Update auth store (for navbar)
+      updateUser({ profilePictureUrl: undefined });
+
+      // Update profile query cache (for settings page)
+      queryClient.setQueryData<User>(["profile"], (old) => {
+        if (!old) return old;
+        return { ...old, profilePictureUrl: undefined };
+      });
     },
   });
 };

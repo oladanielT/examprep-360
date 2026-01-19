@@ -8,480 +8,522 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from "./routes/__root";
-import { Route as UserRouteImport } from "./routes/_user";
-import { Route as AuthRouteImport } from "./routes/_auth";
-import { Route as UserIndexRouteImport } from "./routes/_user/index";
-import { Route as UserSubscriptionRouteImport } from "./routes/_user/subscription";
-import { Route as UserSettingsRouteImport } from "./routes/_user/settings";
-import { Route as UserLeaderboardRouteImport } from "./routes/_user/leaderboard";
-import { Route as UserActivitiesRouteImport } from "./routes/_user/activities";
-import { Route as AuthWelcomeRouteImport } from "./routes/_auth/welcome";
-import { Route as AuthVerifyEmailRouteImport } from "./routes/_auth/verify-email";
-import { Route as AuthSummaryRouteImport } from "./routes/_auth/summary";
-import { Route as AuthSignInRouteImport } from "./routes/_auth/sign-in";
-import { Route as AuthSelectExamRouteImport } from "./routes/_auth/select-exam";
-import { Route as AuthRegisterRouteImport } from "./routes/_auth/register";
-import { Route as AuthPaymentVerifyRouteImport } from "./routes/_auth/payment-verify";
-import { Route as AuthCheckoutRouteImport } from "./routes/_auth/checkout";
-import { Route as UserTutorialsIndexRouteImport } from "./routes/_user/tutorials/index";
-import { Route as UserTextbooksIndexRouteImport } from "./routes/_user/textbooks/index";
-import { Route as UserTestsIndexRouteImport } from "./routes/_user/tests/index";
-import { Route as UserTutorialsTutorialIdRouteImport } from "./routes/_user/tutorials/$tutorialId";
-import { Route as UserTextbooksTextbookIdRouteImport } from "./routes/_user/textbooks/$textbookId";
-import { Route as UserTestsExamsRouteImport } from "./routes/_user/tests/exams";
-import { Route as UserTestsExamRouteImport } from "./routes/_user/tests/exam";
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as UserRouteImport } from './routes/_user'
+import { Route as AuthRouteImport } from './routes/_auth'
+import { Route as UserIndexRouteImport } from './routes/_user/index'
+import { Route as UserSubscriptionRouteImport } from './routes/_user/subscription'
+import { Route as UserSettingsRouteImport } from './routes/_user/settings'
+import { Route as UserLeaderboardRouteImport } from './routes/_user/leaderboard'
+import { Route as UserActivitiesRouteImport } from './routes/_user/activities'
+import { Route as AuthWelcomeRouteImport } from './routes/_auth/welcome'
+import { Route as AuthVerifyEmailRouteImport } from './routes/_auth/verify-email'
+import { Route as AuthSummaryRouteImport } from './routes/_auth/summary'
+import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
+import { Route as AuthSelectExamRouteImport } from './routes/_auth/select-exam'
+import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
+import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
+import { Route as AuthPaymentVerifyRouteImport } from './routes/_auth/payment-verify'
+import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
+import { Route as AuthCheckoutRouteImport } from './routes/_auth/checkout'
+import { Route as UserTutorialsIndexRouteImport } from './routes/_user/tutorials/index'
+import { Route as UserTextbooksIndexRouteImport } from './routes/_user/textbooks/index'
+import { Route as UserTestsIndexRouteImport } from './routes/_user/tests/index'
+import { Route as UserTutorialsTutorialIdRouteImport } from './routes/_user/tutorials/$tutorialId'
+import { Route as UserTextbooksTextbookIdRouteImport } from './routes/_user/textbooks/$textbookId'
+import { Route as UserTestsExamsRouteImport } from './routes/_user/tests/exams'
+import { Route as UserTestsExamRouteImport } from './routes/_user/tests/exam'
 
 const UserRoute = UserRouteImport.update({
-  id: "/_user",
+  id: '/_user',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const AuthRoute = AuthRouteImport.update({
-  id: "/_auth",
+  id: '/_auth',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const UserIndexRoute = UserIndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => UserRoute,
-} as any);
+} as any)
 const UserSubscriptionRoute = UserSubscriptionRouteImport.update({
-  id: "/subscription",
-  path: "/subscription",
+  id: '/subscription',
+  path: '/subscription',
   getParentRoute: () => UserRoute,
-} as any);
+} as any)
 const UserSettingsRoute = UserSettingsRouteImport.update({
-  id: "/settings",
-  path: "/settings",
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => UserRoute,
-} as any);
+} as any)
 const UserLeaderboardRoute = UserLeaderboardRouteImport.update({
-  id: "/leaderboard",
-  path: "/leaderboard",
+  id: '/leaderboard',
+  path: '/leaderboard',
   getParentRoute: () => UserRoute,
-} as any);
+} as any)
 const UserActivitiesRoute = UserActivitiesRouteImport.update({
-  id: "/activities",
-  path: "/activities",
+  id: '/activities',
+  path: '/activities',
   getParentRoute: () => UserRoute,
-} as any);
+} as any)
 const AuthWelcomeRoute = AuthWelcomeRouteImport.update({
-  id: "/welcome",
-  path: "/welcome",
+  id: '/welcome',
+  path: '/welcome',
   getParentRoute: () => AuthRoute,
-} as any);
+} as any)
 const AuthVerifyEmailRoute = AuthVerifyEmailRouteImport.update({
-  id: "/verify-email",
-  path: "/verify-email",
+  id: '/verify-email',
+  path: '/verify-email',
   getParentRoute: () => AuthRoute,
-} as any);
+} as any)
 const AuthSummaryRoute = AuthSummaryRouteImport.update({
-  id: "/summary",
-  path: "/summary",
+  id: '/summary',
+  path: '/summary',
   getParentRoute: () => AuthRoute,
-} as any);
+} as any)
 const AuthSignInRoute = AuthSignInRouteImport.update({
-  id: "/sign-in",
-  path: "/sign-in",
+  id: '/sign-in',
+  path: '/sign-in',
   getParentRoute: () => AuthRoute,
-} as any);
+} as any)
 const AuthSelectExamRoute = AuthSelectExamRouteImport.update({
-  id: "/select-exam",
-  path: "/select-exam",
+  id: '/select-exam',
+  path: '/select-exam',
   getParentRoute: () => AuthRoute,
-} as any);
+} as any)
+const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
-  id: "/register",
-  path: "/register",
+  id: '/register',
+  path: '/register',
   getParentRoute: () => AuthRoute,
-} as any);
+} as any)
 const AuthPaymentVerifyRoute = AuthPaymentVerifyRouteImport.update({
-  id: "/payment-verify",
-  path: "/payment-verify",
+  id: '/payment-verify',
+  path: '/payment-verify',
   getParentRoute: () => AuthRoute,
-} as any);
+} as any)
+const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthCheckoutRoute = AuthCheckoutRouteImport.update({
-  id: "/checkout",
-  path: "/checkout",
+  id: '/checkout',
+  path: '/checkout',
   getParentRoute: () => AuthRoute,
-} as any);
+} as any)
 const UserTutorialsIndexRoute = UserTutorialsIndexRouteImport.update({
-  id: "/tutorials/",
-  path: "/tutorials/",
+  id: '/tutorials/',
+  path: '/tutorials/',
   getParentRoute: () => UserRoute,
-} as any);
+} as any)
 const UserTextbooksIndexRoute = UserTextbooksIndexRouteImport.update({
-  id: "/textbooks/",
-  path: "/textbooks/",
+  id: '/textbooks/',
+  path: '/textbooks/',
   getParentRoute: () => UserRoute,
-} as any);
+} as any)
 const UserTestsIndexRoute = UserTestsIndexRouteImport.update({
-  id: "/tests/",
-  path: "/tests/",
+  id: '/tests/',
+  path: '/tests/',
   getParentRoute: () => UserRoute,
-} as any);
+} as any)
 const UserTutorialsTutorialIdRoute = UserTutorialsTutorialIdRouteImport.update({
-  id: "/tutorials/$tutorialId",
-  path: "/tutorials/$tutorialId",
+  id: '/tutorials/$tutorialId',
+  path: '/tutorials/$tutorialId',
   getParentRoute: () => UserRoute,
-} as any);
+} as any)
 const UserTextbooksTextbookIdRoute = UserTextbooksTextbookIdRouteImport.update({
-  id: "/textbooks/$textbookId",
-  path: "/textbooks/$textbookId",
+  id: '/textbooks/$textbookId',
+  path: '/textbooks/$textbookId',
   getParentRoute: () => UserRoute,
-} as any);
+} as any)
 const UserTestsExamsRoute = UserTestsExamsRouteImport.update({
-  id: "/tests/exams",
-  path: "/tests/exams",
+  id: '/tests/exams',
+  path: '/tests/exams',
   getParentRoute: () => UserRoute,
-} as any);
+} as any)
 const UserTestsExamRoute = UserTestsExamRouteImport.update({
-  id: "/tests/exam",
-  path: "/tests/exam",
+  id: '/tests/exam',
+  path: '/tests/exam',
   getParentRoute: () => UserRoute,
-} as any);
+} as any)
 
 export interface FileRoutesByFullPath {
-  "/checkout": typeof AuthCheckoutRoute;
-  "/payment-verify": typeof AuthPaymentVerifyRoute;
-  "/register": typeof AuthRegisterRoute;
-  "/select-exam": typeof AuthSelectExamRoute;
-  "/sign-in": typeof AuthSignInRoute;
-  "/summary": typeof AuthSummaryRoute;
-  "/verify-email": typeof AuthVerifyEmailRoute;
-  "/welcome": typeof AuthWelcomeRoute;
-  "/activities": typeof UserActivitiesRoute;
-  "/leaderboard": typeof UserLeaderboardRoute;
-  "/settings": typeof UserSettingsRoute;
-  "/subscription": typeof UserSubscriptionRoute;
-  "/": typeof UserIndexRoute;
-  "/tests/exam": typeof UserTestsExamRoute;
-  "/tests/exams": typeof UserTestsExamsRoute;
-  "/textbooks/$textbookId": typeof UserTextbooksTextbookIdRoute;
-  "/tutorials/$tutorialId": typeof UserTutorialsTutorialIdRoute;
-  "/tests": typeof UserTestsIndexRoute;
-  "/textbooks": typeof UserTextbooksIndexRoute;
-  "/tutorials": typeof UserTutorialsIndexRoute;
+  '/checkout': typeof AuthCheckoutRoute
+  '/forgot-password': typeof AuthForgotPasswordRoute
+  '/payment-verify': typeof AuthPaymentVerifyRoute
+  '/register': typeof AuthRegisterRoute
+  '/reset-password': typeof AuthResetPasswordRoute
+  '/select-exam': typeof AuthSelectExamRoute
+  '/sign-in': typeof AuthSignInRoute
+  '/summary': typeof AuthSummaryRoute
+  '/verify-email': typeof AuthVerifyEmailRoute
+  '/welcome': typeof AuthWelcomeRoute
+  '/activities': typeof UserActivitiesRoute
+  '/leaderboard': typeof UserLeaderboardRoute
+  '/settings': typeof UserSettingsRoute
+  '/subscription': typeof UserSubscriptionRoute
+  '/': typeof UserIndexRoute
+  '/tests/exam': typeof UserTestsExamRoute
+  '/tests/exams': typeof UserTestsExamsRoute
+  '/textbooks/$textbookId': typeof UserTextbooksTextbookIdRoute
+  '/tutorials/$tutorialId': typeof UserTutorialsTutorialIdRoute
+  '/tests': typeof UserTestsIndexRoute
+  '/textbooks': typeof UserTextbooksIndexRoute
+  '/tutorials': typeof UserTutorialsIndexRoute
 }
 export interface FileRoutesByTo {
-  "/checkout": typeof AuthCheckoutRoute;
-  "/payment-verify": typeof AuthPaymentVerifyRoute;
-  "/register": typeof AuthRegisterRoute;
-  "/select-exam": typeof AuthSelectExamRoute;
-  "/sign-in": typeof AuthSignInRoute;
-  "/summary": typeof AuthSummaryRoute;
-  "/verify-email": typeof AuthVerifyEmailRoute;
-  "/welcome": typeof AuthWelcomeRoute;
-  "/activities": typeof UserActivitiesRoute;
-  "/leaderboard": typeof UserLeaderboardRoute;
-  "/settings": typeof UserSettingsRoute;
-  "/subscription": typeof UserSubscriptionRoute;
-  "/": typeof UserIndexRoute;
-  "/tests/exam": typeof UserTestsExamRoute;
-  "/tests/exams": typeof UserTestsExamsRoute;
-  "/textbooks/$textbookId": typeof UserTextbooksTextbookIdRoute;
-  "/tutorials/$tutorialId": typeof UserTutorialsTutorialIdRoute;
-  "/tests": typeof UserTestsIndexRoute;
-  "/textbooks": typeof UserTextbooksIndexRoute;
-  "/tutorials": typeof UserTutorialsIndexRoute;
+  '/checkout': typeof AuthCheckoutRoute
+  '/forgot-password': typeof AuthForgotPasswordRoute
+  '/payment-verify': typeof AuthPaymentVerifyRoute
+  '/register': typeof AuthRegisterRoute
+  '/reset-password': typeof AuthResetPasswordRoute
+  '/select-exam': typeof AuthSelectExamRoute
+  '/sign-in': typeof AuthSignInRoute
+  '/summary': typeof AuthSummaryRoute
+  '/verify-email': typeof AuthVerifyEmailRoute
+  '/welcome': typeof AuthWelcomeRoute
+  '/activities': typeof UserActivitiesRoute
+  '/leaderboard': typeof UserLeaderboardRoute
+  '/settings': typeof UserSettingsRoute
+  '/subscription': typeof UserSubscriptionRoute
+  '/': typeof UserIndexRoute
+  '/tests/exam': typeof UserTestsExamRoute
+  '/tests/exams': typeof UserTestsExamsRoute
+  '/textbooks/$textbookId': typeof UserTextbooksTextbookIdRoute
+  '/tutorials/$tutorialId': typeof UserTutorialsTutorialIdRoute
+  '/tests': typeof UserTestsIndexRoute
+  '/textbooks': typeof UserTextbooksIndexRoute
+  '/tutorials': typeof UserTutorialsIndexRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  "/_auth": typeof AuthRouteWithChildren;
-  "/_user": typeof UserRouteWithChildren;
-  "/_auth/checkout": typeof AuthCheckoutRoute;
-  "/_auth/payment-verify": typeof AuthPaymentVerifyRoute;
-  "/_auth/register": typeof AuthRegisterRoute;
-  "/_auth/select-exam": typeof AuthSelectExamRoute;
-  "/_auth/sign-in": typeof AuthSignInRoute;
-  "/_auth/summary": typeof AuthSummaryRoute;
-  "/_auth/verify-email": typeof AuthVerifyEmailRoute;
-  "/_auth/welcome": typeof AuthWelcomeRoute;
-  "/_user/activities": typeof UserActivitiesRoute;
-  "/_user/leaderboard": typeof UserLeaderboardRoute;
-  "/_user/settings": typeof UserSettingsRoute;
-  "/_user/subscription": typeof UserSubscriptionRoute;
-  "/_user/": typeof UserIndexRoute;
-  "/_user/tests/exam": typeof UserTestsExamRoute;
-  "/_user/tests/exams": typeof UserTestsExamsRoute;
-  "/_user/textbooks/$textbookId": typeof UserTextbooksTextbookIdRoute;
-  "/_user/tutorials/$tutorialId": typeof UserTutorialsTutorialIdRoute;
-  "/_user/tests/": typeof UserTestsIndexRoute;
-  "/_user/textbooks/": typeof UserTextbooksIndexRoute;
-  "/_user/tutorials/": typeof UserTutorialsIndexRoute;
+  __root__: typeof rootRouteImport
+  '/_auth': typeof AuthRouteWithChildren
+  '/_user': typeof UserRouteWithChildren
+  '/_auth/checkout': typeof AuthCheckoutRoute
+  '/_auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/_auth/payment-verify': typeof AuthPaymentVerifyRoute
+  '/_auth/register': typeof AuthRegisterRoute
+  '/_auth/reset-password': typeof AuthResetPasswordRoute
+  '/_auth/select-exam': typeof AuthSelectExamRoute
+  '/_auth/sign-in': typeof AuthSignInRoute
+  '/_auth/summary': typeof AuthSummaryRoute
+  '/_auth/verify-email': typeof AuthVerifyEmailRoute
+  '/_auth/welcome': typeof AuthWelcomeRoute
+  '/_user/activities': typeof UserActivitiesRoute
+  '/_user/leaderboard': typeof UserLeaderboardRoute
+  '/_user/settings': typeof UserSettingsRoute
+  '/_user/subscription': typeof UserSubscriptionRoute
+  '/_user/': typeof UserIndexRoute
+  '/_user/tests/exam': typeof UserTestsExamRoute
+  '/_user/tests/exams': typeof UserTestsExamsRoute
+  '/_user/textbooks/$textbookId': typeof UserTextbooksTextbookIdRoute
+  '/_user/tutorials/$tutorialId': typeof UserTutorialsTutorialIdRoute
+  '/_user/tests/': typeof UserTestsIndexRoute
+  '/_user/textbooks/': typeof UserTextbooksIndexRoute
+  '/_user/tutorials/': typeof UserTutorialsIndexRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
+  fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | "/checkout"
-    | "/payment-verify"
-    | "/register"
-    | "/select-exam"
-    | "/sign-in"
-    | "/summary"
-    | "/verify-email"
-    | "/welcome"
-    | "/activities"
-    | "/leaderboard"
-    | "/settings"
-    | "/subscription"
-    | "/"
-    | "/tests/exam"
-    | "/tests/exams"
-    | "/textbooks/$textbookId"
-    | "/tutorials/$tutorialId"
-    | "/tests"
-    | "/textbooks"
-    | "/tutorials";
-  fileRoutesByTo: FileRoutesByTo;
+    | '/checkout'
+    | '/forgot-password'
+    | '/payment-verify'
+    | '/register'
+    | '/reset-password'
+    | '/select-exam'
+    | '/sign-in'
+    | '/summary'
+    | '/verify-email'
+    | '/welcome'
+    | '/activities'
+    | '/leaderboard'
+    | '/settings'
+    | '/subscription'
+    | '/'
+    | '/tests/exam'
+    | '/tests/exams'
+    | '/textbooks/$textbookId'
+    | '/tutorials/$tutorialId'
+    | '/tests'
+    | '/textbooks'
+    | '/tutorials'
+  fileRoutesByTo: FileRoutesByTo
   to:
-    | "/checkout"
-    | "/payment-verify"
-    | "/register"
-    | "/select-exam"
-    | "/sign-in"
-    | "/summary"
-    | "/verify-email"
-    | "/welcome"
-    | "/activities"
-    | "/leaderboard"
-    | "/settings"
-    | "/subscription"
-    | "/"
-    | "/tests/exam"
-    | "/tests/exams"
-    | "/textbooks/$textbookId"
-    | "/tutorials/$tutorialId"
-    | "/tests"
-    | "/textbooks"
-    | "/tutorials";
+    | '/checkout'
+    | '/forgot-password'
+    | '/payment-verify'
+    | '/register'
+    | '/reset-password'
+    | '/select-exam'
+    | '/sign-in'
+    | '/summary'
+    | '/verify-email'
+    | '/welcome'
+    | '/activities'
+    | '/leaderboard'
+    | '/settings'
+    | '/subscription'
+    | '/'
+    | '/tests/exam'
+    | '/tests/exams'
+    | '/textbooks/$textbookId'
+    | '/tutorials/$tutorialId'
+    | '/tests'
+    | '/textbooks'
+    | '/tutorials'
   id:
-    | "__root__"
-    | "/_auth"
-    | "/_user"
-    | "/_auth/checkout"
-    | "/_auth/payment-verify"
-    | "/_auth/register"
-    | "/_auth/select-exam"
-    | "/_auth/sign-in"
-    | "/_auth/summary"
-    | "/_auth/verify-email"
-    | "/_auth/welcome"
-    | "/_user/activities"
-    | "/_user/leaderboard"
-    | "/_user/settings"
-    | "/_user/subscription"
-    | "/_user/"
-    | "/_user/tests/exam"
-    | "/_user/tests/exams"
-    | "/_user/textbooks/$textbookId"
-    | "/_user/tutorials/$tutorialId"
-    | "/_user/tests/"
-    | "/_user/textbooks/"
-    | "/_user/tutorials/";
-  fileRoutesById: FileRoutesById;
+    | '__root__'
+    | '/_auth'
+    | '/_user'
+    | '/_auth/checkout'
+    | '/_auth/forgot-password'
+    | '/_auth/payment-verify'
+    | '/_auth/register'
+    | '/_auth/reset-password'
+    | '/_auth/select-exam'
+    | '/_auth/sign-in'
+    | '/_auth/summary'
+    | '/_auth/verify-email'
+    | '/_auth/welcome'
+    | '/_user/activities'
+    | '/_user/leaderboard'
+    | '/_user/settings'
+    | '/_user/subscription'
+    | '/_user/'
+    | '/_user/tests/exam'
+    | '/_user/tests/exams'
+    | '/_user/textbooks/$textbookId'
+    | '/_user/tutorials/$tutorialId'
+    | '/_user/tests/'
+    | '/_user/textbooks/'
+    | '/_user/tutorials/'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  AuthRoute: typeof AuthRouteWithChildren;
-  UserRoute: typeof UserRouteWithChildren;
+  AuthRoute: typeof AuthRouteWithChildren
+  UserRoute: typeof UserRouteWithChildren
 }
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/_user": {
-      id: "/_user";
-      path: "";
-      fullPath: "";
-      preLoaderRoute: typeof UserRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/_auth": {
-      id: "/_auth";
-      path: "";
-      fullPath: "";
-      preLoaderRoute: typeof AuthRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/_user/": {
-      id: "/_user/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof UserIndexRouteImport;
-      parentRoute: typeof UserRoute;
-    };
-    "/_user/subscription": {
-      id: "/_user/subscription";
-      path: "/subscription";
-      fullPath: "/subscription";
-      preLoaderRoute: typeof UserSubscriptionRouteImport;
-      parentRoute: typeof UserRoute;
-    };
-    "/_user/settings": {
-      id: "/_user/settings";
-      path: "/settings";
-      fullPath: "/settings";
-      preLoaderRoute: typeof UserSettingsRouteImport;
-      parentRoute: typeof UserRoute;
-    };
-    "/_user/leaderboard": {
-      id: "/_user/leaderboard";
-      path: "/leaderboard";
-      fullPath: "/leaderboard";
-      preLoaderRoute: typeof UserLeaderboardRouteImport;
-      parentRoute: typeof UserRoute;
-    };
-    "/_user/activities": {
-      id: "/_user/activities";
-      path: "/activities";
-      fullPath: "/activities";
-      preLoaderRoute: typeof UserActivitiesRouteImport;
-      parentRoute: typeof UserRoute;
-    };
-    "/_auth/welcome": {
-      id: "/_auth/welcome";
-      path: "/welcome";
-      fullPath: "/welcome";
-      preLoaderRoute: typeof AuthWelcomeRouteImport;
-      parentRoute: typeof AuthRoute;
-    };
-    "/_auth/verify-email": {
-      id: "/_auth/verify-email";
-      path: "/verify-email";
-      fullPath: "/verify-email";
-      preLoaderRoute: typeof AuthVerifyEmailRouteImport;
-      parentRoute: typeof AuthRoute;
-    };
-    "/_auth/summary": {
-      id: "/_auth/summary";
-      path: "/summary";
-      fullPath: "/summary";
-      preLoaderRoute: typeof AuthSummaryRouteImport;
-      parentRoute: typeof AuthRoute;
-    };
-    "/_auth/sign-in": {
-      id: "/_auth/sign-in";
-      path: "/sign-in";
-      fullPath: "/sign-in";
-      preLoaderRoute: typeof AuthSignInRouteImport;
-      parentRoute: typeof AuthRoute;
-    };
-    "/_auth/select-exam": {
-      id: "/_auth/select-exam";
-      path: "/select-exam";
-      fullPath: "/select-exam";
-      preLoaderRoute: typeof AuthSelectExamRouteImport;
-      parentRoute: typeof AuthRoute;
-    };
-    "/_auth/register": {
-      id: "/_auth/register";
-      path: "/register";
-      fullPath: "/register";
-      preLoaderRoute: typeof AuthRegisterRouteImport;
-      parentRoute: typeof AuthRoute;
-    };
-    "/_auth/payment-verify": {
-      id: "/_auth/payment-verify";
-      path: "/payment-verify";
-      fullPath: "/payment-verify";
-      preLoaderRoute: typeof AuthPaymentVerifyRouteImport;
-      parentRoute: typeof AuthRoute;
-    };
-    "/_auth/checkout": {
-      id: "/_auth/checkout";
-      path: "/checkout";
-      fullPath: "/checkout";
-      preLoaderRoute: typeof AuthCheckoutRouteImport;
-      parentRoute: typeof AuthRoute;
-    };
-    "/_user/tutorials/": {
-      id: "/_user/tutorials/";
-      path: "/tutorials";
-      fullPath: "/tutorials";
-      preLoaderRoute: typeof UserTutorialsIndexRouteImport;
-      parentRoute: typeof UserRoute;
-    };
-    "/_user/textbooks/": {
-      id: "/_user/textbooks/";
-      path: "/textbooks";
-      fullPath: "/textbooks";
-      preLoaderRoute: typeof UserTextbooksIndexRouteImport;
-      parentRoute: typeof UserRoute;
-    };
-    "/_user/tests/": {
-      id: "/_user/tests/";
-      path: "/tests";
-      fullPath: "/tests";
-      preLoaderRoute: typeof UserTestsIndexRouteImport;
-      parentRoute: typeof UserRoute;
-    };
-    "/_user/tutorials/$tutorialId": {
-      id: "/_user/tutorials/$tutorialId";
-      path: "/tutorials/$tutorialId";
-      fullPath: "/tutorials/$tutorialId";
-      preLoaderRoute: typeof UserTutorialsTutorialIdRouteImport;
-      parentRoute: typeof UserRoute;
-    };
-    "/_user/textbooks/$textbookId": {
-      id: "/_user/textbooks/$textbookId";
-      path: "/textbooks/$textbookId";
-      fullPath: "/textbooks/$textbookId";
-      preLoaderRoute: typeof UserTextbooksTextbookIdRouteImport;
-      parentRoute: typeof UserRoute;
-    };
-    "/_user/tests/exams": {
-      id: "/_user/tests/exams";
-      path: "/tests/exams";
-      fullPath: "/tests/exams";
-      preLoaderRoute: typeof UserTestsExamsRouteImport;
-      parentRoute: typeof UserRoute;
-    };
-    "/_user/tests/exam": {
-      id: "/_user/tests/exam";
-      path: "/tests/exam";
-      fullPath: "/tests/exam";
-      preLoaderRoute: typeof UserTestsExamRouteImport;
-      parentRoute: typeof UserRoute;
-    };
+    '/_user': {
+      id: '/_user'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof UserRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_user/': {
+      id: '/_user/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof UserIndexRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/_user/subscription': {
+      id: '/_user/subscription'
+      path: '/subscription'
+      fullPath: '/subscription'
+      preLoaderRoute: typeof UserSubscriptionRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/_user/settings': {
+      id: '/_user/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof UserSettingsRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/_user/leaderboard': {
+      id: '/_user/leaderboard'
+      path: '/leaderboard'
+      fullPath: '/leaderboard'
+      preLoaderRoute: typeof UserLeaderboardRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/_user/activities': {
+      id: '/_user/activities'
+      path: '/activities'
+      fullPath: '/activities'
+      preLoaderRoute: typeof UserActivitiesRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/_auth/welcome': {
+      id: '/_auth/welcome'
+      path: '/welcome'
+      fullPath: '/welcome'
+      preLoaderRoute: typeof AuthWelcomeRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/verify-email': {
+      id: '/_auth/verify-email'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof AuthVerifyEmailRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/summary': {
+      id: '/_auth/summary'
+      path: '/summary'
+      fullPath: '/summary'
+      preLoaderRoute: typeof AuthSummaryRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/sign-in': {
+      id: '/_auth/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof AuthSignInRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/select-exam': {
+      id: '/_auth/select-exam'
+      path: '/select-exam'
+      fullPath: '/select-exam'
+      preLoaderRoute: typeof AuthSelectExamRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/reset-password': {
+      id: '/_auth/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof AuthResetPasswordRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/register': {
+      id: '/_auth/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof AuthRegisterRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/payment-verify': {
+      id: '/_auth/payment-verify'
+      path: '/payment-verify'
+      fullPath: '/payment-verify'
+      preLoaderRoute: typeof AuthPaymentVerifyRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/forgot-password': {
+      id: '/_auth/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/checkout': {
+      id: '/_auth/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof AuthCheckoutRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_user/tutorials/': {
+      id: '/_user/tutorials/'
+      path: '/tutorials'
+      fullPath: '/tutorials'
+      preLoaderRoute: typeof UserTutorialsIndexRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/_user/textbooks/': {
+      id: '/_user/textbooks/'
+      path: '/textbooks'
+      fullPath: '/textbooks'
+      preLoaderRoute: typeof UserTextbooksIndexRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/_user/tests/': {
+      id: '/_user/tests/'
+      path: '/tests'
+      fullPath: '/tests'
+      preLoaderRoute: typeof UserTestsIndexRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/_user/tutorials/$tutorialId': {
+      id: '/_user/tutorials/$tutorialId'
+      path: '/tutorials/$tutorialId'
+      fullPath: '/tutorials/$tutorialId'
+      preLoaderRoute: typeof UserTutorialsTutorialIdRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/_user/textbooks/$textbookId': {
+      id: '/_user/textbooks/$textbookId'
+      path: '/textbooks/$textbookId'
+      fullPath: '/textbooks/$textbookId'
+      preLoaderRoute: typeof UserTextbooksTextbookIdRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/_user/tests/exams': {
+      id: '/_user/tests/exams'
+      path: '/tests/exams'
+      fullPath: '/tests/exams'
+      preLoaderRoute: typeof UserTestsExamsRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/_user/tests/exam': {
+      id: '/_user/tests/exam'
+      path: '/tests/exam'
+      fullPath: '/tests/exam'
+      preLoaderRoute: typeof UserTestsExamRouteImport
+      parentRoute: typeof UserRoute
+    }
   }
 }
 
 interface AuthRouteChildren {
-  AuthCheckoutRoute: typeof AuthCheckoutRoute;
-  AuthPaymentVerifyRoute: typeof AuthPaymentVerifyRoute;
-  AuthRegisterRoute: typeof AuthRegisterRoute;
-  AuthSelectExamRoute: typeof AuthSelectExamRoute;
-  AuthSignInRoute: typeof AuthSignInRoute;
-  AuthSummaryRoute: typeof AuthSummaryRoute;
-  AuthVerifyEmailRoute: typeof AuthVerifyEmailRoute;
-  AuthWelcomeRoute: typeof AuthWelcomeRoute;
+  AuthCheckoutRoute: typeof AuthCheckoutRoute
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
+  AuthPaymentVerifyRoute: typeof AuthPaymentVerifyRoute
+  AuthRegisterRoute: typeof AuthRegisterRoute
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
+  AuthSelectExamRoute: typeof AuthSelectExamRoute
+  AuthSignInRoute: typeof AuthSignInRoute
+  AuthSummaryRoute: typeof AuthSummaryRoute
+  AuthVerifyEmailRoute: typeof AuthVerifyEmailRoute
+  AuthWelcomeRoute: typeof AuthWelcomeRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthCheckoutRoute: AuthCheckoutRoute,
+  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthPaymentVerifyRoute: AuthPaymentVerifyRoute,
   AuthRegisterRoute: AuthRegisterRoute,
+  AuthResetPasswordRoute: AuthResetPasswordRoute,
   AuthSelectExamRoute: AuthSelectExamRoute,
   AuthSignInRoute: AuthSignInRoute,
   AuthSummaryRoute: AuthSummaryRoute,
   AuthVerifyEmailRoute: AuthVerifyEmailRoute,
   AuthWelcomeRoute: AuthWelcomeRoute,
-};
+}
 
-const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren);
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface UserRouteChildren {
-  UserActivitiesRoute: typeof UserActivitiesRoute;
-  UserLeaderboardRoute: typeof UserLeaderboardRoute;
-  UserSettingsRoute: typeof UserSettingsRoute;
-  UserSubscriptionRoute: typeof UserSubscriptionRoute;
-  UserIndexRoute: typeof UserIndexRoute;
-  UserTestsExamRoute: typeof UserTestsExamRoute;
-  UserTestsExamsRoute: typeof UserTestsExamsRoute;
-  UserTextbooksTextbookIdRoute: typeof UserTextbooksTextbookIdRoute;
-  UserTutorialsTutorialIdRoute: typeof UserTutorialsTutorialIdRoute;
-  UserTestsIndexRoute: typeof UserTestsIndexRoute;
-  UserTextbooksIndexRoute: typeof UserTextbooksIndexRoute;
-  UserTutorialsIndexRoute: typeof UserTutorialsIndexRoute;
+  UserActivitiesRoute: typeof UserActivitiesRoute
+  UserLeaderboardRoute: typeof UserLeaderboardRoute
+  UserSettingsRoute: typeof UserSettingsRoute
+  UserSubscriptionRoute: typeof UserSubscriptionRoute
+  UserIndexRoute: typeof UserIndexRoute
+  UserTestsExamRoute: typeof UserTestsExamRoute
+  UserTestsExamsRoute: typeof UserTestsExamsRoute
+  UserTextbooksTextbookIdRoute: typeof UserTextbooksTextbookIdRoute
+  UserTutorialsTutorialIdRoute: typeof UserTutorialsTutorialIdRoute
+  UserTestsIndexRoute: typeof UserTestsIndexRoute
+  UserTextbooksIndexRoute: typeof UserTextbooksIndexRoute
+  UserTutorialsIndexRoute: typeof UserTutorialsIndexRoute
 }
 
 const UserRouteChildren: UserRouteChildren = {
@@ -497,14 +539,14 @@ const UserRouteChildren: UserRouteChildren = {
   UserTestsIndexRoute: UserTestsIndexRoute,
   UserTextbooksIndexRoute: UserTextbooksIndexRoute,
   UserTutorialsIndexRoute: UserTutorialsIndexRoute,
-};
+}
 
-const UserRouteWithChildren = UserRoute._addFileChildren(UserRouteChildren);
+const UserRouteWithChildren = UserRoute._addFileChildren(UserRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   UserRoute: UserRouteWithChildren,
-};
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()

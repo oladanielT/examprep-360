@@ -51,50 +51,103 @@ export function FillInBlankQuestion({
     isAnswerCorrect(blank.id, answers[blank.id] || "")
   );
 
-  // Parse template and replace [[id]] with input fields
+  // Parse template and replace [[id]] or ____ with input fields
   const renderTemplate = () => {
-    const parts = fillData.template.split(/(\[\[\d+\]\])/g);
+    const template = fillData.template;
 
-    return parts.map((part, index) => {
-      const match = part.match(/\[\[(\d+)\]\]/);
-      if (match) {
-        const blankId = match[1];
-        const blank = fillData.blanks.find((b) => b.id === blankId);
-        const userAnswer = answers[blankId] || "";
-        const isCorrect = isAnswerCorrect(blankId, userAnswer);
+    // Check if template uses [[id]] format or ____ (underscore) format
+    const usesIdFormat = /\[\[\d+\]\]/.test(template);
+    const usesUnderscoreFormat = /_{2,}/.test(template);
 
-        return (
-          <span key={index} className="inline-flex items-center mx-1 my-1">
-            <input
-              type={blank?.inputType === "number" ? "number" : "text"}
-              value={userAnswer}
-              onChange={(e) => handleInputChange(blankId, e.target.value)}
-              disabled={disabled || isSubmitted}
-              placeholder={blank?.hint || "..."}
-              className={cn(
-                "w-32 px-3 py-2 border-2 rounded-full text-center text-sm transition-colors",
-                "focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#F04F54]/50",
-                !isSubmitted && "border-gray-300 focus:border-[#F04F54]",
-                isSubmitted && showCorrectAnswer && isCorrect && "border-green-500 bg-green-50 text-green-700",
-                isSubmitted && showCorrectAnswer && !isCorrect && userAnswer && "border-red-500 bg-red-50 text-red-700",
-                isSubmitted && showCorrectAnswer && !userAnswer && "border-gray-300 bg-gray-50",
-                (disabled || isSubmitted) && "cursor-not-allowed"
-              )}
-            />
-            {isSubmitted && showCorrectAnswer && userAnswer && (
-              <span className="ml-1">
-                {isCorrect ? (
-                  <CheckCircle weight="fill" className="w-5 h-5 text-green-500" />
-                ) : (
-                  <XCircle weight="fill" className="w-5 h-5 text-red-500" />
-                )}
-              </span>
+    if (usesIdFormat) {
+      // Original [[id]] format
+      const parts = template.split(/(\[\[\d+\]\])/g);
+      return parts.map((part, index) => {
+        const match = part.match(/\[\[(\d+)\]\]/);
+        if (match) {
+          const blankId = match[1];
+          const blank = fillData.blanks.find((b) => b.id === blankId);
+          const userAnswer = answers[blankId] || "";
+          const isCorrect = isAnswerCorrect(blankId, userAnswer);
+          return renderInputField(blankId, blank, userAnswer, isCorrect, index);
+        }
+        return <span key={index}>{part}</span>;
+      });
+    } else if (usesUnderscoreFormat) {
+      // Underscore format: replace each ____ with an input
+      const parts = template.split(/(_{2,})/g);
+      let blankIndex = 0;
+
+      return parts.map((part, index) => {
+        if (/^_{2,}$/.test(part)) {
+          const blank = fillData.blanks[blankIndex];
+          const blankId = blank?.id || String(blankIndex);
+          const userAnswer = answers[blankId] || "";
+          const isCorrect = isAnswerCorrect(blankId, userAnswer);
+          blankIndex++;
+          return renderInputField(blankId, blank, userAnswer, isCorrect, index);
+        }
+        return <span key={index}>{part}</span>;
+      });
+    } else {
+      // No blanks detected, just show template with inputs below
+      return (
+        <>
+          <span>{template}</span>
+          <div className="flex flex-wrap gap-2 mt-3 w-full">
+            {fillData.blanks.map((blank, index) => {
+              const userAnswer = answers[blank.id] || "";
+              const isCorrect = isAnswerCorrect(blank.id, userAnswer);
+              return (
+                <div key={blank.id} className="flex items-center gap-1">
+                  <span className="text-sm text-gray-500">({index + 1})</span>
+                  {renderInputField(blank.id, blank, userAnswer, isCorrect, index)}
+                </div>
+              );
+            })}
+          </div>
+        </>
+      );
+    }
+  };
+
+  // Helper function to render input field
+  const renderInputField = (
+    blankId: string,
+    blank: typeof fillData.blanks[0] | undefined,
+    userAnswer: string,
+    isCorrect: boolean,
+    key: number
+  ) => {
+    return (
+      <span key={key} className="inline-flex items-center mx-1 my-1">
+        <input
+          type={blank?.inputType === "number" ? "number" : "text"}
+          value={userAnswer}
+          onChange={(e) => handleInputChange(blankId, e.target.value)}
+          disabled={disabled || isSubmitted}
+          placeholder={blank?.hint || "Type answer..."}
+          className={cn(
+            "w-32 px-3 py-2 border-2 rounded-full text-center text-sm transition-colors",
+            "focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#F04F54]/50",
+            !isSubmitted && "border-gray-300 focus:border-[#F04F54]",
+            isSubmitted && showCorrectAnswer && isCorrect && "border-green-500 bg-green-50 text-green-700",
+            isSubmitted && showCorrectAnswer && !isCorrect && userAnswer && "border-red-500 bg-red-50 text-red-700",
+            isSubmitted && showCorrectAnswer && !userAnswer && "border-gray-300 bg-gray-50",
+            (disabled || isSubmitted) && "cursor-not-allowed"
+          )}
+        />
+        {isSubmitted && showCorrectAnswer && userAnswer && (
+          <span className="ml-1">
+            {isCorrect ? (
+              <CheckCircle weight="fill" className="w-5 h-5 text-green-500" />
+            ) : (
+              <XCircle weight="fill" className="w-5 h-5 text-red-500" />
             )}
           </span>
-        );
-      }
-      return <span key={index}>{part}</span>;
-    });
+        )}
+      </span>
+    );
   };
 
   return (

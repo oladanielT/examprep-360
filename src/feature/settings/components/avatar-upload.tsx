@@ -1,5 +1,5 @@
 
-
+import { useState } from "react";
 import {
   formatBytes,
   useFileUpload,
@@ -13,20 +13,22 @@ import {
 import { Button } from "@/components/ui/button";
 import { TriangleAlert, User, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useProfile, useUploadAvatar, useRemoveAvatar } from "@/feature/profile/hooks/useProfile";
+import { toast } from "sonner";
 
 interface AvatarUploadProps {
   maxSize?: number;
   className?: string;
-  onFileChange?: (file: FileWithPreview | null) => void;
-  defaultAvatar?: string;
 }
 
 export default function AvatarUpload({
   maxSize = 2 * 1024 * 1024, // 2MB
   className,
-  onFileChange,
-  defaultAvatar,
 }: AvatarUploadProps) {
+  const { data: profile } = useProfile();
+  const uploadAvatar = useUploadAvatar();
+  const removeAvatar = useRemoveAvatar();
+
   const [
     { files, isDragging, errors },
     {
@@ -44,16 +46,52 @@ export default function AvatarUpload({
     accept: "image/*",
     multiple: false,
     onFilesChange: (files) => {
-      onFileChange?.(files[0] || null);
+      if (files[0]) {
+        handleUpload(files[0].file);
+      }
     },
   });
 
+  const handleUpload = (file: File) => {
+    uploadAvatar.mutate(file, {
+      onSuccess: (data) => {
+        const message = data?.message || "Profile picture uploaded successfully!";
+        toast.success(message);
+        // Clear files from the upload hook
+        if (files[0]) {
+          removeFile(files[0].id);
+        }
+      },
+      onError: (error: any) => {
+        const message = error?.response?.data?.message || error?.message || "Failed to upload profile picture.";
+        toast.error(message);
+        // Clear files on error
+        if (files[0]) {
+          removeFile(files[0].id);
+        }
+      },
+    });
+  };
+
   const currentFile = files[0];
-  const previewUrl = currentFile?.preview || defaultAvatar;
+  const previewUrl = currentFile?.preview || profile?.profilePictureUrl;
 
   const handleRemove = () => {
     if (currentFile) {
+      // Remove local preview file
       removeFile(currentFile.id);
+    } else if (profile?.profilePictureUrl) {
+      // Remove avatar from server
+      removeAvatar.mutate(undefined, {
+        onSuccess: (data) => {
+          const message = data?.message || "Profile picture removed successfully!";
+          toast.success(message);
+        },
+        onError: (error: any) => {
+          const message = error?.response?.data?.message || error?.message || "Failed to remove profile picture.";
+          toast.error(message);
+        },
+      });
     }
   };
 
@@ -90,12 +128,13 @@ export default function AvatarUpload({
           )}
         </div>
 
-        {/* Remove Button - only show when file is uploaded */}
-        {currentFile && (
+        {/* Remove Button - show when file is uploaded or avatar exists */}
+        {(currentFile || profile?.profilePictureUrl) && (
           <Button
             size="icon"
             variant="outline"
             onClick={handleRemove}
+            disabled={removeAvatar.isPending}
             className="size-6 absolute end-0 top-0 rounded-full"
             aria-label="Remove avatar"
           >
@@ -107,16 +146,22 @@ export default function AvatarUpload({
       {/* Upload Instructions */}
       <div className="text-center space-y-0.5">
         <p className="text-sm font-medium">
-          {currentFile ? "Avatar uploaded" : "Upload avatar"}
+          {uploadAvatar.isPending
+            ? "Uploading..."
+            : removeAvatar.isPending
+            ? "Removing..."
+            : currentFile || profile?.profilePictureUrl
+            ? "Change avatar"
+            : "Upload avatar"}
         </p>
         <p className="text-xs text-muted-foreground">
           PNG, JPG up to {formatBytes(maxSize)}
         </p>
       </div>
 
-      {/* Error Messages */}
+      {/* File validation errors - Keep as Alert (critical errors) */}
       {errors.length > 0 && (
-        <Alert variant="destructive" className="mt-5">
+        <Alert variant="destructive" className="mt-4">
           <TriangleAlert className="h-4 w-4" />
           <AlertTitle>File upload error(s)</AlertTitle>
           <AlertDescription>

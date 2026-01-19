@@ -75,7 +75,7 @@ export interface User {
   examType?: string;
   examCategory?: string;
   selectedSubjects?: string[];
-  avatarUrl?: string;
+  profilePictureUrl?: string;
   emailVerified: boolean;
   phoneVerified: boolean;
   createdAt: string;

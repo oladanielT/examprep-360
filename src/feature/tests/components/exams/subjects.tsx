@@ -19,6 +19,7 @@ import {
   DialogStackNext,
   DialogStackPrevious,
 } from "@/components/kibo-ui/dialog-stack";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import ConfigurePracticeForm from "./step-two";
 import { ArrowLeft } from "lucide-react";
 import {
@@ -154,19 +155,33 @@ function SubjectCard({ subject }: { subject: SubjectType }) {
   const [selectedPracticeOption, setSelectedPracticeOption] =
     useState<string>("jump");
   const [isOpen, setIsOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
   const navigate = useNavigate();
   const startPractice = useStartPractice();
 
   const handleJumpStraightIn = () => {
+    setErrorMessage("");
+    setSuccessMessage("");
     startPractice.mutate(
       {
         subjectId: subject.id,
         title: `${subject.name} Practice`,
       },
       {
-        onSuccess: () => {
-          setIsOpen(false);
-          navigate({ to: "/tests/exam" });
+        onSuccess: (data) => {
+          setErrorMessage("");
+          const message = data?.message || "Practice exam started successfully!";
+          setSuccessMessage(message);
+          setTimeout(() => {
+            setIsOpen(false);
+            navigate({ to: "/tests/exam" });
+          }, 800);
+        },
+        onError: (error: any) => {
+          setSuccessMessage("");
+          const message = error?.response?.data?.message || error?.message || "Failed to start practice exam";
+          setErrorMessage(message);
         },
       }
     );
@@ -253,6 +268,21 @@ function SubjectCard({ subject }: { subject: SubjectType }) {
                   </ChoiceboxItem>
                 ))}
               </Choicebox>
+
+              {/* Success Message */}
+              {successMessage && (
+                <Alert className="bg-green-50 border-green-200 mb-4">
+                  <AlertDescription className="text-green-800">{successMessage}</AlertDescription>
+                </Alert>
+              )}
+
+              {/* Error Message */}
+              {errorMessage && (
+                <Alert variant="destructive" className="mb-4">
+                  <AlertDescription>{errorMessage}</AlertDescription>
+                </Alert>
+              )}
+
               {selectedPracticeOption === "jump" ? (
                 <PrimaryButton
                   title={
