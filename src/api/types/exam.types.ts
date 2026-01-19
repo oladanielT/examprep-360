@@ -1,10 +1,253 @@
 // Exam Types
 export type Difficulty = "EASY" | "MEDIUM" | "HARD";
-export type QuestionType = "SINGLE_CHOICE" | "MULTIPLE_CHOICE" | "TRUE_FALSE" | "FILL_BLANK" | "ESSAY";
+export type QuestionType =
+  | "SINGLE_CHOICE"
+  | "MULTIPLE_CHOICE"
+  | "TRUE_FALSE"
+  | "FILL_IN_BLANK"
+  | "ESSAY"
+  | "ESSAY_WITH_SUB"
+  | "SHORT_ANSWER"
+  | "MATCHING"
+  | "ORDERING"
+  | "CALCULATION"
+  | "DIAGRAM_LABELING"
+  | "THEORY_WITH_OBJECTIVES";
 export type AttemptStatus = "IN_PROGRESS" | "PAUSED" | "COMPLETED" | "ABANDONED";
 export type ExamTypeEnum = "MOCK" | "PRACTICE" | "BIG_MOCK";
 export type ExamCategory = "PRE_DEGREE" | "SECONDARY_SCHOOL" | "POST_JAMB" | "WASSCE" | "NECO" | string;
 export type GroupBy = "SUBJECT" | "TYPE" | "YEAR";
+
+// ==================== RICH CONTENT TYPES ====================
+
+export type RichContentType =
+  | "text"
+  | "markdown"
+  | "latex"
+  | "image"
+  | "audio"
+  | "video"
+  | "table"
+  | "diagram"
+  | "list";
+
+export interface RichContentStyle {
+  bold?: boolean;
+  italic?: boolean;
+  underline?: boolean;
+  fontSize?: "small" | "normal" | "large";
+  color?: string;
+}
+
+// Base rich content block
+export interface RichContentBlockBase {
+  type: RichContentType;
+  style?: RichContentStyle;
+}
+
+// Text block
+export interface TextBlock extends RichContentBlockBase {
+  type: "text";
+  value: string;
+}
+
+// Markdown block
+export interface MarkdownBlock extends RichContentBlockBase {
+  type: "markdown";
+  content: string;
+}
+
+// LaTeX block (for math equations)
+export interface LatexBlock extends RichContentBlockBase {
+  type: "latex";
+  value: string;
+}
+
+// Image block
+export interface ImageBlock extends RichContentBlockBase {
+  type: "image";
+  url: string;
+  alt?: string;
+  publicId?: string;
+}
+
+// Audio block
+export interface AudioBlock extends RichContentBlockBase {
+  type: "audio";
+  url: string;
+}
+
+// Video block
+export interface VideoBlock extends RichContentBlockBase {
+  type: "video";
+  url: string;
+}
+
+// Table block
+export interface TableBlock extends RichContentBlockBase {
+  type: "table";
+  headers: string[];
+  rows: string[][];
+}
+
+// Diagram block
+export interface DiagramBlock extends RichContentBlockBase {
+  type: "diagram";
+  imageUrl: string;
+  annotations?: Array<{
+    id: string;
+    x: number;
+    y: number;
+    label: string;
+  }>;
+}
+
+// List block
+export interface ListBlock extends RichContentBlockBase {
+  type: "list";
+  items: string[];
+}
+
+// Union of all rich content blocks
+export type RichContentBlock =
+  | TextBlock
+  | MarkdownBlock
+  | LatexBlock
+  | ImageBlock
+  | AudioBlock
+  | VideoBlock
+  | TableBlock
+  | DiagramBlock
+  | ListBlock;
+
+// ==================== QUESTION-TYPE SPECIFIC DATA ====================
+
+// Choice question option (SINGLE_CHOICE, MULTIPLE_CHOICE)
+export interface ChoiceOption {
+  id: string;
+  content: RichContentBlock[];
+  isCorrect?: boolean;
+}
+
+// Fill in the blank data
+export interface FillInBlankData {
+  template: string;
+  blanks: Array<{
+    id: string;
+    acceptableAnswers: string[];
+    inputType?: "text" | "number";
+    hint?: string;
+  }>;
+}
+
+// True/False data
+export interface TrueFalseData {
+  correctAnswer: boolean;
+  justificationRequired?: boolean;
+}
+
+// Essay data
+export interface EssayData {
+  minWords?: number;
+  maxWords?: number;
+  expectedPoints?: string[];
+  rubric?: Array<{
+    criterion: string;
+    maxMarks: number;
+  }>;
+}
+
+// Essay with sub-questions data
+export interface EssayWithSubData {
+  mainQuestion: RichContentBlock[];
+  subQuestions: Array<{
+    subId: string;
+    questionText: RichContentBlock[];
+    marks: number;
+  }>;
+}
+
+// Short answer data
+export interface ShortAnswerData {
+  acceptableAnswers: string[];
+  caseSensitive?: boolean;
+  answerFormat?: "text" | "number";
+}
+
+// Matching data
+export interface MatchingData {
+  leftColumn: Array<{
+    id: string;
+    text: string;
+  }>;
+  rightColumn: Array<{
+    id: string;
+    text: string;
+  }>;
+  correctMatches: string[]; // Format: "L1-R1"
+}
+
+// Ordering data
+export interface OrderingData {
+  items: Array<{
+    id: string;
+    text: string;
+  }>;
+  correctOrder: string[];
+}
+
+// Calculation data
+export interface CalculationData {
+  problem: string;
+  steps: Array<{
+    step: string;
+    formula: string;
+  }>;
+  finalAnswer: number;
+  precision?: number;
+}
+
+// Diagram labeling data
+export interface DiagramLabelingData {
+  diagramUrl: string;
+  labels: Array<{
+    id: string;
+    label: string;
+    x: number;
+    y: number;
+  }>;
+}
+
+// Theory with objectives data
+export interface TheoryWithObjectivesData {
+  theoryPart: {
+    content: RichContentBlock[];
+    responseType: "SHORT_ANSWER" | "ESSAY";
+    marks: number;
+  };
+  objectivesPart: {
+    content: RichContentBlock[];
+    options: ChoiceOption[];
+    correctAnswer: string;
+    marks: number;
+  };
+}
+
+// ==================== EXPLANATION TYPES ====================
+
+export interface WorkingStep {
+  step: string;
+  formula?: string;
+  explanation?: string;
+}
+
+export interface ExplanationData {
+  solution: RichContentBlock[];
+  workingSteps?: WorkingStep[];
+  keyPoints?: string[];
+  commonMistakes?: string[];
+  tips?: string[];
+}
 
 // ==================== REQUEST TYPES ====================
 
@@ -66,33 +309,44 @@ export interface Course {
   name: string;
 }
 
+// Legacy Option type (simple text-based)
 export interface Option {
   id: string;
   text: string;
-  isCorrect?: boolean; // Only shown after submission
+  isCorrect?: boolean;
 }
 
-// Question as returned from API (with nested structure)
-export interface QuestionBlock {
-  text: string;
-  type?: string;
-}
-
-export interface QuestionText {
-  blocks: QuestionBlock[];
-}
-
+// Full Question interface with all question-type data
 export interface Question {
   id: string;
   questionNumber: number;
   questionType: QuestionType;
-  questionText: QuestionText;
+  questionText: RichContentBlock[];
   instruction?: string;
-  context?: string | null;
-  options: Option[];
+  context?: RichContentBlock[] | null;
   difficulty: Difficulty;
   marks: number;
   year?: number;
+
+  // Choice questions (SINGLE_CHOICE, MULTIPLE_CHOICE)
+  options?: ChoiceOption[];
+  correctAnswer?: string; // For SINGLE_CHOICE
+  correctAnswers?: string[]; // For MULTIPLE_CHOICE
+
+  // Question-type specific data
+  fillInBlankData?: FillInBlankData;
+  trueFalseData?: TrueFalseData;
+  essayData?: EssayData;
+  essayWithSubData?: EssayWithSubData;
+  shortAnswerData?: ShortAnswerData;
+  matchingData?: MatchingData;
+  orderingData?: OrderingData;
+  calculationData?: CalculationData;
+  diagramLabelingData?: DiagramLabelingData;
+  theoryWithObjectivesData?: TheoryWithObjectivesData;
+
+  // Explanation (shown after submission)
+  explanation?: ExplanationData;
 }
 
 // ExamQuestion is the wrapper that includes order

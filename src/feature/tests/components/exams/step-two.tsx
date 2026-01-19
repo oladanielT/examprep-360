@@ -35,7 +35,7 @@ const questionTypeOptions = [
     { label: "All Types", value: "" },
     { label: "Multiple Choice", value: "MULTIPLE_CHOICE" },
     { label: "True/False", value: "TRUE_FALSE" },
-    { label: "Fill in the Blank", value: "FILL_BLANK" },
+    { label: "Fill in the Blank", value: "FILL_IN_BLANK" },
 ];
 
 const currentYear = new Date().getFullYear();
@@ -74,7 +74,7 @@ export default function ConfigurePracticeForm({ subject, onClose }: ConfigurePra
                     questionCount: value.questionCount,
                     timeLimit: value.timeLimit ? parseInt(value.timeLimit) : undefined,
                     difficulty: value.difficulty ? value.difficulty as "EASY" | "MEDIUM" | "HARD" : undefined,
-                    questionTypes: value.questionType ? [value.questionType as "MULTIPLE_CHOICE" | "TRUE_FALSE" | "FILL_BLANK" | "ESSAY"] : undefined,
+                    questionTypes: value.questionType ? [value.questionType as "MULTIPLE_CHOICE" | "TRUE_FALSE" | "FILL_IN_BLANK" | "ESSAY"] : undefined,
                     year: value.year ? parseInt(value.year) : undefined,
                     title: `${subject.name} Practice`,
                 },

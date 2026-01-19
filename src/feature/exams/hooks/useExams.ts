@@ -216,6 +216,8 @@ export const useStartPractice = () => {
 
 // Configure practice
 export const useConfigurePractice = () => {
+  const { startExam } = useExamStore();
+
   return useMutation<StartExamResponse, AxiosError<ApiError>, ConfigurePracticeRequest>({
     mutationFn: async (config) => {
       const { data } = await apiClient.post<StartExamResponse>(
@@ -223,6 +225,11 @@ export const useConfigurePractice = () => {
         config
       );
       return data;
+    },
+    onSuccess: (data) => {
+      // Extract questions from ExamQuestion[] wrapper
+      const questions = data.exam.questions.map((eq) => eq.question);
+      startExam(data as unknown as ExamAttempt, questions, data.exam.durationMinutes);
     },
   });
 };
