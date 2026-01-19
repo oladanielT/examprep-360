@@ -69,4 +69,24 @@ function AlertAction({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
-export { Alert, AlertTitle, AlertDescription, AlertAction }
+function AlertIcon({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="alert-icon"
+      className={cn("[&>svg]:size-4", className)}
+      {...props}
+    />
+  )
+}
+
+function AlertContent({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="alert-content"
+      className={cn("flex flex-col gap-0.5", className)}
+      {...props}
+    />
+  )
+}
+
+export { Alert, AlertTitle, AlertDescription, AlertAction, AlertIcon, AlertContent }

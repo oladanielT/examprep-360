@@ -36,6 +36,8 @@ export const EXAM_ENDPOINTS = {
   PAUSED: "/student/exams/paused",
   BOOKMARKS: "/student/exams/bookmarks",
   REPORTS: "/student/exams/reports",
+  AVAILABLE: "/student/exams/available",
+  PREFERENCES: "/student/exams/preferences",
 } as const;
 
 // Progress endpoints
@@ -68,6 +70,8 @@ export const TUTORIALS_ENDPOINTS = {
   UPDATE_PROGRESS: (id: string) => `/student/tutorials/${id}/progress`,
   SUBMIT_QUESTIONS: (id: string) => `/student/tutorials/${id}/submit-questions`,
   BOOKMARK: (id: string) => `/student/tutorials/${id}/bookmark`,
+  BOOKMARKS: "/student/tutorials/bookmarks",
+  COMPLETE: (id: string) => `/student/tutorials/${id}/complete`,
 } as const;
 
 // Exam selection endpoints

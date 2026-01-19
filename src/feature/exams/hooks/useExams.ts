@@ -18,6 +18,9 @@ import type {
   ExamCategory,
   ExamSubtype,
   Subject,
+  AvailableExamsParams,
+  AvailableExamsResponse,
+  StudentPreferences,
 } from "@/api/types";
 import type { AxiosError } from "axios";
 
@@ -78,6 +81,39 @@ export const useReports = () => {
     queryKey: ["reports"],
     queryFn: async () => {
       const { data } = await apiClient.get<QuestionReport[]>(EXAM_ENDPOINTS.REPORTS);
+      return data;
+    },
+    enabled: isAuthenticated,
+  });
+};
+
+// Fetch available exams with optional filters
+export const useAvailableExams = (params?: AvailableExamsParams) => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  return useQuery<AvailableExamsResponse>({
+    queryKey: ["availableExams", params],
+    queryFn: async () => {
+      const { data } = await apiClient.get<AvailableExamsResponse>(
+        EXAM_ENDPOINTS.AVAILABLE,
+        { params }
+      );
+      return data;
+    },
+    enabled: isAuthenticated,
+  });
+};
+
+// Fetch student preferences
+export const useStudentPreferences = () => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  return useQuery<StudentPreferences>({
+    queryKey: ["studentPreferences"],
+    queryFn: async () => {
+      const { data } = await apiClient.get<StudentPreferences>(
+        EXAM_ENDPOINTS.PREFERENCES
+      );
       return data;
     },
     enabled: isAuthenticated,

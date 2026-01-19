@@ -98,6 +98,37 @@ export const useToggleTutorialBookmark = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tutorials"] });
+      queryClient.invalidateQueries({ queryKey: ["bookmarkedTutorials"] });
+    },
+  });
+};
+
+// Fetch bookmarked tutorials
+export const useBookmarkedTutorials = () => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  return useQuery<Tutorial[]>({
+    queryKey: ["bookmarkedTutorials"],
+    queryFn: async () => {
+      const { data } = await apiClient.get<Tutorial[]>(TUTORIALS_ENDPOINTS.BOOKMARKS);
+      return data;
+    },
+    enabled: isAuthenticated,
+  });
+};
+
+// Mark tutorial as complete
+export const useCompleteTutorial = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<Tutorial, AxiosError<ApiError>, string>({
+    mutationFn: async (id) => {
+      const { data } = await apiClient.post<Tutorial>(TUTORIALS_ENDPOINTS.COMPLETE(id));
+      return data;
+    },
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: ["tutorials"] });
+      queryClient.invalidateQueries({ queryKey: ["tutorials", id] });
     },
   });
 };

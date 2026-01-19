@@ -22,30 +22,41 @@ const formSchema = z.object({
 });
 
 const durations = [
-    { label: "15 mins", value: "15mins" },
-    { label: "30 mins", value: "30mins" },
-    { label: "45 mins", value: "45mins" },
-    { label: "1 hour", value: "1hour" },
+    { label: "15 mins", value: "15" },
+    { label: "30 mins", value: "30" },
+    { label: "45 mins", value: "45" },
+    { label: "1 hour", value: "60" },
 ];
 
-export default function StepTwo() {
+interface StepTwoProps {
+    subjectId: string;
+}
+
+export default function StepTwo({ subjectId }: StepTwoProps) {
     const form = useForm({
         defaultValues: {
             questionType: "",
             time: "",
-            subjects: '',
-            numQuestion: [4],
+            subjects: subjectId,
+            numQuestion: [10],
         },
         validators: {
             onSubmit: formSchema,
         },
         onSubmit: async ({ value }) => {
-            console.log("Form submitted:", value);
+            console.log("Starting exam:", {
+                subjectId,
+                ...value,
+            });
+            // TODO: Call useStartExam mutation here
         },
     });
     return (
         <div className=' '>
-            <h5 className='  font-semibold text-lg text-center! mb-6'>Confirm Subject and Time</h5>
+            <h5 className='  font-semibold text-lg text-center! mb-2'>Confirm Subject and Time</h5>
+            <p className="text-muted-foreground text-center text-sm mb-6">
+                {subjectId}
+            </p>
             <form
                 className="w-full"
                 onSubmit={(e) => {

@@ -107,3 +107,46 @@ export interface StartExamResponse {
   questions: Question[];
   timeLimit?: number;
 }
+
+// Available Exams
+export type ExamTypeEnum = "PRACTICE" | "MOCK" | "BIG_MOCK";
+export type GroupBy = "subject" | "type" | "year";
+
+export interface AvailableExamsParams {
+  subjectId?: string;
+  courseId?: string;
+  examTypeEnum?: ExamTypeEnum;
+  year?: number;
+  groupBy?: GroupBy;
+}
+
+export interface AvailableExam {
+  id: string;
+  title: string;
+  description?: string;
+  subjectId: string;
+  subjectName?: string;
+  courseId?: string;
+  courseName?: string;
+  examType: ExamTypeEnum;
+  year: number;
+  questionCount: number;
+  duration?: number;
+  difficulty?: Difficulty;
+  createdAt?: string;
+}
+
+export interface AvailableExamsResponse {
+  exams: AvailableExam[];
+  total: number;
+  grouped?: Record<string, AvailableExam[]>;
+}
+
+// Student Preferences
+export interface StudentPreferences {
+  selectedSubjects: string[];
+  selectedCourses: string[];
+  examCategory: string;
+  examSubtype: string | null;
+  examTypeId: string;
+}
