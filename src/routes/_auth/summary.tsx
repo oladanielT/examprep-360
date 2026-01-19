@@ -11,7 +11,7 @@ import { usePaymentPlans } from "@/feature/payment/hooks";
 
 function SummaryPage() {
   const navigate = useNavigate();
-  const { data, reset, setStudentId } = useRegistrationStore();
+  const { data, setStudentId } = useRegistrationStore();
   const registerMutation = useRegister();
 
   // Fetch subjects to get names

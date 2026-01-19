@@ -4,7 +4,6 @@ import { EXAM_ENDPOINTS, EXAM_SELECTION_ENDPOINTS } from "@/api/endpoints";
 import { useAuthStore } from "@/stores/authStore";
 import { useExamStore } from "@/stores/examStore";
 import type {
-  ExamHistory,
   ExamAttempt,
   Bookmark,
   QuestionReport,
@@ -15,12 +14,16 @@ import type {
   ToggleBookmarkRequest,
   StartExamResponse,
   AttemptResponse,
-  ExamCategory,
-  ExamSubtype,
-  Subject,
   AvailableExamsParams,
   AvailableExamsResponse,
-  StudentPreferences,
+  ExamPreferencesResponse,
+  ExamHistoryResponse,
+  ExamHistoryParams,
+  PausedExam,
+  ExamQuestionsResponse,
+  ExamCategoryOption,
+  ExamSubtypeOption,
+  SubjectOption,
 } from "@/api/types";
 import type { AxiosError } from "axios";
 
@@ -31,14 +34,77 @@ interface ApiError {
 
 // ==================== QUERIES ====================
 
-// Fetch exam history
-export const useExamHistory = () => {
+// Fetch exam preferences (for /tests page - list of exam types like JAMB, WAEC, etc.)
+// Uses store to cache preferences - only fetches if not already in store
+export const useExamPreferences = () => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const storedPreferences = useExamStore((state) => state.preferences);
+  const setPreferences = useExamStore((state) => state.setPreferences);
+
+  return useQuery<ExamPreferencesResponse>({
+    queryKey: ["examPreferences"],
+    queryFn: async () => {
+      const { data } = await apiClient.get<ExamPreferencesResponse>(
+        EXAM_ENDPOINTS.PREFERENCES
+      );
+      // Store in Zustand for persistence
+      setPreferences(data);
+      return data;
+    },
+    enabled: isAuthenticated && !storedPreferences, // Only fetch if not in store
+    initialData: storedPreferences || undefined, // Use stored data as initial
+    staleTime: Infinity, // Never refetch automatically since we have it in store
+  });
+};
+
+// Fetch available exams (for /tests/exams page - list of exams filtered by subject, year, etc.)
+export const useAvailableExams = (params: AvailableExamsParams) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
-  return useQuery<ExamHistory>({
-    queryKey: ["examHistory"],
+  return useQuery<AvailableExamsResponse>({
+    queryKey: ["availableExams", params],
     queryFn: async () => {
-      const { data } = await apiClient.get<ExamHistory>(EXAM_ENDPOINTS.HISTORY);
+      const { data } = await apiClient.get<AvailableExamsResponse>(
+        EXAM_ENDPOINTS.AVAILABLE,
+        { params }
+      );
+      return data;
+    },
+    enabled: isAuthenticated,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+};
+
+// Fetch exam questions for offline/prefetch (GET /student/exams/:id/questions)
+export const useExamQuestions = (examId: string, enabled = true) => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  return useQuery<ExamQuestionsResponse>({
+    queryKey: ["examQuestions", examId],
+    queryFn: async () => {
+      const { data } = await apiClient.get<ExamQuestionsResponse>(
+        EXAM_ENDPOINTS.QUESTIONS(examId)
+      );
+      return data;
+    },
+    enabled: isAuthenticated && !!examId && enabled,
+    staleTime: 1000 * 60 * 10, // 10 minutes - questions don't change often
+  });
+};
+
+// Fetch exam history
+export const useExamHistory = (params: ExamHistoryParams = {}) => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  return useQuery<ExamHistoryResponse>({
+    queryKey: ["examHistory", params],
+    queryFn: async () => {
+      const { data } = await apiClient.get<ExamHistoryResponse>(
+        EXAM_ENDPOINTS.HISTORY,
+        {
+          params,
+        }
+      );
       return data;
     },
     enabled: isAuthenticated,
@@ -49,10 +115,10 @@ export const useExamHistory = () => {
 export const usePausedExams = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
-  return useQuery<ExamAttempt[]>({
+  return useQuery<PausedExam[]>({
     queryKey: ["pausedExams"],
     queryFn: async () => {
-      const { data } = await apiClient.get<ExamAttempt[]>(EXAM_ENDPOINTS.PAUSED);
+      const { data } = await apiClient.get<PausedExam[]>(EXAM_ENDPOINTS.PAUSED);
       return data;
     },
     enabled: isAuthenticated,
@@ -66,7 +132,9 @@ export const useBookmarks = () => {
   return useQuery<Bookmark[]>({
     queryKey: ["bookmarks"],
     queryFn: async () => {
-      const { data } = await apiClient.get<Bookmark[]>(EXAM_ENDPOINTS.BOOKMARKS);
+      const { data } = await apiClient.get<Bookmark[]>(
+        EXAM_ENDPOINTS.BOOKMARKS
+      );
       return data;
     },
     enabled: isAuthenticated,
@@ -80,7 +148,9 @@ export const useReports = () => {
   return useQuery<QuestionReport[]>({
     queryKey: ["reports"],
     queryFn: async () => {
-      const { data } = await apiClient.get<QuestionReport[]>(EXAM_ENDPOINTS.REPORTS);
+      const { data } = await apiClient.get<QuestionReport[]>(
+        EXAM_ENDPOINTS.REPORTS
+      );
       return data;
     },
     enabled: isAuthenticated,
@@ -122,10 +192,10 @@ export const useStudentPreferences = () => {
 
 // Exam Selection Queries
 export const useExamCategories = () => {
-  return useQuery<ExamCategory[]>({
+  return useQuery<ExamCategoryOption[]>({
     queryKey: ["examSelection", "categories"],
     queryFn: async () => {
-      const { data } = await apiClient.get<ExamCategory[]>(
+      const { data } = await apiClient.get<ExamCategoryOption[]>(
         EXAM_SELECTION_ENDPOINTS.CATEGORIES
       );
       return data;
@@ -135,10 +205,10 @@ export const useExamCategories = () => {
 };
 
 export const useExamTypes = (category: string) => {
-  return useQuery<ExamSubtype[]>({
+  return useQuery<ExamSubtypeOption[]>({
     queryKey: ["examSelection", "examTypes", category],
     queryFn: async () => {
-      const { data } = await apiClient.get<ExamSubtype[]>(
+      const { data } = await apiClient.get<ExamSubtypeOption[]>(
         EXAM_SELECTION_ENDPOINTS.EXAM_TYPES(category)
       );
       return data;
@@ -149,10 +219,10 @@ export const useExamTypes = (category: string) => {
 };
 
 export const useExamSubjects = (examType: string) => {
-  return useQuery<Subject[]>({
+  return useQuery<SubjectOption[]>({
     queryKey: ["examSelection", "subjects", examType],
     queryFn: async () => {
-      const { data } = await apiClient.get<Subject[]>(
+      const { data } = await apiClient.get<SubjectOption[]>(
         EXAM_SELECTION_ENDPOINTS.SUBJECTS(examType)
       );
       return data;
@@ -168,7 +238,11 @@ export const useExamSubjects = (examType: string) => {
 export const useStartPractice = () => {
   const { startExam } = useExamStore();
 
-  return useMutation<StartExamResponse, AxiosError<ApiError>, StartPracticeRequest>({
+  return useMutation<
+    StartExamResponse,
+    AxiosError<ApiError>,
+    StartPracticeRequest
+  >({
     mutationFn: async (request) => {
       const { data } = await apiClient.post<StartExamResponse>(
         EXAM_ENDPOINTS.PRACTICE_START,
@@ -177,20 +251,41 @@ export const useStartPractice = () => {
       return data;
     },
     onSuccess: (data) => {
-      startExam(data.attempt, data.questions, data.timeLimit);
+      // Extract questions from ExamQuestion[] wrapper
+      const questions = data.exam.questions.map((eq) => eq.question);
+      startExam(
+        data as unknown as ExamAttempt,
+        questions,
+        data.exam.durationMinutes
+      );
     },
   });
 };
 
 // Configure practice
 export const useConfigurePractice = () => {
-  return useMutation<StartExamResponse, AxiosError<ApiError>, ConfigurePracticeRequest>({
+  const { startExam } = useExamStore();
+
+  return useMutation<
+    StartExamResponse,
+    AxiosError<ApiError>,
+    ConfigurePracticeRequest
+  >({
     mutationFn: async (config) => {
       const { data } = await apiClient.post<StartExamResponse>(
         EXAM_ENDPOINTS.PRACTICE_CONFIGURE,
         config
       );
       return data;
+    },
+    onSuccess: (data) => {
+      // Extract questions from ExamQuestion[] wrapper
+      const questions = data.exam.questions.map((eq) => eq.question);
+      startExam(
+        data as unknown as ExamAttempt,
+        questions,
+        data.exam.durationMinutes
+      );
     },
   });
 };
@@ -207,7 +302,13 @@ export const useStartExam = () => {
       return data;
     },
     onSuccess: (data) => {
-      startExam(data.attempt, data.questions, data.timeLimit);
+      // Extract questions from ExamQuestion[] wrapper
+      const questions = data.exam.questions.map((eq) => eq.question);
+      startExam(
+        data as unknown as ExamAttempt,
+        questions,
+        data.exam.durationMinutes
+      );
     },
   });
 };
@@ -292,7 +393,11 @@ export const useCompleteExam = () => {
 export const useToggleBookmark = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<{ bookmarked: boolean }, AxiosError<ApiError>, ToggleBookmarkRequest>({
+  return useMutation<
+    { bookmarked: boolean },
+    AxiosError<ApiError>,
+    ToggleBookmarkRequest
+  >({
     mutationFn: async (request) => {
       const { data } = await apiClient.post(EXAM_ENDPOINTS.BOOKMARKS, request);
       return data;
@@ -307,7 +412,11 @@ export const useToggleBookmark = () => {
 export const useReportQuestion = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<{ message: string }, AxiosError<ApiError>, ReportQuestionRequest>({
+  return useMutation<
+    { message: string },
+    AxiosError<ApiError>,
+    ReportQuestionRequest
+  >({
     mutationFn: async (request) => {
       const { data } = await apiClient.post(EXAM_ENDPOINTS.REPORTS, request);
       return data;

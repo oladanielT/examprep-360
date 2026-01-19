@@ -1,5 +1,4 @@
 import CustomCard from '@/components/global/custom-card'
-import React from 'react'
 
 export default function Paused() {
     return (

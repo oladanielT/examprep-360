@@ -30,19 +30,19 @@ export interface ProfileStatistics {
 // Re-export User type
 export type { User };
 
-// Exam Selection Types
-export interface ExamCategory {
+// Exam Selection Types (for onboarding flow)
+export interface ExamCategoryOption {
   value: string;
   label: string;
 }
 
-export interface ExamSubtype {
+export interface ExamSubtypeOption {
   id: string;
   name: string;
   category: string;
 }
 
-export interface Subject {
+export interface SubjectOption {
   id: string;
   name: string;
   examType: string;

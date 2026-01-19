@@ -1,5 +1,4 @@
 import { CustomTabs } from '@/components/custom/custom-tab'
-import React from 'react'
 import Paused from './paused'
 
 export default function Completed() {

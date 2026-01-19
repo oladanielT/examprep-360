@@ -1,6 +1,5 @@
 import { Card } from '@/components/ui/card'
 // Image converted to img tag
-import React from 'react'
 import { Progress } from "@/components/ui/progress"
 import PrimaryButton from '@/components/buttons/primary-button'
 

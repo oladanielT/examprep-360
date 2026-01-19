@@ -1,0 +1,375 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState, useEffect, useMemo, useRef } from "react";
+import { z } from "zod";
+import { ArrowLeft } from "@phosphor-icons/react";
+import { useExamStore } from "@/stores/examStore";
+import {
+  useSubmitResponse,
+  usePauseExam,
+  useResumeExam,
+  useToggleBookmark,
+  useReportQuestion,
+} from "@/feature/exams/hooks/useExams";
+import {
+  QuestionCard,
+  QuestionNavigator,
+  SingleChoiceQuestion,
+  MultipleChoiceQuestion,
+  TrueFalseQuestion,
+  FillInBlankQuestion,
+  EssayQuestion,
+  RichContentRenderer,
+} from "@/components/questions";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import type { Question } from "@/api/types/exam.types";
+
+const examSearchSchema = z.object({
+  examId: z.string().optional(),
+});
+
+// Answer types for different question types
+type AnswerValue =
+  | string // SINGLE_CHOICE
+  | string[] // MULTIPLE_CHOICE
+  | boolean // TRUE_FALSE
+  | Record<string, string> // FILL_IN_BLANK
+  | null;
+
+function ExamPage() {
+
+  // Get state from store
+  const currentAttempt = useExamStore((state) => state.currentAttempt);
+  const questions = useExamStore((state) => state.questions);
+  const currentQuestionIndex = useExamStore((state) => state.currentQuestionIndex);
+  const timeRemaining = useExamStore((state) => state.timeRemaining);
+  const timerRunning = useExamStore((state) => state.timerRunning);
+
+  // Actions from store
+  const setCurrentQuestion = useExamStore((state) => state.setCurrentQuestion);
+  const nextQuestion = useExamStore((state) => state.nextQuestion);
+  const previousQuestion = useExamStore((state) => state.previousQuestion);
+  const updateTimeRemaining = useExamStore((state) => state.updateTimeRemaining);
+
+  // API mutations
+  const submitResponse = useSubmitResponse();
+  const pauseExam = usePauseExam();
+  const resumeExam = useResumeExam();
+  const toggleBookmark = useToggleBookmark();
+  const reportQuestion = useReportQuestion();
+
+  // Local state for answers
+  const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
+  const [bookmarkedQuestions, setBookmarkedQuestions] = useState<Set<string>>(new Set());
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+
+  // Track time spent on each question
+  const questionStartTime = useRef<number>(Date.now());
+
+  // Current question
+  const currentQuestion = questions[currentQuestionIndex] || null;
+
+  // Answered questions tracking
+  const answeredQuestions = useMemo(() => {
+    const answered = new Set<number>();
+    questions.forEach((q, index) => {
+      const answer = answers[q.id];
+      if (answer !== null && answer !== undefined) {
+        if (Array.isArray(answer) && answer.length > 0) {
+          answered.add(index);
+        } else if (typeof answer === "string" && answer.length > 0) {
+          answered.add(index);
+        } else if (typeof answer === "boolean") {
+          answered.add(index);
+        } else if (typeof answer === "object" && Object.keys(answer).length > 0) {
+          answered.add(index);
+        }
+      }
+    });
+    return answered;
+  }, [answers, questions]);
+
+  // Reset question timer when question changes
+  useEffect(() => {
+    questionStartTime.current = Date.now();
+  }, [currentQuestionIndex]);
+
+  // Timer effect
+  useEffect(() => {
+    if (!timerRunning || timeRemaining === null || timeRemaining <= 0) return;
+
+    const interval = setInterval(() => {
+      updateTimeRemaining(timeRemaining - 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timerRunning, timeRemaining, updateTimeRemaining]);
+
+  // Handle answer change and submit to API
+  const handleAnswerChange = (questionId: string, value: AnswerValue) => {
+    setAnswers((prev) => ({ ...prev, [questionId]: value }));
+
+    // Submit answer to API if we have an attempt
+    if (currentAttempt && value !== null) {
+      const timeSpent = Math.floor((Date.now() - questionStartTime.current) / 1000);
+
+      // Format answer based on type
+      let formattedAnswer: string | string[] | boolean = "";
+      if (typeof value === "boolean") {
+        formattedAnswer = value;
+      } else if (Array.isArray(value)) {
+        formattedAnswer = value;
+      } else if (typeof value === "object") {
+        // Fill in blank - convert to string representation
+        formattedAnswer = JSON.stringify(value);
+      } else {
+        formattedAnswer = value;
+      }
+
+      submitResponse.mutate({
+        attemptId: currentAttempt.id,
+        request: {
+          questionId,
+          answer: formattedAnswer,
+          timeSpentSeconds: timeSpent,
+        },
+      });
+    }
+  };
+
+  // Handle pause/resume toggle
+  const handlePauseToggle = () => {
+    if (!currentAttempt) return;
+
+    if (timerRunning) {
+      pauseExam.mutate(currentAttempt.id);
+    } else {
+      resumeExam.mutate(currentAttempt.id);
+    }
+  };
+
+  // Handle bookmark toggle
+  const handleBookmarkToggle = () => {
+    if (!currentQuestion) return;
+
+    // Toggle local state immediately for responsiveness
+    setBookmarkedQuestions((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(currentQuestion.id)) {
+        newSet.delete(currentQuestion.id);
+      } else {
+        newSet.add(currentQuestion.id);
+      }
+      return newSet;
+    });
+
+    // Call API
+    toggleBookmark.mutate({ questionId: currentQuestion.id });
+  };
+
+  // Handle report submission
+  const handleReportSubmit = () => {
+    if (!currentQuestion || !reportReason.trim()) return;
+
+    reportQuestion.mutate(
+      {
+        questionId: currentQuestion.id,
+        reason: reportReason,
+      },
+      {
+        onSuccess: () => {
+          setShowReportModal(false);
+          setReportReason("");
+        },
+      }
+    );
+  };
+
+  // Loading state
+  if (!currentAttempt || questions.length === 0) {
+    return (
+      <div className="py-10">
+        <Link to="/tests" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4">
+          <ArrowLeft className="w-5 h-5" />
+          <span>Back</span>
+        </Link>
+        <h1 className="text-2xl font-semibold mb-4">Exam</h1>
+        <p className="text-gray-500">No active exam session. Please start an exam from the tests page.</p>
+        <Link to="/tests">
+          <Button className="mt-4">Go to Tests</Button>
+        </Link>
+      </div>
+    );
+  }
+
+  // Get exam name from attempt
+  const examName = currentAttempt.exam?.name || "Practice Exam";
+
+  // Render the question based on type
+  const renderQuestion = (question: Question) => {
+    const questionId = question.id;
+    const answer = answers[questionId];
+
+    switch (question.questionType) {
+      case "SINGLE_CHOICE":
+        return (
+          <SingleChoiceQuestion
+            question={question}
+            questionNumber={currentQuestionIndex + 1}
+            selectedAnswer={(answer as string) || null}
+            onAnswerChange={(value) => handleAnswerChange(questionId, value)}
+          />
+        );
+
+      case "MULTIPLE_CHOICE":
+        return (
+          <MultipleChoiceQuestion
+            question={question}
+            questionNumber={currentQuestionIndex + 1}
+            selectedAnswers={(answer as string[]) || []}
+            onAnswerChange={(value) => handleAnswerChange(questionId, value)}
+          />
+        );
+
+      case "TRUE_FALSE":
+        return (
+          <TrueFalseQuestion
+            question={question}
+            questionNumber={currentQuestionIndex + 1}
+            selectedAnswer={answer as boolean | null}
+            onAnswerChange={(value) => handleAnswerChange(questionId, value)}
+          />
+        );
+
+      case "FILL_IN_BLANK":
+        return (
+          <FillInBlankQuestion
+            question={question}
+            questionNumber={currentQuestionIndex + 1}
+            answers={(answer as Record<string, string>) || {}}
+            onAnswerChange={(value) => handleAnswerChange(questionId, value)}
+          />
+        );
+
+      case "ESSAY":
+      case "ESSAY_WITH_SUB":
+      case "SHORT_ANSWER":
+        return (
+          <EssayQuestion
+            question={question}
+            questionNumber={currentQuestionIndex + 1}
+            answer={(answer as string) || ""}
+            onAnswerChange={(value) => handleAnswerChange(questionId, value)}
+          />
+        );
+
+      default:
+        // Fallback for unsupported question types
+        return (
+          <div className="space-y-4">
+            <p className="text-sm font-medium text-gray-600">Question {currentQuestionIndex + 1}</p>
+            <div className="text-lg font-semibold">
+              <RichContentRenderer content={question.questionText} />
+            </div>
+            <p className="text-yellow-600 text-sm">
+              Question type "{question.questionType}" is not yet supported.
+            </p>
+          </div>
+        );
+    }
+  };
+
+  return (
+    <div className="py-6">
+      {/* Header */}
+      <Link to="/tests" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4">
+        <ArrowLeft className="w-5 h-5" />
+        <span>Back</span>
+      </Link>
+
+      <h1 className="text-2xl font-bold mb-6">{examName}</h1>
+
+      {/* Main Layout */}
+      <div className="flex gap-6">
+        {/* Left: Question Area */}
+        <div className="flex-1">
+          {currentQuestion && (
+            <QuestionCard instruction={currentQuestion.instruction}>
+              {renderQuestion(currentQuestion)}
+            </QuestionCard>
+          )}
+        </div>
+
+        {/* Right: Navigator */}
+        <div className="w-72 flex-shrink-0">
+          <QuestionNavigator
+            totalQuestions={questions.length}
+            currentQuestion={currentQuestionIndex}
+            answeredQuestions={answeredQuestions}
+            timeRemaining={timeRemaining || 0}
+            isPaused={!timerRunning}
+            isBookmarked={currentQuestion ? bookmarkedQuestions.has(currentQuestion.id) : false}
+            onQuestionSelect={setCurrentQuestion}
+            onPrevious={previousQuestion}
+            onNext={nextQuestion}
+            onPauseToggle={handlePauseToggle}
+            onBookmark={handleBookmarkToggle}
+            onReport={() => setShowReportModal(true)}
+          />
+        </div>
+      </div>
+
+      {/* Report Question Modal */}
+      <Dialog open={showReportModal} onOpenChange={setShowReportModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Report Question</DialogTitle>
+            <DialogDescription>
+              Please describe the issue with this question.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Reason</label>
+              <select
+                value={reportReason}
+                onChange={(e) => setReportReason(e.target.value)}
+                className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F04F54]/50"
+              >
+                <option value="">Select a reason</option>
+                <option value="INCORRECT_ANSWER">Incorrect answer marked as correct</option>
+                <option value="UNCLEAR_QUESTION">Question is unclear</option>
+                <option value="TYPO">Typo or grammatical error</option>
+                <option value="INCORRECT_EXPLANATION">Incorrect explanation</option>
+                <option value="IMAGE_ISSUE">Image issue</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </div>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setShowReportModal(false)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleReportSubmit}
+                disabled={!reportReason || reportQuestion.isPending}
+                className="flex-1 bg-[#F04F54] hover:bg-[#F04F54]/90"
+              >
+                {reportQuestion.isPending ? "Submitting..." : "Submit Report"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+export const Route = createFileRoute("/_user/tests/exam")({
+  component: ExamPage,
+  validateSearch: examSearchSchema,
+});

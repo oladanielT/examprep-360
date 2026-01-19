@@ -25,9 +25,12 @@ export const PROFILE_ENDPOINTS = {
 
 // Exam endpoints
 export const EXAM_ENDPOINTS = {
+  AVAILABLE: "/student/exams/available",
+  PREFERENCES: "/student/exams/preferences",
   PRACTICE_START: "/student/exams/practice/start",
   PRACTICE_CONFIGURE: "/student/exams/practice/configure",
   START: (id: string) => `/student/exams/${id}/start`,
+  QUESTIONS: (id: string) => `/student/exams/${id}/questions`,
   SUBMIT_RESPONSE: (attemptId: string) => `/student/exams/attempts/${attemptId}/responses`,
   PAUSE: (attemptId: string) => `/student/exams/attempts/${attemptId}/pause`,
   RESUME: (attemptId: string) => `/student/exams/attempts/${attemptId}/resume`,
@@ -66,9 +69,11 @@ export const TASKS_ENDPOINTS = {
 // Tutorials endpoints
 export const TUTORIALS_ENDPOINTS = {
   LIST: "/student/tutorials",
+  BOOKMARKS: "/student/tutorials/bookmarks",
   DETAILS: (id: string) => `/student/tutorials/${id}`,
   UPDATE_PROGRESS: (id: string) => `/student/tutorials/${id}/progress`,
   SUBMIT_QUESTIONS: (id: string) => `/student/tutorials/${id}/submit-questions`,
+  COMPLETE: (id: string) => `/student/tutorials/${id}/complete`,
   BOOKMARK: (id: string) => `/student/tutorials/${id}/bookmark`,
   BOOKMARKS: "/student/tutorials/bookmarks",
   COMPLETE: (id: string) => `/student/tutorials/${id}/complete`,
