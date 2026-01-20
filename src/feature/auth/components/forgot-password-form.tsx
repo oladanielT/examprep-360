@@ -12,6 +12,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import * as z from "zod";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { usePasswordResetRequest } from "@/feature/auth/hooks/usePasswordReset";
+import { toast } from "sonner";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
@@ -20,7 +21,6 @@ const forgotPasswordSchema = z.object({
 export const ForgotPasswordForm = () => {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [successMessage, setSuccessMessage] = useState<string>("");
   const resetRequest = usePasswordResetRequest();
 
   const form = useForm({
@@ -32,14 +32,13 @@ export const ForgotPasswordForm = () => {
     },
     onSubmit: async ({ value }) => {
       setErrorMessage("");
-      setSuccessMessage("");
       resetRequest.mutate(
         { email: value.email },
         {
           onSuccess: (data) => {
             setErrorMessage("");
             const message = data?.message || "Reset code sent! Check your email.";
-            setSuccessMessage(message);
+            toast.success(message);
             // Navigate to reset password page with email after a brief delay
             setTimeout(() => {
               // @ts-ignore - Route will be available after routes are generated
@@ -50,7 +49,6 @@ export const ForgotPasswordForm = () => {
             }, 1500);
           },
           onError: (error: any) => {
-            setSuccessMessage("");
             const message = error?.response?.data?.message || error?.message || "Failed to send reset code. Please try again.";
             setErrorMessage(message);
           },
@@ -94,13 +92,6 @@ export const ForgotPasswordForm = () => {
               );
             }}
           />
-
-          {/* Success Message */}
-          {successMessage && (
-            <Alert className="bg-green-50 border-green-200">
-              <AlertDescription className="text-green-800">{successMessage}</AlertDescription>
-            </Alert>
-          )}
 
           {/* Error Message */}
           {errorMessage && (

@@ -33,6 +33,7 @@ import { Route as UserTutorialsTutorialIdRouteImport } from './routes/_user/tuto
 import { Route as UserTextbooksTextbookIdRouteImport } from './routes/_user/textbooks/$textbookId'
 import { Route as UserTestsExamsRouteImport } from './routes/_user/tests/exams'
 import { Route as UserTestsExamRouteImport } from './routes/_user/tests/exam'
+import { Route as UserExamAttemptIdRouteImport } from './routes/_user/exam.$attemptId'
 
 const UserRoute = UserRouteImport.update({
   id: '/_user',
@@ -152,6 +153,11 @@ const UserTestsExamRoute = UserTestsExamRouteImport.update({
   path: '/tests/exam',
   getParentRoute: () => UserRoute,
 } as any)
+const UserExamAttemptIdRoute = UserExamAttemptIdRouteImport.update({
+  id: '/exam/$attemptId',
+  path: '/exam/$attemptId',
+  getParentRoute: () => UserRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/checkout': typeof AuthCheckoutRoute
@@ -169,6 +175,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof UserSettingsRoute
   '/subscription': typeof UserSubscriptionRoute
   '/': typeof UserIndexRoute
+  '/exam/$attemptId': typeof UserExamAttemptIdRoute
   '/tests/exam': typeof UserTestsExamRoute
   '/tests/exams': typeof UserTestsExamsRoute
   '/textbooks/$textbookId': typeof UserTextbooksTextbookIdRoute
@@ -193,6 +200,7 @@ export interface FileRoutesByTo {
   '/settings': typeof UserSettingsRoute
   '/subscription': typeof UserSubscriptionRoute
   '/': typeof UserIndexRoute
+  '/exam/$attemptId': typeof UserExamAttemptIdRoute
   '/tests/exam': typeof UserTestsExamRoute
   '/tests/exams': typeof UserTestsExamsRoute
   '/textbooks/$textbookId': typeof UserTextbooksTextbookIdRoute
@@ -220,6 +228,7 @@ export interface FileRoutesById {
   '/_user/settings': typeof UserSettingsRoute
   '/_user/subscription': typeof UserSubscriptionRoute
   '/_user/': typeof UserIndexRoute
+  '/_user/exam/$attemptId': typeof UserExamAttemptIdRoute
   '/_user/tests/exam': typeof UserTestsExamRoute
   '/_user/tests/exams': typeof UserTestsExamsRoute
   '/_user/textbooks/$textbookId': typeof UserTextbooksTextbookIdRoute
@@ -246,6 +255,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/subscription'
     | '/'
+    | '/exam/$attemptId'
     | '/tests/exam'
     | '/tests/exams'
     | '/textbooks/$textbookId'
@@ -270,6 +280,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/subscription'
     | '/'
+    | '/exam/$attemptId'
     | '/tests/exam'
     | '/tests/exams'
     | '/textbooks/$textbookId'
@@ -296,6 +307,7 @@ export interface FileRouteTypes {
     | '/_user/settings'
     | '/_user/subscription'
     | '/_user/'
+    | '/_user/exam/$attemptId'
     | '/_user/tests/exam'
     | '/_user/tests/exams'
     | '/_user/textbooks/$textbookId'
@@ -480,6 +492,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserTestsExamRouteImport
       parentRoute: typeof UserRoute
     }
+    '/_user/exam/$attemptId': {
+      id: '/_user/exam/$attemptId'
+      path: '/exam/$attemptId'
+      fullPath: '/exam/$attemptId'
+      preLoaderRoute: typeof UserExamAttemptIdRouteImport
+      parentRoute: typeof UserRoute
+    }
   }
 }
 
@@ -517,6 +536,7 @@ interface UserRouteChildren {
   UserSettingsRoute: typeof UserSettingsRoute
   UserSubscriptionRoute: typeof UserSubscriptionRoute
   UserIndexRoute: typeof UserIndexRoute
+  UserExamAttemptIdRoute: typeof UserExamAttemptIdRoute
   UserTestsExamRoute: typeof UserTestsExamRoute
   UserTestsExamsRoute: typeof UserTestsExamsRoute
   UserTextbooksTextbookIdRoute: typeof UserTextbooksTextbookIdRoute
@@ -532,6 +552,7 @@ const UserRouteChildren: UserRouteChildren = {
   UserSettingsRoute: UserSettingsRoute,
   UserSubscriptionRoute: UserSubscriptionRoute,
   UserIndexRoute: UserIndexRoute,
+  UserExamAttemptIdRoute: UserExamAttemptIdRoute,
   UserTestsExamRoute: UserTestsExamRoute,
   UserTestsExamsRoute: UserTestsExamsRoute,
   UserTextbooksTextbookIdRoute: UserTextbooksTextbookIdRoute,

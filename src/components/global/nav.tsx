@@ -22,6 +22,11 @@ export default function Nav() {
   const { data: profileUser } = useProfile();
   const logoutMutation = useLogout();
 
+  // Hide nav during exam (focused exam experience)
+  if (pathname.startsWith('/exam/')) {
+    return null;
+  }
+
   // Use profile data if available, fallback to auth store
   const user = profileUser || authUser;
 
@@ -59,6 +64,10 @@ export default function Nav() {
       title: "Tutorials",
     },
     {
+      url: "/activities",
+      title: "Activities",
+    },
+    {
       url: "/leaderboard",
       title: "Leaderboard",
     },
@@ -93,15 +102,13 @@ export default function Nav() {
             })}
           </ul>
         </div>
-        <ul className="flex  gap-5 items-center">
+        <ul className="flex gap-5 items-center">
+          <li>
+            <Bell className="cursor-pointer" />
+          </li>
           <li>
             <Link to="/settings">
               <Settings />
-            </Link>
-          </li>
-          <li>
-            <Link to="/activities">
-              <Bell />
             </Link>
           </li>
           <li>

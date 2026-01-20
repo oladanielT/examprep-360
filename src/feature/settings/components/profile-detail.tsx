@@ -23,7 +23,7 @@ const profileSchema = z.object({
     .string()
     .min(10, "Phone number must be at least 10 characters.")
     .max(15, "Phone number must be at most 15 characters."),
-  referralCode: z.string().optional(),
+  referralCode: z.string(),
 });
 
 export const ProfileSettingsForm = () => {

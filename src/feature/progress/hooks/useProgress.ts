@@ -10,6 +10,7 @@ import type {
   Achievement,
   LeaderboardResponse,
   LeaderboardParams,
+  MyRankResponse,
 } from "@/api/types";
 
 // ==================== PROGRESS QUERIES ====================
@@ -106,10 +107,10 @@ export const useLeaderboard = (params: LeaderboardParams = {}) => {
 export const useMyRank = (params: Omit<LeaderboardParams, "limit" | "offset"> = {}) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
-  return useQuery({
+  return useQuery<MyRankResponse>({
     queryKey: ["leaderboard", "myRank", params],
     queryFn: async () => {
-      const { data } = await apiClient.get(GAMIFICATION_ENDPOINTS.MY_RANK, {
+      const { data } = await apiClient.get<MyRankResponse>(GAMIFICATION_ENDPOINTS.MY_RANK, {
         params,
       });
       return data;

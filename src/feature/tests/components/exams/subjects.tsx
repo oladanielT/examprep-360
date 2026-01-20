@@ -26,8 +26,10 @@ import {
   useExamPreferences,
   useAvailableExams,
   useStartPractice,
+  useStartExam,
 } from "@/feature/exams/hooks";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 import type {
   Subject as SubjectType,
   AvailableExam,
@@ -69,6 +71,8 @@ function MockSelection({
   onClose?: () => void;
 }) {
   const [selectedMockId, setSelectedMockId] = useState<string>("");
+  const navigate = useNavigate();
+  const startMock = useStartExam();
   const { data, isLoading, error } = useAvailableExams({
     subjectId: subject.id,
     examTypeEnum: "MOCK",
@@ -81,12 +85,6 @@ function MockSelection({
   const mocks: AvailableExam[] = groupedData
     ? Object.values(groupedData).flat()
     : ungroupedData || [];
-
-  const handleStartMock = () => {
-    if (selectedMockId) {
-      onClose?.();
-    }
-  };
 
   if (isLoading) {
     return <div className="py-5 text-center">Loading available mocks...</div>;
@@ -127,24 +125,21 @@ function MockSelection({
           </ChoiceboxItem>
         ))}
       </Choicebox>
-      {selectedMockId ? (
-        <Link
-          to="/tests/exam"
-          search={{ examId: selectedMockId }}
-          onClick={handleStartMock}
-        >
-          <PrimaryButton
-            title="Start Mock"
-            className="bg-[#F04F54] hover:bg-[#F04F54]/80 max-w-2xs flex justify-self-center text-white"
-          />
-        </Link>
-      ) : (
-        <PrimaryButton
-          title="Start Mock"
-          disabled
-          className="bg-[#F04F54] hover:bg-[#F04F54]/80 max-w-2xs flex justify-self-center text-white opacity-50"
-        />
-      )}
+      <PrimaryButton
+        title={startMock.isPending ? "Starting..." : "Start Mock"}
+        onClick={() => {
+          if (selectedMockId) {
+            startMock.mutate(selectedMockId, {
+              onSuccess: (data) => {
+                onClose?.();
+                navigate({ to: `/exam/${data.id}` });
+              },
+            });
+          }
+        }}
+        disabled={!selectedMockId || startMock.isPending}
+        className="bg-[#F04F54] hover:bg-[#F04F54]/80 max-w-2xs flex justify-self-center text-white disabled:opacity-50"
+      />
     </>
   );
 }
@@ -156,13 +151,11 @@ function SubjectCard({ subject }: { subject: SubjectType }) {
     useState<string>("jump");
   const [isOpen, setIsOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [successMessage, setSuccessMessage] = useState<string>("");
   const navigate = useNavigate();
   const startPractice = useStartPractice();
 
   const handleJumpStraightIn = () => {
     setErrorMessage("");
-    setSuccessMessage("");
     startPractice.mutate(
       {
         subjectId: subject.id,
@@ -171,15 +164,14 @@ function SubjectCard({ subject }: { subject: SubjectType }) {
       {
         onSuccess: (data) => {
           setErrorMessage("");
-          const message = data?.message || "Practice exam started successfully!";
-          setSuccessMessage(message);
+          toast.success("Practice exam started successfully!");
           setTimeout(() => {
             setIsOpen(false);
-            navigate({ to: "/tests/exam" });
+            // Navigate to exam with attemptId
+            navigate({ to: `/exam/${data.id}` });
           }, 800);
         },
         onError: (error: any) => {
-          setSuccessMessage("");
           const message = error?.response?.data?.message || error?.message || "Failed to start practice exam";
           setErrorMessage(message);
         },
@@ -268,13 +260,6 @@ function SubjectCard({ subject }: { subject: SubjectType }) {
                   </ChoiceboxItem>
                 ))}
               </Choicebox>
-
-              {/* Success Message */}
-              {successMessage && (
-                <Alert className="bg-green-50 border-green-200 mb-4">
-                  <AlertDescription className="text-green-800">{successMessage}</AlertDescription>
-                </Alert>
-              )}
 
               {/* Error Message */}
               {errorMessage && (

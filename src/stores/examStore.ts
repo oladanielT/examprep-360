@@ -10,6 +10,7 @@ interface ExamState {
   currentAttempt: ExamAttempt | null;
   questions: Question[];
   responses: Map<string, AttemptResponse>;
+  answers: Record<string, any>; // Local draft answers (before submission)
 
   // Navigation
   currentQuestionIndex: number;
@@ -26,6 +27,7 @@ interface ExamState {
   nextQuestion: () => void;
   previousQuestion: () => void;
   submitResponse: (questionId: string, response: AttemptResponse) => void;
+  setAnswer: (questionId: string, answer: any) => void; // New action
   updateTimeRemaining: (seconds: number) => void;
   pauseTimer: () => void;
   resumeTimer: () => void;
@@ -42,6 +44,7 @@ const initialState = {
   currentAttempt: null,
   questions: [],
   responses: new Map<string, AttemptResponse>(),
+  answers: {},
   currentQuestionIndex: 0,
   timeRemaining: null,
   timerRunning: false,
@@ -61,6 +64,7 @@ export const useExamStore = create<ExamState>()(
           currentAttempt: attempt,
           questions,
           responses: new Map(),
+          answers: {},
           currentQuestionIndex: 0,
           timeRemaining: timeLimit ? timeLimit * 60 : null, // Convert minutes to seconds
           timerRunning: true,
@@ -94,6 +98,11 @@ export const useExamStore = create<ExamState>()(
           return { responses: newResponses };
         }),
 
+      setAnswer: (questionId, answer) =>
+        set((state) => ({
+          answers: { ...state.answers, [questionId]: answer },
+        })),
+
       updateTimeRemaining: (seconds) => set({ timeRemaining: seconds }),
 
       pauseTimer: () => set({ timerRunning: false }),
@@ -122,9 +131,44 @@ export const useExamStore = create<ExamState>()(
     {
       name: "exam-store",
       partialize: (state) => ({
-        // Only persist preferences, not exam state
+        // Persist preferences
         preferences: state.preferences,
+        // Persist exam state for recovery on refresh
+        currentAttempt: state.currentAttempt,
+        questions: state.questions,
+        responses: state.responses,
+        answers: state.answers, // Persist draft answers
+        currentQuestionIndex: state.currentQuestionIndex,
+        timeRemaining: state.timeRemaining,
+        timerRunning: state.timerRunning,
       }),
+      storage: {
+        getItem: (name) => {
+          const str = localStorage.getItem(name);
+          if (!str) return null;
+          const { state } = JSON.parse(str);
+          return {
+            state: {
+              ...state,
+              // Convert responses array back to Map (JSON serialization loses Map type)
+              responses: new Map(state.responses ? Object.entries(state.responses) : []),
+            },
+          };
+        },
+        setItem: (name, newValue) => {
+          const str = JSON.stringify({
+            state: {
+              ...newValue.state,
+              // Convert Map to object for JSON serialization
+              responses: newValue.state.responses
+                ? Object.fromEntries(newValue.state.responses)
+                : {},
+            },
+          });
+          localStorage.setItem(name, str);
+        },
+        removeItem: (name) => localStorage.removeItem(name),
+      },
     }
   )
 );

@@ -101,9 +101,10 @@ export default function ConfigurePracticeForm({
           title: `${subject.name} Practice`,
         },
         {
-          onSuccess: () => {
+          onSuccess: (data) => {
             onClose?.();
-            navigate({ to: "/tests/exam" });
+            // Navigate to exam with attemptId
+            navigate({ to: `/exam/${data.id}` });
           },
           onError: (error: any) => {
             // Handle trial limit error

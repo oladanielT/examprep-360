@@ -55,20 +55,22 @@ export interface Achievement {
 }
 
 export interface LeaderboardEntry {
-  rank: number;
-  userId: string;
+  id: string;
   fullName: string;
-  avatarUrl?: string;
-  score: number;
-  examType?: string;
-  subjectId?: string;
+  profilePictureUrl?: string;
+  xp: number;
+  weeklyXP: number;
+  monthlyXP: number;
+  currentStreak: number;
 }
 
-export interface LeaderboardResponse {
-  entries: LeaderboardEntry[];
-  totalParticipants: number;
-  userRank?: LeaderboardEntry;
+export interface MyRankResponse {
+  rank: number;
+  xp: number;
+  xpToNextRank: number;
 }
+
+export type LeaderboardResponse = LeaderboardEntry[];
 
 export interface LeaderboardParams {
   period?: "weekly" | "monthly" | "allTime";

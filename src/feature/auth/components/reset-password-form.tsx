@@ -19,6 +19,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import * as z from "zod";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { usePasswordResetVerify, usePasswordReset } from "@/feature/auth/hooks/usePasswordReset";
+import { toast } from "sonner";
 
 const resetPasswordSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
@@ -45,7 +46,6 @@ export const ResetPasswordForm = ({ email: initialEmail }: ResetPasswordFormProp
   const [seePassword, setSeePassword] = useState(false);
   const [seeConfirmPassword, setSeeConfirmPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [successMessage, setSuccessMessage] = useState<string>("");
   const [resetToken, setResetToken] = useState<string>("");
   const [step, setStep] = useState<"verify" | "reset">("verify");
 
@@ -61,7 +61,6 @@ export const ResetPasswordForm = ({ email: initialEmail }: ResetPasswordFormProp
     },
     onSubmit: async ({ value }) => {
       setErrorMessage("");
-      setSuccessMessage("");
 
       if (step === "verify") {
         // Step 1: Verify OTP - validate email and OTP only
@@ -72,7 +71,7 @@ export const ResetPasswordForm = ({ email: initialEmail }: ResetPasswordFormProp
 
         const result = verifySchema.safeParse(value);
         if (!result.success) {
-          setErrorMessage(result.error.errors[0].message);
+          setErrorMessage(result.error.issues[0].message);
           return;
         }
 
@@ -85,7 +84,7 @@ export const ResetPasswordForm = ({ email: initialEmail }: ResetPasswordFormProp
             onSuccess: (data) => {
               setResetToken(data.resetToken);
               setStep("reset");
-              setSuccessMessage("OTP verified! Now enter your new password.");
+              toast.success("OTP verified! Now enter your new password.");
             },
             onError: (error: any) => {
               const message = error?.response?.data?.message || error?.message || "Invalid OTP. Please try again.";
@@ -97,7 +96,7 @@ export const ResetPasswordForm = ({ email: initialEmail }: ResetPasswordFormProp
         // Step 2: Reset Password - validate all fields including passwords
         const result = resetPasswordSchema.safeParse(value);
         if (!result.success) {
-          setErrorMessage(result.error.errors[0].message);
+          setErrorMessage(result.error.issues[0].message);
           return;
         }
 
@@ -109,7 +108,7 @@ export const ResetPasswordForm = ({ email: initialEmail }: ResetPasswordFormProp
           },
           {
             onSuccess: () => {
-              setSuccessMessage("Password reset successful! Redirecting to sign in...");
+              toast.success("Password reset successful! Redirecting to sign in...");
               setTimeout(() => {
                 navigate({ to: "/sign-in" });
               }, 2000);
@@ -265,13 +264,6 @@ export const ResetPasswordForm = ({ email: initialEmail }: ResetPasswordFormProp
                 }}
               />
             </>
-          )}
-
-          {/* Success Message */}
-          {successMessage && (
-            <Alert className="bg-green-50 border-green-200">
-              <AlertDescription className="text-green-800">{successMessage}</AlertDescription>
-            </Alert>
           )}
 
           {/* Error Message */}

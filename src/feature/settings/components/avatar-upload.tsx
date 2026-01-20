@@ -1,9 +1,6 @@
-
-import { useState } from "react";
 import {
   formatBytes,
   useFileUpload,
-  type FileWithPreview,
 } from "@/hooks/use-file-upload";
 import {
   Alert,
@@ -46,7 +43,7 @@ export default function AvatarUpload({
     accept: "image/*",
     multiple: false,
     onFilesChange: (files) => {
-      if (files[0]) {
+      if (files[0] && files[0].file instanceof File) {
         handleUpload(files[0].file);
       }
     },
@@ -54,9 +51,8 @@ export default function AvatarUpload({
 
   const handleUpload = (file: File) => {
     uploadAvatar.mutate(file, {
-      onSuccess: (data) => {
-        const message = data?.message || "Profile picture uploaded successfully!";
-        toast.success(message);
+      onSuccess: () => {
+        toast.success("Profile picture uploaded successfully!");
         // Clear files from the upload hook
         if (files[0]) {
           removeFile(files[0].id);
