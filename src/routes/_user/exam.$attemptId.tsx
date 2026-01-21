@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react";
 import { useExamStore } from "@/stores/examStore";
 import {
   useSubmitResponse,
+  useSubmitResponsesBulk,
   usePauseExam,
   useResumeExam,
   useToggleBookmark,
@@ -53,6 +54,8 @@ function ExamPage() {
   const answers = useExamStore((state) => state.answers);
   const responses = useExamStore((state) => state.responses);
   const startExam = useExamStore((state) => state.startExam);
+  const storeSubmitResponse = useExamStore((state) => state.submitResponse);
+  const storeSetAnswer = useExamStore((state) => state.setAnswer);
 
   // Validate that stored attemptId matches URL
   const isValidSession = currentAttempt?.id === attemptId;
@@ -70,6 +73,7 @@ function ExamPage() {
 
   // API mutations
   const submitResponse = useSubmitResponse();
+  const submitResponsesBulk = useSubmitResponsesBulk();
   const pauseExam = usePauseExam();
   const resumeExam = useResumeExam();
   const toggleBookmark = useToggleBookmark();
@@ -93,7 +97,26 @@ function ExamPage() {
           // Check if response has exam with questions
           if (data.exam?.questions) {
             const examQuestions = data.exam.questions.map((eq: any) => eq.question);
-            startExam(data, examQuestions, data.exam.durationMinutes);
+
+            // Calculate remaining time based on time already spent
+            const totalTimeSeconds = data.exam.durationMinutes * 60;
+            const timeSpent = data.timeSpentSeconds || 0;
+            const remainingTimeMinutes = Math.max(0, (totalTimeSeconds - timeSpent) / 60);
+
+            // Start the exam with calculated remaining time
+            startExam(data, examQuestions, remainingTimeMinutes);
+
+            // Restore previous responses if any
+            if (data.responses && Array.isArray(data.responses)) {
+              data.responses.forEach((response: any) => {
+                // Add to responses Map in store (marks as submitted)
+                storeSubmitResponse(response.questionId, response);
+
+                // Also restore the answer so UI shows the selection
+                storeSetAnswer(response.questionId, response.answer);
+              });
+            }
+
             setIsLoadingExam(false);
           } else {
             // Resume doesn't return questions, need to fetch them separately
@@ -289,16 +312,75 @@ function ExamPage() {
 
     setShowCompleteConfirm(false);
     setErrorMessage(""); // Clear any previous errors
-    completeExam.mutate(currentAttempt.id, {
-      onSuccess: () => {
-        // Redirect to tests page or exam history
-        navigate({ to: "/tests" });
-      },
-      onError: (error: any) => {
-        const message = error?.response?.data?.message || error?.message || "Failed to complete exam. Please try again.";
-        setErrorMessage(message);
-      },
-    });
+
+    // Collect all unsubmitted answers
+    const unsubmittedResponses = questions
+      .filter((q) => {
+        const answer = answers[q.id];
+        const isSubmitted = submittedQuestions.has(q.id);
+        // Has an answer but not yet submitted
+        if (isSubmitted) return false;
+        if (answer === null || answer === undefined) return false;
+        if (Array.isArray(answer)) return answer.length > 0;
+        if (typeof answer === "string") return answer.length > 0;
+        if (typeof answer === "boolean") return true;
+        if (typeof answer === "object") return Object.keys(answer).length > 0;
+        return false;
+      })
+      .map((q) => {
+        const answer = answers[q.id];
+        // Format answer based on type
+        let formattedAnswer: string | string[] | boolean = "";
+        if (typeof answer === "boolean") {
+          formattedAnswer = answer;
+        } else if (Array.isArray(answer)) {
+          formattedAnswer = answer;
+        } else if (typeof answer === "object") {
+          formattedAnswer = JSON.stringify(answer);
+        } else {
+          formattedAnswer = answer;
+        }
+        return {
+          questionId: q.id,
+          answer: formattedAnswer,
+          timeSpentSeconds: 0, // We don't track time per question for bulk submission
+        };
+      });
+
+    // If there are unsubmitted responses, submit them in bulk first
+    if (unsubmittedResponses.length > 0) {
+      submitResponsesBulk.mutate(
+        {
+          attemptId: currentAttempt.id,
+          request: {
+            responses: unsubmittedResponses,
+            complete: true,
+          },
+        },
+        {
+          onSuccess: () => {
+            // Redirect to tests page or exam history
+            navigate({ to: "/tests" });
+          },
+          onError: (error: any) => {
+            const message = error?.response?.data?.message || error?.message || "Failed to submit responses. Please try again.";
+            setErrorMessage(message);
+          },
+        }
+      );
+    } else {
+      // No unsubmitted responses, just complete the exam
+      completeExam.mutate(currentAttempt.id, {
+        onSuccess: () => {
+          // Redirect to tests page or exam history
+          navigate({ to: "/tests" });
+        },
+        onError: (error: any) => {
+          const message = error?.response?.data?.message || error?.message || "Failed to complete exam. Please try again.";
+          setErrorMessage(message);
+        },
+      });
+    }
   };
 
   // Handle pause/resume toggle
@@ -561,7 +643,7 @@ function ExamPage() {
             canSubmit={hasCurrentAnswer()}
             isCurrentSubmitted={isCurrentQuestionSubmitted}
             canCompleteExam={true}
-            isCompletingExam={completeExam.isPending}
+            isCompletingExam={completeExam.isPending || submitResponsesBulk.isPending}
             onQuestionSelect={setCurrentQuestion}
             onPrevious={previousQuestion}
             onNext={nextQuestion}
@@ -641,10 +723,10 @@ function ExamPage() {
             </Button>
             <Button
               onClick={confirmCompleteExam}
-              disabled={completeExam.isPending}
+              disabled={completeExam.isPending || submitResponsesBulk.isPending}
               className="flex-1 bg-[#F04F54] hover:bg-[#F04F54]/90"
             >
-              {completeExam.isPending ? "Submitting..." : "Complete Exam"}
+              {completeExam.isPending || submitResponsesBulk.isPending ? "Submitting..." : "Complete Exam"}
             </Button>
           </div>
         </DialogContent>

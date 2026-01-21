@@ -48,44 +48,125 @@ function ChapterItem({
   );
 }
 
-function VideoPlayer({
-  videoUrl,
+function ChapterContent({
   chapter,
   onComplete,
 }: {
-  videoUrl: string;
   chapter: TutorialChapter;
   onComplete: () => void;
 }) {
+  // Parse video data from content block
+  const getVideoFromContent = () => {
+    if (!chapter.content || !Array.isArray(chapter.content)) return null;
+
+    const videoBlock = chapter.content.find((block: any) => block.type === "video");
+    if (!videoBlock?.value) return null;
+
+    try {
+      const videoData = JSON.parse(videoBlock.value);
+      return { src: videoData.src, title: videoData.title };
+    } catch {
+      // If value is a direct URL string
+      return { src: videoBlock.value, title: "" };
+    }
+  };
+
+  const videoData = getVideoFromContent();
+
+  // Render rich content blocks (excluding video which is rendered separately)
+  const renderContent = () => {
+    if (!chapter.content || !Array.isArray(chapter.content)) return null;
+
+    const nonVideoContent = chapter.content.filter((block: any) => block.type !== "video");
+    if (nonVideoContent.length === 0) return null;
+
+    return nonVideoContent.map((block: any, idx: number) => {
+      switch (block.type) {
+        case "text":
+          return (
+            <p key={idx} className="text-gray-700 leading-relaxed mb-4">
+              {block.value}
+            </p>
+          );
+        case "markdown":
+          return (
+            <div key={idx} className="prose max-w-none mb-4">
+              {block.content}
+            </div>
+          );
+        case "image":
+          return (
+            <img
+              key={idx}
+              src={block.url || block.value}
+              alt={block.alt || ""}
+              className="rounded-lg max-w-full mb-4"
+            />
+          );
+        case "audio":
+          try {
+            const audioData = JSON.parse(block.value);
+            return (
+              <audio key={idx} controls className="w-full mb-4">
+                <source src={audioData.src || block.value} />
+                Your browser does not support the audio element.
+              </audio>
+            );
+          } catch {
+            return (
+              <audio key={idx} controls className="w-full mb-4">
+                <source src={block.value} />
+                Your browser does not support the audio element.
+              </audio>
+            );
+          }
+        default:
+          return null;
+      }
+    });
+  };
+
+  const hasTextContent = chapter.content?.some((block: any) => block.type !== "video");
+
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-semibold">{chapter.name}</h2>
-      <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
-        {videoUrl ? (
+
+      {/* Video Player */}
+      {videoData && (
+        <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
           <video
-            src={videoUrl}
+            src={videoData.src}
             controls
             className="w-full h-full"
           >
             Your browser does not support the video tag.
           </video>
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-900">
-            <div className="text-center text-white">
-              <Play weight="fill" className="w-16 h-16 mx-auto mb-4 opacity-50" />
-              <p>Video preview</p>
-            </div>
-          </div>
-        )}
-      </div>
-      {/* Chapter Content */}
-      {chapter.content?.blocks && chapter.content.blocks.length > 0 && (
-        <div className="prose max-w-none">
-          {chapter.content.blocks.map((block, idx) => (
-            <p key={idx}>{block.text}</p>
-          ))}
+          {videoData.title && (
+            <p className="text-sm text-gray-500 mt-2">{videoData.title}</p>
+          )}
         </div>
       )}
+
+      {/* No video placeholder */}
+      {!videoData && !hasTextContent && (
+        <div className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
+          <div className="text-center text-gray-500">
+            <Play weight="fill" className="w-16 h-16 mx-auto mb-4 opacity-50" />
+            <p>No content available</p>
+          </div>
+        </div>
+      )}
+
+      {/* Chapter Text Content */}
+      {hasTextContent && (
+        <Card className="p-6">
+          <div className="prose max-w-none">
+            {renderContent()}
+          </div>
+        </Card>
+      )}
+
       <div className="flex justify-center">
         <Button
           onClick={onComplete}
@@ -427,11 +508,12 @@ function TutorialDetailPage() {
             </div>
           )}
 
-          {/* Lesson Content (Video) View */}
+          {/* Lesson Content View */}
           {viewMode === "lesson-content" && selectedChapter && (
-            <VideoPlayer
-              videoUrl={videoUrl}
+            <ChapterContent
               chapter={selectedChapter}
+              isVideoTutorial={tutorial.type === "VIDEO_TUTORIAL"}
+              videoUrl={videoUrl}
               onComplete={handleCompleteChapter}
             />
           )}

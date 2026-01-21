@@ -34,6 +34,7 @@ export const EXAM_ENDPOINTS = {
   START: (id: string) => `/student/exams/${id}/start`,
   QUESTIONS: (id: string) => `/student/exams/${id}/questions`,
   SUBMIT_RESPONSE: (attemptId: string) => `/student/exams/attempts/${attemptId}/responses`,
+  SUBMIT_RESPONSES_BULK: (attemptId: string) => `/student/exams/attempts/${attemptId}/responses/bulk`,
   PAUSE: (attemptId: string) => `/student/exams/attempts/${attemptId}/pause`,
   RESUME: (attemptId: string) => `/student/exams/attempts/${attemptId}/resume`,
   COMPLETE: (attemptId: string) => `/student/exams/attempts/${attemptId}/complete`,

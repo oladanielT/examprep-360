@@ -1,0 +1,156 @@
+"use client";
+
+import { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Field, FieldLabel, FieldError } from "@/components/ui/field";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  useCreateExamType,
+  createExamTypeInputSchema,
+  CreateExamTypeInput,
+} from "../api/exam-types/create-exam-types";
+import { toast } from "sonner";
+
+interface AddNewExamDialogProps {
+  children: React.ReactNode;
+  onSuccess?: () => void;
+}
+
+const examCategories = [
+  { value: "SECONDARY_SCHOOL", label: "Secondary School" },
+  { value: "PRE_DEGREE", label: "Pre Degree" },
+  { value: "POST_JAMB", label: "Post Jamb" },
+  { value: "UNIVERSITY_COURSE", label: "University Course" },
+  { value: "TUTORIAL", label: "Tutorial" },
+  { value: "CLASS_TEST", label: "Class Test" },
+  { value: "MOCK_EXAM", label: "Mock Exam" },
+  { value: "PRACTICE_TEST", label: "Practice Test" },
+];
+
+export function AddNewExamDialog({ children, onSuccess }: AddNewExamDialogProps) {
+  const [open, setOpen] = useState(false);
+
+  const form = useForm<CreateExamTypeInput>({
+    resolver: zodResolver(createExamTypeInputSchema),
+    defaultValues: {
+      name: "",
+      category: "",
+      imageUrl: "",
+    },
+  });
+
+  const { mutate: createExamType, isPending } = useCreateExamType({
+    mutationConfig: {
+      onSuccess: () => {
+        toast.success("Exam type created successfully");
+        setOpen(false);
+        form.reset();
+        onSuccess?.();
+      },
+      onError: (error: any) => {
+        toast.error(error?.message || "Failed to create exam type");
+      },
+    },
+  });
+
+  const onSubmit = (data: CreateExamTypeInput) => {
+    createExamType({ data });
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="sm:max-w-lg p-8">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-semibold">Add New Exam</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pt-6">
+          <Controller
+            name="name"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>Exam Name</FieldLabel>
+                <Input
+                  {...field}
+                  id={field.name}
+                  placeholder="e.g., WAEC, JAMB, NECO"
+                  aria-invalid={fieldState.invalid}
+                />
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+              </Field>
+            )}
+          />
+
+          <Controller
+            name="category"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="add-exam-category">Category</FieldLabel>
+                <Select
+                  name={field.name}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <SelectTrigger id="add-exam-category" aria-invalid={fieldState.invalid}>
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent position="item-aligned">
+                    {examCategories.map((category) => (
+                      <SelectItem key={category.value} value={category.value}>
+                        {category.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+              </Field>
+            )}
+          />
+
+          <Controller
+            name="imageUrl"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>Image URL (Optional)</FieldLabel>
+                <Input
+                  {...field}
+                  id={field.name}
+                  placeholder="https://example.com/image.jpg"
+                  aria-invalid={fieldState.invalid}
+                />
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+              </Field>
+            )}
+          />
+
+          <Button
+            type="submit"
+            className="w-full h-12 rounded-full bg-[#BEE74C] hover:bg-[#B0D945] text-black font-medium"
+            disabled={isPending}
+          >
+            {isPending ? "Adding..." : "Add Exam"}
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}

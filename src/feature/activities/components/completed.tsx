@@ -14,7 +14,7 @@ function CompletedExamsList({ examType }: { examType: ExamTypeEnum }) {
     );
   }
 
-  const exams = data?.data?.items || [];
+  const exams = data?.items || [];
 
   if (exams.length === 0) {
     return (
@@ -26,37 +26,58 @@ function CompletedExamsList({ examType }: { examType: ExamTypeEnum }) {
 
   return (
     <div className="grid grid-cols-3 gap-6">
-      {exams.map((exam) => (
-        <div
-          key={exam.id}
-          className="bg-white rounded-xl border border-gray-200 p-6 hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer"
-        >
-          <div className="flex flex-col items-center space-y-3">
-            <div className="w-20 h-20 flex items-center justify-center">
-              <img
-                src="/img/jamb.png"
-                alt={exam.exam.subject?.name || exam.exam.name}
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <div className="text-center">
-              <h3 className="text-base font-semibold text-gray-900">
-                {exam.exam.subject?.name || exam.exam.name}
-              </h3>
-              <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
-                {exam.percentage !== undefined && (
-                  <span className={exam.passed ? "text-green-600" : "text-red-600"}>
-                    {exam.percentage.toFixed(0)}%
-                  </span>
-                )}
-                {exam.totalScore !== undefined && (
-                  <span>Score: {exam.totalScore}</span>
+      {exams.map((exam) => {
+        const completedDate = exam.completedAt || exam.submittedAt;
+        const formattedDate = completedDate
+          ? new Date(completedDate).toLocaleString(undefined, {
+              dateStyle: "short",
+              timeStyle: "short",
+            })
+          : "";
+        const numQuestions = exam.exam?.numQuestions || 0;
+
+        return (
+          <div
+            key={exam.id}
+            className="bg-white rounded-xl border border-gray-200 p-6 hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer"
+          >
+            <div className="flex flex-col items-center space-y-3">
+              <div className="w-20 h-20 flex items-center justify-center">
+                <img
+                  src="/img/jamb.png"
+                  alt={exam.exam?.subject?.name || exam.exam?.name || "Exam"}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div className="text-center">
+                <h3 className="text-base font-semibold text-gray-900">
+                  {exam.exam?.subject?.name || exam.exam?.name || "Exam"}
+                </h3>
+                <p className="text-sm text-gray-500 mt-1">
+                  {numQuestions} questions
+                </p>
+                <div className="flex items-center justify-center gap-2 text-sm mt-1">
+                  {exam.percentage !== undefined && (
+                    <span className={exam.passed ? "text-green-600" : "text-red-600"}>
+                      {exam.percentage.toFixed(0)}%
+                    </span>
+                  )}
+                  {exam.totalScore !== undefined && numQuestions > 0 && (
+                    <span className="text-gray-500">
+                      ({exam.totalScore}/{numQuestions})
+                    </span>
+                  )}
+                </div>
+                {formattedDate && (
+                  <p className="text-xs text-gray-400 mt-1">
+                    Completed: {formattedDate}
+                  </p>
                 )}
               </div>
             </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

@@ -37,7 +37,13 @@ export default function Reported() {
   return (
     <div className="space-y-6">
       {reports.map((report) => {
-        const year = report.question.year || "";
+        const year = report.question?.year || "";
+        const reportedDate = report.createdAt
+          ? new Date(report.createdAt).toLocaleString(undefined, {
+              dateStyle: "short",
+              timeStyle: "short",
+            })
+          : "";
 
         return (
           <div
@@ -45,10 +51,10 @@ export default function Reported() {
             className="bg-white rounded-xl border border-gray-200 p-6 hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer"
           >
             <p className="text-gray-900 font-medium leading-relaxed mb-4 text-base">
-              {extractTextFromRichContent(report.question.questionText)}
+              {extractTextFromRichContent(report.question?.questionText || [])}
             </p>
 
-            <div className="flex items-center gap-2 text-sm text-gray-600">
+            <div className="flex items-center flex-wrap gap-2 text-sm text-gray-600">
               <span className="flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
                 {report.reason}
@@ -61,6 +67,12 @@ export default function Reported() {
                 <span className="flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
                   {year}
+                </span>
+              )}
+              {reportedDate && (
+                <span className="flex items-center gap-1.5 text-gray-400">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
+                  Reported: {reportedDate}
                 </span>
               )}
             </div>

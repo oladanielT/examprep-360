@@ -21,6 +21,8 @@ export const usePausedExams = () => {
       if (data.exams && Array.isArray(data.exams)) return data.exams;
       return [];
     },
+    staleTime: 0,
+    refetchOnMount: true,
   });
 };
 
@@ -32,6 +34,8 @@ export const useExamHistory = (params?: ExamHistoryParams) => {
       const { data } = await apiClient.get(EXAM_ENDPOINTS.HISTORY, { params });
       return data;
     },
+    staleTime: 0,
+    refetchOnMount: true,
   });
 };
 
@@ -46,6 +50,8 @@ export const useBookmarkedQuestions = () => {
       if (Array.isArray(data)) return data;
       return [];
     },
+    staleTime: 0,
+    refetchOnMount: true,
   });
 };
 
@@ -60,5 +66,7 @@ export const useReportedQuestions = () => {
       if (data.data && Array.isArray(data.data)) return data.data;
       return [];
     },
+    staleTime: 0,
+    refetchOnMount: true,
   });
 };

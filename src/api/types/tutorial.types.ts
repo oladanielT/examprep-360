@@ -61,21 +61,23 @@ export interface TutorialDocument {
   format: string; // e.g., "pdf"
 }
 
-export interface ContentBlock {
-  text: string;
-  type?: string;
-}
-
-export interface ChapterContent {
-  blocks: ContentBlock[];
+export interface TutorialContentBlock {
+  type: "text" | "markdown" | "image" | "video" | "audio" | "latex";
+  value?: string;
+  content?: string;
+  url?: string;
+  alt?: string;
 }
 
 export interface TutorialChapter {
   id: string;
   name: string;
+  tutorialId: string;
   order: number;
-  content: ChapterContent;
-  documents: TutorialDocument[];
+  content: TutorialContentBlock[] | null;
+  documents: TutorialDocument[] | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface TutorialQuestionOption {
@@ -97,32 +99,29 @@ export interface TutorialProgress {
   isCompleted: boolean;
 }
 
-// Video Tutorial Detail Response
-export interface VideoTutorialDetail {
+// Tutorial Detail Response (unified)
+export interface TutorialDetail {
   id: string;
   name: string;
-  type: "VIDEO_TUTORIAL";
   subjectId: string;
-  tutorialVideos: TutorialVideo[];
+  topicId: string | null;
+  subTopicId: string | null;
+  type: TutorialType;
+  chapterCount: number;
+  subscriberCount: number;
+  createdAt: string;
+  updatedAt: string;
+  tutorialImages: TutorialVideo[] | null;
+  tutorialVideos: TutorialVideo[] | null;
+  tutorialAudios: TutorialVideo[] | null;
+  subject: { id: string; name: string; examTypeId: string } | null;
+  topic: { name: string } | null;
+  subTopic: { name: string } | null;
   chapters: TutorialChapter[];
   testQuestions: TutorialQuestion[];
   isBookmarked: boolean;
   userProgress: TutorialProgress | null;
 }
-
-// Text Tutorial Detail Response
-export interface TextTutorialDetail {
-  id: string;
-  name: string;
-  type: "TEXT_TUTORIAL";
-  subjectId?: string;
-  chapters: TutorialChapter[];
-  testQuestions: TutorialQuestion[];
-  isBookmarked: boolean;
-  userProgress: TutorialProgress | null;
-}
-
-export type TutorialDetail = VideoTutorialDetail | TextTutorialDetail;
 
 // ==================== UPDATE PROGRESS (PATCH /student/tutorials/:id/progress) ====================
 

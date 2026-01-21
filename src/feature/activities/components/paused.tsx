@@ -25,8 +25,15 @@ export default function Paused() {
   return (
     <div className="grid grid-cols-3 gap-6">
       {attempts.map((attempt) => {
-        const subject = attempt.exam.subject?.name || "Unknown Subject";
-        const answeredCount = attempt._count.responses || 0;
+        const subject = attempt.exam?.subject?.name || "Unknown Subject";
+        const answeredCount = attempt._count?.responses || 0;
+        const pausedDate = attempt.pausedAt || attempt.updatedAt;
+        const formattedDate = pausedDate
+          ? new Date(pausedDate).toLocaleString(undefined, {
+              dateStyle: "short",
+              timeStyle: "short",
+            })
+          : "";
 
         return (
           <div
@@ -47,11 +54,16 @@ export default function Paused() {
                   {subject}
                 </h3>
                 <p className="text-sm text-gray-500 mt-1">
-                  {attempt.exam.numQuestions} questions
+                  {attempt.exam?.numQuestions || 0} questions
                 </p>
                 {answeredCount > 0 && (
                   <p className="text-xs text-gray-400 mt-1">
                     {answeredCount} answered
+                  </p>
+                )}
+                {formattedDate && (
+                  <p className="text-xs text-gray-400 mt-1">
+                    Paused: {formattedDate}
                   </p>
                 )}
               </div>

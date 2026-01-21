@@ -278,6 +278,22 @@ export interface SubmitResponseRequest {
   timeSpentSeconds: number;
 }
 
+export interface BulkResponseItem {
+  questionId: string;
+  answer: string | string[] | boolean;
+  timeSpentSeconds: number;
+}
+
+export interface SubmitResponsesBulkRequest {
+  responses: BulkResponseItem[];
+  complete?: boolean;
+}
+
+export interface SubmitResponsesBulkResponse {
+  responses: AttemptResponse[];
+  completed?: boolean;
+}
+
 export interface ReportQuestionRequest {
   questionId: string;
   reason: string;
@@ -438,6 +454,7 @@ export interface ExamHistoryItem {
   status: AttemptStatus;
   startedAt: string;
   submittedAt?: string;
+  completedAt?: string;
   totalScore?: number;
   percentage?: number;
   passed?: boolean;
@@ -446,6 +463,7 @@ export interface ExamHistoryItem {
     numQuestions: number;
     examTypeEnum: ExamTypeEnum;
     subject: { name: string } | null;
+    examType?: { name: string };
   };
 }
 
@@ -457,12 +475,8 @@ export interface ExamHistoryMeta {
 }
 
 export interface ExamHistoryResponse {
-  success: boolean;
-  data: {
-    items: ExamHistoryItem[];
-    meta: ExamHistoryMeta;
-  };
-  timestamp: string;
+  items: ExamHistoryItem[];
+  meta: ExamHistoryMeta;
 }
 
 export interface ExamHistoryParams {
@@ -477,6 +491,8 @@ export interface ExamHistoryParams {
 export interface PausedExam {
   id: string;
   status: "PAUSED";
+  pausedAt?: string;
+  updatedAt?: string;
   exam: {
     id: string;
     name: string;

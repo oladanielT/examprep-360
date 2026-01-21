@@ -61,10 +61,10 @@ function TextContent({
 
       {/* Text Content from chapter blocks */}
       <div className="prose prose-gray max-w-none">
-        {chapter.content?.blocks && chapter.content.blocks.length > 0 ? (
+        {chapter.content && Array.isArray(chapter.content) && chapter.content.length > 0 ? (
           <div className="space-y-4">
-            {chapter.content.blocks.map((block, idx) => (
-              <p key={idx}>{block.text}</p>
+            {chapter.content.map((block: any, idx: number) => (
+              <p key={idx}>{block.value || block.text}</p>
             ))}
           </div>
         ) : (

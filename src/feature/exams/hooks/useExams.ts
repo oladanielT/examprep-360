@@ -10,6 +10,8 @@ import type {
   StartPracticeRequest,
   ConfigurePracticeRequest,
   SubmitResponseRequest,
+  SubmitResponsesBulkRequest,
+  SubmitResponsesBulkResponse,
   ReportQuestionRequest,
   ToggleBookmarkRequest,
   StartExamResponse,
@@ -298,6 +300,31 @@ export const useSubmitResponse = () => {
     },
     onSuccess: (data) => {
       submitResponse(data.questionId, data);
+    },
+  });
+};
+
+// Submit responses in bulk (for completing exams)
+export const useSubmitResponsesBulk = () => {
+  const { submitResponse } = useExamStore();
+
+  return useMutation<
+    SubmitResponsesBulkResponse,
+    AxiosError<ApiError>,
+    { attemptId: string; request: SubmitResponsesBulkRequest }
+  >({
+    mutationFn: async ({ attemptId, request }) => {
+      const { data } = await apiClient.post<SubmitResponsesBulkResponse>(
+        EXAM_ENDPOINTS.SUBMIT_RESPONSES_BULK(attemptId),
+        request
+      );
+      return data;
+    },
+    onSuccess: (data) => {
+      // Update store with all submitted responses
+      data.responses?.forEach((response) => {
+        submitResponse(response.questionId, response);
+      });
     },
   });
 };

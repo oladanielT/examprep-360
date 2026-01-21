@@ -36,28 +36,43 @@ export default function Bookmarked() {
 
   return (
     <div className="space-y-6">
-      {bookmarks.map((bookmark) => (
-        <div
-          key={bookmark.id}
-          className="bg-white rounded-xl border border-gray-200 p-6 hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer"
-        >
-          <p className="text-gray-900 font-medium leading-relaxed mb-4 text-base">
-            {extractTextFromRichContent(bookmark.question.questionText)}
-          </p>
+      {bookmarks.map((bookmark) => {
+        const bookmarkedDate = bookmark.createdAt
+          ? new Date(bookmark.createdAt).toLocaleString(undefined, {
+              dateStyle: "short",
+              timeStyle: "short",
+            })
+          : "";
 
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <span className="capitalize">{bookmark.question.questionType.replace(/_/g, " ")}</span>
-            <span className="text-gray-300">•</span>
-            <span className="capitalize">{bookmark.question.difficulty}</span>
-            {bookmark.question.year && (
-              <>
-                <span className="text-gray-300">•</span>
-                <span>{bookmark.question.year}</span>
-              </>
-            )}
+        return (
+          <div
+            key={bookmark.id}
+            className="bg-white rounded-xl border border-gray-200 p-6 hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer"
+          >
+            <p className="text-gray-900 font-medium leading-relaxed mb-4 text-base">
+              {extractTextFromRichContent(bookmark.question?.questionText || [])}
+            </p>
+
+            <div className="flex items-center flex-wrap gap-2 text-sm text-gray-600">
+              <span className="capitalize">{bookmark.question?.questionType?.replace(/_/g, " ") || "Unknown"}</span>
+              <span className="text-gray-300">•</span>
+              <span className="capitalize">{bookmark.question?.difficulty || "Unknown"}</span>
+              {bookmark.question?.year && (
+                <>
+                  <span className="text-gray-300">•</span>
+                  <span>{bookmark.question.year}</span>
+                </>
+              )}
+              {bookmarkedDate && (
+                <>
+                  <span className="text-gray-300">•</span>
+                  <span className="text-gray-400">Bookmarked: {bookmarkedDate}</span>
+                </>
+              )}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
