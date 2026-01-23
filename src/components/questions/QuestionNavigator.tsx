@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { Pause, Play, BookmarkSimple } from "@phosphor-icons/react";
 import { Card } from "@/components/ui/card";
@@ -59,8 +60,8 @@ export function QuestionNavigator({
   onSubmitAnswer,
   onCompleteExam,
 }: QuestionNavigatorProps) {
-  // Generate array of question numbers
-  const questions = Array.from({ length: totalQuestions }, (_, i) => i);
+  // Generate array of question numbers - memoized to prevent recreation on every render
+  const questions = useMemo(() => Array.from({ length: totalQuestions }, (_, i) => i), [totalQuestions]);
 
   return (
     <Card className="p-4 space-y-4 sticky top-4">

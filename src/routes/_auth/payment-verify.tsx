@@ -16,16 +16,17 @@ function PaymentVerifyPage() {
   const search = useSearch({ from: "/_auth/payment-verify" });
   const { reset: resetRegistration } = useRegistrationStore();
   const verifyPaymentMutation = useVerifyPayment();
-  const [verificationStatus, setVerificationStatus] = useState<
-    "verifying" | "success" | "failed"
-  >("verifying");
 
   // Get payment reference from URL params
   const reference = search.reference || search.trxref;
 
+  // Initialize status based on whether reference exists (avoids setState in effect)
+  const [verificationStatus, setVerificationStatus] = useState<
+    "verifying" | "success" | "failed"
+  >(() => (reference ? "verifying" : "failed"));
+
   useEffect(() => {
     if (!reference) {
-      setVerificationStatus("failed");
       return;
     }
 
@@ -45,6 +46,8 @@ function PaymentVerifyPage() {
         },
       }
     );
+    // verifyPaymentMutation is stable (from useMutation)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reference]);
 
   const handleContinue = () => {

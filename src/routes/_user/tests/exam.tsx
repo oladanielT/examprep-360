@@ -72,7 +72,12 @@ function ExamPage() {
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   // Track time spent on each question
-  const questionStartTime = useRef<number>(Date.now());
+  const questionStartTime = useRef<number>(0);
+
+  // Initialize the question start time on mount
+  useEffect(() => {
+    questionStartTime.current = Date.now();
+  }, []);
 
   // Current question
   const currentQuestion = questions[currentQuestionIndex] || null;
@@ -105,16 +110,22 @@ function ExamPage() {
     questionStartTime.current = Date.now();
   }, [currentQuestionIndex]);
 
-  // Timer effect
+  // Timer effect - using functional update pattern to avoid recreating interval every second
+  // timeRemaining is intentionally excluded - we read it only for the guard condition,
+  // and use functional updates inside the interval to avoid stale closures
   useEffect(() => {
     if (!timerRunning || timeRemaining === null || timeRemaining <= 0) return;
 
     const interval = setInterval(() => {
-      updateTimeRemaining(timeRemaining - 1);
+      updateTimeRemaining((prev: number | null) => {
+        if (prev === null || prev <= 0) return prev;
+        return prev - 1;
+      });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [timerRunning, timeRemaining, updateTimeRemaining]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timerRunning, updateTimeRemaining]);
 
   // Handle answer change - only update local state
   const handleAnswerChange = (questionId: string, value: AnswerValue) => {

@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { cn } from "@/lib/utils";
 import type {
   RichContentBlock,
@@ -191,7 +192,7 @@ function renderBlock(block: RichContentBlock, index: number) {
   }
 }
 
-export function RichContentRenderer({ content, className }: RichContentRendererProps) {
+export const RichContentRenderer = memo(function RichContentRenderer({ content, className }: RichContentRendererProps) {
   if (!content || content.length === 0) {
     return null;
   }
@@ -201,7 +202,7 @@ export function RichContentRenderer({ content, className }: RichContentRendererP
       {content.map((block, index) => renderBlock(block, index))}
     </div>
   );
-}
+});
 
 // Helper to extract plain text from rich content (for accessibility, search, etc.)
 export function getPlainText(content: RichContentBlock[]): string {

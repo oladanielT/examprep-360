@@ -334,11 +334,6 @@ function TutorialDetailPage() {
     : 0;
   const allLessonsComplete = completedChapters.size === chapters.length && chapters.length > 0;
 
-  // Get video URL for video tutorials
-  const videoUrl = tutorial.type === "VIDEO_TUTORIAL" && tutorial.tutorialVideos?.[0]?.url
-    ? tutorial.tutorialVideos[0].url
-    : "";
-
   const handleChapterClick = (chapterId: string) => {
     setSelectedChapterId(chapterId);
     setViewMode("lesson-content");
@@ -512,8 +507,6 @@ function TutorialDetailPage() {
           {viewMode === "lesson-content" && selectedChapter && (
             <ChapterContent
               chapter={selectedChapter}
-              isVideoTutorial={tutorial.type === "VIDEO_TUTORIAL"}
-              videoUrl={videoUrl}
               onComplete={handleCompleteChapter}
             />
           )}

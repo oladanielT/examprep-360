@@ -8,6 +8,42 @@ export const apiClient = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
+// Request deduplication - track pending requests
+// This prevents duplicate identical GET requests from being sent simultaneously
+const pendingRequests = new Map<string, Promise<any>>();
+
+// Generate request key for deduplication
+function getRequestKey(config: any): string {
+  const { method = 'get', url, params, data } = config;
+  return `${method.toUpperCase()}:${url}:${JSON.stringify(params || {})}:${JSON.stringify(data || {})}`;
+}
+
+// Create a wrapper around axios to add deduplication
+const originalRequest = apiClient.request.bind(apiClient);
+apiClient.request = function (config: any) {
+  // Only deduplicate GET requests (safe to deduplicate)
+  if (config.method?.toLowerCase() === 'get' || !config.method) {
+    const requestKey = getRequestKey(config);
+
+    // If there's already a pending request with the same key, return it
+    if (pendingRequests.has(requestKey)) {
+      return pendingRequests.get(requestKey)!;
+    }
+
+    // Create new request and store it
+    const requestPromise = originalRequest(config).finally(() => {
+      // Clean up after request completes (success or error)
+      pendingRequests.delete(requestKey);
+    });
+
+    pendingRequests.set(requestKey, requestPromise);
+    return requestPromise;
+  }
+
+  // For non-GET requests, just execute normally (POST/PUT/DELETE may have side effects)
+  return originalRequest(config);
+} as any;
+
 // Request interceptor - adds auth token
 apiClient.interceptors.request.use((config) => {
   const token = useAuthStore.getState().accessToken;

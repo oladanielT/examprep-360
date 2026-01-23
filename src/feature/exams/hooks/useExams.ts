@@ -110,6 +110,7 @@ export const useExamHistory = (params: ExamHistoryParams = {}) => {
       return data;
     },
     enabled: isAuthenticated,
+    staleTime: 1000 * 60 * 2, // 2 minutes - exam history doesn't change frequently
   });
 };
 
@@ -124,6 +125,7 @@ export const usePausedExams = () => {
       return data;
     },
     enabled: isAuthenticated,
+    staleTime: 1000 * 60 * 1, // 1 minute - paused exams list changes when user pauses/resumes
   });
 };
 
@@ -140,6 +142,7 @@ export const useBookmarks = () => {
       return data;
     },
     enabled: isAuthenticated,
+    staleTime: 1000 * 60 * 3, // 3 minutes - bookmarks don't change too frequently
   });
 };
 
@@ -156,6 +159,7 @@ export const useReports = () => {
       return data;
     },
     enabled: isAuthenticated,
+    staleTime: 1000 * 60 * 5, // 5 minutes - reports list is relatively static
   });
 };
 

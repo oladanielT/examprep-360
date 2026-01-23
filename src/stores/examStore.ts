@@ -28,7 +28,7 @@ interface ExamState {
   previousQuestion: () => void;
   submitResponse: (questionId: string, response: AttemptResponse) => void;
   setAnswer: (questionId: string, answer: any) => void; // New action
-  updateTimeRemaining: (seconds: number) => void;
+  updateTimeRemaining: (seconds: number | ((prev: number | null) => number | null)) => void;
   pauseTimer: () => void;
   resumeTimer: () => void;
   clearExam: () => void;
@@ -103,7 +103,10 @@ export const useExamStore = create<ExamState>()(
           answers: { ...state.answers, [questionId]: answer },
         })),
 
-      updateTimeRemaining: (seconds) => set({ timeRemaining: seconds }),
+      updateTimeRemaining: (seconds) =>
+        set((state) => ({
+          timeRemaining: typeof seconds === "function" ? seconds(state.timeRemaining) : seconds,
+        })),
 
       pauseTimer: () => set({ timerRunning: false }),
 

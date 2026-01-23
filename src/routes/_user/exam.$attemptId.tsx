@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { z } from "zod";
 import { ArrowLeft } from "@phosphor-icons/react";
 import { Loader2 } from "lucide-react";
@@ -46,11 +46,14 @@ function ExamPage() {
   const navigate = useNavigate();
 
   // Get state from store
+  // Group timer-related state together since they change together
+  const { timeRemaining, timerRunning } = useExamStore(
+    (state) => ({ timeRemaining: state.timeRemaining, timerRunning: state.timerRunning })
+  );
+
   const currentAttempt = useExamStore((state) => state.currentAttempt);
   const questions = useExamStore((state) => state.questions);
   const currentQuestionIndex = useExamStore((state) => state.currentQuestionIndex);
-  const timeRemaining = useExamStore((state) => state.timeRemaining);
-  const timerRunning = useExamStore((state) => state.timerRunning);
   const answers = useExamStore((state) => state.answers);
   const responses = useExamStore((state) => state.responses);
   const startExam = useExamStore((state) => state.startExam);
@@ -131,14 +134,20 @@ function ExamPage() {
         },
       });
     }
-  }, [attemptId, isValidSession]);
+    // Zustand store actions are stable references and won't cause re-runs
+  }, [attemptId, isValidSession, resumeExam, startExam, storeSetAnswer, storeSubmitResponse]);
   const [bookmarkedQuestions, setBookmarkedQuestions] = useState<Set<string>>(new Set());
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportReason, setReportReason] = useState("");
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   // Track time spent on each question
-  const questionStartTime = useRef<number>(Date.now());
+  const questionStartTime = useRef<number>(0);
+
+  // Initialize the question start time on mount
+  useEffect(() => {
+    questionStartTime.current = Date.now();
+  }, []);
 
   // Current question
   const currentQuestion = questions[currentQuestionIndex] || null;
@@ -171,24 +180,30 @@ function ExamPage() {
     questionStartTime.current = Date.now();
   }, [currentQuestionIndex]);
 
-  // Timer effect
+  // Timer effect - using functional update pattern to avoid recreating interval every second
+  // timeRemaining is intentionally excluded - we read it only for the guard condition,
+  // and use functional updates inside the interval to avoid stale closures
   useEffect(() => {
     if (!timerRunning || timeRemaining === null || timeRemaining <= 0) return;
 
     const interval = setInterval(() => {
-      updateTimeRemaining(timeRemaining - 1);
+      updateTimeRemaining((prev: number | null) => {
+        if (prev === null || prev <= 0) return prev;
+        return prev - 1;
+      });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [timerRunning, timeRemaining, updateTimeRemaining]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timerRunning, updateTimeRemaining]);
 
   // Handle answer change - save to persisted store
-  const handleAnswerChange = (questionId: string, value: AnswerValue) => {
+  const handleAnswerChange = useCallback((questionId: string, value: AnswerValue) => {
     setAnswer(questionId, value);
-  };
+  }, [setAnswer]);
 
   // Handle submit for current question
-  const handleSubmitAnswer = () => {
+  const handleSubmitAnswer = useCallback(() => {
     if (!currentAttempt || !currentQuestion) return;
 
     const questionId = currentQuestion.id;
@@ -231,10 +246,10 @@ function ExamPage() {
         },
       }
     );
-  };
+  }, [currentAttempt, currentQuestion, answers, submitResponse]);
 
   // Check if current question has an answer selected
-  const hasCurrentAnswer = () => {
+  const hasCurrentAnswer = useCallback(() => {
     if (!currentQuestion) return false;
     const answer = answers[currentQuestion.id];
     if (answer === null || answer === undefined) return false;
@@ -243,7 +258,7 @@ function ExamPage() {
     if (typeof answer === "boolean") return true;
     if (typeof answer === "object") return Object.keys(answer).length > 0;
     return false;
-  };
+  }, [currentQuestion, answers]);
 
   // Check if current question is already submitted
   const isCurrentQuestionSubmitted = currentQuestion ? submittedQuestions.has(currentQuestion.id) : false;
@@ -275,11 +290,11 @@ function ExamPage() {
   }, []);
 
   // Handle exit exam
-  const handleExitExam = () => {
+  const handleExitExam = useCallback(() => {
     setShowExitConfirm(true);
-  };
+  }, []);
 
-  const confirmExitExam = () => {
+  const confirmExitExam = useCallback(() => {
     if (!currentAttempt) return;
 
     // Pause the exam first
@@ -293,21 +308,10 @@ function ExamPage() {
         navigate({ to: "/tests" });
       },
     });
-  };
-
-  // Handle complete exam button click
-  const handleCompleteExam = () => {
-    // If there are unanswered questions, show confirmation
-    if (hasUnansweredQuestions) {
-      setShowCompleteConfirm(true);
-    } else {
-      // Otherwise, complete directly
-      confirmCompleteExam();
-    }
-  };
+  }, [currentAttempt, pauseExam, navigate]);
 
   // Actually complete the exam
-  const confirmCompleteExam = () => {
+  const confirmCompleteExam = useCallback(() => {
     if (!currentAttempt) return;
 
     setShowCompleteConfirm(false);
@@ -381,10 +385,21 @@ function ExamPage() {
         },
       });
     }
-  };
+  }, [currentAttempt, questions, answers, submittedQuestions, submitResponsesBulk, completeExam, navigate]);
+
+  // Handle complete exam button click
+  const handleCompleteExam = useCallback(() => {
+    // If there are unanswered questions, show confirmation
+    if (hasUnansweredQuestions) {
+      setShowCompleteConfirm(true);
+    } else {
+      // Otherwise, complete directly
+      confirmCompleteExam();
+    }
+  }, [hasUnansweredQuestions, confirmCompleteExam]);
 
   // Handle pause/resume toggle
-  const handlePauseToggle = () => {
+  const handlePauseToggle = useCallback(() => {
     if (!currentAttempt) return;
 
     if (timerRunning) {
@@ -402,10 +417,10 @@ function ExamPage() {
         },
       });
     }
-  };
+  }, [currentAttempt, timerRunning, pauseExam, resumeExam]);
 
   // Handle bookmark toggle
-  const handleBookmarkToggle = () => {
+  const handleBookmarkToggle = useCallback(() => {
     if (!currentQuestion) return;
 
     const questionId = currentQuestion.id;
@@ -442,10 +457,10 @@ function ExamPage() {
         },
       }
     );
-  };
+  }, [currentQuestion, bookmarkedQuestions, toggleBookmark]);
 
   // Handle report submission
-  const handleReportSubmit = () => {
+  const handleReportSubmit = useCallback(() => {
     if (!currentQuestion || !reportReason.trim()) return;
 
     reportQuestion.mutate(
@@ -465,7 +480,7 @@ function ExamPage() {
         },
       }
     );
-  };
+  }, [currentQuestion, reportReason, reportQuestion]);
 
   // Loading state while fetching exam from API
   if (isLoadingExam) {
