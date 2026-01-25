@@ -1,15 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { useTutorial, useUpdateTutorialProgress, useSubmitTutorialQuestions } from "@/feature/tutorials/hooks";
-import { ArrowLeft, CheckCircle, Warning } from "@phosphor-icons/react";
+import { useState, useEffect } from "react";
+import { useTutorial, useUpdateTutorialProgress, useSubmitTutorialQuestions, useMarkTutorialComplete, useToggleTutorialBookmark } from "@/feature/tutorials/hooks";
+import { ArrowLeft, CheckCircle, Warning, BookmarkSimple, Trophy, Book } from "@phosphor-icons/react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 import { Progress, ProgressIndicator, ProgressTrack } from "@/components/ui/progress";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 import type { TutorialChapter, TutorialQuestion, TutorialQuizAnswer } from "@/api/types/tutorial.types";
 
 type ViewMode = "lessons" | "lesson-content" | "test";
@@ -273,8 +273,12 @@ function TextbookDetailPage() {
   const { data: textbook, isLoading, error } = useTutorial(textbookId);
   const updateProgress = useUpdateTutorialProgress();
   const submitQuestions = useSubmitTutorialQuestions();
+  const markComplete = useMarkTutorialComplete();
+  const toggleBookmark = useToggleTutorialBookmark();
 
   const [activeTab, setActiveTab] = useState<"lessons" | "test">("lessons");
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("lessons");
   const [selectedChapterId, setSelectedChapterId] = useState<string | null>(null);
   const [completedChapters, setCompletedChapters] = useState<Set<string>>(new Set());
@@ -284,7 +288,34 @@ function TextbookDetailPage() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submittedQuestions, setSubmittedQuestions] = useState<Set<number>>(new Set());
-  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  // Initialize state from textbook data
+  useEffect(() => {
+    if (textbook) {
+      // Set bookmark state
+      if (textbook.isBookmarked !== undefined) {
+        setIsBookmarked(textbook.isBookmarked);
+      }
+
+      // Restore progress - mark chapters up to lastChapterId as completed
+      if (textbook.userProgress?.lastChapterId && textbook.chapters) {
+        const lastChapterIndex = textbook.chapters.findIndex(
+          (c) => c.id === textbook.userProgress?.lastChapterId
+        );
+        if (lastChapterIndex !== -1) {
+          const completedIds = textbook.chapters
+            .slice(0, lastChapterIndex + 1)
+            .map((c) => c.id);
+          setCompletedChapters(new Set(completedIds));
+        }
+      }
+
+      // If textbook is already completed, mark all chapters as done
+      if (textbook.userProgress?.isCompleted && textbook.chapters) {
+        setCompletedChapters(new Set(textbook.chapters.map((c) => c.id)));
+      }
+    }
+  }, [textbook]);
 
   if (isLoading) {
     return <div className="py-10 text-center">Loading textbook...</div>;
@@ -309,6 +340,9 @@ function TextbookDetailPage() {
   const handleCompleteChapter = () => {
     if (selectedChapterId) {
       const chapterId = selectedChapterId;
+      const currentIndex = chapters.findIndex((c) => c.id === chapterId);
+      const isLastChapter = currentIndex === chapters.length - 1;
+
       setCompletedChapters((prev) => new Set([...prev, chapterId]));
 
       updateProgress.mutate(
@@ -321,7 +355,13 @@ function TextbookDetailPage() {
         },
         {
           onSuccess: () => {
-            setErrorMessage(""); // Clear any previous errors
+            toast.success("Chapter completed!");
+
+            // If this is the last chapter and there are no test questions,
+            // automatically mark the textbook as complete
+            if (isLastChapter && questions.length === 0) {
+              handleMarkComplete();
+            }
           },
           onError: (error: any) => {
             // Revert completion on error
@@ -331,14 +371,13 @@ function TextbookDetailPage() {
               return newSet;
             });
             const message = error?.response?.data?.message || error?.message || "Failed to update progress.";
-            setErrorMessage(message);
+            toast.error(message);
           },
         }
       );
 
       // Move to next chapter or back to list
-      const currentIndex = chapters.findIndex((c) => c.id === chapterId);
-      if (currentIndex < chapters.length - 1) {
+      if (!isLastChapter) {
         setSelectedChapterId(chapters[currentIndex + 1].id);
       } else {
         setViewMode("lessons");
@@ -364,6 +403,33 @@ function TextbookDetailPage() {
     setSubmittedQuestions((prev) => new Set([...prev, currentQuestionIndex]));
   };
 
+  const handleBookmarkToggle = () => {
+    toggleBookmark.mutate(textbookId, {
+      onSuccess: () => {
+        const newBookmarkState = !isBookmarked;
+        setIsBookmarked(newBookmarkState);
+        toast.success(newBookmarkState ? "Textbook bookmarked!" : "Bookmark removed!");
+      },
+      onError: (error: any) => {
+        const message = error?.response?.data?.message || error?.message || "Failed to update bookmark.";
+        toast.error(message);
+      },
+    });
+  };
+
+  const handleMarkComplete = () => {
+    markComplete.mutate(textbookId, {
+      onSuccess: () => {
+        setShowCompletionModal(true);
+        toast.success("Textbook completed! Great job!");
+      },
+      onError: (error: any) => {
+        const message = error?.response?.data?.message || error?.message || "Failed to mark textbook as complete.";
+        toast.error(message);
+      },
+    });
+  };
+
   const selectedChapter = chapters.find((c) => c.id === selectedChapterId);
 
   return (
@@ -374,17 +440,35 @@ function TextbookDetailPage() {
         <span>Back</span>
       </Link>
 
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">{textbook.name}</h1>
-        <p className="text-gray-500">400k Students</p>
+      <div className="mb-6 flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">{textbook.name}</h1>
+          <div className="flex items-center gap-2 text-gray-500">
+            {textbook.subject?.name && (
+              <>
+                <span>{textbook.subject.name}</span>
+                <span>•</span>
+              </>
+            )}
+            <span>{textbook.subscriberCount?.toLocaleString() || 0} Students</span>
+          </div>
+        </div>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={handleBookmarkToggle}
+          disabled={toggleBookmark.isPending}
+          className={cn(
+            "flex-shrink-0",
+            isBookmarked && "text-[#F04F54] border-[#F04F54]"
+          )}
+        >
+          <BookmarkSimple
+            weight={isBookmarked ? "fill" : "regular"}
+            className="w-5 h-5"
+          />
+        </Button>
       </div>
-
-      {/* Error Message */}
-      {errorMessage && (
-        <Alert variant="destructive" className="mb-6">
-          <AlertDescription>{errorMessage}</AlertDescription>
-        </Alert>
-      )}
 
       {/* Main Layout */}
       <div className="flex gap-8">
@@ -393,11 +477,17 @@ function TextbookDetailPage() {
           <Card className="p-4">
             {/* Thumbnail */}
             <div className="aspect-[4/3] rounded-lg overflow-hidden mb-4 bg-gray-100">
-              <img
-                src="/img/algebra.png"
-                alt={textbook.name}
-                className="w-full h-full object-cover"
-              />
+              {textbook.tutorialImages?.[0]?.url ? (
+                <img
+                  src={textbook.tutorialImages[0].url}
+                  alt={textbook.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-50">
+                  <Book weight="fill" className="w-12 h-12 text-blue-500 opacity-50" />
+                </div>
+              )}
             </div>
 
             {/* Progress */}
@@ -495,16 +585,17 @@ function TextbookDetailPage() {
                   const answersList: TutorialQuizAnswer[] = Object.entries(answers).map(
                     ([questionId, answer]) => ({ questionId, answer })
                   );
-                  setErrorMessage(""); // Clear any previous errors
                   submitQuestions.mutate(
                     { id: textbookId, answers: { answers: answersList } },
                     {
                       onSuccess: () => {
-                        setErrorMessage("");
+                        toast.success("Quiz submitted successfully!");
+                        // Mark the entire textbook as complete after quiz submission
+                        handleMarkComplete();
                       },
                       onError: (error: any) => {
                         const message = error?.response?.data?.message || error?.message || "Failed to submit quiz. Please try again.";
-                        setErrorMessage(message);
+                        toast.error(message);
                       },
                     }
                   );
@@ -529,9 +620,9 @@ function TextbookDetailPage() {
             <div className="flex justify-center mb-4">
               <Warning weight="fill" className="w-12 h-12 text-yellow-500" />
             </div>
-            <DialogTitle>Finish Tutorial First</DialogTitle>
+            <DialogTitle>Finish Textbook First</DialogTitle>
             <DialogDescription>
-              Finish course to take Class test.
+              Finish all chapters to take the Class test.
             </DialogDescription>
           </DialogHeader>
           <Button
@@ -540,6 +631,37 @@ function TextbookDetailPage() {
           >
             Continue
           </Button>
+        </DialogContent>
+      </Dialog>
+
+      {/* Textbook Completion Modal */}
+      <Dialog open={showCompletionModal} onOpenChange={setShowCompletionModal}>
+        <DialogContent className="sm:max-w-md text-center">
+          <DialogHeader>
+            <div className="flex justify-center mb-4">
+              <Trophy weight="fill" className="w-16 h-16 text-yellow-500" />
+            </div>
+            <DialogTitle className="text-xl">Congratulations!</DialogTitle>
+            <DialogDescription className="text-base">
+              You have successfully completed this textbook. Keep up the great work!
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={() => setShowCompletionModal(false)}
+            >
+              Stay Here
+            </Button>
+            <Link to="/textbooks" className="flex-1">
+              <Button
+                className="w-full bg-[#F04F54] hover:bg-[#F04F54]/90"
+              >
+                Back to Textbooks
+              </Button>
+            </Link>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

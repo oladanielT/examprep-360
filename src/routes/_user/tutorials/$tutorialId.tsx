@@ -1,15 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { useTutorial, useUpdateTutorialProgress, useSubmitTutorialQuestions } from "@/feature/tutorials/hooks";
-import { ArrowLeft, Play, CheckCircle, Warning } from "@phosphor-icons/react";
+import { useState, useEffect } from "react";
+import { useTutorial, useUpdateTutorialProgress, useSubmitTutorialQuestions, useMarkTutorialComplete, useToggleTutorialBookmark } from "@/feature/tutorials/hooks";
+import { ArrowLeft, Play, CheckCircle, Warning, BookmarkSimple, Trophy } from "@phosphor-icons/react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 import { Progress, ProgressIndicator, ProgressTrack } from "@/components/ui/progress";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 import type { TutorialChapter, TutorialQuestion, TutorialQuizAnswer } from "@/api/types/tutorial.types";
 
 type ViewMode = "lessons" | "lesson-content" | "test";
@@ -306,8 +306,12 @@ function TutorialDetailPage() {
   const { data: tutorial, isLoading, error } = useTutorial(tutorialId);
   const updateProgress = useUpdateTutorialProgress();
   const submitQuestions = useSubmitTutorialQuestions();
+  const markComplete = useMarkTutorialComplete();
+  const toggleBookmark = useToggleTutorialBookmark();
 
   const [activeTab, setActiveTab] = useState<"lessons" | "test">("lessons");
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("lessons");
   const [selectedChapterId, setSelectedChapterId] = useState<string | null>(null);
   const [completedChapters, setCompletedChapters] = useState<Set<string>>(new Set());
@@ -317,7 +321,34 @@ function TutorialDetailPage() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submittedQuestions, setSubmittedQuestions] = useState<Set<number>>(new Set());
-  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  // Initialize state from tutorial data
+  useEffect(() => {
+    if (tutorial) {
+      // Set bookmark state
+      if (tutorial.isBookmarked !== undefined) {
+        setIsBookmarked(tutorial.isBookmarked);
+      }
+
+      // Restore progress - mark chapters up to lastChapterId as completed
+      if (tutorial.userProgress?.lastChapterId && tutorial.chapters) {
+        const lastChapterIndex = tutorial.chapters.findIndex(
+          (c) => c.id === tutorial.userProgress?.lastChapterId
+        );
+        if (lastChapterIndex !== -1) {
+          const completedIds = tutorial.chapters
+            .slice(0, lastChapterIndex + 1)
+            .map((c) => c.id);
+          setCompletedChapters(new Set(completedIds));
+        }
+      }
+
+      // If tutorial is already completed, mark all chapters as done
+      if (tutorial.userProgress?.isCompleted && tutorial.chapters) {
+        setCompletedChapters(new Set(tutorial.chapters.map((c) => c.id)));
+      }
+    }
+  }, [tutorial]);
 
   if (isLoading) {
     return <div className="py-10 text-center">Loading tutorial...</div>;
@@ -342,6 +373,9 @@ function TutorialDetailPage() {
   const handleCompleteChapter = () => {
     if (selectedChapterId) {
       const chapterId = selectedChapterId;
+      const currentIndex = chapters.findIndex((c) => c.id === chapterId);
+      const isLastChapter = currentIndex === chapters.length - 1;
+
       setCompletedChapters((prev) => new Set([...prev, chapterId]));
 
       updateProgress.mutate(
@@ -354,7 +388,13 @@ function TutorialDetailPage() {
         },
         {
           onSuccess: () => {
-            setErrorMessage(""); // Clear any previous errors
+            toast.success("Chapter completed!");
+
+            // If this is the last chapter and there are no test questions,
+            // automatically mark the tutorial as complete
+            if (isLastChapter && questions.length === 0) {
+              handleMarkComplete();
+            }
           },
           onError: (error: any) => {
             // Revert completion on error
@@ -364,14 +404,13 @@ function TutorialDetailPage() {
               return newSet;
             });
             const message = error?.response?.data?.message || error?.message || "Failed to update progress.";
-            setErrorMessage(message);
+            toast.error(message);
           },
         }
       );
 
       // Move to next chapter or back to list
-      const currentIndex = chapters.findIndex((c) => c.id === chapterId);
-      if (currentIndex < chapters.length - 1) {
+      if (!isLastChapter) {
         setSelectedChapterId(chapters[currentIndex + 1].id);
       } else {
         setViewMode("lessons");
@@ -397,6 +436,33 @@ function TutorialDetailPage() {
     setSubmittedQuestions((prev) => new Set([...prev, currentQuestionIndex]));
   };
 
+  const handleBookmarkToggle = () => {
+    toggleBookmark.mutate(tutorialId, {
+      onSuccess: () => {
+        const newBookmarkState = !isBookmarked;
+        setIsBookmarked(newBookmarkState);
+        toast.success(newBookmarkState ? "Tutorial bookmarked!" : "Bookmark removed!");
+      },
+      onError: (error: any) => {
+        const message = error?.response?.data?.message || error?.message || "Failed to update bookmark.";
+        toast.error(message);
+      },
+    });
+  };
+
+  const handleMarkComplete = () => {
+    markComplete.mutate(tutorialId, {
+      onSuccess: () => {
+        setShowCompletionModal(true);
+        toast.success("Tutorial completed! Great job!");
+      },
+      onError: (error: any) => {
+        const message = error?.response?.data?.message || error?.message || "Failed to mark tutorial as complete.";
+        toast.error(message);
+      },
+    });
+  };
+
   const selectedChapter = chapters.find((c) => c.id === selectedChapterId);
 
   return (
@@ -407,17 +473,35 @@ function TutorialDetailPage() {
         <span>Back</span>
       </Link>
 
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">{tutorial.name}</h1>
-        <p className="text-gray-500">400k Students</p>
+      <div className="mb-6 flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">{tutorial.name}</h1>
+          <div className="flex items-center gap-2 text-gray-500">
+            {tutorial.subject?.name && (
+              <>
+                <span>{tutorial.subject.name}</span>
+                <span>•</span>
+              </>
+            )}
+            <span>{tutorial.subscriberCount?.toLocaleString() || 0} Students</span>
+          </div>
+        </div>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={handleBookmarkToggle}
+          disabled={toggleBookmark.isPending}
+          className={cn(
+            "flex-shrink-0",
+            isBookmarked && "text-[#F04F54] border-[#F04F54]"
+          )}
+        >
+          <BookmarkSimple
+            weight={isBookmarked ? "fill" : "regular"}
+            className="w-5 h-5"
+          />
+        </Button>
       </div>
-
-      {/* Error Message */}
-      {errorMessage && (
-        <Alert variant="destructive" className="mb-6">
-          <AlertDescription>{errorMessage}</AlertDescription>
-        </Alert>
-      )}
 
       {/* Main Layout */}
       <div className="flex gap-8">
@@ -426,11 +510,23 @@ function TutorialDetailPage() {
           <Card className="p-4">
             {/* Thumbnail */}
             <div className="aspect-[4/3] rounded-lg overflow-hidden mb-4 bg-gray-100">
-              <img
-                src="/img/algebra.png"
-                alt={tutorial.name}
-                className="w-full h-full object-cover"
-              />
+              {tutorial.tutorialImages?.[0]?.url ? (
+                <img
+                  src={tutorial.tutorialImages[0].url}
+                  alt={tutorial.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : tutorial.tutorialVideos?.[0]?.url ? (
+                <video
+                  src={tutorial.tutorialVideos[0].url}
+                  className="w-full h-full object-cover"
+                  muted
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-red-100 to-red-50">
+                  <Play weight="fill" className="w-12 h-12 text-[#F04F54] opacity-50" />
+                </div>
+              )}
             </div>
 
             {/* Progress */}
@@ -528,16 +624,17 @@ function TutorialDetailPage() {
                   const answersList: TutorialQuizAnswer[] = Object.entries(answers).map(
                     ([questionId, answer]) => ({ questionId, answer })
                   );
-                  setErrorMessage(""); // Clear any previous errors
                   submitQuestions.mutate(
                     { id: tutorialId, answers: { answers: answersList } },
                     {
                       onSuccess: () => {
-                        setErrorMessage("");
+                        toast.success("Quiz submitted successfully!");
+                        // Mark the entire tutorial as complete after quiz submission
+                        handleMarkComplete();
                       },
                       onError: (error: any) => {
                         const message = error?.response?.data?.message || error?.message || "Failed to submit quiz. Please try again.";
-                        setErrorMessage(message);
+                        toast.error(message);
                       },
                     }
                   );
@@ -573,6 +670,37 @@ function TutorialDetailPage() {
           >
             Continue
           </Button>
+        </DialogContent>
+      </Dialog>
+
+      {/* Tutorial Completion Modal */}
+      <Dialog open={showCompletionModal} onOpenChange={setShowCompletionModal}>
+        <DialogContent className="sm:max-w-md text-center">
+          <DialogHeader>
+            <div className="flex justify-center mb-4">
+              <Trophy weight="fill" className="w-16 h-16 text-yellow-500" />
+            </div>
+            <DialogTitle className="text-xl">Congratulations!</DialogTitle>
+            <DialogDescription className="text-base">
+              You have successfully completed this tutorial. Keep up the great work!
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={() => setShowCompletionModal(false)}
+            >
+              Stay Here
+            </Button>
+            <Link to="/tutorials" className="flex-1">
+              <Button
+                className="w-full bg-[#F04F54] hover:bg-[#F04F54]/90"
+              >
+                Back to Tutorials
+              </Button>
+            </Link>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

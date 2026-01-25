@@ -1,34 +1,39 @@
 // Progress Types
 export interface ProgressOverview {
-  totalStudyTime: number;
-  questionsAnswered: number;
-  correctAnswers: number;
-  accuracy: number;
-  examsCompleted: number;
+  xp: number;
+  weeklyXP: number;
+  currentStreak: number;
+  longestStreak: number;
+  weeklyRank: number;
+  xpToNextRank: number;
+  totalExams: number;
+  totalQuestions: number;
+  totalCorrect: number;
   averageScore: number;
-  subjectsStudied: number;
-  topicsCompleted: number;
+  totalTimeSpent: number;
+  activeGoals: Goal[];
+}
+
+export interface Goal {
+  id: string;
+  title: string;
+  target: number;
+  current: number;
+  type: string;
 }
 
 export interface Streaks {
   currentStreak: number;
   longestStreak: number;
   lastActivityDate: string;
-  streakHistory: StreakDay[];
-}
-
-export interface StreakDay {
-  date: string;
-  active: boolean;
-  studyMinutes: number;
+  streakFreezeCount: number;
 }
 
 export interface TrendData {
   date: string;
-  questionsAnswered: number;
-  correctAnswers: number;
-  studyMinutes: number;
-  score?: number;
+  averageScore: number;
+  xpEarned: number;
+  examsCompleted: number;
 }
 
 export interface WeakArea {
@@ -40,6 +45,28 @@ export interface WeakArea {
   questionsAttempted: number;
   suggestedFocus: boolean;
 }
+
+export interface ProgressStatistics {
+  xp: number;
+  weeklyXP: number;
+  currentStreak: number;
+  longestStreak: number;
+  weeklyRank: number;
+  xpToNextRank: number;
+  totalExams: number;
+  totalQuestions: number;
+  totalCorrect: number;
+  averageScore: number;
+  totalTimeSpent: number;
+  activeGoals: Goal[];
+}
+
+export interface SubjectProgressItem {
+  correct: number;
+  total: number;
+}
+
+export type SubjectProgressMap = Record<string, SubjectProgressItem>;
 
 // Gamification Types
 export interface Achievement {

@@ -4,6 +4,7 @@ import { z } from "zod";
 import { ArrowLeft } from "@phosphor-icons/react";
 import { Loader2 } from "lucide-react";
 import { useExamStore } from "@/stores/examStore";
+import { useShallow } from "zustand/react/shallow";
 import {
   useSubmitResponse,
   useSubmitResponsesBulk,
@@ -45,17 +46,33 @@ function ExamPage() {
   const { attemptId } = Route.useParams();
   const navigate = useNavigate();
 
-  // Get state from store
-  // Group timer-related state together since they change together
-  const { timeRemaining, timerRunning } = useExamStore(
-    (state) => ({ timeRemaining: state.timeRemaining, timerRunning: state.timerRunning })
+  // Use useShallow for object selectors to prevent unnecessary re-renders
+  // This does shallow equality check on the returned object
+  const {
+    timeRemaining,
+    timerRunning,
+    currentAttempt,
+    questions,
+    currentQuestionIndex,
+    answers,
+  } = useExamStore(
+    useShallow((state) => ({
+      timeRemaining: state.timeRemaining,
+      timerRunning: state.timerRunning,
+      currentAttempt: state.currentAttempt,
+      questions: state.questions,
+      currentQuestionIndex: state.currentQuestionIndex,
+      answers: state.answers,
+    }))
   );
 
-  const currentAttempt = useExamStore((state) => state.currentAttempt);
-  const questions = useExamStore((state) => state.questions);
-  const currentQuestionIndex = useExamStore((state) => state.currentQuestionIndex);
-  const answers = useExamStore((state) => state.answers);
-  const responses = useExamStore((state) => state.responses);
+  // Select responses Map size separately to avoid re-renders on every Map change
+  // We only need the keys for checking submission status
+  const responsesKeys = useExamStore(
+    useShallow((state) => Array.from(state.responses.keys()))
+  );
+
+  // Actions - these are stable references, select them separately
   const startExam = useExamStore((state) => state.startExam);
   const storeSubmitResponse = useExamStore((state) => state.submitResponse);
   const storeSetAnswer = useExamStore((state) => state.setAnswer);
@@ -67,12 +84,23 @@ function ExamPage() {
   const [isLoadingExam, setIsLoadingExam] = useState(!isValidSession);
   const [loadError, setLoadError] = useState<string>("");
 
-  // Actions from store
-  const setCurrentQuestion = useExamStore((state) => state.setCurrentQuestion);
-  const nextQuestion = useExamStore((state) => state.nextQuestion);
-  const previousQuestion = useExamStore((state) => state.previousQuestion);
-  const updateTimeRemaining = useExamStore((state) => state.updateTimeRemaining);
-  const setAnswer = useExamStore((state) => state.setAnswer);
+  // Actions from store - select all at once using useShallow
+  // Actions are stable functions so this won't cause re-renders
+  const {
+    setCurrentQuestion,
+    nextQuestion,
+    previousQuestion,
+    updateTimeRemaining,
+    setAnswer,
+  } = useExamStore(
+    useShallow((state) => ({
+      setCurrentQuestion: state.setCurrentQuestion,
+      nextQuestion: state.nextQuestion,
+      previousQuestion: state.previousQuestion,
+      updateTimeRemaining: state.updateTimeRemaining,
+      setAnswer: state.setAnswer,
+    }))
+  );
 
   // API mutations
   const submitResponse = useSubmitResponse();
@@ -83,59 +111,80 @@ function ExamPage() {
   const reportQuestion = useReportQuestion();
   const completeExam = useCompleteExam();
 
-  // Derive submittedQuestions from responses Map (persisted)
+  // Derive submittedQuestions from responses keys array
   const submittedQuestions = useMemo(() => {
-    return new Set(Array.from(responses.keys()));
-  }, [responses]);
+    return new Set(responsesKeys);
+  }, [responsesKeys]);
+
+  // Track if we've already attempted to load for this attemptId
+  const hasAttemptedLoad = useRef<string | null>(null);
 
   // Try to load exam from API if not in store
+  // Use a ref-based guard to prevent multiple loads for the same attemptId
   useEffect(() => {
-    if (!isValidSession && attemptId) {
-      setIsLoadingExam(true);
-      setLoadError("");
-
-      // Call resume API to get exam data
-      resumeExam.mutate(attemptId, {
-        onSuccess: (data: any) => {
-          // Check if response has exam with questions
-          if (data.exam?.questions) {
-            const examQuestions = data.exam.questions.map((eq: any) => eq.question);
-
-            // Calculate remaining time based on time already spent
-            const totalTimeSeconds = data.exam.durationMinutes * 60;
-            const timeSpent = data.timeSpentSeconds || 0;
-            const remainingTimeMinutes = Math.max(0, (totalTimeSeconds - timeSpent) / 60);
-
-            // Start the exam with calculated remaining time
-            startExam(data, examQuestions, remainingTimeMinutes);
-
-            // Restore previous responses if any
-            if (data.responses && Array.isArray(data.responses)) {
-              data.responses.forEach((response: any) => {
-                // Add to responses Map in store (marks as submitted)
-                storeSubmitResponse(response.questionId, response);
-
-                // Also restore the answer so UI shows the selection
-                storeSetAnswer(response.questionId, response.answer);
-              });
-            }
-
-            setIsLoadingExam(false);
-          } else {
-            // Resume doesn't return questions, need to fetch them separately
-            setLoadError("Unable to load exam. Please try starting a new exam.");
-            setIsLoadingExam(false);
-          }
-        },
-        onError: (error: any) => {
-          const message = error?.response?.data?.message || "Exam not found or has expired.";
-          setLoadError(message);
-          setIsLoadingExam(false);
-        },
-      });
+    // Skip if session is already valid
+    if (isValidSession) {
+      setIsLoadingExam(false);
+      return;
     }
-    // Zustand store actions are stable references and won't cause re-runs
-  }, [attemptId, isValidSession, resumeExam, startExam, storeSetAnswer, storeSubmitResponse]);
+
+    // Skip if no attemptId
+    if (!attemptId) {
+      return;
+    }
+
+    // Skip if we've already attempted to load this exact attemptId
+    if (hasAttemptedLoad.current === attemptId) {
+      return;
+    }
+
+    // Mark that we're attempting to load this attemptId
+    hasAttemptedLoad.current = attemptId;
+    setIsLoadingExam(true);
+    setLoadError("");
+
+    // Call resume API to get exam data
+    resumeExam.mutate(attemptId, {
+      onSuccess: (data: any) => {
+        // Check if response has exam with questions
+        if (data.exam?.questions) {
+          const examQuestions = data.exam.questions.map((eq: any) => eq.question);
+
+          // Calculate remaining time based on time already spent
+          const totalTimeSeconds = data.exam.durationMinutes * 60;
+          const timeSpent = data.timeSpentSeconds || 0;
+          const remainingTimeMinutes = Math.max(0, (totalTimeSeconds - timeSpent) / 60);
+
+          // Start the exam with calculated remaining time
+          startExam(data, examQuestions, remainingTimeMinutes);
+
+          // Restore previous responses if any
+          if (data.responses && Array.isArray(data.responses)) {
+            data.responses.forEach((response: any) => {
+              // Add to responses Map in store (marks as submitted)
+              storeSubmitResponse(response.questionId, response);
+
+              // Also restore the answer so UI shows the selection
+              storeSetAnswer(response.questionId, response.answer);
+            });
+          }
+
+          setIsLoadingExam(false);
+        } else {
+          // Resume doesn't return questions, need to fetch them separately
+          setLoadError("Unable to load exam. Please try starting a new exam.");
+          setIsLoadingExam(false);
+        }
+      },
+      onError: (error: any) => {
+        const message = error?.response?.data?.message || "Exam not found or has expired.";
+        setLoadError(message);
+        setIsLoadingExam(false);
+      },
+    });
+    // Only depend on attemptId - other values are accessed via refs or are stable
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [attemptId]);
   const [bookmarkedQuestions, setBookmarkedQuestions] = useState<Set<string>>(new Set());
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportReason, setReportReason] = useState("");

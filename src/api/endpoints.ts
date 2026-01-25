@@ -48,6 +48,8 @@ export const EXAM_ENDPOINTS = {
 export const PROGRESS_ENDPOINTS = {
   OVERVIEW: "/progress/overview",
   STREAKS: "/progress/streaks",
+  STATISTICS: "/progress/statistics",
+  BY_SUBJECT: "/progress/by-subject",
   TRENDS: "/progress/trends",
   WEAK_AREAS: "/progress/weak-areas",
 } as const;

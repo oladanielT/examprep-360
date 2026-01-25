@@ -7,6 +7,8 @@ import type {
   Streaks,
   TrendData,
   WeakArea,
+  ProgressStatistics,
+  SubjectProgressMap,
   Achievement,
   LeaderboardResponse,
   LeaderboardParams,
@@ -65,6 +67,36 @@ export const useWeakAreas = () => {
     queryKey: ["progress", "weakAreas"],
     queryFn: async () => {
       const { data } = await apiClient.get<WeakArea[]>(PROGRESS_ENDPOINTS.WEAK_AREAS);
+      return data;
+    },
+    enabled: isAuthenticated,
+  });
+};
+
+export const useStatistics = () => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  return useQuery<ProgressStatistics>({
+    queryKey: ["progress", "statistics"],
+    queryFn: async () => {
+      const { data } = await apiClient.get<ProgressStatistics>(
+        PROGRESS_ENDPOINTS.STATISTICS
+      );
+      return data;
+    },
+    enabled: isAuthenticated,
+  });
+};
+
+export const useProgressBySubject = () => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  return useQuery<SubjectProgressMap>({
+    queryKey: ["progress", "bySubject"],
+    queryFn: async () => {
+      const { data } = await apiClient.get<SubjectProgressMap>(
+        PROGRESS_ENDPOINTS.BY_SUBJECT
+      );
       return data;
     },
     enabled: isAuthenticated,
