@@ -97,7 +97,7 @@ export default function AvatarUpload({
       <div className="relative">
         <div
           className={cn(
-            "group/avatar relative h-50 w-50 cursor-pointer overflow-hidden rounded-full border border-dashed transition-colors",
+            "group/avatar relative h-32 w-32 sm:h-40 sm:w-40 lg:h-50 lg:w-50 cursor-pointer overflow-hidden rounded-full border border-dashed transition-colors",
             isDragging
               ? "border-primary bg-primary/5"
               : "border-muted-foreground/25 hover:border-muted-foreground/20",

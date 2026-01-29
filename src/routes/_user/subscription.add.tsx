@@ -194,12 +194,12 @@ function AddSubscriptionPage() {
         }
       />
 
-      <div className="max-w-2xl py-8">
+      <div className="max-w-2xl py-6 sm:py-8">
         {/* Back button within steps */}
         {step !== "category" && (
           <button
             onClick={handleBack}
-            className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-6"
+            className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4 sm:mb-6"
           >
             <ArrowLeft className="h-4 w-4" />
             Back
@@ -215,7 +215,7 @@ function AddSubscriptionPage() {
               </div>
             )}
             {categories && (
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {categories
                   .filter((c) => c.value !== "TUTORIAL")
                   .map((cat) => (
@@ -238,16 +238,16 @@ function AddSubscriptionPage() {
 
         {/* Step 2: Exam Selection */}
         {step === "exam-selection" && (
-          <div className="space-y-6">
+          <div className="space-y-5 sm:space-y-6">
             {/* Exam Type */}
             <div className="space-y-2">
-              <label className="text-[#6D6D6D] uppercase text-[12px] font-medium">
+              <label className="text-[#6D6D6D] uppercase text-[11px] sm:text-[12px] font-medium">
                 Exam Type
               </label>
               {isLoadingExamTypes ? (
-                <div className="flex items-center gap-2 h-14 px-4 border rounded-4xl">
+                <div className="flex items-center gap-2 h-12 sm:h-14 px-4 border rounded-4xl">
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  <span className="text-gray-500">Loading exam types...</span>
+                  <span className="text-gray-500 text-sm">Loading exam types...</span>
                 </div>
               ) : (
                 <CustomSelect
@@ -269,7 +269,7 @@ function AddSubscriptionPage() {
 
             {/* Subjects */}
             <div className="space-y-2">
-              <label className="text-[#6D6D6D] uppercase text-[12px] font-medium">
+              <label className="text-[#6D6D6D] uppercase text-[11px] sm:text-[12px] font-medium">
                 Subjects
               </label>
               {!examType ? (
@@ -279,27 +279,27 @@ function AddSubscriptionPage() {
               ) : isLoadingSubjects ? (
                 <div className="flex items-center gap-2 py-4">
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  <span className="text-gray-500">Loading subjects...</span>
+                  <span className="text-gray-500 text-sm">Loading subjects...</span>
                 </div>
               ) : availableSubjects && availableSubjects.length > 0 ? (
                 <>
-                  <p className="text-sm text-gray-600 mb-3">
+                  <p className="text-xs sm:text-sm text-gray-600 mb-3">
                     Please select your subjects (up to 9)
                   </p>
                   <ToggleGroup
                     multiple
                     value={subjects}
                     onValueChange={setSubjects}
-                    className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4"
+                    className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3"
                   >
                     {availableSubjects.map((subject) => (
                       <ToggleGroupItem
                         key={subject.id}
                         value={subject.id}
                         className={cn(
-                          "h-auto py-4 px-3 !rounded-sm border-2",
+                          "h-auto py-3 sm:py-4 px-2 sm:px-3 !rounded-sm border-2",
                           "flex items-center justify-center",
-                          "text-xs font-medium text-center",
+                          "text-[11px] sm:text-xs font-medium text-center",
                           "transition-all duration-200",
                           "hover:border-accent hover:bg-accent/5",
                           "data-[state=on]:border-accent/70 data-[state=on]:bg-transparent data-[state=on]:text-black",
@@ -309,7 +309,7 @@ function AddSubscriptionPage() {
                         )}
                         aria-label={subject.name}
                       >
-                        <span className="whitespace-nowrap">{subject.name}</span>
+                        <span className="break-words text-center leading-tight">{subject.name}</span>
                       </ToggleGroupItem>
                     ))}
                   </ToggleGroup>
@@ -328,7 +328,7 @@ function AddSubscriptionPage() {
 
             {/* Plan */}
             <div className="space-y-2">
-              <label className="text-[#6D6D6D] uppercase text-[12px] font-medium">
+              <label className="text-[#6D6D6D] uppercase text-[11px] sm:text-[12px] font-medium">
                 Subscription Plan
               </label>
               {!examType ? (
@@ -336,9 +336,9 @@ function AddSubscriptionPage() {
                   Please select an exam type first
                 </p>
               ) : isLoadingPlans ? (
-                <div className="flex items-center gap-2 h-14 px-4 border rounded-4xl">
+                <div className="flex items-center gap-2 h-12 sm:h-14 px-4 border rounded-4xl">
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  <span className="text-gray-500">Loading plans...</span>
+                  <span className="text-gray-500 text-sm">Loading plans...</span>
                 </div>
               ) : durationOptions.length > 0 ? (
                 <CustomSelect
@@ -360,7 +360,7 @@ function AddSubscriptionPage() {
               type="button"
               onClick={handleExamSelectionSubmit}
               disabled={!examType || subjects.length === 0 || !planId}
-              className="w-full bg-accent hover:bg-accent/80 mt-4 text-white text-lg"
+              className="w-full bg-accent hover:bg-accent/80 mt-4 text-white text-base sm:text-lg"
               title="Continue"
             />
           </div>
@@ -370,26 +370,26 @@ function AddSubscriptionPage() {
         {step === "checkout" && selectedPlan && (
           <div className="space-y-4">
             {/* Plan Card */}
-            <div className="bg-gradient-to-br from-accent/5 to-accent/10 rounded-xl p-6 border-2 border-accent/20">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h3 className="text-xl font-bold text-[#101828]">
+            <div className="bg-gradient-to-br from-accent/5 to-accent/10 rounded-xl p-4 sm:p-6 border-2 border-accent/20">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4 mb-4">
+                <div className="min-w-0">
+                  <h3 className="text-lg sm:text-xl font-bold text-[#101828]">
                     {selectedPlan.name}
                   </h3>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-xs sm:text-sm text-gray-600">
                     {selectedPlan.description}
                   </p>
-                  <p className="text-sm text-gray-500 mt-1">
+                  <p className="text-xs sm:text-sm text-gray-500 mt-1">
                     {examType} &middot; {subjects.length} subject
                     {subjects.length !== 1 ? "s" : ""}
                   </p>
                 </div>
-                <div className="text-right">
-                  <div className="text-3xl font-bold text-accent">
+                <div className="sm:text-right shrink-0">
+                  <div className="text-2xl sm:text-3xl font-bold text-accent">
                     {selectedPlan.currency}{" "}
                     {selectedPlan.basePrice.toLocaleString()}
                   </div>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-xs sm:text-sm text-gray-500">
                     for {selectedPlan.duration} days
                   </div>
                 </div>
@@ -403,9 +403,9 @@ function AddSubscriptionPage() {
                   {selectedPlan.features.map((feature, index) => (
                     <div
                       key={index}
-                      className="flex items-center gap-2 text-sm"
+                      className="flex items-center gap-2 text-xs sm:text-sm"
                     >
-                      <Check className="h-4 w-4 text-accent" />
+                      <Check className="h-4 w-4 text-accent shrink-0" />
                       <span>{feature}</span>
                     </div>
                   ))}
@@ -441,7 +441,7 @@ function AddSubscriptionPage() {
               <PrimaryButton
                 onClick={handlePayNow}
                 disabled={initPayment.isPending}
-                className="w-full bg-accent hover:bg-accent/80 text-white text-lg"
+                className="w-full bg-accent hover:bg-accent/80 text-white text-base sm:text-lg"
                 title={initPayment.isPending ? "Processing..." : "Pay Now"}
               />
 
@@ -461,13 +461,13 @@ function AddSubscriptionPage() {
                       value={licenseCode}
                       onChange={(e) => setLicenseCode(e.target.value)}
                       placeholder="Enter license code"
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none text-sm"
                     />
                     <div className="flex gap-2">
                       <button
                         onClick={handleRedeemLicense}
                         disabled={!licenseCode || redeemLicense.isPending}
-                        className="flex-1 py-2 px-4 bg-accent text-white rounded-xl disabled:opacity-50"
+                        className="flex-1 py-2.5 px-4 bg-accent text-white rounded-xl disabled:opacity-50 text-sm font-medium"
                       >
                         {redeemLicense.isPending ? "Redeeming..." : "Redeem"}
                       </button>
@@ -476,7 +476,7 @@ function AddSubscriptionPage() {
                           setShowLicenseInput(false);
                           setLicenseCode("");
                         }}
-                        className="px-4 py-2 text-gray-500 hover:text-gray-700"
+                        className="px-4 py-2.5 text-gray-500 hover:text-gray-700 text-sm"
                       >
                         Cancel
                       </button>

@@ -40,7 +40,7 @@ export default function Continue() {
     return (
         <div className="py-10">
             <h2 className='font-semibold text-2xl mb-5'>Jump back in</h2>
-            <div className='grid grid-cols-3 gap-5'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5'>
                 {pausedExams.slice(0, 3).map((exam) => {
                     const subject = exam.exam?.subject?.name || "Unknown Subject"
                     const examTitle = exam.exam?.name || "Practice Exam"

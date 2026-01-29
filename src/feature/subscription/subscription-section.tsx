@@ -1,11 +1,3 @@
-import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemDescription,
-  ItemMedia,
-  ItemTitle,
-} from "@/components/ui/item";
 import { Link } from "@tanstack/react-router";
 import { Loader2, Trash2, ArrowRightLeft, Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -60,11 +52,11 @@ export const SubscriptionSection = () => {
   }
 
   return (
-    <section>
-      <div className="py-6">
+    <section className="py-4 sm:py-6">
+      <div className="pb-4 sm:pb-6">
         <Link
           to="/subscription/add"
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-4xl border border-border bg-accent text-white hover:bg-accent/80 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-4xl border border-border bg-accent text-white hover:bg-accent/80 transition-colors"
         >
           <Plus className="h-4 w-4" />
           Add Subscription
@@ -76,45 +68,48 @@ export const SubscriptionSection = () => {
           No subscriptions yet. Add one to get started.
         </p>
       ) : (
-        <section className="flex flex-wrap gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           {subscriptions.map((sub) => (
-            <Item key={sub.id} className="h-fit bg-[#FFF0B333] w-80">
-              <ItemContent>
-                <ItemTitle className="text-lg font-semibold">
-                  {sub.examType}
-                </ItemTitle>
-                <ItemDescription>
-                  {sub.subjects.length} Subject
-                  {sub.subjects.length !== 1 ? "s" : ""} &middot;{" "}
-                  {sub.subscription.name}
-                </ItemDescription>
-                <div className="flex items-center gap-2 mt-1">
-                  <span
-                    className={`text-xs px-2 py-0.5 rounded-full ${
-                      sub.status === "ACTIVE"
-                        ? "bg-green-100 text-green-700"
-                        : sub.status === "EXPIRED"
-                          ? "bg-red-100 text-red-700"
-                          : "bg-gray-100 text-gray-700"
-                    }`}
-                  >
-                    {sub.status}
-                  </span>
-                  <span className="text-xs text-gray-400">
-                    {sub.paymentMethod}
-                  </span>
+            <div
+              key={sub.id}
+              className="bg-[#FFFBEB] rounded-xl border border-amber-100 p-4 sm:p-5 space-y-3"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate">
+                    {sub.examType}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
+                    {sub.subjects.length} Subject
+                    {sub.subjects.length !== 1 ? "s" : ""} &middot;{" "}
+                    {sub.subscription.name}
+                  </p>
                 </div>
-              </ItemContent>
-              <ItemMedia className="w-24 h-20" variant="image">
                 <img
                   src="/svg/note.svg"
                   alt=""
-                  width={32}
-                  height={32}
-                  className="w-full"
+                  className="w-10 h-10 sm:w-12 sm:h-12 shrink-0"
                 />
-              </ItemMedia>
-              <ItemActions className="flex gap-2 mt-2">
+              </div>
+
+              <div className="flex items-center flex-wrap gap-2">
+                <span
+                  className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                    sub.status === "ACTIVE"
+                      ? "bg-green-100 text-green-700"
+                      : sub.status === "EXPIRED"
+                        ? "bg-red-100 text-red-700"
+                        : "bg-gray-100 text-gray-700"
+                  }`}
+                >
+                  {sub.status}
+                </span>
+                <span className="text-xs text-gray-400">
+                  {sub.paymentMethod}
+                </span>
+              </div>
+
+              <div className="flex items-center flex-wrap gap-2 pt-1">
                 {sub.status === "ACTIVE" && (
                   <span className="text-xs text-accent font-medium px-2 py-1">
                     Current Focus
@@ -159,10 +154,10 @@ export const SubscriptionSection = () => {
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
-              </ItemActions>
-            </Item>
+              </div>
+            </div>
           ))}
-        </section>
+        </div>
       )}
     </section>
   );

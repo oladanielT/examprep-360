@@ -1,0 +1,470 @@
+{{baseUrl}}/student/exams/attempts/:attemptId/review GET
+
+{
+    "id": "e5853bc9-a3ec-47e0-bcd2-f4a20a86420b",
+    "studentId": "db17e8b7-3824-4657-b5c5-0164b0482444",
+    "examId": "de1d8dbd-ef75-4f4f-81f2-4515038ddf49",
+    "attemptNumber": 1,
+    "status": "COMPLETED",
+    "startedAt": "2026-01-27T14:33:58.771Z",
+    "submittedAt": "2026-01-27T15:07:22.638Z",
+    "completedAt": "2026-01-27T15:07:22.638Z",
+    "timeSpentSeconds": 1064,
+    "totalScore": 2,
+    "percentage": 66.66666666666666,
+    "passed": true,
+    "autoGraded": false,
+    "manualGraded": false,
+    "gradedBy": null,
+    "gradedAt": null,
+    "createdAt": "2026-01-27T14:33:58.771Z",
+    "updatedAt": "2026-01-27T15:07:22.640Z",
+    "exam": {
+        "id": "de1d8dbd-ef75-4f4f-81f2-4515038ddf49",
+        "name": "Mathematics",
+        "description": null,
+        "startDate": "2026-01-27T14:33:57.880Z",
+        "endDate": "2027-01-27T14:33:57.880Z",
+        "durationMinutes": 9999,
+        "numQuestions": 3,
+        "allowedAttempts": 1,
+        "passingScore": 50,
+        "rules": null,
+        "status": "DRAFT",
+        "examTypeId": "404bf6d7-5eed-45d2-ac9b-f5462eb54681",
+        "subjectId": "d5167a52-726f-4943-932a-e2fe6e759e33",
+        "departmentId": null,
+        "courseId": null,
+        "examTypeEnum": "PRACTICE",
+        "createdAt": "2026-01-27T14:33:57.883Z",
+        "updatedAt": "2026-01-27T14:33:57.883Z",
+        "examStatisticsId": null,
+        "subject": {
+            "id": "d5167a52-726f-4943-932a-e2fe6e759e33",
+            "name": "Mathematics",
+            "examTypeId": "404bf6d7-5eed-45d2-ac9b-f5462eb54681",
+            "year": null,
+            "textTutorialCount": 1,
+            "videoTutorialCount": 1,
+            "createdAt": "2026-01-09T03:39:19.222Z",
+            "updatedAt": "2026-01-21T17:40:37.397Z"
+        },
+        "examType": {
+            "id": "404bf6d7-5eed-45d2-ac9b-f5462eb54681",
+            "name": "WAEC",
+            "category": "SECONDARY_SCHOOL",
+            "imageUrl": null,
+            "imagePublicId": null,
+            "createdAt": "2026-01-09T03:38:28.478Z",
+            "updatedAt": "2026-01-09T03:38:28.478Z"
+        }
+    },
+    "responses": [
+        {
+            "id": "04552cd8-6184-4492-8c1a-5fc4af1f3108",
+            "attemptId": "e5853bc9-a3ec-47e0-bcd2-f4a20a86420b",
+            "questionId": "80d6d1a4-55e7-4021-aa77-279d78e76f39",
+            "answer": "D",
+            "isCorrect": true,
+            "marksAwarded": 1,
+            "timeSpentSeconds": 18,
+            "flaggedForReview": false,
+            "createdAt": "2026-01-27T14:34:20.290Z",
+            "updatedAt": "2026-01-27T15:07:22.045Z",
+            "question": {
+                "id": "80d6d1a4-55e7-4021-aa77-279d78e76f39",
+                "questionNumber": 1,
+                "questionType": "SINGLE_CHOICE",
+                "questionText": [
+                    {
+                        "type": "text",
+                        "value": "vvvvv"
+                    }
+                ],
+                "instruction": "ccccc",
+                "context": null,
+                "options": [
+                    {
+                        "id": "A",
+                        "content": [
+                            {
+                                "type": "text",
+                                "value": "cccc"
+                            }
+                        ],
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "B",
+                        "content": [
+                            {
+                                "type": "text",
+                                "value": "cccc"
+                            }
+                        ],
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "C",
+                        "content": [
+                            {
+                                "type": "text",
+                                "value": "vvvv"
+                            }
+                        ],
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "D",
+                        "content": [
+                            {
+                                "type": "text",
+                                "value": "cccc"
+                            }
+                        ],
+                        "isCorrect": true
+                    }
+                ],
+                "correctAnswer": "D",
+                "correctAnswers": [],
+                "explanation": null,
+                "textExplanation": null,
+                "marks": 1,
+                "marksPerCorrect": null,
+                "negativeMarking": null,
+                "partialCreditAllowed": null,
+                "randomizeOptions": null,
+                "passingMarks": null,
+                "estimatedTimeSeconds": null,
+                "difficulty": "EASY",
+                "status": "PUBLISHED",
+                "tags": [],
+                "cognitiveLevel": null,
+                "skillsAssessed": [],
+                "learningOutcomes": [],
+                "averageScore": null,
+                "attemptCount": 0,
+                "successRate": null,
+                "paper": null,
+                "year": null,
+                "createdAt": "2026-01-17T11:28:33.745Z",
+                "updatedAt": "2026-01-18T09:05:21.904Z",
+                "hierarchy": {
+                    "topic": {
+                        "name": "convex"
+                    },
+                    "subject": "Mathematics",
+                    "examType": "WAEC",
+                    "subjectCode": "Mathematics"
+                },
+                "metadata": {
+                    "tags": [],
+                    "marks": 1,
+                    "status": "PUBLISHED",
+                    "examType": "WAEC",
+                    "examYear": "2026",
+                    "difficulty": "EASY",
+                    "examPeriod": "MAY/JUNE",
+                    "passingMarks": 1,
+                    "cognitiveLevel": "RECALL",
+                    "estimatedTimeSeconds": 60
+                },
+                "crossExamRef": null,
+                "tutorialInfo": null,
+                "pastQuestionReference": null,
+                "accessibility": null,
+                "adaptiveSettings": null,
+                "examType": "WAEC",
+                "examYear": "2026",
+                "trueFalseData": null,
+                "fillInBlankData": null,
+                "essayData": null,
+                "essayWithSubData": null,
+                "shortAnswerData": null,
+                "matchingData": null,
+                "orderingData": null,
+                "calculationData": null,
+                "diagramLabelingData": null,
+                "theoryWithObjectivesData": null,
+                "questionVideoUrls": [],
+                "optionVideoUrls": [],
+                "explanationVideoUrls": [],
+                "topicId": "74dbac8a-3183-4f9c-8af5-48b128248595",
+                "subTopicId": null,
+                "sessionId": null,
+                "universityId": null,
+                "facultyId": null,
+                "departmentId": null,
+                "courseId": null,
+                "tutorialId": null
+            }
+        },
+        {
+            "id": "ee1d1e95-d688-41b8-a3c2-f18a70d1589b",
+            "attemptId": "e5853bc9-a3ec-47e0-bcd2-f4a20a86420b",
+            "questionId": "bb092a31-cc5f-4522-ac71-8e2622aec4c0",
+            "answer": [
+                "C",
+                "D"
+            ],
+            "isCorrect": true,
+            "marksAwarded": 1,
+            "timeSpentSeconds": 7,
+            "flaggedForReview": false,
+            "createdAt": "2026-01-27T14:34:54.223Z",
+            "updatedAt": "2026-01-27T15:07:22.341Z",
+            "question": {
+                "id": "bb092a31-cc5f-4522-ac71-8e2622aec4c0",
+                "questionNumber": 2,
+                "questionType": "MULTIPLE_CHOICE",
+                "questionText": [
+                    {
+                        "type": "text",
+                        "value": "bbbbbbb"
+                    }
+                ],
+                "instruction": "HOw areu",
+                "context": null,
+                "options": [
+                    {
+                        "id": "A",
+                        "content": [
+                            {
+                                "type": "text",
+                                "value": "bbbb"
+                            }
+                        ],
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "B",
+                        "content": [
+                            {
+                                "type": "text",
+                                "value": "bbbb"
+                            }
+                        ],
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "C",
+                        "content": [
+                            {
+                                "type": "text",
+                                "value": "bbbb"
+                            }
+                        ],
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "D",
+                        "content": [
+                            {
+                                "type": "text",
+                                "value": "bbbb"
+                            }
+                        ],
+                        "isCorrect": true
+                    }
+                ],
+                "correctAnswer": null,
+                "correctAnswers": [
+                    "D",
+                    "C"
+                ],
+                "explanation": null,
+                "textExplanation": null,
+                "marks": 1,
+                "marksPerCorrect": null,
+                "negativeMarking": null,
+                "partialCreditAllowed": null,
+                "randomizeOptions": null,
+                "passingMarks": null,
+                "estimatedTimeSeconds": null,
+                "difficulty": "MEDIUM",
+                "status": "PUBLISHED",
+                "tags": [],
+                "cognitiveLevel": null,
+                "skillsAssessed": [],
+                "learningOutcomes": [],
+                "averageScore": null,
+                "attemptCount": 0,
+                "successRate": null,
+                "paper": null,
+                "year": null,
+                "createdAt": "2026-01-19T12:01:44.150Z",
+                "updatedAt": "2026-01-19T12:06:15.307Z",
+                "hierarchy": {
+                    "topic": {
+                        "name": "convex"
+                    },
+                    "subject": "Mathematics",
+                    "examType": "WAEC",
+                    "subjectCode": "Mathematics"
+                },
+                "metadata": {
+                    "tags": [],
+                    "marks": 1,
+                    "status": "PUBLISHED",
+                    "examType": "WAEC",
+                    "examYear": "2026",
+                    "difficulty": "MEDIUM",
+                    "examPeriod": "MAY/JUNE",
+                    "passingMarks": 1,
+                    "cognitiveLevel": "RECALL",
+                    "estimatedTimeSeconds": 60
+                },
+                "crossExamRef": null,
+                "tutorialInfo": null,
+                "pastQuestionReference": null,
+                "accessibility": null,
+                "adaptiveSettings": null,
+                "examType": "WAEC",
+                "examYear": "2026",
+                "trueFalseData": null,
+                "fillInBlankData": null,
+                "essayData": null,
+                "essayWithSubData": null,
+                "shortAnswerData": null,
+                "matchingData": null,
+                "orderingData": null,
+                "calculationData": null,
+                "diagramLabelingData": null,
+                "theoryWithObjectivesData": null,
+                "questionVideoUrls": [],
+                "optionVideoUrls": [],
+                "explanationVideoUrls": [],
+                "topicId": "74dbac8a-3183-4f9c-8af5-48b128248595",
+                "subTopicId": null,
+                "sessionId": null,
+                "universityId": null,
+                "facultyId": null,
+                "departmentId": null,
+                "courseId": null,
+                "tutorialId": null
+            }
+        },
+        {
+            "id": "29419e30-efb9-41f1-a14b-f83f8ae9c26a",
+            "attemptId": "e5853bc9-a3ec-47e0-bcd2-f4a20a86420b",
+            "questionId": "869540df-12e4-44aa-a482-38a972f77f98",
+            "answer": "Nnnnn",
+            "isCorrect": false,
+            "marksAwarded": 0,
+            "timeSpentSeconds": 8,
+            "flaggedForReview": false,
+            "createdAt": "2026-01-27T14:34:34.337Z",
+            "updatedAt": "2026-01-27T15:07:22.490Z",
+            "question": {
+                "id": "869540df-12e4-44aa-a482-38a972f77f98",
+                "questionNumber": 3,
+                "questionType": "FILL_IN_BLANK",
+                "questionText": [
+                    {
+                        "type": "text",
+                        "value": "eeeee"
+                    }
+                ],
+                "instruction": "eeee",
+                "context": null,
+                "options": null,
+                "correctAnswer": null,
+                "correctAnswers": [],
+                "explanation": null,
+                "textExplanation": null,
+                "marks": 1,
+                "marksPerCorrect": null,
+                "negativeMarking": null,
+                "partialCreditAllowed": null,
+                "randomizeOptions": null,
+                "passingMarks": null,
+                "estimatedTimeSeconds": null,
+                "difficulty": "EASY",
+                "status": "PUBLISHED",
+                "tags": [],
+                "cognitiveLevel": null,
+                "skillsAssessed": [],
+                "learningOutcomes": [],
+                "averageScore": null,
+                "attemptCount": 0,
+                "successRate": null,
+                "paper": null,
+                "year": null,
+                "createdAt": "2026-01-19T12:05:49.446Z",
+                "updatedAt": "2026-01-19T12:17:41.102Z",
+                "hierarchy": {
+                    "topic": {
+                        "name": "convex"
+                    },
+                    "subject": "Mathematics",
+                    "examType": "WAEC",
+                    "subjectCode": "Mathematics"
+                },
+                "metadata": {
+                    "tags": [],
+                    "marks": 1,
+                    "status": "PUBLISHED",
+                    "examType": "WAEC",
+                    "examYear": "2026",
+                    "difficulty": "EASY",
+                    "examPeriod": "MAY/JUNE",
+                    "passingMarks": 1,
+                    "cognitiveLevel": "RECALL",
+                    "estimatedTimeSeconds": 60
+                },
+                "crossExamRef": null,
+                "tutorialInfo": null,
+                "pastQuestionReference": null,
+                "accessibility": null,
+                "adaptiveSettings": null,
+                "examType": "WAEC",
+                "examYear": "2026",
+                "trueFalseData": null,
+                "fillInBlankData": {
+                    "blanks": [
+                        {
+                            "id": "96804bbd-0b0f-4475-9990-7e1b89e262a4",
+                            "hint": "",
+                            "marks": 1,
+                            "inputType": "text",
+                            "caseSensitive": false,
+                            "acceptableAnswers": [
+                                "bbbbbb"
+                            ]
+                        },
+                        {
+                            "id": "a5bb0b8a-a5b5-42af-8b02-51c2da5110e4",
+                            "hint": "",
+                            "marks": 1,
+                            "inputType": "text",
+                            "caseSensitive": false,
+                            "acceptableAnswers": [
+                                "vvvvvvvv"
+                            ]
+                        }
+                    ],
+                    "template": "ccccc_____vvvvv_____"
+                },
+                "essayData": null,
+                "essayWithSubData": null,
+                "shortAnswerData": null,
+                "matchingData": null,
+                "orderingData": null,
+                "calculationData": null,
+                "diagramLabelingData": null,
+                "theoryWithObjectivesData": null,
+                "questionVideoUrls": [],
+                "optionVideoUrls": [],
+                "explanationVideoUrls": [],
+                "topicId": "74dbac8a-3183-4f9c-8af5-48b128248595",
+                "subTopicId": null,
+                "sessionId": null,
+                "universityId": null,
+                "facultyId": null,
+                "departmentId": null,
+                "courseId": null,
+                "tutorialId": null
+            }
+        }
+    ]
+}

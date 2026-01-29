@@ -8,11 +8,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Bell, Settings, LogOut, User } from "lucide-react";
+import { Bell, Settings, LogOut, User, Menu, X } from "lucide-react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useAuthStore } from "@/stores/authStore";
 import { useLogout } from "@/feature/auth/hooks";
 import { useProfile } from "@/feature/profile/hooks/useProfile";
+import { useState } from "react";
 
 export default function Nav() {
   const location = useLocation();
@@ -21,6 +22,7 @@ export default function Nav() {
   const { user: authUser } = useAuthStore();
   const { data: profileUser } = useProfile();
   const logoutMutation = useLogout();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Hide nav during exam (focused exam experience)
   if (pathname.startsWith('/exam/')) {
@@ -47,38 +49,21 @@ export default function Nav() {
   };
 
   const navLinks = [
-    {
-      url: "/",
-      title: "home",
-    },
-    {
-      url: "/textbooks",
-      title: "Textbooks",
-    },
-    {
-      url: "/tests",
-      title: "Tests",
-    },
-    {
-      url: "/tutorials",
-      title: "Tutorials",
-    },
-    {
-      url: "/activities",
-      title: "Activities",
-    },
-    {
-      url: "/leaderboard",
-      title: "Leaderboard",
-    },
+    { url: "/", title: "home" },
+    { url: "/textbooks", title: "Textbooks" },
+    { url: "/tests", title: "Tests" },
+    { url: "/tutorials", title: "Tutorials" },
+    { url: "/activities", title: "Activities" },
+    { url: "/leaderboard", title: "Leaderboard" },
   ];
 
   return (
     <div className="bg-warning">
-      <nav className="max-w-6xl mx-auto flex items-center justify-between  py-5">
-        <div className="flex  gap-5 items-center">
+      <nav className="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4 lg:py-5">
+        <div className="flex gap-5 items-center">
           <Logo />
-          <ul className="flex  gap-5 items-center">
+          {/* Desktop nav links */}
+          <ul className="hidden lg:flex gap-3 xl:gap-5 items-center">
             {navLinks.map((link) => {
               const isActive =
                 link.url === "/"
@@ -88,7 +73,7 @@ export default function Nav() {
               return (
                 <Link
                   className={cn(
-                    "capitalize p-3 font-semibold transition-all duration-300 ease-in-out rounded-md",
+                    "capitalize p-3 font-semibold transition-all duration-300 ease-in-out rounded-md text-sm xl:text-base",
                     isActive
                       ? "text-white bg-primary shadow-md"
                       : "text-gray-700 hover:bg-gray-100"
@@ -102,7 +87,9 @@ export default function Nav() {
             })}
           </ul>
         </div>
-        <ul className="flex gap-5 items-center">
+
+        {/* Desktop right actions */}
+        <ul className="hidden lg:flex gap-5 items-center">
           <li>
             <Bell className="cursor-pointer" />
           </li>
@@ -147,7 +134,87 @@ export default function Nav() {
             </DropdownMenu>
           </li>
         </ul>
+
+        {/* Mobile: right actions + hamburger */}
+        <div className="flex lg:hidden items-center gap-3">
+          <Bell className="cursor-pointer w-5 h-5" />
+          <DropdownMenu>
+            <DropdownMenuTrigger className="focus:outline-none focus:ring-2 focus:ring-primary rounded-full">
+              <Avatar className="w-8 h-8">
+                <AvatarImage src={user?.profilePictureUrl || "/img/avatar.png"} alt="user" />
+                <AvatarFallback className="text-xs">{getInitials(user?.fullName)}</AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <div className="px-2 py-1.5">
+                <p className="text-sm font-medium">{user?.fullName || "User"}</p>
+                <p className="text-xs text-muted-foreground">{user?.email}</p>
+              </div>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => navigate({ to: "/settings" })}
+                className="cursor-pointer"
+              >
+                <User className="mr-2 h-4 w-4" />
+                Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => navigate({ to: "/settings" })}
+                className="cursor-pointer"
+              >
+                <Settings className="mr-2 h-4 w-4" />
+                Settings
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={handleLogout}
+                disabled={logoutMutation.isPending}
+                className="cursor-pointer text-destructive focus:text-destructive"
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                {logoutMutation.isPending ? "Logging out..." : "Logout"}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-1.5 rounded-md hover:bg-black/5 transition-colors"
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </nav>
+
+      {/* Mobile nav drawer */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden border-t border-black/10 px-4 pb-4">
+          <ul className="flex flex-col gap-1 pt-2">
+            {navLinks.map((link) => {
+              const isActive =
+                link.url === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(link.url);
+
+              return (
+                <Link
+                  className={cn(
+                    "capitalize p-3 font-semibold transition-all duration-200 rounded-md",
+                    isActive
+                      ? "text-white bg-primary shadow-md"
+                      : "text-gray-700 hover:bg-gray-100"
+                  )}
+                  to={link.url}
+                  key={link.title}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {link.title}
+                </Link>
+              );
+            })}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

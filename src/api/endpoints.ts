@@ -38,6 +38,7 @@ export const EXAM_ENDPOINTS = {
   PAUSE: (attemptId: string) => `/student/exams/attempts/${attemptId}/pause`,
   RESUME: (attemptId: string) => `/student/exams/attempts/${attemptId}/resume`,
   COMPLETE: (attemptId: string) => `/student/exams/attempts/${attemptId}/complete`,
+  REVIEW: (attemptId: string) => `/student/exams/attempts/${attemptId}/review`,
   HISTORY: "/student/exams/history",
   PAUSED: "/student/exams/paused",
   BOOKMARKS: "/student/exams/bookmarks",

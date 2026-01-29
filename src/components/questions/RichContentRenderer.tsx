@@ -198,7 +198,7 @@ export const RichContentRenderer = memo(function RichContentRenderer({ content, 
   }
 
   return (
-    <div className={cn("rich-content", className)}>
+    <div className={cn("rich-content break-words [word-break:break-word] overflow-hidden", className)}>
       {content.map((block, index) => renderBlock(block, index))}
     </div>
   );

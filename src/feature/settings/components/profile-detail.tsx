@@ -77,7 +77,7 @@ export const ProfileSettingsForm = () => {
   };
 
   return (
-    <div className="w-full max-w-sm">
+    <div className="w-full max-w-sm sm:max-w-md lg:max-w-sm">
       <form
         className="w-full"
         onSubmit={(e) => {

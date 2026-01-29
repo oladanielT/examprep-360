@@ -64,13 +64,13 @@ export function QuestionNavigator({
   const questions = useMemo(() => Array.from({ length: totalQuestions }, (_, i) => i), [totalQuestions]);
 
   return (
-    <Card className="p-4 space-y-4 sticky top-4">
+    <Card className="p-3 sm:p-4 space-y-3 sm:space-y-4 lg:sticky lg:top-4">
       {/* Timer Header */}
-      <div className="flex items-center gap-2 border border-dashed border-gray-300 rounded-lg p-3">
+      <div className="flex items-center gap-2 border border-dashed border-gray-300 rounded-lg p-2.5 sm:p-3">
         {onPauseToggle && (
           <button
             onClick={onPauseToggle}
-            className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
+            className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors shrink-0"
             title={isPaused ? "Resume" : "Pause"}
           >
             {isPaused ? (
@@ -83,8 +83,8 @@ export function QuestionNavigator({
 
         <div className="flex-1 text-center">
           <span className={cn(
-            "font-mono text-lg font-semibold",
-            timeRemaining < 300 && "text-red-500" // Less than 5 minutes
+            "font-mono text-base sm:text-lg font-semibold",
+            timeRemaining < 300 && "text-red-500"
           )}>
             {formatTime(timeRemaining)}
           </span>
@@ -94,7 +94,7 @@ export function QuestionNavigator({
           <button
             onClick={onBookmark}
             className={cn(
-              "w-8 h-8 rounded-full flex items-center justify-center transition-colors",
+              "w-8 h-8 rounded-full flex items-center justify-center transition-colors shrink-0",
               isBookmarked ? "bg-[#F04F54] text-white" : "bg-gray-100 hover:bg-gray-200"
             )}
           >
@@ -107,7 +107,7 @@ export function QuestionNavigator({
       </div>
 
       {/* Question Grid */}
-      <div className="grid grid-cols-6 gap-2">
+      <div className="grid grid-cols-8 sm:grid-cols-10 lg:grid-cols-6 gap-1.5 sm:gap-2">
         {questions.map((qIndex) => {
           const isCurrent = qIndex === currentQuestion;
           const isAnswered = answeredQuestions.has(qIndex);
@@ -118,11 +118,11 @@ export function QuestionNavigator({
               key={qIndex}
               onClick={() => onQuestionSelect(qIndex)}
               className={cn(
-                "w-9 h-9 rounded-full text-sm font-medium transition-colors",
+                "w-8 h-8 sm:w-9 sm:h-9 rounded-full text-xs sm:text-sm font-medium transition-colors",
                 "focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#F04F54]/50",
                 isCurrent && "bg-green-500 text-white",
-                !isCurrent && isSubmitted && "bg-green-500 text-white", // Submitted = solid green
-                !isCurrent && !isSubmitted && isAnswered && "bg-yellow-100 text-yellow-700 border border-yellow-300", // Answered but not submitted = yellow
+                !isCurrent && isSubmitted && "bg-green-500 text-white",
+                !isCurrent && !isSubmitted && isAnswered && "bg-yellow-100 text-yellow-700 border border-yellow-300",
                 !isCurrent && !isAnswered && "bg-gray-100 text-gray-600 hover:bg-gray-200"
               )}
             >
@@ -132,29 +132,30 @@ export function QuestionNavigator({
         })}
       </div>
 
-      {/* Submit Answer Button */}
-      {onSubmitAnswer && (
-        <Button
-          onClick={onSubmitAnswer}
-          disabled={!canSubmit || isSubmitting || isCurrentSubmitted}
-          className={cn(
-            "w-full rounded-full",
-            isCurrentSubmitted
-              ? "bg-green-500 hover:bg-green-500 cursor-default"
-              : "bg-[#F04F54] hover:bg-[#F04F54]/90"
-          )}
-        >
-          {isSubmitting ? "Submitting..." : isCurrentSubmitted ? "Submitted ✓" : "Submit Answer"}
-        </Button>
-      )}
+      {/* Action Buttons */}
+      <div className="grid grid-cols-2 lg:grid-cols-1 gap-2 sm:gap-3">
+        {/* Submit Answer Button */}
+        {onSubmitAnswer && (
+          <Button
+            onClick={onSubmitAnswer}
+            disabled={!canSubmit || isSubmitting || isCurrentSubmitted}
+            className={cn(
+              "w-full rounded-full text-sm col-span-2 lg:col-span-1",
+              isCurrentSubmitted
+                ? "bg-green-500 hover:bg-green-500 cursor-default"
+                : "bg-[#F04F54] hover:bg-[#F04F54]/90"
+            )}
+          >
+            {isSubmitting ? "Submitting..." : isCurrentSubmitted ? "Submitted ✓" : "Submit Answer"}
+          </Button>
+        )}
 
-      {/* Navigation Buttons */}
-      <div className="flex gap-3">
+        {/* Navigation Buttons */}
         <Button
           variant="outline"
           onClick={onPrevious}
           disabled={currentQuestion === 0}
-          className="flex-1 rounded-full"
+          className="rounded-full text-sm"
         >
           Previous
         </Button>
@@ -162,33 +163,33 @@ export function QuestionNavigator({
           variant="outline"
           onClick={onNext}
           disabled={currentQuestion === totalQuestions - 1}
-          className="flex-1 rounded-full"
+          className="rounded-full text-sm"
         >
           Next
         </Button>
+
+        {/* Report Button */}
+        {onReport && (
+          <Button
+            variant="outline"
+            onClick={onReport}
+            className="rounded-full border-[#F04F54] text-[#F04F54] hover:bg-red-50 text-sm col-span-2 lg:col-span-1"
+          >
+            Report Question
+          </Button>
+        )}
+
+        {/* Complete Exam Button */}
+        {onCompleteExam && (
+          <Button
+            onClick={onCompleteExam}
+            disabled={!canCompleteExam || isCompletingExam}
+            className="rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm col-span-2 lg:col-span-1"
+          >
+            {isCompletingExam ? "Completing..." : "Complete Exam"}
+          </Button>
+        )}
       </div>
-
-      {/* Report Button */}
-      {onReport && (
-        <Button
-          variant="outline"
-          onClick={onReport}
-          className="w-full rounded-full border-[#F04F54] text-[#F04F54] hover:bg-red-50"
-        >
-          Report Question
-        </Button>
-      )}
-
-      {/* Complete Exam Button */}
-      {onCompleteExam && (
-        <Button
-          onClick={onCompleteExam}
-          disabled={!canCompleteExam || isCompletingExam}
-          className="w-full rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold"
-        >
-          {isCompletingExam ? "Completing..." : "Complete Exam"}
-        </Button>
-      )}
     </Card>
   );
 }

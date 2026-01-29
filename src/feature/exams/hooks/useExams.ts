@@ -424,3 +424,18 @@ export const useReportQuestion = () => {
     },
   });
 };
+
+// ==================== REVIEW ====================
+
+export const useExamReview = (attemptId: string) => {
+  return useQuery({
+    queryKey: ["examReview", attemptId],
+    queryFn: async () => {
+      const { data } = await apiClient.get(
+        EXAM_ENDPOINTS.REVIEW(attemptId)
+      );
+      return data;
+    },
+    enabled: !!attemptId,
+  });
+};

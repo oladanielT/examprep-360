@@ -153,17 +153,17 @@ export function FillInBlankQuestion({
   return (
     <div className="space-y-6">
       {/* Question Header */}
-      <div className="space-y-4">
-        <p className="text-sm font-medium text-gray-600">Question {questionNumber}</p>
+      <div className="space-y-3 sm:space-y-4">
+        <p className="text-xs sm:text-sm font-medium text-gray-600">Question {questionNumber}</p>
 
         {/* Question Text */}
-        <div className="text-lg font-semibold text-gray-900">
+        <div className="text-base sm:text-lg font-semibold text-gray-900 break-words overflow-hidden [word-break:break-word]">
           <RichContentRenderer content={question.questionText} />
         </div>
       </div>
 
       {/* Fill in the blank template */}
-      <div className="text-base leading-relaxed p-4 bg-gray-50 rounded-lg flex flex-wrap items-center">
+      <div className="text-sm sm:text-base leading-relaxed p-3 sm:p-4 bg-gray-50 rounded-lg flex flex-wrap items-center">
         {renderTemplate()}
       </div>
 

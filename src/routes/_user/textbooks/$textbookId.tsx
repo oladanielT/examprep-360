@@ -11,6 +11,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import type { TutorialChapter, TutorialQuestion, TutorialQuizAnswer } from "@/api/types/tutorial.types";
+import { RichContentRenderer } from "@/components/questions/RichContentRenderer";
 
 type ViewMode = "lessons" | "lesson-content" | "test";
 
@@ -37,13 +38,13 @@ function ChapterItem({
       )}
     >
       <span className="font-medium text-gray-500 mt-0.5">{index + 1}.</span>
-      <div className="flex-1">
-        <p className={cn("font-medium", isActive && "text-[#F04F54]")}>
+      <div className="flex-1 min-w-0">
+        <p className={cn("font-medium truncate", isActive && "text-[#F04F54]")}>
           {chapter.name}
         </p>
         <p className="text-sm text-gray-400">Chapter {chapter.order}</p>
       </div>
-      {isCompleted && <CheckCircle weight="fill" className="w-5 h-5 text-green-500 mt-1" />}
+      {isCompleted && <CheckCircle weight="fill" className="w-5 h-5 text-green-500 mt-1 shrink-0" />}
     </button>
   );
 }
@@ -57,60 +58,17 @@ function TextContent({
 }) {
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold">{chapter.name}</h2>
+      <h2 className="text-lg sm:text-xl font-semibold">{chapter.name}</h2>
 
-      {/* Text Content from chapter blocks */}
-      <div className="prose prose-gray max-w-none">
+      {/* Rich Content from chapter blocks */}
+      <div className="max-w-none overflow-hidden break-words [word-break:break-word]">
         {chapter.content && Array.isArray(chapter.content) && chapter.content.length > 0 ? (
-          <div className="space-y-4">
-            {chapter.content.map((block: any, idx: number) => (
-              <p key={idx}>{block.value || block.text}</p>
-            ))}
-          </div>
+          <RichContentRenderer
+            content={chapter.content}
+            className="space-y-4 text-sm sm:text-base text-gray-700"
+          />
         ) : (
-          <div className="space-y-4 text-gray-700">
-            <p>
-              A fraction is a way of expressing a part of a whole. It is written in the form:
-            </p>
-            <ul className="list-disc pl-6 space-y-2">
-              <li>The numerator (top number) tells you how many parts you have.</li>
-              <li>The denominator (bottom number) tells you how many equal parts the whole is divided into.</li>
-            </ul>
-            <p>
-              For example, if a pizza is cut into 4 equal slices and you take 3, you have taken 3/4 of the pizza.
-            </p>
-            <p>
-              Fractions are everywhere — in measuring time, money, distance, ingredients in recipes, and much more. Understanding fractions is essential in solving more complex math problems like ratios, proportions, and algebraic expressions.
-            </p>
-            <p>There are different types of fractions:</p>
-            <ul className="list-disc pl-6 space-y-2">
-              <li>Proper Fractions: Numerator is less than denominator, e.g., 3/5</li>
-              <li>Improper Fractions: Numerator is greater than or equal to denominator, e.g., 7/4</li>
-              <li>Mixed Numbers: A whole number combined with a fraction, e.g., 2 1/2</li>
-            </ul>
-
-            {/* Sample image placeholder */}
-            <div className="my-6 grid grid-cols-2 gap-4">
-              <div className="bg-gray-100 p-4 rounded-lg">
-                <p className="text-sm text-gray-500 mb-2">Write the solutions in your book and also here. Be cognizant of showing E-models</p>
-                <div className="grid grid-cols-4 gap-2 text-sm">
-                  <span>1/2 + 1/4 =</span>
-                  <span>1/3 + 1/6 =</span>
-                  <span>2/5 + 1/5 =</span>
-                  <span>3/4 + 1/8 =</span>
-                </div>
-              </div>
-              <div className="bg-gray-100 p-4 rounded-lg">
-                <p className="text-sm text-gray-500 mb-2">Finding and dividing</p>
-                <div className="grid grid-cols-4 gap-2 text-sm">
-                  <span>1/2 + 1/4 =</span>
-                  <span>1/3 + 1/6 =</span>
-                  <span>2/5 + 1/5 =</span>
-                  <span>3/4 + 1/8 =</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <p className="text-gray-500 text-center py-6">No content available for this chapter.</p>
         )}
       </div>
 
@@ -137,7 +95,7 @@ function TextContent({
       <div className="flex justify-center pt-4">
         <Button
           onClick={onComplete}
-          className="bg-[#F04F54] hover:bg-[#F04F54]/90 px-8"
+          className="bg-[#F04F54] hover:bg-[#F04F54]/90 px-8 w-full sm:w-auto"
         >
           Complete and continue
         </Button>
@@ -173,17 +131,17 @@ function QuizQuestion({
   const isCorrect = isSubmitted && selectedAnswer === correctOption?.id;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="bg-gray-800 text-white p-4 rounded-lg flex items-center gap-2">
-        <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs">i</div>
-        <p className="text-sm">Choose the option that best conveys the meaning of the underlined portion in the following sentence:</p>
+      <div className="bg-gray-800 text-white p-3 sm:p-4 rounded-lg flex items-start sm:items-center gap-2">
+        <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs shrink-0 mt-0.5 sm:mt-0">i</div>
+        <p className="text-xs sm:text-sm">Choose the option that best conveys the meaning of the underlined portion in the following sentence:</p>
       </div>
 
       {/* Question Card */}
-      <Card className="p-6">
+      <Card className="p-4 sm:p-6">
         <p className="text-sm text-gray-500 mb-2">Question {questionNumber}</p>
-        <p className="text-lg font-medium mb-6">{question.questionText}</p>
+        <p className="text-base sm:text-lg font-medium mb-4 sm:mb-6">{question.questionText}</p>
 
         {/* Options */}
         <RadioGroup
@@ -200,7 +158,7 @@ function QuizQuestion({
               <label
                 key={option.id}
                 className={cn(
-                  "flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-colors",
+                  "flex items-center gap-3 p-3 sm:p-4 rounded-lg border cursor-pointer transition-colors",
                   !isSubmitted && "hover:bg-gray-50",
                   isSelected && !isSubmitted && "border-[#F04F54] bg-red-50",
                   showCorrect && "border-green-500 bg-green-50",
@@ -208,7 +166,7 @@ function QuizQuestion({
                 )}
               >
                 <RadioGroupItem value={option.id} disabled={isSubmitted} />
-                <span>{option.text}</span>
+                <span className="text-sm sm:text-base">{option.text}</span>
               </label>
             );
           })}
@@ -216,8 +174,8 @@ function QuizQuestion({
 
         {/* Explanation (shown after submit) */}
         {isSubmitted && (
-          <div className="mt-6 space-y-4">
-            <div className="bg-teal-600 text-white p-4 rounded-lg">
+          <div className="mt-4 sm:mt-6 space-y-4">
+            <div className="bg-teal-600 text-white p-3 sm:p-4 rounded-lg">
               <p className="text-xs uppercase tracking-wide mb-1">Explanation</p>
               <p className="text-sm">The correct answer demonstrates the intended meaning based on the context.</p>
             </div>
@@ -226,40 +184,42 @@ function QuizQuestion({
                 {isCorrect ? (
                   <>
                     <CheckCircle weight="fill" className="w-5 h-5 text-green-500" />
-                    <span className="font-medium">Correct!</span>
+                    <span className="font-medium text-sm sm:text-base">Correct!</span>
                   </>
                 ) : (
                   <>
                     <Warning weight="fill" className="w-5 h-5 text-red-500" />
-                    <span className="font-medium">Incorrect</span>
+                    <span className="font-medium text-sm sm:text-base">Incorrect</span>
                   </>
                 )}
               </div>
-              {isCorrect && <span className="text-green-500 font-medium">+40XP</span>}
+              {isCorrect && <span className="text-green-500 font-medium text-sm sm:text-base">+40XP</span>}
             </div>
           </div>
         )}
       </Card>
 
       {/* Navigation */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <Button
           variant="outline"
           onClick={onPrevious}
           disabled={isFirst}
+          className="text-sm"
         >
           Previous
         </Button>
         <Button
           variant="outline"
           onClick={onReport}
-          className="border-[#F04F54] text-[#F04F54] hover:bg-red-50"
+          className="border-[#F04F54] text-[#F04F54] hover:bg-red-50 text-xs sm:text-sm"
         >
-          Report Question
+          Report
         </Button>
         <Button
           variant="outline"
           onClick={onNext}
+          className="text-sm"
         >
           {isLast ? "Finish" : "Next"}
         </Button>
@@ -292,12 +252,10 @@ function TextbookDetailPage() {
   // Initialize state from textbook data
   useEffect(() => {
     if (textbook) {
-      // Set bookmark state
       if (textbook.isBookmarked !== undefined) {
         setIsBookmarked(textbook.isBookmarked);
       }
 
-      // Restore progress - mark chapters up to lastChapterId as completed
       if (textbook.userProgress?.lastChapterId && textbook.chapters) {
         const lastChapterIndex = textbook.chapters.findIndex(
           (c) => c.id === textbook.userProgress?.lastChapterId
@@ -310,7 +268,6 @@ function TextbookDetailPage() {
         }
       }
 
-      // If textbook is already completed, mark all chapters as done
       if (textbook.userProgress?.isCompleted && textbook.chapters) {
         setCompletedChapters(new Set(textbook.chapters.map((c) => c.id)));
       }
@@ -356,15 +313,11 @@ function TextbookDetailPage() {
         {
           onSuccess: () => {
             toast.success("Chapter completed!");
-
-            // If this is the last chapter and there are no test questions,
-            // automatically mark the textbook as complete
             if (isLastChapter && questions.length === 0) {
               handleMarkComplete();
             }
           },
           onError: (error: any) => {
-            // Revert completion on error
             setCompletedChapters((prev) => {
               const newSet = new Set(prev);
               newSet.delete(chapterId);
@@ -376,7 +329,6 @@ function TextbookDetailPage() {
         }
       );
 
-      // Move to next chapter or back to list
       if (!isLastChapter) {
         setSelectedChapterId(chapters[currentIndex + 1].id);
       } else {
@@ -399,7 +351,6 @@ function TextbookDetailPage() {
   const handleAnswerSelect = (optionId: string) => {
     const question = questions[currentQuestionIndex];
     setAnswers((prev) => ({ ...prev, [question.id]: optionId }));
-    // Auto-submit on selection
     setSubmittedQuestions((prev) => new Set([...prev, currentQuestionIndex]));
   };
 
@@ -433,21 +384,21 @@ function TextbookDetailPage() {
   const selectedChapter = chapters.find((c) => c.id === selectedChapterId);
 
   return (
-    <div className="py-6">
+    <div className="py-4 sm:py-6">
       {/* Header */}
       <Link to="/textbooks" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4">
         <ArrowLeft className="w-5 h-5" />
         <span>Back</span>
       </Link>
 
-      <div className="mb-6 flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">{textbook.name}</h1>
-          <div className="flex items-center gap-2 text-gray-500">
+      <div className="mb-6 flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold">{textbook.name}</h1>
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-gray-500">
             {textbook.subject?.name && (
               <>
                 <span>{textbook.subject.name}</span>
-                <span>•</span>
+                <span className="hidden sm:inline">•</span>
               </>
             )}
             <span>{textbook.subscriberCount?.toLocaleString() || 0} Students</span>
@@ -459,7 +410,7 @@ function TextbookDetailPage() {
           onClick={handleBookmarkToggle}
           disabled={toggleBookmark.isPending}
           className={cn(
-            "flex-shrink-0",
+            "shrink-0",
             isBookmarked && "text-[#F04F54] border-[#F04F54]"
           )}
         >
@@ -470,60 +421,66 @@ function TextbookDetailPage() {
         </Button>
       </div>
 
-      {/* Main Layout */}
-      <div className="flex gap-8">
-        {/* Left Sidebar */}
-        <div className="w-64 flex-shrink-0">
+      {/* Main Layout: stacked on mobile, side-by-side on lg */}
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+        {/* Sidebar */}
+        <div className="w-full lg:w-64 lg:shrink-0">
           <Card className="p-4">
-            {/* Thumbnail */}
-            <div className="aspect-[4/3] rounded-lg overflow-hidden mb-4 bg-gray-100">
-              {textbook.tutorialImages?.[0]?.url ? (
-                <img
-                  src={textbook.tutorialImages[0].url}
-                  alt={textbook.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-50">
-                  <Book weight="fill" className="w-12 h-12 text-blue-500 opacity-50" />
+            {/* Thumbnail + Progress row on mobile, stacked on lg */}
+            <div className="flex gap-4 lg:flex-col lg:gap-0">
+              {/* Thumbnail */}
+              <div className="aspect-square w-24 sm:w-28 lg:w-full lg:aspect-[4/3] rounded-lg overflow-hidden bg-gray-100 shrink-0 lg:mb-4">
+                {textbook.tutorialImages?.[0]?.url ? (
+                  <img
+                    src={textbook.tutorialImages[0].url}
+                    alt={textbook.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-50">
+                    <Book weight="fill" className="w-10 h-10 lg:w-12 lg:h-12 text-blue-500 opacity-50" />
+                  </div>
+                )}
+              </div>
+
+              {/* Progress + Tabs on mobile beside thumbnail */}
+              <div className="flex-1 min-w-0">
+                {/* Progress */}
+                <div className="mb-3 lg:mb-4">
+                  <Progress value={progressPercent} className="mb-1">
+                    <ProgressTrack className="h-1.5 bg-gray-200">
+                      <ProgressIndicator className="bg-[#F04F54]" />
+                    </ProgressTrack>
+                  </Progress>
+                  <p className="text-xs sm:text-sm text-gray-600">{progressPercent}% Complete</p>
                 </div>
-              )}
-            </div>
 
-            {/* Progress */}
-            <div className="mb-4">
-              <Progress value={progressPercent} className="mb-1">
-                <ProgressTrack className="h-1.5 bg-gray-200">
-                  <ProgressIndicator className="bg-[#F04F54]" />
-                </ProgressTrack>
-              </Progress>
-              <p className="text-sm text-center text-gray-600">{progressPercent}% Complete</p>
-            </div>
-
-            {/* Tabs */}
-            <div className="space-y-1 mb-6">
-              <button
-                onClick={() => handleTabClick("lessons")}
-                className={cn(
-                  "w-full text-left px-3 py-2 rounded font-medium transition-colors",
-                  activeTab === "lessons"
-                    ? "border-l-4 border-[#F04F54] bg-red-50 text-gray-900"
-                    : "text-gray-500 hover:text-gray-700"
-                )}
-              >
-                Lessons
-              </button>
-              <button
-                onClick={() => handleTabClick("test")}
-                className={cn(
-                  "w-full text-left px-3 py-2 rounded font-medium transition-colors",
-                  activeTab === "test"
-                    ? "border-l-4 border-[#F04F54] bg-red-50 text-gray-900"
-                    : "text-gray-500 hover:text-gray-700"
-                )}
-              >
-                Class Test
-              </button>
+                {/* Tabs */}
+                <div className="flex lg:flex-col gap-1 lg:mb-6">
+                  <button
+                    onClick={() => handleTabClick("lessons")}
+                    className={cn(
+                      "text-left px-3 py-2 rounded font-medium transition-colors text-sm",
+                      activeTab === "lessons"
+                        ? "border-l-4 border-[#F04F54] bg-red-50 text-gray-900"
+                        : "text-gray-500 hover:text-gray-700"
+                    )}
+                  >
+                    Lessons
+                  </button>
+                  <button
+                    onClick={() => handleTabClick("test")}
+                    className={cn(
+                      "text-left px-3 py-2 rounded font-medium transition-colors text-sm",
+                      activeTab === "test"
+                        ? "border-l-4 border-[#F04F54] bg-red-50 text-gray-900"
+                        : "text-gray-500 hover:text-gray-700"
+                    )}
+                  >
+                    Class Test
+                  </button>
+                </div>
+              </div>
             </div>
 
             {/* Teacher Info */}
@@ -540,7 +497,7 @@ function TextbookDetailPage() {
         </div>
 
         {/* Right Content Area */}
-        <div className="flex-1">
+        <div className="flex-1 min-w-0 overflow-hidden">
           {/* Lessons List View */}
           {viewMode === "lessons" && (
             <div className="space-y-2">
@@ -581,7 +538,6 @@ function TextbookDetailPage() {
                 if (currentQuestionIndex < questions.length - 1) {
                   setCurrentQuestionIndex((i) => i + 1);
                 } else {
-                  // Submit all answers
                   const answersList: TutorialQuizAnswer[] = Object.entries(answers).map(
                     ([questionId, answer]) => ({ questionId, answer })
                   );
@@ -590,7 +546,6 @@ function TextbookDetailPage() {
                     {
                       onSuccess: () => {
                         toast.success("Quiz submitted successfully!");
-                        // Mark the entire textbook as complete after quiz submission
                         handleMarkComplete();
                       },
                       onError: (error: any) => {

@@ -11,6 +11,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import type { TutorialChapter, TutorialQuestion, TutorialQuizAnswer } from "@/api/types/tutorial.types";
+import { RichContentRenderer } from "@/components/questions/RichContentRenderer";
 
 type ViewMode = "lessons" | "lesson-content" | "test";
 
@@ -37,13 +38,13 @@ function ChapterItem({
       )}
     >
       <span className="font-medium text-gray-500 mt-0.5">{index + 1}.</span>
-      <div className="flex-1">
-        <p className={cn("font-medium", isActive && "text-[#F04F54]")}>
+      <div className="flex-1 min-w-0">
+        <p className={cn("font-medium truncate", isActive && "text-[#F04F54]")}>
           {chapter.name}
         </p>
         <p className="text-sm text-gray-400">Lesson {chapter.order}</p>
       </div>
-      {isCompleted && <CheckCircle weight="fill" className="w-5 h-5 text-green-500 mt-1" />}
+      {isCompleted && <CheckCircle weight="fill" className="w-5 h-5 text-green-500 mt-1 shrink-0" />}
     </button>
   );
 }
@@ -66,71 +67,19 @@ function ChapterContent({
       const videoData = JSON.parse(videoBlock.value);
       return { src: videoData.src, title: videoData.title };
     } catch {
-      // If value is a direct URL string
       return { src: videoBlock.value, title: "" };
     }
   };
 
   const videoData = getVideoFromContent();
 
-  // Render rich content blocks (excluding video which is rendered separately)
-  const renderContent = () => {
-    if (!chapter.content || !Array.isArray(chapter.content)) return null;
-
-    const nonVideoContent = chapter.content.filter((block: any) => block.type !== "video");
-    if (nonVideoContent.length === 0) return null;
-
-    return nonVideoContent.map((block: any, idx: number) => {
-      switch (block.type) {
-        case "text":
-          return (
-            <p key={idx} className="text-gray-700 leading-relaxed mb-4">
-              {block.value}
-            </p>
-          );
-        case "markdown":
-          return (
-            <div key={idx} className="prose max-w-none mb-4">
-              {block.content}
-            </div>
-          );
-        case "image":
-          return (
-            <img
-              key={idx}
-              src={block.url || block.value}
-              alt={block.alt || ""}
-              className="rounded-lg max-w-full mb-4"
-            />
-          );
-        case "audio":
-          try {
-            const audioData = JSON.parse(block.value);
-            return (
-              <audio key={idx} controls className="w-full mb-4">
-                <source src={audioData.src || block.value} />
-                Your browser does not support the audio element.
-              </audio>
-            );
-          } catch {
-            return (
-              <audio key={idx} controls className="w-full mb-4">
-                <source src={block.value} />
-                Your browser does not support the audio element.
-              </audio>
-            );
-          }
-        default:
-          return null;
-      }
-    });
-  };
-
-  const hasTextContent = chapter.content?.some((block: any) => block.type !== "video");
+  // Filter non-video content for RichContentRenderer
+  const nonVideoContent = chapter.content?.filter((block: any) => block.type !== "video") || [];
+  const hasTextContent = nonVideoContent.length > 0;
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold">{chapter.name}</h2>
+      <h2 className="text-lg sm:text-xl font-semibold">{chapter.name}</h2>
 
       {/* Video Player */}
       {videoData && (
@@ -158,19 +107,22 @@ function ChapterContent({
         </div>
       )}
 
-      {/* Chapter Text Content */}
+      {/* Chapter Rich Content */}
       {hasTextContent && (
-        <Card className="p-6">
-          <div className="prose max-w-none">
-            {renderContent()}
+        <Card className="p-4 sm:p-6">
+          <div className="max-w-none overflow-hidden break-words [word-break:break-word]">
+            <RichContentRenderer
+              content={nonVideoContent}
+              className="space-y-4 text-sm sm:text-base text-gray-700"
+            />
           </div>
         </Card>
       )}
 
-      <div className="flex justify-center">
+      <div className="flex justify-center pt-4">
         <Button
           onClick={onComplete}
-          className="bg-[#F04F54] hover:bg-[#F04F54]/90 px-8"
+          className="bg-[#F04F54] hover:bg-[#F04F54]/90 px-8 w-full sm:w-auto"
         >
           Complete and continue
         </Button>
@@ -206,17 +158,17 @@ function QuizQuestion({
   const isCorrect = isSubmitted && selectedAnswer === correctOption?.id;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="bg-gray-800 text-white p-4 rounded-lg flex items-center gap-2">
-        <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs">i</div>
-        <p className="text-sm">Choose the option that best conveys the meaning of the underlined portion in the following sentence:</p>
+      <div className="bg-gray-800 text-white p-3 sm:p-4 rounded-lg flex items-start sm:items-center gap-2">
+        <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs shrink-0 mt-0.5 sm:mt-0">i</div>
+        <p className="text-xs sm:text-sm">Choose the option that best conveys the meaning of the underlined portion in the following sentence:</p>
       </div>
 
       {/* Question Card */}
-      <Card className="p-6">
+      <Card className="p-4 sm:p-6">
         <p className="text-sm text-gray-500 mb-2">Question {questionNumber}</p>
-        <p className="text-lg font-medium mb-6">{question.questionText}</p>
+        <p className="text-base sm:text-lg font-medium mb-4 sm:mb-6">{question.questionText}</p>
 
         {/* Options */}
         <RadioGroup
@@ -233,7 +185,7 @@ function QuizQuestion({
               <label
                 key={option.id}
                 className={cn(
-                  "flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-colors",
+                  "flex items-center gap-3 p-3 sm:p-4 rounded-lg border cursor-pointer transition-colors",
                   !isSubmitted && "hover:bg-gray-50",
                   isSelected && !isSubmitted && "border-[#F04F54] bg-red-50",
                   showCorrect && "border-green-500 bg-green-50",
@@ -241,7 +193,7 @@ function QuizQuestion({
                 )}
               >
                 <RadioGroupItem value={option.id} disabled={isSubmitted} />
-                <span>{option.text}</span>
+                <span className="text-sm sm:text-base">{option.text}</span>
               </label>
             );
           })}
@@ -249,8 +201,8 @@ function QuizQuestion({
 
         {/* Explanation (shown after submit) */}
         {isSubmitted && (
-          <div className="mt-6 space-y-4">
-            <div className="bg-teal-600 text-white p-4 rounded-lg">
+          <div className="mt-4 sm:mt-6 space-y-4">
+            <div className="bg-teal-600 text-white p-3 sm:p-4 rounded-lg">
               <p className="text-xs uppercase tracking-wide mb-1">Explanation</p>
               <p className="text-sm">The correct answer demonstrates the intended meaning based on the context.</p>
             </div>
@@ -259,40 +211,42 @@ function QuizQuestion({
                 {isCorrect ? (
                   <>
                     <CheckCircle weight="fill" className="w-5 h-5 text-green-500" />
-                    <span className="font-medium">Correct!</span>
+                    <span className="font-medium text-sm sm:text-base">Correct!</span>
                   </>
                 ) : (
                   <>
                     <Warning weight="fill" className="w-5 h-5 text-red-500" />
-                    <span className="font-medium">Incorrect</span>
+                    <span className="font-medium text-sm sm:text-base">Incorrect</span>
                   </>
                 )}
               </div>
-              {isCorrect && <span className="text-green-500 font-medium">+40XP</span>}
+              {isCorrect && <span className="text-green-500 font-medium text-sm sm:text-base">+40XP</span>}
             </div>
           </div>
         )}
       </Card>
 
       {/* Navigation */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <Button
           variant="outline"
           onClick={onPrevious}
           disabled={isFirst}
+          className="text-sm"
         >
           Previous
         </Button>
         <Button
           variant="outline"
           onClick={onReport}
-          className="border-[#F04F54] text-[#F04F54] hover:bg-red-50"
+          className="border-[#F04F54] text-[#F04F54] hover:bg-red-50 text-xs sm:text-sm"
         >
-          Report Question
+          Report
         </Button>
         <Button
           variant="outline"
           onClick={onNext}
+          className="text-sm"
         >
           {isLast ? "Finish" : "Next"}
         </Button>
@@ -325,12 +279,10 @@ function TutorialDetailPage() {
   // Initialize state from tutorial data
   useEffect(() => {
     if (tutorial) {
-      // Set bookmark state
       if (tutorial.isBookmarked !== undefined) {
         setIsBookmarked(tutorial.isBookmarked);
       }
 
-      // Restore progress - mark chapters up to lastChapterId as completed
       if (tutorial.userProgress?.lastChapterId && tutorial.chapters) {
         const lastChapterIndex = tutorial.chapters.findIndex(
           (c) => c.id === tutorial.userProgress?.lastChapterId
@@ -343,7 +295,6 @@ function TutorialDetailPage() {
         }
       }
 
-      // If tutorial is already completed, mark all chapters as done
       if (tutorial.userProgress?.isCompleted && tutorial.chapters) {
         setCompletedChapters(new Set(tutorial.chapters.map((c) => c.id)));
       }
@@ -389,15 +340,11 @@ function TutorialDetailPage() {
         {
           onSuccess: () => {
             toast.success("Chapter completed!");
-
-            // If this is the last chapter and there are no test questions,
-            // automatically mark the tutorial as complete
             if (isLastChapter && questions.length === 0) {
               handleMarkComplete();
             }
           },
           onError: (error: any) => {
-            // Revert completion on error
             setCompletedChapters((prev) => {
               const newSet = new Set(prev);
               newSet.delete(chapterId);
@@ -409,7 +356,6 @@ function TutorialDetailPage() {
         }
       );
 
-      // Move to next chapter or back to list
       if (!isLastChapter) {
         setSelectedChapterId(chapters[currentIndex + 1].id);
       } else {
@@ -432,7 +378,6 @@ function TutorialDetailPage() {
   const handleAnswerSelect = (optionId: string) => {
     const question = questions[currentQuestionIndex];
     setAnswers((prev) => ({ ...prev, [question.id]: optionId }));
-    // Auto-submit on selection
     setSubmittedQuestions((prev) => new Set([...prev, currentQuestionIndex]));
   };
 
@@ -466,21 +411,21 @@ function TutorialDetailPage() {
   const selectedChapter = chapters.find((c) => c.id === selectedChapterId);
 
   return (
-    <div className="py-6">
+    <div className="py-4 sm:py-6">
       {/* Header */}
       <Link to="/tutorials" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4">
         <ArrowLeft className="w-5 h-5" />
         <span>Back</span>
       </Link>
 
-      <div className="mb-6 flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">{tutorial.name}</h1>
-          <div className="flex items-center gap-2 text-gray-500">
+      <div className="mb-6 flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold">{tutorial.name}</h1>
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-gray-500">
             {tutorial.subject?.name && (
               <>
                 <span>{tutorial.subject.name}</span>
-                <span>•</span>
+                <span className="hidden sm:inline">•</span>
               </>
             )}
             <span>{tutorial.subscriberCount?.toLocaleString() || 0} Students</span>
@@ -492,7 +437,7 @@ function TutorialDetailPage() {
           onClick={handleBookmarkToggle}
           disabled={toggleBookmark.isPending}
           className={cn(
-            "flex-shrink-0",
+            "shrink-0",
             isBookmarked && "text-[#F04F54] border-[#F04F54]"
           )}
         >
@@ -503,66 +448,72 @@ function TutorialDetailPage() {
         </Button>
       </div>
 
-      {/* Main Layout */}
-      <div className="flex gap-8">
-        {/* Left Sidebar */}
-        <div className="w-64 flex-shrink-0">
+      {/* Main Layout: stacked on mobile, side-by-side on lg */}
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+        {/* Sidebar */}
+        <div className="w-full lg:w-64 lg:shrink-0">
           <Card className="p-4">
-            {/* Thumbnail */}
-            <div className="aspect-[4/3] rounded-lg overflow-hidden mb-4 bg-gray-100">
-              {tutorial.tutorialImages?.[0]?.url ? (
-                <img
-                  src={tutorial.tutorialImages[0].url}
-                  alt={tutorial.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : tutorial.tutorialVideos?.[0]?.url ? (
-                <video
-                  src={tutorial.tutorialVideos[0].url}
-                  className="w-full h-full object-cover"
-                  muted
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-red-100 to-red-50">
-                  <Play weight="fill" className="w-12 h-12 text-[#F04F54] opacity-50" />
+            {/* Thumbnail + Progress row on mobile, stacked on lg */}
+            <div className="flex gap-4 lg:flex-col lg:gap-0">
+              {/* Thumbnail */}
+              <div className="aspect-square w-24 sm:w-28 lg:w-full lg:aspect-[4/3] rounded-lg overflow-hidden bg-gray-100 shrink-0 lg:mb-4">
+                {tutorial.tutorialImages?.[0]?.url ? (
+                  <img
+                    src={tutorial.tutorialImages[0].url}
+                    alt={tutorial.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : tutorial.tutorialVideos?.[0]?.url ? (
+                  <video
+                    src={tutorial.tutorialVideos[0].url}
+                    className="w-full h-full object-cover"
+                    muted
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-red-100 to-red-50">
+                    <Play weight="fill" className="w-10 h-10 lg:w-12 lg:h-12 text-[#F04F54] opacity-50" />
+                  </div>
+                )}
+              </div>
+
+              {/* Progress + Tabs beside thumbnail on mobile */}
+              <div className="flex-1 min-w-0">
+                {/* Progress */}
+                <div className="mb-3 lg:mb-4">
+                  <Progress value={progressPercent} className="mb-1">
+                    <ProgressTrack className="h-1.5 bg-gray-200">
+                      <ProgressIndicator className="bg-[#F04F54]" />
+                    </ProgressTrack>
+                  </Progress>
+                  <p className="text-xs sm:text-sm text-gray-600">{progressPercent}% Complete</p>
                 </div>
-              )}
-            </div>
 
-            {/* Progress */}
-            <div className="mb-4">
-              <Progress value={progressPercent} className="mb-1">
-                <ProgressTrack className="h-1.5 bg-gray-200">
-                  <ProgressIndicator className="bg-[#F04F54]" />
-                </ProgressTrack>
-              </Progress>
-              <p className="text-sm text-center text-gray-600">{progressPercent}% Complete</p>
-            </div>
-
-            {/* Tabs */}
-            <div className="space-y-1 mb-6">
-              <button
-                onClick={() => handleTabClick("lessons")}
-                className={cn(
-                  "w-full text-left px-3 py-2 rounded font-medium transition-colors",
-                  activeTab === "lessons"
-                    ? "border-l-4 border-[#F04F54] bg-red-50 text-gray-900"
-                    : "text-gray-500 hover:text-gray-700"
-                )}
-              >
-                Lessons
-              </button>
-              <button
-                onClick={() => handleTabClick("test")}
-                className={cn(
-                  "w-full text-left px-3 py-2 rounded font-medium transition-colors",
-                  activeTab === "test"
-                    ? "border-l-4 border-[#F04F54] bg-red-50 text-gray-900"
-                    : "text-gray-500 hover:text-gray-700"
-                )}
-              >
-                Class Test
-              </button>
+                {/* Tabs */}
+                <div className="flex lg:flex-col gap-1 lg:mb-6">
+                  <button
+                    onClick={() => handleTabClick("lessons")}
+                    className={cn(
+                      "text-left px-3 py-2 rounded font-medium transition-colors text-sm",
+                      activeTab === "lessons"
+                        ? "border-l-4 border-[#F04F54] bg-red-50 text-gray-900"
+                        : "text-gray-500 hover:text-gray-700"
+                    )}
+                  >
+                    Lessons
+                  </button>
+                  <button
+                    onClick={() => handleTabClick("test")}
+                    className={cn(
+                      "text-left px-3 py-2 rounded font-medium transition-colors text-sm",
+                      activeTab === "test"
+                        ? "border-l-4 border-[#F04F54] bg-red-50 text-gray-900"
+                        : "text-gray-500 hover:text-gray-700"
+                    )}
+                  >
+                    Class Test
+                  </button>
+                </div>
+              </div>
             </div>
 
             {/* Teacher Info */}
@@ -579,7 +530,7 @@ function TutorialDetailPage() {
         </div>
 
         {/* Right Content Area */}
-        <div className="flex-1">
+        <div className="flex-1 min-w-0 overflow-hidden">
           {/* Lessons List View */}
           {viewMode === "lessons" && (
             <div className="space-y-2">
@@ -620,7 +571,6 @@ function TutorialDetailPage() {
                 if (currentQuestionIndex < questions.length - 1) {
                   setCurrentQuestionIndex((i) => i + 1);
                 } else {
-                  // Submit all answers
                   const answersList: TutorialQuizAnswer[] = Object.entries(answers).map(
                     ([questionId, answer]) => ({ questionId, answer })
                   );
@@ -629,7 +579,6 @@ function TutorialDetailPage() {
                     {
                       onSuccess: () => {
                         toast.success("Quiz submitted successfully!");
-                        // Mark the entire tutorial as complete after quiz submission
                         handleMarkComplete();
                       },
                       onError: (error: any) => {

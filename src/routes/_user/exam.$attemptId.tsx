@@ -412,8 +412,7 @@ function ExamPage() {
         },
         {
           onSuccess: () => {
-            // Redirect to tests page or exam history
-            navigate({ to: "/tests" });
+            navigate({ to: "/exam/review/$attemptId", params: { attemptId: currentAttempt.id } });
           },
           onError: (error: any) => {
             const message = error?.response?.data?.message || error?.message || "Failed to submit responses. Please try again.";
@@ -425,8 +424,7 @@ function ExamPage() {
       // No unsubmitted responses, just complete the exam
       completeExam.mutate(currentAttempt.id, {
         onSuccess: () => {
-          // Redirect to tests page or exam history
-          navigate({ to: "/tests" });
+            navigate({ to: "/exam/review/$attemptId", params: { attemptId: currentAttempt.id } });
         },
         onError: (error: any) => {
           const message = error?.response?.data?.message || error?.message || "Failed to complete exam. Please try again.";
@@ -652,45 +650,33 @@ function ExamPage() {
   };
 
   return (
-    <div className="py-6">
+    <div className="py-4 sm:py-6">
       {/* Header */}
-      <button
-        onClick={handleExitExam}
-        className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors"
-      >
-        <ArrowLeft className="w-5 h-5" />
-        <span>Exit Exam</span>
-      </button>
-
-      <h1 className="text-2xl font-bold mb-6">{examName}</h1>
+      <div className="flex items-center justify-between mb-4 sm:mb-6">
+        <div>
+          <button
+            onClick={handleExitExam}
+            className="inline-flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="hidden sm:inline">Exit Exam</span>
+            <span className="sm:hidden">Exit</span>
+          </button>
+          <h1 className="text-lg sm:text-2xl font-bold mt-1">{examName}</h1>
+        </div>
+      </div>
 
       {/* Error Message */}
       {errorMessage && (
-        <Alert variant="destructive" className="mb-6">
-          <AlertDescription>{errorMessage}</AlertDescription>
+        <Alert variant="destructive" className="mb-4 sm:mb-6">
+          <AlertDescription className="text-sm">{errorMessage}</AlertDescription>
         </Alert>
       )}
 
-      {/* Main Layout */}
-      <div className="flex gap-6">
-        {/* Left: Question Area */}
-        <div className="flex-1">
-          {currentQuestion && (
-            <QuestionCard instruction={currentQuestion.instruction}>
-              {renderQuestion(currentQuestion)}
-
-              {/* Show explanation after submission for practice exams */}
-              {isPracticeExam &&
-                submittedQuestions.has(currentQuestion.id) &&
-                currentQuestion.explanation && (
-                  <Explanation explanation={currentQuestion.explanation} />
-              )}
-            </QuestionCard>
-          )}
-        </div>
-
-        {/* Right: Navigator */}
-        <div className="w-72 flex-shrink-0">
+      {/* Main Layout — stacked on mobile, side-by-side on desktop */}
+      <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
+        {/* Navigator — top on mobile, right sidebar on desktop */}
+        <div className="w-full lg:w-72 lg:order-2 shrink-0">
           <QuestionNavigator
             totalQuestions={questions.length}
             currentQuestion={currentQuestionIndex}
@@ -717,6 +703,22 @@ function ExamPage() {
             onSubmitAnswer={handleSubmitAnswer}
             onCompleteExam={handleCompleteExam}
           />
+        </div>
+
+        {/* Question Area */}
+        <div className="flex-1 min-w-0 lg:order-1">
+          {currentQuestion && (
+            <QuestionCard instruction={currentQuestion.instruction}>
+              {renderQuestion(currentQuestion)}
+
+              {/* Show explanation after submission for practice exams */}
+              {isPracticeExam &&
+                submittedQuestions.has(currentQuestion.id) &&
+                currentQuestion.explanation && (
+                  <Explanation explanation={currentQuestion.explanation} />
+              )}
+            </QuestionCard>
+          )}
         </div>
       </div>
 

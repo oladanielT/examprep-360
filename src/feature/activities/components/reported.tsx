@@ -1,8 +1,7 @@
 import { useReportedQuestions } from "../hooks/useActivities";
-import { Loader2 } from "lucide-react";
+import { Loader2, AlertTriangle } from "lucide-react";
 import type { RichContentBlock } from "@/api/types/exam.types";
 
-// Helper to extract text from rich content blocks
 const extractTextFromRichContent = (blocks: RichContentBlock[]): string => {
   return blocks
     .map((block) => {
@@ -13,6 +12,12 @@ const extractTextFromRichContent = (blocks: RichContentBlock[]): string => {
     })
     .join(" ")
     .trim();
+};
+
+const statusColors: Record<string, string> = {
+  PENDING: "bg-amber-50 text-amber-700",
+  RESOLVED: "bg-green-50 text-green-700",
+  REJECTED: "bg-red-50 text-red-700",
 };
 
 export default function Reported() {
@@ -35,46 +40,51 @@ export default function Reported() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3 sm:space-y-4">
       {reports.map((report) => {
         const year = report.question?.year || "";
         const reportedDate = report.createdAt
-          ? new Date(report.createdAt).toLocaleString(undefined, {
-              dateStyle: "short",
-              timeStyle: "short",
+          ? new Date(report.createdAt).toLocaleDateString(undefined, {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
             })
           : "";
+        const statusClass = statusColors[report.status] || "bg-gray-100 text-gray-700";
 
         return (
           <div
             key={report.id}
-            className="bg-white rounded-xl border border-gray-200 p-6 hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer"
+            className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 hover:border-gray-300 hover:shadow-md transition-all cursor-pointer"
           >
-            <p className="text-gray-900 font-medium leading-relaxed mb-4 text-base">
-              {extractTextFromRichContent(report.question?.questionText || [])}
-            </p>
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center shrink-0 mt-0.5">
+                <AlertTriangle className="w-4 h-4 text-orange-500" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm sm:text-base text-gray-900 font-medium leading-relaxed line-clamp-2 break-words [word-break:break-word]">
+                  {extractTextFromRichContent(report.question?.questionText || [])}
+                </p>
 
-            <div className="flex items-center flex-wrap gap-2 text-sm text-gray-600">
-              <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
-                {report.reason}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
-                {report.status}
-              </span>
-              {year && (
-                <span className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
-                  {year}
-                </span>
-              )}
-              {reportedDate && (
-                <span className="flex items-center gap-1.5 text-gray-400">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
-                  Reported: {reportedDate}
-                </span>
-              )}
+                <div className="flex items-center flex-wrap gap-x-2 gap-y-1 text-xs mt-2.5">
+                  <span className={`capitalize px-2 py-0.5 rounded-full font-medium ${statusClass}`}>
+                    {report.status?.toLowerCase()}
+                  </span>
+                  <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
+                    {report.reason}
+                  </span>
+                  {year && (
+                    <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
+                      {year}
+                    </span>
+                  )}
+                  {reportedDate && (
+                    <span className="text-gray-400 ml-auto hidden sm:inline">
+                      {reportedDate}
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         );

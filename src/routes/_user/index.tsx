@@ -20,8 +20,8 @@ function HomePage() {
         subHeading="Pick up quickly from where you left off"
       />
       <Stat />
-      {/* <Continue />
-      <Competition /> */}
+      <Continue />
+      <Competition />
     </div>
   );
 }

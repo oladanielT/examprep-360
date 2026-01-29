@@ -5,8 +5,8 @@ import { useAuthStore } from "@/stores/authStore";
 function UserLayout() {
   return (
     <div className="bg-white min-h-screen font-sans">
-      {/* <Nav /> */}
-      <div className="max-w-6xl mx-auto">
+      <Nav />
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <Outlet />
       </div>
     </div>

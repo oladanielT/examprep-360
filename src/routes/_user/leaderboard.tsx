@@ -20,11 +20,10 @@ function LeaderboardPage() {
       .slice(0, 2);
   };
 
-  // Get XP based on period
   const getXPForPeriod = (entry: any) => {
     if (period === "weekly") return entry.weeklyXP;
     if (period === "monthly") return entry.monthlyXP;
-    return entry.xp; // allTime
+    return entry.xp;
   };
 
   const getMotivationalMessage = () => {
@@ -39,7 +38,7 @@ function LeaderboardPage() {
   };
 
   return (
-    <div className="">
+    <div>
       <CustomPageHeader
         backLink="/"
         search={false}
@@ -47,16 +46,18 @@ function LeaderboardPage() {
         filter={true}
         subHeading="See your position in contrast to others"
       />
-      <div className="flex items-start py-10 gap-20">
-        <div className="space-y-5 max-w-80 gap-5">
+
+      <div className="flex flex-col lg:flex-row items-start py-6 sm:py-10 gap-8 lg:gap-16 xl:gap-20">
+        {/* Left: illustration + rank card */}
+        <div className="w-full lg:max-w-80 space-y-5">
           <img
-            src={"/svg/competition.svg"}
+            src="/svg/competition.svg"
             alt="leaderboard"
-            className="w-72 h-44"
+            className="w-full max-w-[280px] h-auto mx-auto lg:mx-0"
             width={1000}
             height={1000}
           />
-          <p className="text-lg font-medium">
+          <p className="text-base sm:text-lg font-medium text-center lg:text-left">
             {getMotivationalMessage()}
           </p>
 
@@ -64,7 +65,7 @@ function LeaderboardPage() {
             <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
               <div className="p-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-teal-50 rounded-lg flex items-center justify-center">
+                  <div className="w-10 h-10 bg-teal-50 rounded-lg flex items-center justify-center shrink-0">
                     <TrendingUp className="w-5 h-5 text-teal-600" />
                   </div>
                   <div>
@@ -76,13 +77,14 @@ function LeaderboardPage() {
                     </p>
                   </div>
                 </div>
-                <ChevronRight className="w-5 h-5 text-gray-400" />
+                <ChevronRight className="w-5 h-5 text-gray-400 shrink-0" />
               </div>
             </Card>
           )}
         </div>
 
-        <Card className="bg-[#FFF8F9] max-w-md! w-full! border-none shadow-lg px-10 py-6">
+        {/* Right: leaderboard list */}
+        <Card className="bg-[#FFF8F9] w-full lg:max-w-md! border-none shadow-lg px-4 sm:px-8 lg:px-10 py-5 sm:py-6">
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
               <Loader2 className="w-8 h-8 animate-spin text-[#F04F54]" />
@@ -92,7 +94,7 @@ function LeaderboardPage() {
               No leaderboard data available yet
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-2 sm:space-y-4">
               {leaderboard.map((entry, index) => {
                 const rank = index + 1;
                 const xp = getXPForPeriod(entry);
@@ -101,23 +103,23 @@ function LeaderboardPage() {
                 return (
                   <div
                     key={entry.id}
-                    className={`text-sm flex items-center justify-between py-2 px-3 rounded-lg transition-colors ${
+                    className={`text-sm flex items-center justify-between py-2 sm:py-2.5 px-2 sm:px-3 rounded-lg transition-colors ${
                       isCurrentUser
                         ? "bg-[#F04F54]/10 border border-[#F04F54]/30"
                         : "hover:bg-white/50"
                     }`}
                   >
-                    <div className="font-medium flex items-center gap-3">
-                      <span className="text-gray-600 w-6">{rank}.</span>
-                      <Avatar className="w-8 h-8">
+                    <div className="font-medium flex items-center gap-2 sm:gap-3 min-w-0">
+                      <span className="text-gray-600 w-5 sm:w-6 shrink-0 text-xs sm:text-sm">{rank}.</span>
+                      <Avatar className="w-7 h-7 sm:w-8 sm:h-8 shrink-0">
                         <AvatarImage src={entry.profilePictureUrl || "/img/avatar.png"} />
-                        <AvatarFallback>{getInitials(entry.fullName)}</AvatarFallback>
+                        <AvatarFallback className="text-xs">{getInitials(entry.fullName)}</AvatarFallback>
                       </Avatar>
-                      <span className={isCurrentUser ? "text-[#F04F54] font-semibold" : ""}>
+                      <span className={`truncate text-xs sm:text-sm ${isCurrentUser ? "text-[#F04F54] font-semibold" : ""}`}>
                         {isCurrentUser ? "You" : entry.fullName}
                       </span>
                     </div>
-                    <h6 className="text-gray-400 font-medium">{xp}XP</h6>
+                    <span className="text-gray-400 font-medium text-xs sm:text-sm shrink-0 ml-2">{xp}XP</span>
                   </div>
                 );
               })}
@@ -125,7 +127,7 @@ function LeaderboardPage() {
           )}
 
           {leaderboard && leaderboard.length > 0 && (
-            <div className="mt-6 pt-4 border-t border-gray-200 text-center text-sm text-gray-500">
+            <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-gray-200 text-center text-xs sm:text-sm text-gray-500">
               {leaderboard.length} participants shown
             </div>
           )}

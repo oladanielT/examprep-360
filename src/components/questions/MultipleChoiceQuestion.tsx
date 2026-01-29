@@ -63,22 +63,22 @@ export function MultipleChoiceQuestion({
   return (
     <div className="space-y-6">
       {/* Question Header */}
-      <div className="space-y-4">
-        <p className="text-sm font-medium text-gray-600">Question {questionNumber}</p>
+      <div className="space-y-3 sm:space-y-4">
+        <p className="text-xs sm:text-sm font-medium text-gray-600">Question {questionNumber}</p>
 
         {/* Question Text */}
-        <div className="text-lg font-semibold text-gray-900">
+        <div className="text-base sm:text-lg font-semibold text-gray-900 break-words overflow-hidden [word-break:break-word]">
           <RichContentRenderer content={question.questionText} />
         </div>
 
         {/* Instruction for multiple choice */}
-        <p className="text-xs text-gray-500 uppercase tracking-wide">
+        <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide">
           Select all that apply
         </p>
       </div>
 
       {/* Options */}
-      <div className="space-y-3">
+      <div className="space-y-2.5 sm:space-y-3">
         {options.map((option) => {
           const state = getOptionState(option);
 
@@ -89,7 +89,7 @@ export function MultipleChoiceQuestion({
               onClick={() => handleOptionClick(option.id)}
               disabled={disabled || isSubmitted}
               className={cn(
-                "w-full text-left px-5 py-4 rounded-full border transition-all text-sm",
+                "w-full text-left px-4 sm:px-5 py-3 sm:py-4 rounded-full border transition-all text-xs sm:text-sm",
                 "focus:outline-none",
                 state === "default" && "border-gray-200 bg-white hover:bg-gray-50 text-gray-700",
                 state === "selected" && "border-[#F04F54] bg-[#F04F54] text-white",
