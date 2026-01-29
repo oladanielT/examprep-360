@@ -16,7 +16,7 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { Switch } from "@/components/ui/switch";
-import { Alert } from "@/components/ui/alert";
+import { toast } from "sonner"
 import * as z from "zod";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useRegistrationStore } from "@/stores/registrationStore";
@@ -84,6 +84,8 @@ export const RegisterForm = () => {
         navigate({ to: "/verify-email" });
       } catch {
         // Error is handled by the mutation
+        toast.error(requestOtpMutation.error?.response?.data?.message ||
+              "Failed to send verification code. Please try again.")
       }
     },
   });
@@ -276,13 +278,6 @@ export const RegisterForm = () => {
             onCheckedChange={setIsInstitutionalLocal}
           />
         </div>
-
-        {requestOtpMutation.isError && (
-          <Alert variant="destructive" className="mt-4">
-            {requestOtpMutation.error?.response?.data?.message ||
-              "Failed to send verification code. Please try again."}
-          </Alert>
-        )}
 
         <PrimaryButton
           type="submit"

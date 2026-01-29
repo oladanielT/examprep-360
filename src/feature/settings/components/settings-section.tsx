@@ -8,8 +8,12 @@ import {
 import AvatarUpload from "./avatar-upload";
 import { ProfileSettingsForm } from "./profile-detail";
 import { Link } from "@tanstack/react-router";
+import { useSubscriptions } from "@/feature/subscription/hooks/useSubscription";
 
 export const SettingsSection = () => {
+  const { data: subscriptions } = useSubscriptions();
+  const count = subscriptions?.length ?? 0;
+
   return (
     <section className="py-10 flex gap-20">
       <AvatarUpload />
@@ -17,7 +21,9 @@ export const SettingsSection = () => {
       <Item className="h-fit bg-[#FFF0B333]">
         <ItemContent>
           <ItemTitle>Manage Subscriptions</ItemTitle>
-          <ItemDescription>6 Subscriptions</ItemDescription>
+          <ItemDescription>
+            {count} Subscription{count !== 1 ? "s" : ""}
+          </ItemDescription>
         </ItemContent>
         <ItemActions>
           <Link

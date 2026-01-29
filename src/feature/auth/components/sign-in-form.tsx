@@ -155,7 +155,7 @@ export const SigninForm = () => {
                     />
                     <FieldLabel
                       htmlFor="form-remember-me"
-                      className="font-medium text-[#344054] text-sm"
+                      className="font-medium text-[#344054] text-xs sm:text-sm"
                     >
                       Remember for 30 days
                     </FieldLabel>
@@ -165,9 +165,8 @@ export const SigninForm = () => {
               }}
             />
             <Link
-              // @ts-ignore - Route will be available after routes are generated
               to="/forgot-password"
-              className="text-sm font-semibold text-accent shrink-0 hover:underline"
+              className="text-xs sm:text-sm font-semibold text-accent shrink-0 hover:underline"
             >
               Forgot Password?
             </Link>

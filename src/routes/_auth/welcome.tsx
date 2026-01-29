@@ -48,7 +48,7 @@ function Welcome() {
         )}
 
         {categories && (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid md:grid-cols-2 gap-3">
             {categories
               .filter((category) => category.value !== "TUTORIAL")
               .map((category) => (
@@ -61,7 +61,7 @@ function Welcome() {
                 <span className="text-sm font-medium text-[#101828] group-hover:text-[#101828] pr-2">
                   {category.label}
                 </span>
-                <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-warning flex-shrink-0" />
+                <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-warning shrink-0" />
               </button>
             ))}
           </div>

@@ -156,25 +156,25 @@ function CheckoutPage() {
 
       <div className="space-y-4">
         <div className="text-center space-y-2">
-          <h2 className="text-3xl font-bold tracking-tight text-[#101828]">
+          <h2 className="text-xl md:text-3xl font-bold tracking-tight text-[#101828]">
             Complete Your Subscription
           </h2>
-          <p className="text-[#667085]">
+          <p className="text-[#667085] text-sm md:text-base">
             You're almost there! Complete payment to unlock all features.
           </p>
         </div>
 
         {/* Plan Card */}
-        <div className="bg-gradient-to-br from-accent/5 to-accent/10 rounded-xl p-6 border-2 border-accent/20">
+        <div className="bg-linear-to-br from-accent/5 to-accent/10 rounded-xl p-6 border-2 border-accent/20">
           <div className="flex items-start justify-between mb-4">
             <div>
-              <h3 className="text-xl font-bold text-[#101828]">
+              <h3 className="text-lg md:text-xl font-bold text-[#101828]">
                 {selectedPlan.name}
               </h3>
               <p className="text-sm text-gray-600">{selectedPlan.description}</p>
             </div>
             <div className="text-right">
-              <div className="text-3xl font-bold text-accent">
+              <div className="text-xl md:text-3xl font-bold text-accent">
                 {selectedPlan.currency} {totalPrice.toLocaleString()}
               </div>
               <div className="text-sm text-gray-500">

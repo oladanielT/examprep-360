@@ -64,10 +64,10 @@ function SummaryPage() {
         <Logo />
 
         <div className="text-center space-y-2">
-          <h2 className="text-3xl font-bold tracking-tighter text-[#101828]">
+          <h2 className="text-xl md:text-3xl font-bold tracking-tight text-[#101828]">
             Review Your Information
           </h2>
-          <p className="text-[#667085]">
+          <p className="text-[#667085] text-sm md:text-base ">
             Please confirm your details before creating your account.
           </p>
         </div>
@@ -122,7 +122,7 @@ function SummaryPage() {
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Subjects</span>
-              <span className="font-medium text-right max-w-[200px]">
+              <span className="font-medium text-right max-w-50">
                 {selectedSubjectLabels.join(", ")}
               </span>
             </div>

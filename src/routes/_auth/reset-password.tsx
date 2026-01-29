@@ -20,10 +20,10 @@ function ResetPasswordPage() {
       <div className="flex flex-col gap-10 items-center mt-5 max-w-md mx-auto">
         <Logo />
         <div className="text-center space-y-3">
-          <h2 className="text-3xl font-bold tracking-tighter text-[#101828]">
+          <h2 className="text-xl md:text-3xl font-bold tracking-tighter text-[#101828]">
             Reset Password
           </h2>
-          <p className="text-[#667085]">
+          <p className="text-[#667085] text-sm md:text-base">
             Enter the code sent to your email and your new password.
           </p>
         </div>

@@ -29,10 +29,12 @@ import { Route as AuthCheckoutRouteImport } from './routes/_auth/checkout'
 import { Route as UserTutorialsIndexRouteImport } from './routes/_user/tutorials/index'
 import { Route as UserTextbooksIndexRouteImport } from './routes/_user/textbooks/index'
 import { Route as UserTestsIndexRouteImport } from './routes/_user/tests/index'
+import { Route as UserSubscriptionIndexRouteImport } from './routes/_user/subscription.index'
 import { Route as UserTutorialsTutorialIdRouteImport } from './routes/_user/tutorials/$tutorialId'
 import { Route as UserTextbooksTextbookIdRouteImport } from './routes/_user/textbooks/$textbookId'
 import { Route as UserTestsExamsRouteImport } from './routes/_user/tests/exams'
 import { Route as UserTestsExamRouteImport } from './routes/_user/tests/exam'
+import { Route as UserSubscriptionAddRouteImport } from './routes/_user/subscription.add'
 import { Route as UserExamAttemptIdRouteImport } from './routes/_user/exam.$attemptId'
 
 const UserRoute = UserRouteImport.update({
@@ -133,6 +135,11 @@ const UserTestsIndexRoute = UserTestsIndexRouteImport.update({
   path: '/tests/',
   getParentRoute: () => UserRoute,
 } as any)
+const UserSubscriptionIndexRoute = UserSubscriptionIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => UserSubscriptionRoute,
+} as any)
 const UserTutorialsTutorialIdRoute = UserTutorialsTutorialIdRouteImport.update({
   id: '/tutorials/$tutorialId',
   path: '/tutorials/$tutorialId',
@@ -152,6 +159,11 @@ const UserTestsExamRoute = UserTestsExamRouteImport.update({
   id: '/tests/exam',
   path: '/tests/exam',
   getParentRoute: () => UserRoute,
+} as any)
+const UserSubscriptionAddRoute = UserSubscriptionAddRouteImport.update({
+  id: '/add',
+  path: '/add',
+  getParentRoute: () => UserSubscriptionRoute,
 } as any)
 const UserExamAttemptIdRoute = UserExamAttemptIdRouteImport.update({
   id: '/exam/$attemptId',
@@ -173,13 +185,15 @@ export interface FileRoutesByFullPath {
   '/activities': typeof UserActivitiesRoute
   '/leaderboard': typeof UserLeaderboardRoute
   '/settings': typeof UserSettingsRoute
-  '/subscription': typeof UserSubscriptionRoute
+  '/subscription': typeof UserSubscriptionRouteWithChildren
   '/': typeof UserIndexRoute
   '/exam/$attemptId': typeof UserExamAttemptIdRoute
+  '/subscription/add': typeof UserSubscriptionAddRoute
   '/tests/exam': typeof UserTestsExamRoute
   '/tests/exams': typeof UserTestsExamsRoute
   '/textbooks/$textbookId': typeof UserTextbooksTextbookIdRoute
   '/tutorials/$tutorialId': typeof UserTutorialsTutorialIdRoute
+  '/subscription/': typeof UserSubscriptionIndexRoute
   '/tests': typeof UserTestsIndexRoute
   '/textbooks': typeof UserTextbooksIndexRoute
   '/tutorials': typeof UserTutorialsIndexRoute
@@ -198,13 +212,14 @@ export interface FileRoutesByTo {
   '/activities': typeof UserActivitiesRoute
   '/leaderboard': typeof UserLeaderboardRoute
   '/settings': typeof UserSettingsRoute
-  '/subscription': typeof UserSubscriptionRoute
   '/': typeof UserIndexRoute
   '/exam/$attemptId': typeof UserExamAttemptIdRoute
+  '/subscription/add': typeof UserSubscriptionAddRoute
   '/tests/exam': typeof UserTestsExamRoute
   '/tests/exams': typeof UserTestsExamsRoute
   '/textbooks/$textbookId': typeof UserTextbooksTextbookIdRoute
   '/tutorials/$tutorialId': typeof UserTutorialsTutorialIdRoute
+  '/subscription': typeof UserSubscriptionIndexRoute
   '/tests': typeof UserTestsIndexRoute
   '/textbooks': typeof UserTextbooksIndexRoute
   '/tutorials': typeof UserTutorialsIndexRoute
@@ -226,13 +241,15 @@ export interface FileRoutesById {
   '/_user/activities': typeof UserActivitiesRoute
   '/_user/leaderboard': typeof UserLeaderboardRoute
   '/_user/settings': typeof UserSettingsRoute
-  '/_user/subscription': typeof UserSubscriptionRoute
+  '/_user/subscription': typeof UserSubscriptionRouteWithChildren
   '/_user/': typeof UserIndexRoute
   '/_user/exam/$attemptId': typeof UserExamAttemptIdRoute
+  '/_user/subscription/add': typeof UserSubscriptionAddRoute
   '/_user/tests/exam': typeof UserTestsExamRoute
   '/_user/tests/exams': typeof UserTestsExamsRoute
   '/_user/textbooks/$textbookId': typeof UserTextbooksTextbookIdRoute
   '/_user/tutorials/$tutorialId': typeof UserTutorialsTutorialIdRoute
+  '/_user/subscription/': typeof UserSubscriptionIndexRoute
   '/_user/tests/': typeof UserTestsIndexRoute
   '/_user/textbooks/': typeof UserTextbooksIndexRoute
   '/_user/tutorials/': typeof UserTutorialsIndexRoute
@@ -256,10 +273,12 @@ export interface FileRouteTypes {
     | '/subscription'
     | '/'
     | '/exam/$attemptId'
+    | '/subscription/add'
     | '/tests/exam'
     | '/tests/exams'
     | '/textbooks/$textbookId'
     | '/tutorials/$tutorialId'
+    | '/subscription/'
     | '/tests'
     | '/textbooks'
     | '/tutorials'
@@ -278,13 +297,14 @@ export interface FileRouteTypes {
     | '/activities'
     | '/leaderboard'
     | '/settings'
-    | '/subscription'
     | '/'
     | '/exam/$attemptId'
+    | '/subscription/add'
     | '/tests/exam'
     | '/tests/exams'
     | '/textbooks/$textbookId'
     | '/tutorials/$tutorialId'
+    | '/subscription'
     | '/tests'
     | '/textbooks'
     | '/tutorials'
@@ -308,10 +328,12 @@ export interface FileRouteTypes {
     | '/_user/subscription'
     | '/_user/'
     | '/_user/exam/$attemptId'
+    | '/_user/subscription/add'
     | '/_user/tests/exam'
     | '/_user/tests/exams'
     | '/_user/textbooks/$textbookId'
     | '/_user/tutorials/$tutorialId'
+    | '/_user/subscription/'
     | '/_user/tests/'
     | '/_user/textbooks/'
     | '/_user/tutorials/'
@@ -464,6 +486,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserTestsIndexRouteImport
       parentRoute: typeof UserRoute
     }
+    '/_user/subscription/': {
+      id: '/_user/subscription/'
+      path: '/'
+      fullPath: '/subscription/'
+      preLoaderRoute: typeof UserSubscriptionIndexRouteImport
+      parentRoute: typeof UserSubscriptionRoute
+    }
     '/_user/tutorials/$tutorialId': {
       id: '/_user/tutorials/$tutorialId'
       path: '/tutorials/$tutorialId'
@@ -491,6 +520,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/tests/exam'
       preLoaderRoute: typeof UserTestsExamRouteImport
       parentRoute: typeof UserRoute
+    }
+    '/_user/subscription/add': {
+      id: '/_user/subscription/add'
+      path: '/add'
+      fullPath: '/subscription/add'
+      preLoaderRoute: typeof UserSubscriptionAddRouteImport
+      parentRoute: typeof UserSubscriptionRoute
     }
     '/_user/exam/$attemptId': {
       id: '/_user/exam/$attemptId'
@@ -530,11 +566,24 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
+interface UserSubscriptionRouteChildren {
+  UserSubscriptionAddRoute: typeof UserSubscriptionAddRoute
+  UserSubscriptionIndexRoute: typeof UserSubscriptionIndexRoute
+}
+
+const UserSubscriptionRouteChildren: UserSubscriptionRouteChildren = {
+  UserSubscriptionAddRoute: UserSubscriptionAddRoute,
+  UserSubscriptionIndexRoute: UserSubscriptionIndexRoute,
+}
+
+const UserSubscriptionRouteWithChildren =
+  UserSubscriptionRoute._addFileChildren(UserSubscriptionRouteChildren)
+
 interface UserRouteChildren {
   UserActivitiesRoute: typeof UserActivitiesRoute
   UserLeaderboardRoute: typeof UserLeaderboardRoute
   UserSettingsRoute: typeof UserSettingsRoute
-  UserSubscriptionRoute: typeof UserSubscriptionRoute
+  UserSubscriptionRoute: typeof UserSubscriptionRouteWithChildren
   UserIndexRoute: typeof UserIndexRoute
   UserExamAttemptIdRoute: typeof UserExamAttemptIdRoute
   UserTestsExamRoute: typeof UserTestsExamRoute
@@ -550,7 +599,7 @@ const UserRouteChildren: UserRouteChildren = {
   UserActivitiesRoute: UserActivitiesRoute,
   UserLeaderboardRoute: UserLeaderboardRoute,
   UserSettingsRoute: UserSettingsRoute,
-  UserSubscriptionRoute: UserSubscriptionRoute,
+  UserSubscriptionRoute: UserSubscriptionRouteWithChildren,
   UserIndexRoute: UserIndexRoute,
   UserExamAttemptIdRoute: UserExamAttemptIdRoute,
   UserTestsExamRoute: UserTestsExamRoute,

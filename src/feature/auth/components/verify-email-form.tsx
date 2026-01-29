@@ -109,30 +109,30 @@ export const VerifyEmailForm = () => {
                   >
                     <InputOTPGroup>
                       <InputOTPSlot
-                        className="w-[56px] h-[56px] text-[24px]"
+                        className="size-10 md:w-14 md:h-14 text-xl md:text-[24px]"
                         index={0}
                       />
                       <InputOTPSlot
-                        className="w-[56px] h-[56px] text-[24px]"
+                        className="size-10 md:w-14 md:h-14 text-xl md:text-[24px]"
                         index={1}
                       />
                       <InputOTPSlot
-                        className="w-[56px] h-[56px] text-[24px]"
+                        className="size-10 md:w-14 md:h-14 text-xl md:text-[24px]"
                         index={2}
                       />
                     </InputOTPGroup>
                     <InputOTPSeparator />
                     <InputOTPGroup>
                       <InputOTPSlot
-                        className="w-[56px] h-[56px] text-[24px]"
+                        className="size-10 md:w-14 md:h-14 text-xl md:text-[24px]"
                         index={3}
                       />
                       <InputOTPSlot
-                        className="w-[56px] h-[56px] text-[24px]"
+                        className="size-10 md:w-14 md:h-14 text-xl md:text-[24px]"
                         index={4}
                       />
                       <InputOTPSlot
-                        className="w-[56px] h-[56px] text-[24px]"
+                        className="size-10 md:w-14 md:h-14 text-xl md:text-[24px]"
                         index={5}
                       />
                     </InputOTPGroup>

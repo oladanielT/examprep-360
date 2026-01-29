@@ -1,22 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
-import CustomPageHeader from "@/components/global/custom-page-header";
-import { SubscriptionSection } from "@/feature/subscription/subscription-section";
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 
-function SubscriptionPage() {
-  return (
-    <div className="">
-      <CustomPageHeader
-        backLink="/settings"
-        search={false}
-        heading="Manage subscription"
-        filter={true}
-        subHeading="Pick a Subject and year"
-      />
-      <SubscriptionSection />
-    </div>
-  );
+function SubscriptionLayout() {
+  return <Outlet />;
 }
 
 export const Route = createFileRoute("/_user/subscription")({
-  component: SubscriptionPage,
+  component: SubscriptionLayout,
 });

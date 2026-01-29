@@ -86,6 +86,9 @@ export const EXAM_SELECTION_ENDPOINTS = {
   EXAM_TYPES: (category: string) => `/user/exam-selection/exam-types/${category}`,
   SUBJECTS: (examType: string) => `/user/exam-selection/subjects/${examType}`,
   SAVE: "/user/exam-selection/save",
+  SUBSCRIPTIONS: "/user/exam-selection/subscriptions",
+  DELETE_SUBSCRIPTION: (id: string) => `/user/exam-selection/subscriptions/${id}`,
+  SWITCH: (id: string) => `/user/exam-selection/switch/${id}`,
 } as const;
 
 // Payment endpoints
