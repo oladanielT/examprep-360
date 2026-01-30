@@ -60,15 +60,10 @@ function ChapterContent({
   const getVideoFromContent = () => {
     if (!chapter.content || !Array.isArray(chapter.content)) return null;
 
-    const videoBlock = chapter.content.find((block: any) => block.type === "video");
-    if (!videoBlock?.value) return null;
+    const videoBlock = chapter.content.find((block) => block.type === "video");
+    if (!videoBlock || videoBlock.type !== "video") return null;
 
-    try {
-      const videoData = JSON.parse(videoBlock.value);
-      return { src: videoData.src, title: videoData.title };
-    } catch {
-      return { src: videoBlock.value, title: "" };
-    }
+    return { src: videoBlock.url, title: "" };
   };
 
   const videoData = getVideoFromContent();
