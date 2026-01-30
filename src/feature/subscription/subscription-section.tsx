@@ -126,14 +126,12 @@ export const SubscriptionSection = () => {
                   </button>
                 )}
                 <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <button
-                      disabled={deleteMutation.isPending}
-                      className="inline-flex items-center gap-1 h-8 px-3 text-xs font-medium rounded-4xl border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
-                    >
-                      <Trash2 className="h-3 w-3" />
-                      Delete
-                    </button>
+                  <AlertDialogTrigger
+                    disabled={deleteMutation.isPending}
+                    className="inline-flex items-center gap-1 h-8 px-3 text-xs font-medium rounded-4xl border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                    Delete
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>

@@ -1,3 +1,5 @@
+import type { RichContentBlock } from "./exam.types";
+
 // Tutorial Types
 export type TutorialType = "VIDEO_TUTORIAL" | "TEXT_TUTORIAL" | "INTERACTIVE";
 
@@ -61,20 +63,12 @@ export interface TutorialDocument {
   format: string; // e.g., "pdf"
 }
 
-export interface TutorialContentBlock {
-  type: "text" | "markdown" | "image" | "video" | "audio" | "latex";
-  value?: string;
-  content?: string;
-  url?: string;
-  alt?: string;
-}
-
 export interface TutorialChapter {
   id: string;
   name: string;
   tutorialId: string;
   order: number;
-  content: TutorialContentBlock[] | null;
+  content: RichContentBlock[] | null;
   documents: TutorialDocument[] | null;
   createdAt: string;
   updatedAt: string;
