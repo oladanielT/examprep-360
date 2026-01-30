@@ -13,37 +13,37 @@ function TestsPage() {
         heading="Take a Test"
         subHeading="Pick an Exam"
       />
-      <div className="grid grid-cols-3 py-10 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 py-6 sm:py-10 gap-3 sm:gap-5">
         {isLoading && (
-          <div className="col-span-3 text-center py-10">Loading...</div>
+          <div className="col-span-full text-center py-10">Loading...</div>
         )}
         {error && (
-          <div className="col-span-3 text-center py-10 text-red-500">
+          <div className="col-span-full text-center py-10 text-red-500">
             Failed to load exam preferences
           </div>
         )}
         {data && (
           <Link
             to="/tests/exams"
-            className="bg-[#FFF0B333] rounded-3xl shadow p-5 items-center flex border justify-between"
+            className="bg-[#FFF0B333] rounded-2xl sm:rounded-3xl shadow p-4 sm:p-5 items-center flex border justify-between gap-3 active:scale-[0.98] transition-transform"
           >
-            <div className="flex items-center gap-5">
+            <div className="flex items-center gap-3 sm:gap-5 min-w-0">
               <img
                 src="/img/note.png"
                 alt={data.examTypeRecord.name}
                 width={1000}
                 height={1000}
-                className="w-14 h-14"
+                className="w-10 h-10 sm:w-14 sm:h-14 flex-shrink-0"
               />
-              <div>
-                <h6 className="text-lg font-semibold">{data.examTypeRecord.name}</h6>
-                <p className="font-medium text-xs">
+              <div className="min-w-0">
+                <h6 className="text-sm sm:text-lg font-semibold truncate">{data.examTypeRecord.name}</h6>
+                <p className="font-medium text-[10px] sm:text-xs text-gray-500">
                   {data.subjects.length} Subjects
                 </p>
               </div>
             </div>
-            <span className="bg-white w-10 h-10 flex items-center justify-center rounded-full shadow">
-              <ChevronRight className="text-green-400" />
+            <span className="bg-white w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full shadow flex-shrink-0">
+              <ChevronRight className="text-green-400 w-4 h-4 sm:w-5 sm:h-5" />
             </span>
           </Link>
         )}

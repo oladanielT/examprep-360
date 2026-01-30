@@ -179,7 +179,7 @@ export default function ConfigurePracticeForm({
                     value={field.state.value}
                     onChange={(e) => field.handleChange(e.target.value)}
                     className={cn(
-                      "w-full h-14 px-5 rounded-full border border-input bg-input/30",
+                      "w-full h-12 sm:h-14 px-4 sm:px-5 rounded-full border border-input bg-input/30",
                       "text-sm appearance-none cursor-pointer",
                       "focus:outline-none focus:ring-2 focus:ring-ring/50 focus:border-ring",
                       "bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%20viewBox%3D%220%200%20256%20256%22%3E%3Cpath%20fill%3D%22%236b7280%22%20d%3D%22m213.66%2C101.66l-80%2C80c-4.69%2C4.69-12.28%2C4.69-16.97%2C0l-80-80c-4.69-4.69-4.69-12.28%2C0-16.97%2C4.69-4.69%2C12.28-4.69%2C16.97%2C0l71.51%2C71.51%2C71.51-71.51c4.69-4.69%2C12.28-4.69%2C16.97%2C0%2C4.69%2C4.69%2C4.69%2C12.28%2C0%2C16.97Z%22%2F%3E%3C%2Fsvg%3E')]",
@@ -216,7 +216,7 @@ export default function ConfigurePracticeForm({
                     value={field.state.value}
                     onChange={(e) => field.handleChange(e.target.value)}
                     className={cn(
-                      "w-full h-14 px-5 rounded-full border border-input bg-input/30",
+                      "w-full h-12 sm:h-14 px-4 sm:px-5 rounded-full border border-input bg-input/30",
                       "text-sm appearance-none cursor-pointer",
                       "focus:outline-none focus:ring-2 focus:ring-ring/50 focus:border-ring",
                       "bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%20viewBox%3D%220%200%20256%20256%22%3E%3Cpath%20fill%3D%22%236b7280%22%20d%3D%22m213.66%2C101.66l-80%2C80c-4.69%2C4.69-12.28%2C4.69-16.97%2C0l-80-80c-4.69-4.69-4.69-12.28%2C0-16.97%2C4.69-4.69%2C12.28-4.69%2C16.97%2C0l71.51%2C71.51%2C71.51-71.51c4.69-4.69%2C12.28-4.69%2C16.97%2C0%2C4.69%2C4.69%2C4.69%2C12.28%2C0%2C16.97Z%22%2F%3E%3C%2Fsvg%3E')]",
@@ -253,7 +253,7 @@ export default function ConfigurePracticeForm({
                     value={field.state.value}
                     onChange={(e) => field.handleChange(e.target.value)}
                     className={cn(
-                      "w-full h-14 px-5 rounded-full border border-input bg-input/30",
+                      "w-full h-12 sm:h-14 px-4 sm:px-5 rounded-full border border-input bg-input/30",
                       "text-sm appearance-none cursor-pointer",
                       "focus:outline-none focus:ring-2 focus:ring-ring/50 focus:border-ring",
                       "bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%20viewBox%3D%220%200%20256%20256%22%3E%3Cpath%20fill%3D%22%236b7280%22%20d%3D%22m213.66%2C101.66l-80%2C80c-4.69%2C4.69-12.28%2C4.69-16.97%2C0l-80-80c-4.69-4.69-4.69-12.28%2C0-16.97%2C4.69-4.69%2C12.28-4.69%2C16.97%2C0l71.51%2C71.51%2C71.51-71.51c4.69-4.69%2C12.28-4.69%2C16.97%2C0%2C4.69%2C4.69%2C4.69%2C12.28%2C0%2C16.97Z%22%2F%3E%3C%2Fsvg%3E')]",
@@ -290,7 +290,7 @@ export default function ConfigurePracticeForm({
                     value={field.state.value}
                     onChange={(e) => field.handleChange(e.target.value)}
                     className={cn(
-                      "w-full h-14 px-5 rounded-full border border-input bg-input/30",
+                      "w-full h-12 sm:h-14 px-4 sm:px-5 rounded-full border border-input bg-input/30",
                       "text-sm appearance-none cursor-pointer",
                       "focus:outline-none focus:ring-2 focus:ring-ring/50 focus:border-ring",
                       "bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%20viewBox%3D%220%200%20256%20256%22%3E%3Cpath%20fill%3D%22%236b7280%22%20d%3D%22m213.66%2C101.66l-80%2C80c-4.69%2C4.69-12.28%2C4.69-16.97%2C0l-80-80c-4.69-4.69-4.69-12.28%2C0-16.97%2C4.69-4.69%2C12.28-4.69%2C16.97%2C0l71.51%2C71.51%2C71.51-71.51c4.69-4.69%2C12.28-4.69%2C16.97%2C0%2C4.69%2C4.69%2C4.69%2C12.28%2C0%2C16.97Z%22%2F%3E%3C%2Fsvg%3E')]",

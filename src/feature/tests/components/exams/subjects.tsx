@@ -1,6 +1,6 @@
 import { useState } from "react";
 import PrimaryButton from "@/components/buttons/primary-button";
-import CustomCard from "@/components/global/custom-card";
+import { Card } from "@/components/ui/card";
 import {
   Choicebox,
   ChoiceboxIndicator,
@@ -182,17 +182,24 @@ function SubjectCard({ subject }: { subject: SubjectType }) {
   return (
     <DialogStack open={isOpen} onOpenChange={setIsOpen}>
       <DialogStackTrigger asChild>
-        <CustomCard
-          className="cursor-pointer"
-          src="/img/jamb.png"
-          imgClassName="w-24"
-        >
-          <div>
-            <h6 className="text-lg font-medium text-center pt-2">
-              {subject.name}
-            </h6>
-          </div>
-        </CustomCard>
+        <button className="text-left cursor-pointer group w-full">
+          <Card className="relative overflow-hidden rounded-2xl border border-gray-100 bg-gradient-to-b from-white to-gray-50/80 shadow-sm hover:shadow-lg hover:border-gray-200 transition-all duration-200 active:scale-[0.96] group-hover:-translate-y-0.5">
+            <div className="flex flex-col items-center justify-center px-3 py-5 sm:px-4 sm:py-7">
+              <div className="w-14 h-14 sm:w-18 sm:h-18 rounded-xl bg-amber-50 flex items-center justify-center mb-3">
+                <img
+                  width={1000}
+                  height={1000}
+                  alt={subject.name}
+                  src="/img/jamb.png"
+                  className="object-contain w-10 h-10 sm:w-14 sm:h-14"
+                />
+              </div>
+              <h6 className="text-xs sm:text-sm font-semibold text-gray-800 text-center leading-tight line-clamp-2">
+                {subject.name}
+              </h6>
+            </div>
+          </Card>
+        </button>
       </DialogStackTrigger>
       <DialogStackOverlay />
       <DialogStackBody>
@@ -334,9 +341,9 @@ export default function Subjects() {
   const subjects = data?.subjects || [];
 
   return (
-    <div className="grid grid-cols-5 gap-x-5 gap-y-10 py-10">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-3 sm:gap-x-5 gap-y-6 sm:gap-y-10 py-6 sm:py-10">
       {subjects.length === 0 && (
-        <div className="col-span-5 text-center py-10 text-gray-500">
+        <div className="col-span-full text-center py-10 text-gray-500">
           No subjects available
         </div>
       )}
