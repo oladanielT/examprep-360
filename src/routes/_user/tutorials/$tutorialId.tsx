@@ -60,10 +60,28 @@ function ChapterContent({
   const getVideoFromContent = () => {
     if (!chapter.content || !Array.isArray(chapter.content)) return null;
 
-    const videoBlock = chapter.content.find((block) => block.type === "video");
-    if (!videoBlock || videoBlock.type !== "video") return null;
+    const videoBlock = chapter.content.find((block: any) => block.type === "video");
+    if (!videoBlock) return null;
 
-    return { src: videoBlock.url, title: "" };
+    // Handle direct url property
+    if ((videoBlock as any).url) {
+      return { src: (videoBlock as any).url, title: "" };
+    }
+
+    // Handle JSON string in value property (API format: { type: "video", value: "{\"src\":\"...\",\"title\":\"...\"}" })
+    if ((videoBlock as any).value) {
+      try {
+        const parsed = typeof (videoBlock as any).value === "string"
+          ? JSON.parse((videoBlock as any).value)
+          : (videoBlock as any).value;
+        return { src: parsed.src || parsed.url || "", title: parsed.title || "" };
+      } catch {
+        // value might be a direct URL string
+        return { src: (videoBlock as any).value, title: "" };
+      }
+    }
+
+    return null;
   };
 
   const videoData = getVideoFromContent();

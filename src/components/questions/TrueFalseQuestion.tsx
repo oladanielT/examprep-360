@@ -21,7 +21,7 @@ export function TrueFalseQuestion({
   disabled = false,
   showCorrectAnswer = false,
 }: TrueFalseQuestionProps) {
-  const correctAnswer = question.trueFalseData?.correctAnswer;
+  const correctAnswer = question.trueFalseData?.correctAnswer ?? (question.correctAnswer === "true" ? true : question.correctAnswer === "false" ? false : undefined);
 
   const handleOptionClick = (value: boolean) => {
     if (disabled || isSubmitted) return;

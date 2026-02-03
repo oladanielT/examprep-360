@@ -491,15 +491,20 @@ export interface ExamHistoryParams {
 export interface PausedExam {
   id: string;
   status: "PAUSED";
+  startedAt?: string;
   pausedAt?: string;
   updatedAt?: string;
+  timeSpentSeconds?: number;
+  answeredQuestions?: number;
   exam: {
     id: string;
     name: string;
     numQuestions: number;
-    subject: { name: string } | null;
+    subjectId?: string;
+    examTypeEnum?: string;
+    subject?: { name: string } | null;
   };
-  _count: {
+  _count?: {
     responses: number;
   };
 }

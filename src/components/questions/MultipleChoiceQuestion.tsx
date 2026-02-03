@@ -34,6 +34,13 @@ export function MultipleChoiceQuestion({
     }
   };
 
+  const correctAnswerIds = new Set(
+    [question.correctAnswer, ...(question.correctAnswers || [])].filter(Boolean)
+  );
+
+  const isOptionCorrect = (option: ChoiceOption) =>
+    option.isCorrect || correctAnswerIds.has(option.id);
+
   const getOptionState = (option: ChoiceOption) => {
     const isSelected = selectedAnswers.includes(option.id);
 
@@ -42,22 +49,23 @@ export function MultipleChoiceQuestion({
     }
 
     // After submission with answers shown
-    if (option.isCorrect && isSelected) {
+    const correct = isOptionCorrect(option);
+    if (correct && isSelected) {
       return "correct";
     }
-    if (option.isCorrect && !isSelected) {
+    if (correct && !isSelected) {
       return "missed"; // Should have selected but didn't
     }
-    if (!option.isCorrect && isSelected) {
+    if (!correct && isSelected) {
       return "incorrect";
     }
     return "default";
   };
 
   // Check if all correct answers were selected and no incorrect ones
-  const correctOptions = options.filter(o => o.isCorrect);
-  const selectedCorrect = selectedAnswers.filter(id => options.find(o => o.id === id)?.isCorrect);
-  const selectedIncorrect = selectedAnswers.filter(id => !options.find(o => o.id === id)?.isCorrect);
+  const correctOptions = options.filter(o => isOptionCorrect(o));
+  const selectedCorrect = selectedAnswers.filter(id => correctAnswerIds.has(id) || options.find(o => o.id === id)?.isCorrect);
+  const selectedIncorrect = selectedAnswers.filter(id => !correctAnswerIds.has(id) && !options.find(o => o.id === id)?.isCorrect);
   const isFullyCorrect = selectedCorrect.length === correctOptions.length && selectedIncorrect.length === 0;
 
   return (

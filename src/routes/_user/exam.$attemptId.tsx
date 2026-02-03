@@ -72,11 +72,6 @@ function ExamPage() {
     useShallow((state) => Array.from(state.responses.keys()))
   );
 
-  // Actions - these are stable references, select them separately
-  const startExam = useExamStore((state) => state.startExam);
-  const storeSubmitResponse = useExamStore((state) => state.submitResponse);
-  const storeSetAnswer = useExamStore((state) => state.setAnswer);
-
   // Validate that stored attemptId matches URL
   const isValidSession = currentAttempt?.id === attemptId;
 
@@ -116,75 +111,16 @@ function ExamPage() {
     return new Set(responsesKeys);
   }, [responsesKeys]);
 
-  // Track if we've already attempted to load for this attemptId
-  const hasAttemptedLoad = useRef<string | null>(null);
-
-  // Try to load exam from API if not in store
-  // Use a ref-based guard to prevent multiple loads for the same attemptId
+  // Check if store has valid exam data for this attemptId
   useEffect(() => {
-    // Skip if session is already valid
     if (isValidSession) {
       setIsLoadingExam(false);
-      return;
+    } else {
+      // Store doesn't have data for this attempt - redirect back
+      setLoadError("Exam session not found. Please resume from the tests page.");
+      setIsLoadingExam(false);
     }
-
-    // Skip if no attemptId
-    if (!attemptId) {
-      return;
-    }
-
-    // Skip if we've already attempted to load this exact attemptId
-    if (hasAttemptedLoad.current === attemptId) {
-      return;
-    }
-
-    // Mark that we're attempting to load this attemptId
-    hasAttemptedLoad.current = attemptId;
-    setIsLoadingExam(true);
-    setLoadError("");
-
-    // Call resume API to get exam data
-    resumeExam.mutate(attemptId, {
-      onSuccess: (data: any) => {
-        // Check if response has exam with questions
-        if (data.exam?.questions) {
-          const examQuestions = data.exam.questions.map((eq: any) => eq.question);
-
-          // Calculate remaining time based on time already spent
-          const totalTimeSeconds = data.exam.durationMinutes * 60;
-          const timeSpent = data.timeSpentSeconds || 0;
-          const remainingTimeMinutes = Math.max(0, (totalTimeSeconds - timeSpent) / 60);
-
-          // Start the exam with calculated remaining time
-          startExam(data, examQuestions, remainingTimeMinutes);
-
-          // Restore previous responses if any
-          if (data.responses && Array.isArray(data.responses)) {
-            data.responses.forEach((response: any) => {
-              // Add to responses Map in store (marks as submitted)
-              storeSubmitResponse(response.questionId, response);
-
-              // Also restore the answer so UI shows the selection
-              storeSetAnswer(response.questionId, response.answer);
-            });
-          }
-
-          setIsLoadingExam(false);
-        } else {
-          // Resume doesn't return questions, need to fetch them separately
-          setLoadError("Unable to load exam. Please try starting a new exam.");
-          setIsLoadingExam(false);
-        }
-      },
-      onError: (error: any) => {
-        const message = error?.response?.data?.message || "Exam not found or has expired.";
-        setLoadError(message);
-        setIsLoadingExam(false);
-      },
-    });
-    // Only depend on attemptId - other values are accessed via refs or are stable
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [attemptId]);
+  }, [attemptId, isValidSession]);
   const [bookmarkedQuestions, setBookmarkedQuestions] = useState<Set<string>>(new Set());
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportReason, setReportReason] = useState("");

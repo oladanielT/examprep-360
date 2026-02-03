@@ -34,22 +34,25 @@ export function SingleChoiceQuestion({
     }
   };
 
+  const correctAnswer = question.correctAnswer;
+
   const getOptionState = (option: ChoiceOption) => {
     if (!isSubmitted || !showCorrectAnswer) {
       return selectedAnswer === option.id ? "selected" : "default";
     }
 
     // After submission with answers shown
-    if (option.isCorrect) {
+    const isOptionCorrect = option.isCorrect || option.id === correctAnswer;
+    if (isOptionCorrect) {
       return "correct";
     }
-    if (selectedAnswer === option.id && !option.isCorrect) {
+    if (selectedAnswer === option.id && !isOptionCorrect) {
       return "incorrect";
     }
     return "default";
   };
 
-  const isCorrect = isSubmitted && showCorrectAnswer && options.find(o => o.id === selectedAnswer)?.isCorrect;
+  const isCorrect = isSubmitted && showCorrectAnswer && (selectedAnswer === correctAnswer || options.find(o => o.id === selectedAnswer)?.isCorrect);
 
   return (
     <div className="space-y-6">

@@ -352,17 +352,12 @@ export const usePauseExam = () => {
 
 // Resume exam
 export const useResumeExam = () => {
-  const { resumeTimer } = useExamStore();
-
   return useMutation<ExamAttempt, AxiosError<ApiError>, string>({
     mutationFn: async (attemptId) => {
       const { data } = await apiClient.patch<ExamAttempt>(
         EXAM_ENDPOINTS.RESUME(attemptId)
       );
       return data;
-    },
-    onSuccess: () => {
-      resumeTimer();
     },
   });
 };
