@@ -1,10 +1,19 @@
 import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useForm } from "@tanstack/react-form";
 import CustomPageHeader from "@/components/global/custom-page-header";
 import PrimaryButton from "@/components/buttons/primary-button";
 import { CustomSelect } from "@/components/custom/custom-select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
 import { Alert } from "@/components/ui/alert";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 import {
   useExamCategories,
@@ -15,7 +24,6 @@ import {
   usePaymentPlans,
   useInitializePayment,
   useRedeemLicense,
-  useStartTrial,
 } from "@/feature/payment/hooks";
 import { useProfile } from "@/feature/profile/hooks/useProfile";
 import { apiClient } from "@/api/client";
@@ -23,22 +31,51 @@ import { EXAM_SELECTION_ENDPOINTS } from "@/api/endpoints";
 import { Loader2, ChevronRight, Check, ArrowLeft } from "lucide-react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import * as z from "zod";
 
 type Step = "category" | "exam-selection" | "checkout";
+
+const examSelectionSchema = z.object({
+  examType: z.string().min(1, "Please select an exam type"),
+  subjects: z
+    .array(z.string())
+    .min(1, "Please select at least one subject")
+    .max(9, "You can select maximum 9 subjects"),
+  planId: z.string().min(1, "Please select a subscription plan"),
+  numberOfStudents: z.array(z.number()),
+});
 
 function AddSubscriptionPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: user } = useProfile();
 
+  // UI state
   const [step, setStep] = useState<Step>("category");
   const [category, setCategory] = useState("");
-  const [examType, setExamType] = useState("");
   const [examTypeId, setExamTypeId] = useState("");
-  const [subjects, setSubjects] = useState<string[]>([]);
-  const [planId, setPlanId] = useState("");
+  const [isInstitutional, setIsInstitutional] = useState(false);
   const [showLicenseInput, setShowLicenseInput] = useState(false);
   const [licenseCode, setLicenseCode] = useState("");
+
+  // Track examType separately for hooks
+  const [selectedExamType, setSelectedExamType] = useState("");
+
+  // TanStack Form for step 2
+  const form = useForm({
+    defaultValues: {
+      examType: "",
+      subjects: [] as string[],
+      planId: "",
+      numberOfStudents: [4] as number[],
+    },
+    validators: {
+      onSubmit: examSelectionSchema,
+    },
+    onSubmit: async () => {
+      setStep("checkout");
+    },
+  });
 
   // Data hooks
   const { data: categories, isLoading: isLoadingCategories } =
@@ -46,18 +83,22 @@ function AddSubscriptionPage() {
   const { data: examTypes, isLoading: isLoadingExamTypes } =
     useExamTypes(category);
   const { data: availableSubjects, isLoading: isLoadingSubjects } =
-    useExamSubjects(examType);
+    useExamSubjects(selectedExamType);
+
+  const subscriptionType = isInstitutional ? "BODY" : "INDIVIDUAL";
   const { data: plans, isLoading: isLoadingPlans } = usePaymentPlans(
     category,
-    examType
+    selectedExamType,
+    subscriptionType
   );
 
   // Save exam selection mutation
   const saveExamSelection = useMutation({
     mutationFn: async () => {
+      const { subjects, planId } = form.state.values;
       await apiClient.post(EXAM_SELECTION_ENDPOINTS.SAVE, {
         examCategory: category,
-        examSubtype: examType,
+        examSubtype: selectedExamType,
         examTypeId,
         selectedSubjects: subjects,
         subscriptionPlanId: planId,
@@ -68,9 +109,18 @@ function AddSubscriptionPage() {
   // Payment hooks
   const initPayment = useInitializePayment();
   const redeemLicense = useRedeemLicense();
-  const startTrial = useStartTrial();
+  const selectedPlan = plans?.find((p) => p.id === form.state.values.planId);
+  const numberOfStudents = isInstitutional
+    ? form.state.values.numberOfStudents[0]
+    : 1;
 
-  const selectedPlan = plans?.find((p) => p.id === planId);
+  // Calculate total price for institutional
+  const totalPrice = selectedPlan
+    ? isInstitutional && selectedPlan.pricePerStudent
+      ? selectedPlan.basePrice +
+        numberOfStudents * selectedPlan.pricePerStudent
+      : selectedPlan.basePrice
+    : 0;
 
   const durationOptions =
     plans?.map((plan) => ({
@@ -86,22 +136,19 @@ function AddSubscriptionPage() {
 
   const handleCategorySelect = (cat: { value: string }) => {
     setCategory(cat.value);
-    setExamType("");
+    setSelectedExamType("");
     setExamTypeId("");
-    setSubjects([]);
-    setPlanId("");
+    form.reset();
     setStep("exam-selection");
-  };
-
-  const handleExamSelectionSubmit = () => {
-    if (!examType || subjects.length === 0 || !planId) return;
-    setStep("checkout");
   };
 
   const onSuccess = () => {
     queryClient.invalidateQueries({ queryKey: ["subscriptions"] });
-    toast.success("Subscription added");
-    navigate({ to: "/subscription" });
+    queryClient.invalidateQueries({ queryKey: ["examPreferences"] });
+    toast.success("Subscription added successfully!");
+    setTimeout(() => {
+      navigate({ to: "/subscription" });
+    }, 500);
   };
 
   const handlePayNow = async () => {
@@ -113,23 +160,35 @@ function AddSubscriptionPage() {
       );
       return;
     }
+    const { subjects } = form.state.values;
     try {
       await saveExamSelection.mutateAsync();
-      const callbackUrl = `${window.location.origin}/payment-verify`;
+      const callbackUrl = `${window.location.origin}/payment-verify?returnUrl=${encodeURIComponent("/subscription/add")}`;
       const response = await initPayment.mutateAsync({
         studentId: user.id,
         subscriptionId: selectedPlan.id,
-        amount: selectedPlan.basePrice,
-        subscriptionType: "INDIVIDUAL",
+        amount: totalPrice,
+        subscriptionType: isInstitutional ? "BODY" : "INDIVIDUAL",
         numberOfSubjects: subjects.length,
-        numberOfStudents: 1,
+        numberOfStudents,
         schoolType: category,
-        examType: examType,
+        examType: selectedExamType,
         numberOfDays: selectedPlan.duration,
         metadata: { callbackUrl },
       });
-      if (response.authorizationUrl) {
-        window.location.href = response.authorizationUrl;
+
+      // Get payment URL from response
+      const paymentUrl = (response as any).paymentUrl;
+      const accessCode = (response as any).accessCode;
+
+      if (paymentUrl) {
+        window.location.href = paymentUrl;
+      } else if (accessCode) {
+        window.location.href = `https://checkout.paystack.com/${accessCode}`;
+      } else {
+        toast.error("Payment initialization failed", {
+          description: "Could not get payment URL. Please try again.",
+        });
       }
     } catch {
       // error shown via mutation state
@@ -137,36 +196,25 @@ function AddSubscriptionPage() {
   };
 
   const handleRedeemLicense = async () => {
-    if (!licenseCode) return;
+    if (!licenseCode || !user?.id) return;
+    const { subjects } = form.state.values;
     try {
       await saveExamSelection.mutateAsync();
-      const response = await redeemLicense.mutateAsync({ licenseCode });
-      if (response.success) onSuccess();
+      const response = await redeemLicense.mutateAsync({
+        code: licenseCode,
+        studentId: user.id,
+        subjects,
+        courses: [],
+      });
+      if (response && ((response as any).id || (response as any).success)) {
+        toast.success("License code redeemed!", {
+          description: "Your subscription has been activated.",
+          duration: 4000,
+        });
+        setTimeout(() => onSuccess(), 500);
+      }
     } catch {
       // error shown via mutation state
-    }
-  };
-
-  const handleStartTrial = async () => {
-    if (!selectedPlan || !user?.id) {
-      toast.error(
-        !selectedPlan
-          ? "No plan selected"
-          : "User not found — please log in again"
-      );
-      return;
-    }
-    try {
-      await saveExamSelection.mutateAsync();
-      const response = await startTrial.mutateAsync({
-        studentId: user.id,
-        subscriptionId: selectedPlan.id,
-      });
-      if (response.success) onSuccess();
-    } catch (error: any) {
-      toast.error(
-        error?.response?.data?.message || "Failed to start trial"
-      );
     }
   };
 
@@ -238,132 +286,236 @@ function AddSubscriptionPage() {
 
         {/* Step 2: Exam Selection */}
         {step === "exam-selection" && (
-          <div className="space-y-5 sm:space-y-6">
-            {/* Exam Type */}
-            <div className="space-y-2">
-              <label className="text-[#6D6D6D] uppercase text-[11px] sm:text-[12px] font-medium">
-                Exam Type
-              </label>
-              {isLoadingExamTypes ? (
-                <div className="flex items-center gap-2 h-12 sm:h-14 px-4 border rounded-4xl">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span className="text-gray-500 text-sm">Loading exam types...</span>
-                </div>
-              ) : (
-                <CustomSelect
-                  name="examType"
-                  value={examType}
-                  onValueChange={(value) => {
-                    setExamType(value);
-                    const selected = examTypes?.find((t) => t.name === value);
-                    setExamTypeId(selected?.id || "");
-                    setSubjects([]);
-                    setPlanId("");
-                  }}
-                  options={examTypeOptions}
-                  placeholder="Choose an exam type"
-                  required
-                />
-              )}
+          <form
+            className="space-y-5 sm:space-y-6"
+            onSubmit={(e) => {
+              e.preventDefault();
+              form.handleSubmit();
+            }}
+          >
+            {/* Institutional Toggle */}
+            <div className="flex items-center justify-between p-4 rounded-xl border border-gray-200 bg-white">
+              <div>
+                <p className="text-sm font-medium text-[#101828]">
+                  Institutional Subscription
+                </p>
+                <p className="text-xs text-gray-500">
+                  Subscribe for multiple students
+                </p>
+              </div>
+              <Switch
+                checked={isInstitutional}
+                onCheckedChange={(checked) => {
+                  setIsInstitutional(checked);
+                  form.setFieldValue("planId", "");
+                }}
+              />
             </div>
+
+            {/* Exam Type */}
+            <form.Field
+              name="examType"
+              children={(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid;
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel className="text-[#6D6D6D] uppercase text-[11px] sm:text-[12px] font-medium">
+                      Exam Type
+                    </FieldLabel>
+                    {isLoadingExamTypes ? (
+                      <div className="flex items-center gap-2 h-12 sm:h-14 px-4 border rounded-4xl">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <span className="text-gray-500 text-sm">
+                          Loading exam types...
+                        </span>
+                      </div>
+                    ) : (
+                      <CustomSelect
+                        name={field.name}
+                        value={field.state.value}
+                        onValueChange={(value) => {
+                          field.handleChange(value);
+                          const selected = examTypes?.find(
+                            (t) => t.name === value
+                          );
+                          setSelectedExamType(value);
+                          setExamTypeId(selected?.id || "");
+                          form.setFieldValue("subjects", []);
+                          form.setFieldValue("planId", "");
+                        }}
+                        options={examTypeOptions}
+                        placeholder="Choose an exam type"
+                        required
+                      />
+                    )}
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                );
+              }}
+            />
 
             {/* Subjects */}
-            <div className="space-y-2">
-              <label className="text-[#6D6D6D] uppercase text-[11px] sm:text-[12px] font-medium">
-                Subjects
-              </label>
-              {!examType ? (
-                <p className="text-sm text-gray-500 py-4">
-                  Please select an exam type first
-                </p>
-              ) : isLoadingSubjects ? (
-                <div className="flex items-center gap-2 py-4">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span className="text-gray-500 text-sm">Loading subjects...</span>
-                </div>
-              ) : availableSubjects && availableSubjects.length > 0 ? (
-                <>
-                  <p className="text-xs sm:text-sm text-gray-600 mb-3">
-                    Please select your subjects (up to 9)
-                  </p>
-                  <ToggleGroup
-                    multiple
-                    value={subjects}
-                    onValueChange={setSubjects}
-                    className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3"
-                  >
-                    {availableSubjects.map((subject) => (
-                      <ToggleGroupItem
-                        key={subject.id}
-                        value={subject.id}
-                        className={cn(
-                          "h-auto py-3 sm:py-4 px-2 sm:px-3 !rounded-sm border-2",
-                          "flex items-center justify-center",
-                          "text-[11px] sm:text-xs font-medium text-center",
-                          "transition-all duration-200",
-                          "hover:border-accent hover:bg-accent/5",
-                          "data-[state=on]:border-accent/70 data-[state=on]:bg-transparent data-[state=on]:text-black",
-                          subjects.includes(subject.id)
-                            ? "border-accent"
-                            : "border-[#E5E5E5] text-black"
+            <form.Field
+              name="subjects"
+              mode="array"
+              children={(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid;
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel className="text-[#6D6D6D] uppercase text-[11px] sm:text-[12px] font-medium">
+                      Subjects
+                    </FieldLabel>
+                    {!selectedExamType ? (
+                      <p className="text-sm text-gray-500 py-4">
+                        Please select an exam type first
+                      </p>
+                    ) : isLoadingSubjects ? (
+                      <div className="flex items-center gap-2 py-4">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <span className="text-gray-500 text-sm">
+                          Loading subjects...
+                        </span>
+                      </div>
+                    ) : availableSubjects && availableSubjects.length > 0 ? (
+                      <>
+                        <p className="text-xs sm:text-sm text-gray-600 mb-3">
+                          Please select your subjects (up to 9)
+                        </p>
+                        <ToggleGroup
+                          multiple
+                          value={field.state.value}
+                          onValueChange={field.handleChange}
+                          className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3"
+                        >
+                          {availableSubjects.map((subject) => (
+                            <ToggleGroupItem
+                              key={subject.id}
+                              value={subject.id}
+                              className={cn(
+                                "h-auto py-3 sm:py-4 px-2 sm:px-3 !rounded-sm border-2",
+                                "flex items-center justify-center",
+                                "text-[11px] sm:text-xs font-medium text-center",
+                                "transition-all duration-200",
+                                "hover:border-accent hover:bg-accent/5",
+                                "data-[state=on]:border-accent/70 data-[state=on]:bg-transparent data-[state=on]:text-black",
+                                field.state.value.includes(subject.id)
+                                  ? "border-accent"
+                                  : "border-[#E5E5E5] text-black"
+                              )}
+                              aria-label={subject.name}
+                            >
+                              <span className="break-words text-center leading-tight">
+                                {subject.name}
+                              </span>
+                            </ToggleGroupItem>
+                          ))}
+                        </ToggleGroup>
+                        {field.state.value.length > 0 && (
+                          <div className="mt-3 text-xs text-[#6B7280]">
+                            Selected: {field.state.value.length}/
+                            {availableSubjects.length}
+                          </div>
                         )}
-                        aria-label={subject.name}
-                      >
-                        <span className="break-words text-center leading-tight">{subject.name}</span>
-                      </ToggleGroupItem>
-                    ))}
-                  </ToggleGroup>
-                  {subjects.length > 0 && (
-                    <div className="mt-3 text-xs text-[#6B7280]">
-                      Selected: {subjects.length}/{availableSubjects.length}
+                      </>
+                    ) : (
+                      <p className="text-sm text-gray-500 py-4">
+                        No subjects available for this exam type
+                      </p>
+                    )}
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                );
+              }}
+            />
+
+            {/* Number of Students (Institutional) */}
+            {isInstitutional && (
+              <form.Field
+                name="numberOfStudents"
+                children={(field) => (
+                  <Field>
+                    <div className="flex items-center justify-between mb-2">
+                      <FieldLabel className="text-[#6D6D6D] uppercase text-[11px] sm:text-[12px] font-medium">
+                        Number of Students
+                      </FieldLabel>
+                      <span className="text-sm font-semibold text-accent">
+                        {field.state.value[0]} Students
+                      </span>
                     </div>
-                  )}
-                </>
-              ) : (
-                <p className="text-sm text-gray-500 py-4">
-                  No subjects available for this exam type
-                </p>
-              )}
-            </div>
+                    <Slider
+                      min={2}
+                      max={500}
+                      step={1}
+                      value={field.state.value}
+                      onValueChange={(value) =>
+                        field.handleChange(
+                          Array.isArray(value) ? value : [value]
+                        )
+                      }
+                      className="w-full"
+                    />
+                  </Field>
+                )}
+              />
+            )}
 
             {/* Plan */}
-            <div className="space-y-2">
-              <label className="text-[#6D6D6D] uppercase text-[11px] sm:text-[12px] font-medium">
-                Subscription Plan
-              </label>
-              {!examType ? (
-                <p className="text-sm text-gray-500 py-4">
-                  Please select an exam type first
-                </p>
-              ) : isLoadingPlans ? (
-                <div className="flex items-center gap-2 h-12 sm:h-14 px-4 border rounded-4xl">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span className="text-gray-500 text-sm">Loading plans...</span>
-                </div>
-              ) : durationOptions.length > 0 ? (
-                <CustomSelect
-                  name="plan"
-                  value={planId}
-                  onValueChange={setPlanId}
-                  options={durationOptions}
-                  placeholder="Choose a subscription plan"
-                  required
-                />
-              ) : (
-                <p className="text-sm text-gray-500 py-4">
-                  No plans available for this exam type
-                </p>
-              )}
-            </div>
+            <form.Field
+              name="planId"
+              children={(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid;
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel className="text-[#6D6D6D] uppercase text-[11px] sm:text-[12px] font-medium">
+                      Subscription Plan
+                    </FieldLabel>
+                    {!selectedExamType ? (
+                      <p className="text-sm text-gray-500 py-4">
+                        Please select an exam type first
+                      </p>
+                    ) : isLoadingPlans ? (
+                      <div className="flex items-center gap-2 h-12 sm:h-14 px-4 border rounded-4xl">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <span className="text-gray-500 text-sm">
+                          Loading plans...
+                        </span>
+                      </div>
+                    ) : durationOptions.length > 0 ? (
+                      <CustomSelect
+                        name={field.name}
+                        value={field.state.value}
+                        onValueChange={field.handleChange}
+                        options={durationOptions}
+                        placeholder="Choose a subscription plan"
+                        required
+                      />
+                    ) : (
+                      <p className="text-sm text-gray-500 py-4">
+                        No plans available for this exam type
+                      </p>
+                    )}
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                );
+              }}
+            />
 
             <PrimaryButton
-              type="button"
-              onClick={handleExamSelectionSubmit}
-              disabled={!examType || subjects.length === 0 || !planId}
+              type="submit"
+              disabled={form.state.isSubmitting || isLoadingExamTypes}
               className="w-full bg-accent hover:bg-accent/80 mt-4 text-white text-base sm:text-lg"
               title="Continue"
             />
-          </div>
+          </form>
         )}
 
         {/* Step 3: Checkout */}
@@ -380,14 +532,21 @@ function AddSubscriptionPage() {
                     {selectedPlan.description}
                   </p>
                   <p className="text-xs sm:text-sm text-gray-500 mt-1">
-                    {examType} &middot; {subjects.length} subject
-                    {subjects.length !== 1 ? "s" : ""}
+                    {selectedExamType} &middot;{" "}
+                    {form.state.values.subjects.length} subject
+                    {form.state.values.subjects.length !== 1 ? "s" : ""}
+                    {isInstitutional && ` · ${numberOfStudents} students`}
                   </p>
+                  {isInstitutional && (
+                    <span className="inline-block mt-2 text-xs font-medium bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                      Institutional
+                    </span>
+                  )}
                 </div>
                 <div className="sm:text-right shrink-0">
                   <div className="text-2xl sm:text-3xl font-bold text-accent">
                     {selectedPlan.currency}{" "}
-                    {selectedPlan.basePrice.toLocaleString()}
+                    {totalPrice.toLocaleString()}
                   </div>
                   <div className="text-xs sm:text-sm text-gray-500">
                     for {selectedPlan.duration} days
@@ -430,19 +589,16 @@ function AddSubscriptionPage() {
                   "Failed to redeem license code."}
               </Alert>
             )}
-            {startTrial.isError && (
-              <Alert variant="destructive">
-                {startTrial.error?.response?.data?.message ||
-                  "Failed to start trial."}
-              </Alert>
-            )}
-
             <div className="space-y-3">
               <PrimaryButton
                 onClick={handlePayNow}
-                disabled={initPayment.isPending}
+                disabled={initPayment.isPending || saveExamSelection.isPending}
                 className="w-full bg-accent hover:bg-accent/80 text-white text-base sm:text-lg"
-                title={initPayment.isPending ? "Processing..." : "Pay Now"}
+                title={
+                  initPayment.isPending || saveExamSelection.isPending
+                    ? "Processing..."
+                    : `Pay ${selectedPlan.currency} ${totalPrice.toLocaleString()}`
+                }
               />
 
               {/* License Code */}
@@ -485,15 +641,6 @@ function AddSubscriptionPage() {
                 )}
               </div>
 
-              <button
-                onClick={handleStartTrial}
-                disabled={startTrial.isPending}
-                className="w-full py-3 px-4 border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:border-accent/50 transition-colors disabled:opacity-50"
-              >
-                {startTrial.isPending
-                  ? "Starting Trial..."
-                  : "Start Free Trial"}
-              </button>
             </div>
           </div>
         )}

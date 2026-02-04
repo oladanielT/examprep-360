@@ -79,9 +79,11 @@ export default function Stat() {
         <EmptyStat />
       )}
 
-      <Button className="text-base font-semibold text-accent bg-transparent px-8 sm:px-20! py-6 sm:py-8! rounded-full hover:bg-accent/10 border w-full sm:w-auto">
-        + Subscribe to New Exam
-      </Button>
+      <Link to="/subscription/add">
+        <Button className="text-base font-semibold text-accent bg-transparent px-8 sm:px-20! py-6 sm:py-8! rounded-full hover:bg-accent/10 border w-full sm:w-auto">
+          + Subscribe to New Exam
+        </Button>
+      </Link>
     </div>
   );
 }

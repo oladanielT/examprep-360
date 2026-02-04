@@ -37,10 +37,8 @@ interface ApiError {
 // ==================== QUERIES ====================
 
 // Fetch exam preferences (for /tests page - list of exam types like JAMB, WAEC, etc.)
-// Uses store to cache preferences - only fetches if not already in store
 export const useExamPreferences = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const storedPreferences = useExamStore((state) => state.preferences);
   const setPreferences = useExamStore((state) => state.setPreferences);
 
   return useQuery<ExamPreferencesResponse>({
@@ -53,9 +51,8 @@ export const useExamPreferences = () => {
       setPreferences(data);
       return data;
     },
-    enabled: isAuthenticated && !storedPreferences, // Only fetch if not in store
-    initialData: storedPreferences || undefined, // Use stored data as initial
-    staleTime: Infinity, // Never refetch automatically since we have it in store
+    enabled: isAuthenticated,
+    staleTime: 1000 * 60 * 5, // 5 minutes - refetch periodically
   });
 };
 

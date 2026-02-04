@@ -33,7 +33,7 @@ export interface InitializePaymentRequest {
   studentId: string;
   subscriptionId: string; // This is the plan ID
   amount: number;
-  subscriptionType: "INDIVIDUAL" | "INSTITUTIONAL";
+  subscriptionType: "INDIVIDUAL" | "BODY";
   numberOfSubjects: number;
   numberOfStudents: number;
   schoolType: string;
@@ -70,7 +70,10 @@ export interface VerifyPaymentResponse {
 }
 
 export interface RedeemLicenseRequest {
-  licenseCode: string;
+  code: string;
+  studentId: string;
+  subjects: string[];
+  courses: string[];
 }
 
 export interface RedeemLicenseResponse {

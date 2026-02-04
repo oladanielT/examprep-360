@@ -6,6 +6,7 @@ import {
   useDeleteSubscription,
   useSwitchSubscription,
 } from "./hooks/useSubscription";
+import { useExamPreferences } from "@/feature/exams/hooks";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,8 +21,15 @@ import {
 
 export const SubscriptionSection = () => {
   const { data: subscriptions, isLoading } = useSubscriptions();
+  const { data: preferences } = useExamPreferences();
   const deleteMutation = useDeleteSubscription();
   const switchMutation = useSwitchSubscription();
+
+  // The focused subscription matches the current exam preferences
+  const isFocused = (sub: { examType: string; examTypeId: string }) =>
+    preferences?.examTypeId
+      ? sub.examTypeId === preferences.examTypeId
+      : sub.examType === preferences?.examSubtype;
 
   const handleDelete = (id: string) => {
     deleteMutation.mutate(id, {
@@ -110,12 +118,11 @@ export const SubscriptionSection = () => {
               </div>
 
               <div className="flex items-center flex-wrap gap-2 pt-1">
-                {sub.status === "ACTIVE" && (
+                {isFocused(sub) ? (
                   <span className="text-xs text-accent font-medium px-2 py-1">
                     Current Focus
                   </span>
-                )}
-                {sub.status !== "ACTIVE" && (
+                ) : sub.status === "ACTIVE" ? (
                   <button
                     onClick={() => handleSwitch(sub.id)}
                     disabled={switchMutation.isPending}
@@ -124,7 +131,7 @@ export const SubscriptionSection = () => {
                     <ArrowRightLeft className="h-3 w-3" />
                     Switch
                   </button>
-                )}
+                ) : null}
                 <AlertDialog>
                   <AlertDialogTrigger
                     disabled={deleteMutation.isPending}

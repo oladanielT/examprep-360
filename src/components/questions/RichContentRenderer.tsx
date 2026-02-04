@@ -1,5 +1,7 @@
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { cn } from "@/lib/utils";
+import katex from "katex";
+import "katex/dist/katex.min.css";
 import type {
   RichContentBlock,
   TextBlock,
@@ -18,8 +20,74 @@ interface RichContentRendererProps {
   className?: string;
 }
 
+// Render LaTeX string to HTML using KaTeX
+function renderLatex(latex: string, displayMode = false): string {
+  try {
+    return katex.renderToString(latex, {
+      displayMode,
+      throwOnError: false,
+      trust: true,
+      strict: false,
+    });
+  } catch {
+    return latex; // Return raw string if KaTeX fails
+  }
+}
+
+// Parse text containing $...$ (inline) and $$...$$ (display) LaTeX patterns
+function parseTextWithLatex(text: string): React.ReactNode[] {
+  const nodes: React.ReactNode[] = [];
+  // Match $$...$$ (display mode) or $...$ (inline mode)
+  const regex = /(\$\$[^$]+\$\$|\$[^$]+\$)/g;
+
+  let lastIndex = 0;
+  let match;
+  let key = 0;
+
+  while ((match = regex.exec(text)) !== null) {
+    // Add text before the match
+    if (match.index > lastIndex) {
+      nodes.push(<span key={key++}>{text.slice(lastIndex, match.index)}</span>);
+    }
+
+    const matchedText = match[0];
+    const isDisplayMode = matchedText.startsWith("$$");
+    const latex = isDisplayMode
+      ? matchedText.slice(2, -2) // Remove $$ from both ends
+      : matchedText.slice(1, -1); // Remove $ from both ends
+
+    nodes.push(
+      <span
+        key={key++}
+        className={isDisplayMode ? "block my-2" : "inline"}
+        dangerouslySetInnerHTML={{ __html: renderLatex(latex, isDisplayMode) }}
+      />
+    );
+
+    lastIndex = regex.lastIndex;
+  }
+
+  // Add remaining text after last match
+  if (lastIndex < text.length) {
+    nodes.push(<span key={key++}>{text.slice(lastIndex)}</span>);
+  }
+
+  return nodes.length > 0 ? nodes : [<span key={0}>{text}</span>];
+}
+
 function TextBlockRenderer({ block }: { block: TextBlock }) {
   const style = block.style;
+
+  // Check if text contains LaTeX patterns
+  const hasLatex = block.value.includes("$");
+
+  const content = useMemo(() => {
+    if (hasLatex) {
+      return parseTextWithLatex(block.value);
+    }
+    return block.value;
+  }, [block.value, hasLatex]);
+
   return (
     <span
       className={cn(
@@ -31,22 +99,42 @@ function TextBlockRenderer({ block }: { block: TextBlock }) {
       )}
       style={{ color: style?.color }}
     >
-      {block.value}
+      {content}
     </span>
   );
 }
 
 function MarkdownBlockRenderer({ block }: { block: MarkdownBlock }) {
-  // For now, render as plain text. Could integrate react-markdown later.
-  return <div className="prose prose-sm max-w-none">{block.content}</div>;
+  // Check if markdown contains LaTeX patterns
+  const hasLatex = block.content.includes("$");
+
+  const content = useMemo(() => {
+    if (hasLatex) {
+      return parseTextWithLatex(block.content);
+    }
+    return block.content;
+  }, [block.content, hasLatex]);
+
+  return <div className="prose prose-sm max-w-none">{content}</div>;
 }
 
 function LatexBlockRenderer({ block }: { block: LatexBlock }) {
-  // For now, render as code. Could integrate KaTeX later.
+  // Handle both raw string and object format { equation, displayMode }
+  const latex = typeof block.value === "string"
+    ? block.value
+    : (block.value as { equation?: string })?.equation || "";
+
+  const displayMode = typeof block.value === "object"
+    ? (block.value as { displayMode?: boolean })?.displayMode ?? false
+    : false;
+
+  const html = useMemo(() => renderLatex(latex, displayMode), [latex, displayMode]);
+
   return (
-    <code className="px-1.5 py-0.5 bg-gray-100 rounded text-sm font-mono">
-      {block.value}
-    </code>
+    <span
+      className={displayMode ? "block my-2 text-center" : "inline"}
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
   );
 }
 
@@ -188,7 +276,12 @@ function renderBlock(block: RichContentBlock, index: number) {
     default:
       // Fallback for unknown types - try to render value or content
       const unknownBlock = block as { value?: string; content?: string; text?: string };
-      return <span key={index}>{unknownBlock.value || unknownBlock.content || unknownBlock.text || ""}</span>;
+      const fallbackText = unknownBlock.value || unknownBlock.content || unknownBlock.text || "";
+      // Check if fallback text has LaTeX
+      if (fallbackText.includes("$")) {
+        return <span key={index}>{parseTextWithLatex(fallbackText)}</span>;
+      }
+      return <span key={index}>{fallbackText}</span>;
   }
 }
 
@@ -216,7 +309,7 @@ export function getPlainText(content: RichContentBlock[]): string {
         case "markdown":
           return block.content;
         case "latex":
-          return block.value;
+          return typeof block.value === "string" ? block.value : (block.value as { equation?: string })?.equation || "";
         case "list":
           return block.items.join(", ");
         case "table":

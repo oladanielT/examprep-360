@@ -15,12 +15,10 @@ import { Slider } from "@/components/ui/slider";
 import { useNavigate } from "@tanstack/react-router";
 import { useRegistrationStore } from "@/stores/registrationStore";
 import { useExamTypes, useExamSubjects } from "@/feature/exams/hooks";
-import { usePaymentPlans } from "@/feature/payment/hooks";
 import { Loader2 } from "lucide-react";
 
 const selectExamSchema = z.object({
   examType: z.string().min(1, "Please select an exam type"),
-  duration: z.string().min(1, "Please select a duration"),
   subjects: z
     .array(z.string())
     .min(1, "Please select at least one subject")
@@ -51,22 +49,9 @@ export const SelectExamForm = () => {
     isLoading: isLoadingSubjects
   } = useExamSubjects(selectedExamType);
 
-  // Fetch payment plans based on category (schoolType) and exam type
-  const {
-    data: plans,
-    isLoading: isLoadingPlans
-  } = usePaymentPlans(category, selectedExamType);
-
-  // Transform plans into duration options
-  const durationOptions = plans?.map((plan) => ({
-    label: `${plan.name} - ${plan.duration} Days (${plan.currency} ${plan.basePrice.toLocaleString()})`,
-    value: plan.id,
-  })) || [];
-
   const form = useForm({
     defaultValues: {
       examType: data.examType || "",
-      duration: data.duration || "",
       subjects: data.subjects || ([] as string[]),
       students: [data.students || 4] as number[],
     },
@@ -76,11 +61,11 @@ export const SelectExamForm = () => {
       if (!result.success) {
         return;
       }
-      // Save to registration store
+      // Save to registration store (no duration/plan selection here)
       setExamSelection({
         examType: value.examType,
         examTypeId: selectedExamTypeId,
-        duration: value.duration,
+        duration: "", // Will be selected at checkout if paying
         subjects: value.subjects,
         students: isInstitutional && value.students ? value.students[0] : 1,
       });
@@ -135,9 +120,8 @@ export const SelectExamForm = () => {
                         // Update local state for subject fetching
                         setSelectedExamType(value);
                         setSelectedExamTypeId(selected?.id || "");
-                        // Clear subjects and duration when exam type changes
+                        // Clear subjects when exam type changes
                         form.setFieldValue("subjects", []);
-                        form.setFieldValue("duration", "");
                       }}
                       options={examTypeOptions}
                       placeholder="Choose an exam type"
@@ -228,51 +212,6 @@ export const SelectExamForm = () => {
             }}
           />
 
-          {/* Duration / Subscription Plan */}
-          <form.Field
-            name="duration"
-            children={(field) => {
-              const isInvalid =
-                field.state.meta.isTouched && !field.state.meta.isValid;
-              return (
-                <Field data-invalid={isInvalid}>
-                  <FieldLabel
-                    className="text-[#6D6D6D] uppercase text-[12px]"
-                    htmlFor="form-duration"
-                  >
-                    Subscription Plan
-                  </FieldLabel>
-
-                  {!selectedExamType ? (
-                    <p className="text-sm text-gray-500 py-4">
-                      Please select an exam type first
-                    </p>
-                  ) : isLoadingPlans ? (
-                    <div className="flex items-center gap-2 h-14 px-4 border rounded-4xl">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span className="text-gray-500">Loading plans...</span>
-                    </div>
-                  ) : durationOptions.length > 0 ? (
-                    <CustomSelect
-                      name={field.name}
-                      value={field.state.value}
-                      onValueChange={field.handleChange}
-                      options={durationOptions}
-                      placeholder="Choose a subscription plan"
-                      required
-                    />
-                  ) : (
-                    <p className="text-sm text-gray-500 py-4">
-                      No plans available for this exam type
-                    </p>
-                  )}
-
-                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                </Field>
-              );
-            }}
-          />
-
           {isInstitutional && (
             <form.Field
               name="students"
@@ -309,7 +248,7 @@ export const SelectExamForm = () => {
 
         <PrimaryButton
           type="submit"
-          disabled={form.state.isSubmitting || isLoadingExamTypes || isLoadingPlans}
+          disabled={form.state.isSubmitting || isLoadingExamTypes}
           className="w-full bg-accent hover:bg-accent/80 mt-10 text-white text-lg"
           title={form.state.isSubmitting ? "Loading..." : "Continue"}
         />

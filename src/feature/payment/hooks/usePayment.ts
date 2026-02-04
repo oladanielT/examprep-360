@@ -25,14 +25,18 @@ interface ApiError {
 // ==================== QUERIES ====================
 
 // Fetch payment plans
-export const usePaymentPlans = (schoolType: string, examType: string) => {
+export const usePaymentPlans = (
+  schoolType: string,
+  examType: string,
+  subscriptionType: "INDIVIDUAL" | "BODY" = "INDIVIDUAL"
+) => {
   return useQuery<PaymentPlan[]>({
-    queryKey: ["paymentPlans", schoolType, examType],
+    queryKey: ["paymentPlans", schoolType, examType, subscriptionType],
     queryFn: async () => {
       const { data } = await apiClient.get<PaymentPlan[]>(
         PAYMENT_ENDPOINTS.PLANS,
         {
-          params: { schoolType, examType },
+          params: { schoolType, examType, subscriptionType },
         }
       );
       return data;

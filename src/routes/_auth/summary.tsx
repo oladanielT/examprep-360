@@ -7,7 +7,7 @@ import { Alert } from "@/components/ui/alert";
 import { useRegistrationStore } from "@/stores/registrationStore";
 import { useRegister } from "@/feature/auth/hooks";
 import { useExamSubjects } from "@/feature/exams/hooks";
-import { usePaymentPlans } from "@/feature/payment/hooks";
+import { toast } from "sonner";
 
 function SummaryPage() {
   const navigate = useNavigate();
@@ -17,16 +17,10 @@ function SummaryPage() {
   // Fetch subjects to get names
   const { data: subjects } = useExamSubjects(data.examType);
 
-  // Fetch plans to get plan details
-  const { data: plans } = usePaymentPlans(data.category, data.examType);
-
   // Get subject labels from IDs
   const selectedSubjectLabels = data.subjects
     .map((id) => subjects?.find((s) => s.id === id)?.name)
     .filter(Boolean);
-
-  // Get selected plan details
-  const selectedPlan = plans?.find((p) => p.id === data.duration);
 
   const handleSubmit = async () => {
     try {
@@ -39,7 +33,6 @@ function SummaryPage() {
         examTypeId: data.examTypeId,
         examCategory: data.category,
         selectedSubjects: data.subjects,
-        subscriptionPlanId: data.duration, // This is the plan ID
         ...(data.isInstitutional && { numberOfStudents: data.students }),
       });
 
@@ -48,9 +41,16 @@ function SummaryPage() {
         setStudentId(response.student.id);
       }
 
-      // Navigate to checkout page to complete payment
-      // Don't clear registration data yet - we need it in checkout
-      navigate({ to: "/checkout" });
+      // Show success toast and navigate
+      toast.success("Account created successfully!", {
+        description: "Choose how you'd like to get started.",
+        duration: 4000,
+      });
+
+      // Small delay to ensure toast is visible before navigation
+      setTimeout(() => {
+        navigate({ to: "/checkout" });
+      }, 500);
     } catch {
       // Error is handled by the mutation
     }
@@ -99,26 +99,6 @@ function SummaryPage() {
             <div className="flex justify-between">
               <span className="text-gray-500">Exam Type</span>
               <span className="font-medium uppercase">{data.examType}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Subscription Plan</span>
-              <span className="font-medium">
-                {selectedPlan ? selectedPlan.name : data.duration}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Duration</span>
-              <span className="font-medium">
-                {selectedPlan ? `${selectedPlan.duration} Days` : "N/A"}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Price</span>
-              <span className="font-medium text-accent">
-                {selectedPlan
-                  ? `${selectedPlan.currency} ${selectedPlan.basePrice.toLocaleString()}`
-                  : "N/A"}
-              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Subjects</span>

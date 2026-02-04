@@ -9,6 +9,7 @@ import PrimaryButton from "@/components/buttons/primary-button";
 type PaymentSearchParams = {
   reference?: string;
   trxref?: string;
+  returnUrl?: string;
 };
 
 function PaymentVerifyPage() {
@@ -34,8 +35,12 @@ function PaymentVerifyPage() {
     verifyPaymentMutation.mutate(
       { reference },
       {
-        onSuccess: (data) => {
-          if (data.success && data.status === "success") {
+        onSuccess: (data: any) => {
+          if (
+            data.success ||
+            data.status === "success" ||
+            (data.message && data.message.toLowerCase().includes("success"))
+          ) {
             setVerificationStatus("success");
           } else {
             setVerificationStatus("failed");
@@ -56,7 +61,8 @@ function PaymentVerifyPage() {
       resetRegistration();
       navigate({ to: "/" });
     } else {
-      navigate({ to: "/checkout" });
+      // Redirect back to where the payment was initiated from
+      navigate({ to: search.returnUrl || "/checkout" });
     }
   };
 
@@ -154,6 +160,7 @@ export const Route = createFileRoute("/_auth/payment-verify")({
     return {
       reference: search.reference as string | undefined,
       trxref: search.trxref as string | undefined,
+      returnUrl: search.returnUrl as string | undefined,
     };
   },
   component: PaymentVerifyPage,
