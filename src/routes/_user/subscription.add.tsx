@@ -8,12 +8,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Alert } from "@/components/ui/alert";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 import {
   useExamCategories,
@@ -89,7 +84,7 @@ function AddSubscriptionPage() {
   const { data: plans, isLoading: isLoadingPlans } = usePaymentPlans(
     category,
     selectedExamType,
-    subscriptionType
+    subscriptionType,
   );
 
   // Save exam selection mutation
@@ -117,8 +112,7 @@ function AddSubscriptionPage() {
   // Calculate total price for institutional
   const totalPrice = selectedPlan
     ? isInstitutional && selectedPlan.pricePerStudent
-      ? selectedPlan.basePrice +
-        numberOfStudents * selectedPlan.pricePerStudent
+      ? selectedPlan.basePrice + numberOfStudents * selectedPlan.pricePerStudent
       : selectedPlan.basePrice
     : 0;
 
@@ -156,7 +150,7 @@ function AddSubscriptionPage() {
       toast.error(
         !selectedPlan
           ? "No plan selected"
-          : "User not found — please log in again"
+          : "User not found — please log in again",
       );
       return;
     }
@@ -337,7 +331,7 @@ function AddSubscriptionPage() {
                         onValueChange={(value) => {
                           field.handleChange(value);
                           const selected = examTypes?.find(
-                            (t) => t.name === value
+                            (t) => t.name === value,
                           );
                           setSelectedExamType(value);
                           setExamTypeId(selected?.id || "");
@@ -404,7 +398,7 @@ function AddSubscriptionPage() {
                                 "data-[state=on]:border-accent/70 data-[state=on]:bg-transparent data-[state=on]:text-black",
                                 field.state.value.includes(subject.id)
                                   ? "border-accent"
-                                  : "border-[#E5E5E5] text-black"
+                                  : "border-[#E5E5E5] text-black",
                               )}
                               aria-label={subject.name}
                             >
@@ -455,7 +449,7 @@ function AddSubscriptionPage() {
                       value={field.state.value}
                       onValueChange={(value) =>
                         field.handleChange(
-                          Array.isArray(value) ? value : [value]
+                          Array.isArray(value) ? value : [value],
                         )
                       }
                       className="w-full"
@@ -545,8 +539,7 @@ function AddSubscriptionPage() {
                 </div>
                 <div className="sm:text-right shrink-0">
                   <div className="text-2xl sm:text-3xl font-bold text-accent">
-                    {selectedPlan.currency}{" "}
-                    {totalPrice.toLocaleString()}
+                    {selectedPlan.currency} {totalPrice.toLocaleString()}
                   </div>
                   <div className="text-xs sm:text-sm text-gray-500">
                     for {selectedPlan.duration} days
@@ -556,9 +549,7 @@ function AddSubscriptionPage() {
 
               {selectedPlan.features && selectedPlan.features.length > 0 && (
                 <div className="space-y-2 mt-4 pt-4 border-t">
-                  <p className="text-sm font-medium text-gray-700">
-                    Features:
-                  </p>
+                  <p className="text-sm font-medium text-gray-700">Features:</p>
                   {selectedPlan.features.map((feature, index) => (
                     <div
                       key={index}
@@ -640,7 +631,6 @@ function AddSubscriptionPage() {
                   </div>
                 )}
               </div>
-
             </div>
           </div>
         )}
