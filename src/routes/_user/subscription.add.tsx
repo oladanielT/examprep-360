@@ -270,7 +270,7 @@ function AddSubscriptionPage() {
                       <span className="text-sm font-medium text-[#101828] pr-2">
                         {cat.label}
                       </span>
-                      <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-warning flex-shrink-0" />
+                      <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-warning shrink-0" />
                     </button>
                   ))}
               </div>
@@ -390,7 +390,7 @@ function AddSubscriptionPage() {
                               key={subject.id}
                               value={subject.id}
                               className={cn(
-                                "h-auto py-3 sm:py-4 px-2 sm:px-3 !rounded-sm border-2",
+                                "h-auto py-3 sm:py-4 px-2 sm:px-3 rounded-sm! border-2",
                                 "flex items-center justify-center",
                                 "text-[11px] sm:text-xs font-medium text-center",
                                 "transition-all duration-200",
@@ -402,7 +402,7 @@ function AddSubscriptionPage() {
                               )}
                               aria-label={subject.name}
                             >
-                              <span className="break-words text-center leading-tight">
+                              <span className="wrap-break-words text-center leading-tight">
                                 {subject.name}
                               </span>
                             </ToggleGroupItem>
@@ -516,7 +516,7 @@ function AddSubscriptionPage() {
         {step === "checkout" && selectedPlan && (
           <div className="space-y-4">
             {/* Plan Card */}
-            <div className="bg-gradient-to-br from-accent/5 to-accent/10 rounded-xl p-4 sm:p-6 border-2 border-accent/20">
+            <div className="bg-linear-to-br from-accent/5 to-accent/10 rounded-xl p-4 sm:p-6 border-2 border-accent/20">
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4 mb-4">
                 <div className="min-w-0">
                   <h3 className="text-lg sm:text-xl font-bold text-[#101828]">
