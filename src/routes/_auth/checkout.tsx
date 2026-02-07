@@ -17,7 +17,7 @@ function CheckoutPage() {
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [licenseCode, setLicenseCode] = useState("");
   const [trialStarted, setTrialStarted] = useState(false);
-  const navigationTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const navigationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     return () => {

@@ -55,9 +55,7 @@ apiClient.interceptors.request.use((config) => {
 });
 
 // Auth endpoints that should NOT trigger token refresh or redirect on 401
-const AUTH_PATHS = Object.values(AUTH_ENDPOINTS).filter(
-  (v): v is string => typeof v === "string"
-);
+const AUTH_PATHS: string[] = Object.values(AUTH_ENDPOINTS);
 
 // Token refresh mutex -- ensures only one refresh is in-flight at a time
 let refreshPromise: Promise<any> | null = null;

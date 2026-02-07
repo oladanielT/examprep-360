@@ -379,13 +379,13 @@ function ExamReviewPage() {
 
                 {/* Text explanation fallback */}
                 {!currentQuestion.explanation &&
-                  currentQuestion.textExplanation && (
+                  (currentQuestion as any).textExplanation && (
                     <div className="mt-6 pt-6 border-t space-y-2">
                       <h3 className="text-sm font-semibold text-gray-900">
                         Explanation
                       </h3>
                       <p className="text-sm text-gray-600 leading-relaxed">
-                        {currentQuestion.textExplanation}
+                        {(currentQuestion as any).textExplanation}
                       </p>
                     </div>
                   )}
