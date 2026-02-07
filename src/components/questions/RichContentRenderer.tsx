@@ -80,13 +80,39 @@ function TextBlockRenderer({ block }: { block: TextBlock }) {
 
   // Check if text contains LaTeX patterns
   const hasLatex = block.value.includes("$");
+  const hasNewlines = block.value.includes("\n");
 
   const content = useMemo(() => {
     if (hasLatex) {
-      return parseTextWithLatex(block.value);
+      const nodes = parseTextWithLatex(block.value);
+      if (!hasNewlines) return nodes;
+      // Insert <br /> for newlines within LaTeX-parsed nodes
+      const result: React.ReactNode[] = [];
+      let brKey = 1000;
+      for (const node of nodes) {
+        if (typeof node === "string") {
+          const parts = node.split("\n");
+          parts.forEach((part, i) => {
+            if (i > 0) result.push(<br key={brKey++} />);
+            if (part) result.push(part);
+          });
+        } else {
+          result.push(node);
+        }
+      }
+      return result;
+    }
+    if (hasNewlines) {
+      const parts = block.value.split("\n");
+      const result: React.ReactNode[] = [];
+      parts.forEach((part, i) => {
+        if (i > 0) result.push(<br key={`br-${i}`} />);
+        if (part) result.push(<span key={`t-${i}`}>{part}</span>);
+      });
+      return result;
     }
     return block.value;
-  }, [block.value, hasLatex]);
+  }, [block.value, hasLatex, hasNewlines]);
 
   return (
     <span
@@ -151,10 +177,31 @@ function LatexBlockRenderer({ block }: { block: LatexBlock }) {
 }
 
 function ImageBlockRenderer({ block }: { block: ImageBlock }) {
+  let src = block.url;
+  let alt = block.alt || "Question image";
+
+  // Handle API shape where image data arrives as a JSON string in `value`
+  // e.g. { type: "image", value: '{"src":"https://...","alt":null,"title":null}' }
+  if (!src) {
+    const rawValue = (block as unknown as { value?: string }).value;
+    if (rawValue) {
+      try {
+        const parsed = JSON.parse(rawValue);
+        src = parsed.src || parsed.url || rawValue;
+        alt = parsed.alt || alt;
+      } catch {
+        // value is not JSON — use it as a raw URL
+        src = rawValue;
+      }
+    }
+  }
+
+  if (!src) return null;
+
   return (
     <img
-      src={block.url}
-      alt={block.alt || "Question image"}
+      src={src}
+      alt={alt}
       className="max-w-full h-auto rounded-lg my-2"
     />
   );
