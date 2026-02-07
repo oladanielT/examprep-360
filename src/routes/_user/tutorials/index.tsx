@@ -1,3 +1,4 @@
+import { useState, useMemo } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import CustomPageHeader from "@/components/global/custom-page-header";
 import { useTutorials } from "@/feature/tutorials/hooks";
@@ -10,6 +11,7 @@ import {
   EmptyDescription,
 } from "@/components/ui/empty";
 import type { TutorialListItem } from "@/api/types/tutorial.types";
+import type { FilterOption } from "@/components/global/custom-page-header";
 
 function TutorialCard({ tutorial }: { tutorial: TutorialListItem }) {
   return (
@@ -54,11 +56,39 @@ function TutorialCard({ tutorial }: { tutorial: TutorialListItem }) {
 }
 
 function TutorialsPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [subjectFilter, setSubjectFilter] = useState("");
+
   const {
     data: tutorials,
     isLoading,
     error,
   } = useTutorials({ type: "VIDEO_TUTORIAL" });
+
+  const filterOptions: FilterOption[] = useMemo(() => {
+    if (!tutorials) return [];
+    const subjects = new Map<string, string>();
+    for (const t of tutorials) {
+      if (t.subject?.name) {
+        subjects.set(t.subject.name, t.subject.name);
+      }
+    }
+    return Array.from(subjects.values())
+      .sort()
+      .map((name) => ({ label: name, value: name }));
+  }, [tutorials]);
+
+  const filteredTutorials = useMemo(() => {
+    if (!tutorials) return [];
+    return tutorials.filter((t) => {
+      const matchesSearch =
+        !searchQuery ||
+        t.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSubject =
+        !subjectFilter || t.subject?.name === subjectFilter;
+      return matchesSearch && matchesSubject;
+    });
+  }, [tutorials, searchQuery, subjectFilter]);
 
   return (
     <div>
@@ -67,6 +97,12 @@ function TutorialsPage() {
         heading="Video Tutorials"
         filter={true}
         subHeading="Watch and learn at your own pace"
+        searchValue={searchQuery}
+        onSearchChange={(e) => setSearchQuery(e.target.value)}
+        searchPlaceholder="Search tutorials..."
+        filterOptions={filterOptions}
+        activeFilter={subjectFilter}
+        onFilterChange={setSubjectFilter}
       />
 
       {isLoading && (
@@ -79,26 +115,31 @@ function TutorialsPage() {
         </div>
       )}
 
-      {!isLoading && !error && (!tutorials || tutorials.length === 0) && (
+      {!isLoading && !error && filteredTutorials.length === 0 && (
         <div className="py-20">
           <Empty>
             <EmptyHeader>
               <EmptyMedia variant="icon">
                 <VideoCamera className="w-6 h-6" />
               </EmptyMedia>
-              <EmptyTitle>No Video Tutorials</EmptyTitle>
+              <EmptyTitle>
+                {tutorials && tutorials.length > 0
+                  ? "No Matching Tutorials"
+                  : "No Video Tutorials"}
+              </EmptyTitle>
               <EmptyDescription>
-                There are no video tutorials available at the moment. Check back
-                later for new content.
+                {tutorials && tutorials.length > 0
+                  ? "Try adjusting your search or filter to find what you're looking for."
+                  : "There are no video tutorials available at the moment. Check back later for new content."}
               </EmptyDescription>
             </EmptyHeader>
           </Empty>
         </div>
       )}
 
-      {!isLoading && !error && tutorials && tutorials.length > 0 && (
+      {!isLoading && !error && filteredTutorials.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-5 py-8 sm:py-10">
-          {tutorials.map((tutorial) => (
+          {filteredTutorials.map((tutorial) => (
             <TutorialCard key={tutorial.id} tutorial={tutorial} />
           ))}
         </div>

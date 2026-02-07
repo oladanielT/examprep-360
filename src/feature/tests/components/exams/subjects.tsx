@@ -330,7 +330,7 @@ function SubjectCard({ subject }: { subject: SubjectType }) {
   );
 }
 
-export default function Subjects() {
+export default function Subjects({ searchQuery = "" }: { searchQuery?: string }) {
   const { data, isLoading, error } = useExamPreferences();
 
   if (isLoading) {
@@ -345,13 +345,20 @@ export default function Subjects() {
     );
   }
 
-  const subjects = data?.subjects || [];
+  const allSubjects = data?.subjects || [];
+  const subjects = searchQuery
+    ? allSubjects.filter((s) =>
+        s.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : allSubjects;
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-3 sm:gap-x-5 gap-y-6 sm:gap-y-10 py-6 sm:py-10">
       {subjects.length === 0 && (
         <div className="col-span-full text-center py-10 text-gray-500">
-          No subjects available
+          {allSubjects.length > 0
+            ? "No subjects match your search"
+            : "No subjects available"}
         </div>
       )}
       {subjects.map((subject) => (

@@ -9,8 +9,7 @@ function SettingsPage() {
         backLink="/"
         search={false}
         heading="Profile"
-        filter={true}
-        subHeading="Pick a Subject and year"
+        subHeading="Manage your account settings"
       />
       <SettingsSection />
     </div>

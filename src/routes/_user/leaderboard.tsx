@@ -1,10 +1,20 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import CustomPageHeader from "@/components/global/custom-page-header";
+import type { FilterOption } from "@/components/global/custom-page-header";
 import { Card } from "@/components/ui/card";
 import { useLeaderboard, useMyRank } from "@/feature/progress/hooks/useProgress";
 import { useCurrentUser } from "@/stores/authStore";
 import { Loader2, TrendingUp, ChevronRight } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+type Period = "weekly" | "monthly" | "allTime";
+
+const periodFilterOptions: FilterOption[] = [
+  { label: "Weekly", value: "weekly" },
+  { label: "Monthly", value: "monthly" },
+  { label: "All Time", value: "allTime" },
+];
 
 function getOrdinal(n: number): string {
   const s = ["th", "st", "nd", "rd"];
@@ -13,7 +23,7 @@ function getOrdinal(n: number): string {
 }
 
 function LeaderboardPage() {
-  const period = "weekly" as const;
+  const [period, setPeriod] = useState<Period>("weekly");
 
   const currentUser = useCurrentUser();
   const { data: leaderboard, isLoading } = useLeaderboard({ period, limit: 10 });
@@ -34,6 +44,8 @@ function LeaderboardPage() {
     return entry.xp;
   };
 
+  const periodLabel = period === "weekly" ? "week" : period === "monthly" ? "month" : "overall";
+
   const getMotivationalMessage = () => {
     if (!myRank?.rank) return "Keep pushing to get on the leaderboard!";
 
@@ -41,8 +53,8 @@ function LeaderboardPage() {
     const ordinal = getOrdinal(rank);
 
     if (rank === 1) return "You're at the top! Keep up the great work!";
-    if (rank <= 3) return `You placed ${ordinal} this ${period === 'weekly' ? 'week' : period === 'monthly' ? 'month' : 'overall'}! Amazing performance!`;
-    return `You placed ${ordinal} this ${period === 'weekly' ? 'week' : period === 'monthly' ? 'month' : 'overall'}, you can do better! Keep pushing!`;
+    if (rank <= 3) return `You placed ${ordinal} this ${periodLabel}! Amazing performance!`;
+    return `You placed ${ordinal} this ${periodLabel}, you can do better! Keep pushing!`;
   };
 
   return (
@@ -53,6 +65,9 @@ function LeaderboardPage() {
         heading="Leaderboard"
         filter={true}
         subHeading="See your position in contrast to others"
+        filterOptions={periodFilterOptions}
+        activeFilter={period}
+        onFilterChange={(value) => setPeriod((value || "weekly") as Period)}
       />
 
       <div className="flex flex-col lg:flex-row items-start py-6 sm:py-10 gap-8 lg:gap-16 xl:gap-20">
