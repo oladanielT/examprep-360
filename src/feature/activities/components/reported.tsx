@@ -17,7 +17,7 @@ const extractTextFromRichContent = (blocks: RichContentBlock[]): string => {
 const statusColors: Record<string, string> = {
   PENDING: "bg-amber-50 text-amber-700",
   RESOLVED: "bg-green-50 text-green-700",
-  REJECTED: "bg-red-50 text-red-700",
+  REVIEWED: "bg-blue-50 text-blue-700",
 };
 
 export default function Reported() {

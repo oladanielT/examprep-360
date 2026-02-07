@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn, XP_PER_CORRECT_ANSWER } from "@/lib/utils";
 import { RichContentRenderer } from "./RichContentRenderer";
 import type { Question } from "@/api/types/exam.types";
 
@@ -112,7 +112,7 @@ export function TrueFalseQuestion({
             </span>
           </div>
           {isCorrect && (
-            <span className="text-green-600 font-medium">+40XP</span>
+            <span className="text-green-600 font-medium">+{XP_PER_CORRECT_ANSWER}XP</span>
           )}
         </div>
       )}

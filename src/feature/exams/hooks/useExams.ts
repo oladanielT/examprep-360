@@ -26,6 +26,7 @@ import type {
   ExamCategoryOption,
   ExamSubtypeOption,
   SubjectOption,
+  ExamReviewResponse,
 } from "@/api/types";
 import type { AxiosError } from "axios";
 
@@ -307,7 +308,8 @@ export const useSubmitResponse = () => {
 
 // Submit responses in bulk (for completing exams)
 export const useSubmitResponsesBulk = () => {
-  const { submitResponse } = useExamStore();
+  const queryClient = useQueryClient();
+  const { submitResponse, clearExam } = useExamStore();
 
   return useMutation<
     SubmitResponsesBulkResponse,
@@ -321,11 +323,17 @@ export const useSubmitResponsesBulk = () => {
       );
       return data;
     },
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       // Update store with all submitted responses
       data.responses?.forEach((response) => {
         submitResponse(response.questionId, response);
       });
+      // If this was a completing bulk submit, clear exam state and invalidate caches
+      if (variables.request.complete) {
+        clearExam();
+        queryClient.invalidateQueries({ queryKey: ["examHistory"] });
+        queryClient.invalidateQueries({ queryKey: ["progress"] });
+      }
     },
   });
 };
@@ -349,12 +357,17 @@ export const usePauseExam = () => {
 
 // Resume exam
 export const useResumeExam = () => {
+  const { resumeTimer } = useExamStore();
+
   return useMutation<ExamAttempt, AxiosError<ApiError>, string>({
     mutationFn: async (attemptId) => {
       const { data } = await apiClient.patch<ExamAttempt>(
         EXAM_ENDPOINTS.RESUME(attemptId)
       );
       return data;
+    },
+    onSuccess: () => {
+      resumeTimer();
     },
   });
 };
@@ -420,10 +433,10 @@ export const useReportQuestion = () => {
 // ==================== REVIEW ====================
 
 export const useExamReview = (attemptId: string) => {
-  return useQuery({
+  return useQuery<ExamReviewResponse>({
     queryKey: ["examReview", attemptId],
     queryFn: async () => {
-      const { data } = await apiClient.get(
+      const { data } = await apiClient.get<ExamReviewResponse>(
         EXAM_ENDPOINTS.REVIEW(attemptId)
       );
       return data;

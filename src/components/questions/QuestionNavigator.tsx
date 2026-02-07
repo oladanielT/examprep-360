@@ -120,7 +120,7 @@ export function QuestionNavigator({
               className={cn(
                 "w-8 h-8 sm:w-9 sm:h-9 rounded-full text-xs sm:text-sm font-medium transition-colors",
                 "focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#F04F54]/50",
-                isCurrent && "bg-green-500 text-white",
+                isCurrent && "bg-[#F04F54] text-white ring-2 ring-[#F04F54]/50",
                 !isCurrent && isSubmitted && "bg-green-500 text-white",
                 !isCurrent && !isSubmitted && isAnswered && "bg-yellow-100 text-yellow-700 border border-yellow-300",
                 !isCurrent && !isAnswered && "bg-gray-100 text-gray-600 hover:bg-gray-200"

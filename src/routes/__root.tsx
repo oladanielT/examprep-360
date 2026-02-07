@@ -1,6 +1,14 @@
 import { createRootRoute, Outlet, useNavigate } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { lazy } from "react";
 import { Logo } from "@/components/global/logo";
+
+const TanStackRouterDevtools = import.meta.env.DEV
+  ? lazy(() =>
+      import("@tanstack/react-router-devtools").then((mod) => ({
+        default: mod.TanStackRouterDevtools,
+      }))
+    )
+  : () => null;
 import PrimaryButton from "@/components/buttons/primary-button";
 import { Home, ArrowLeft } from "lucide-react";
 

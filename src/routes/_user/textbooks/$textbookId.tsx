@@ -8,7 +8,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { Progress, ProgressIndicator, ProgressTrack } from "@/components/ui/progress";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { cn } from "@/lib/utils";
+import { cn, XP_PER_CORRECT_ANSWER } from "@/lib/utils";
 import { toast } from "sonner";
 import type { TutorialChapter, TutorialQuestion, TutorialQuizAnswer } from "@/api/types/tutorial.types";
 import { RichContentRenderer } from "@/components/questions/RichContentRenderer";
@@ -193,7 +193,7 @@ function QuizQuestion({
                   </>
                 )}
               </div>
-              {isCorrect && <span className="text-green-500 font-medium text-sm sm:text-base">+40XP</span>}
+              {isCorrect && <span className="text-green-500 font-medium text-sm sm:text-base">+{XP_PER_CORRECT_ANSWER}XP</span>}
             </div>
           </div>
         )}

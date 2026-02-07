@@ -115,6 +115,10 @@ export const useRegistrationStore = create<RegistrationState>()(
     {
       name: "exprep-registration",
       storage: createJSONStorage(() => sessionStorage), // Use sessionStorage so it clears on browser close
+      partialize: (state) => ({
+        data: { ...state.data, password: "" }, // Never persist password
+        currentStep: state.currentStep,
+      }),
     }
   )
 );

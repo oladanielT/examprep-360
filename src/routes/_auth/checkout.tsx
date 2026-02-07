@@ -5,7 +5,7 @@ import { Alert } from "@/components/ui/alert";
 import { useRegistrationStore } from "@/stores/registrationStore";
 import { usePaymentPlans, useInitializePayment, useRedeemLicense, useStartTrial } from "@/feature/payment/hooks";
 import { Check, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -17,6 +17,13 @@ function CheckoutPage() {
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [licenseCode, setLicenseCode] = useState("");
   const [trialStarted, setTrialStarted] = useState(false);
+  const navigationTimerRef = useRef<ReturnType<typeof setTimeout>>();
+
+  useEffect(() => {
+    return () => {
+      if (navigationTimerRef.current) clearTimeout(navigationTimerRef.current);
+    };
+  }, []);
 
   const examType = registrationData.examType;
   const examCategory = registrationData.category;
@@ -107,7 +114,7 @@ function CheckoutPage() {
           duration: 4000,
         });
         // Small delay to ensure toast is visible
-        setTimeout(() => {
+        navigationTimerRef.current = setTimeout(() => {
           resetRegistration();
           navigate({ to: "/sign-in" });
         }, 1000);
@@ -143,7 +150,7 @@ function CheckoutPage() {
           description: "You can now sign in to access all features.",
         });
         // Wait a moment then navigate
-        setTimeout(() => {
+        navigationTimerRef.current = setTimeout(() => {
           resetRegistration();
           navigate({ to: "/sign-in" });
         }, 1500);

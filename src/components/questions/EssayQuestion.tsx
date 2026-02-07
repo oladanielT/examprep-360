@@ -116,12 +116,11 @@ export function EssayQuestion({
 
       {/* Feedback */}
       {isSubmitted && showCorrectAnswer && answer && (
-        <div className="flex items-center justify-between py-3 px-4 rounded-lg bg-green-50">
+        <div className="flex items-center justify-between py-3 px-4 rounded-lg bg-blue-50">
           <div className="flex items-center gap-2">
             <span className="text-lg">✨</span>
-            <span className="font-medium text-green-700">Correct!</span>
+            <span className="font-medium text-blue-700">Answer submitted</span>
           </div>
-          <span className="text-green-600 font-medium">+40XP</span>
         </div>
       )}
     </div>

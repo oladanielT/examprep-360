@@ -13,6 +13,7 @@ import {
   useToggleBookmark,
   useReportQuestion,
   useCompleteExam,
+  useBookmarks,
 } from "@/feature/exams/hooks/useExams";
 import {
   QuestionCard,
@@ -122,6 +123,27 @@ function ExamPage() {
     }
   }, [attemptId, isValidSession]);
   const [bookmarkedQuestions, setBookmarkedQuestions] = useState<Set<string>>(new Set());
+  const { data: serverBookmarks } = useBookmarks();
+
+  // Hydrate bookmarked questions from server on mount/resume
+  useEffect(() => {
+    if (serverBookmarks && questions.length > 0) {
+      // API may return array or paginated { items: [...] }
+      const bookmarks = Array.isArray(serverBookmarks)
+        ? serverBookmarks
+        : (serverBookmarks as any)?.items ?? [];
+      const questionIds = new Set(questions.map((q) => q.id));
+      const bookmarked = new Set<string>(
+        bookmarks
+          .filter((b: any) => questionIds.has(b.questionId))
+          .map((b: any) => b.questionId)
+      );
+      if (bookmarked.size > 0) {
+        setBookmarkedQuestions(bookmarked);
+      }
+    }
+  }, [serverBookmarks, questions]);
+
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportReason, setReportReason] = useState("");
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -381,6 +403,14 @@ function ExamPage() {
     }
   }, [hasUnansweredQuestions, confirmCompleteExam]);
 
+  // Auto-complete exam when timer reaches zero
+  useEffect(() => {
+    if (timeRemaining === 0 && timerRunning && currentAttempt) {
+      confirmCompleteExam();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeRemaining]);
+
   // Handle pause/resume toggle
   const handlePauseToggle = useCallback(() => {
     if (!currentAttempt) return;
@@ -622,7 +652,7 @@ function ExamPage() {
                 .map((q, idx) => (submittedQuestions.has(q.id) ? idx : -1))
                 .filter((idx) => idx !== -1)
             )}
-            timeRemaining={timeRemaining || 0}
+            timeRemaining={timeRemaining ?? 0}
             isPaused={!timerRunning}
             isBookmarked={currentQuestion ? bookmarkedQuestions.has(currentQuestion.id) : false}
             isSubmitting={submitResponse.isPending}

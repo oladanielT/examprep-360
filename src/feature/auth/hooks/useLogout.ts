@@ -12,13 +12,14 @@ interface ApiError {
 
 export const useLogout = () => {
   const queryClient = useQueryClient();
-  const { logout, refreshToken } = useAuthStore();
+  const { logout } = useAuthStore();
   const clearExam = useExamStore((state) => state.clearExam);
 
   return useMutation<void, AxiosError<ApiError>>({
     mutationFn: async () => {
-      if (refreshToken) {
-        await apiClient.post(AUTH_ENDPOINTS.LOGOUT, { refreshToken });
+      const currentRefreshToken = useAuthStore.getState().refreshToken;
+      if (currentRefreshToken) {
+        await apiClient.post(AUTH_ENDPOINTS.LOGOUT, { refreshToken: currentRefreshToken });
       }
     },
     onSettled: () => {

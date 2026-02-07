@@ -71,7 +71,7 @@ function CompletedExamsList({ examType }: { examType: ExamTypeEnum }) {
                       <XCircle className="w-4 h-4 text-red-500 shrink-0" />
                     )
                   )}
-                  <span className={`text-lg font-bold ${passed ? "text-green-600" : "text-red-600"}`}>
+                  <span className={`text-lg font-bold ${passed === true ? "text-green-600" : passed === false ? "text-red-600" : "text-gray-700"}`}>
                     {percentage.toFixed(0)}%
                   </span>
                   {exam.totalScore !== undefined && numQuestions > 0 && (

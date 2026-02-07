@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PrimaryButton from "@/components/buttons/primary-button";
 import { Card } from "@/components/ui/card";
 import {
@@ -85,6 +85,13 @@ function MockSelection({
   const mocks: AvailableExam[] = groupedData
     ? Object.values(groupedData).flat()
     : ungroupedData || [];
+
+  // Sync state with default selection when data loads
+  useEffect(() => {
+    if (mocks.length > 0 && !selectedMockId) {
+      setSelectedMockId(mocks[0].id);
+    }
+  }, [mocks, selectedMockId]);
 
   if (isLoading) {
     return <div className="py-5 text-center">Loading available mocks...</div>;

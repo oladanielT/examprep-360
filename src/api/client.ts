@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useAuthStore } from "@/stores/authStore";
+import { AUTH_ENDPOINTS } from "@/api/endpoints";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -53,8 +54,13 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-// Auth endpoints that should NOT trigger redirect on 401
-const AUTH_PATHS = ["/user/auth/login", "/user/auth/register", "/user/auth/refresh"];
+// Auth endpoints that should NOT trigger token refresh or redirect on 401
+const AUTH_PATHS = Object.values(AUTH_ENDPOINTS).filter(
+  (v): v is string => typeof v === "string"
+);
+
+// Token refresh mutex -- ensures only one refresh is in-flight at a time
+let refreshPromise: Promise<any> | null = null;
 
 // Response interceptor - handles token refresh
 apiClient.interceptors.response.use(
@@ -63,7 +69,7 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config;
     const requestPath = originalRequest?.url || "";
 
-    // Skip redirect logic for auth endpoints (login, register, refresh)
+    // Skip redirect logic for auth endpoints (login, register, refresh, password-reset, etc.)
     const isAuthEndpoint = AUTH_PATHS.some((path) => requestPath.includes(path));
     if (isAuthEndpoint) {
       return Promise.reject(error);
@@ -76,19 +82,34 @@ apiClient.interceptors.response.use(
       const refreshToken = useAuthStore.getState().refreshToken;
       if (refreshToken) {
         try {
-          const { data } = await axios.post(`${API_BASE_URL}/user/auth/refresh`, {
-            refreshToken,
-          });
-          useAuthStore.getState().setTokens(data.accessToken, data.refreshToken);
-          originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
-          return apiClient(originalRequest);
-        } catch {
+          // Use mutex to prevent concurrent refresh calls
+          if (!refreshPromise) {
+            refreshPromise = axios
+              .post(`${API_BASE_URL}/user/auth/refresh`, { refreshToken })
+              .finally(() => {
+                refreshPromise = null;
+              });
+          }
+
+          const { data } = await refreshPromise;
+
+          if (data?.accessToken && data?.refreshToken) {
+            useAuthStore.getState().setTokens(data.accessToken, data.refreshToken);
+            originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+            return apiClient(originalRequest);
+          }
+
+          // Invalid response from refresh endpoint
           useAuthStore.getState().logout();
-          window.location.href = "/sign-in";
+          window.location.replace("/sign-in");
+        } catch {
+          refreshPromise = null;
+          useAuthStore.getState().logout();
+          window.location.replace("/sign-in");
         }
       } else {
         useAuthStore.getState().logout();
-        window.location.href = "/sign-in";
+        window.location.replace("/sign-in");
       }
     }
     return Promise.reject(error);

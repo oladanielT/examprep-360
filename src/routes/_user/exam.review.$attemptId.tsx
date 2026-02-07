@@ -11,6 +11,7 @@ import {
   Trophy,
   ChevronLeft,
   ChevronRight,
+  MinusCircle,
 } from "lucide-react";
 import { useExamReview } from "@/feature/exams/hooks/useExams";
 import {
@@ -63,7 +64,8 @@ function ExamReviewPage() {
   const responses = review.responses || [];
   const totalQuestions = responses.length;
   const correctCount = responses.filter((r: any) => r.isCorrect).length;
-  const incorrectCount = totalQuestions - correctCount;
+  const skippedCount = responses.filter((r: any) => r.answer === null || r.answer === undefined || r.answer === "").length;
+  const incorrectCount = totalQuestions - correctCount - skippedCount;
   const percentage = review.percentage ?? 0;
   const passed = review.passed ?? false;
   const timeSpent = review.timeSpentSeconds ?? 0;
@@ -166,6 +168,12 @@ function ExamReviewPage() {
               <XCircle className="w-3.5 h-3.5 text-red-400" />
               <span className="text-gray-700 font-medium">{incorrectCount} wrong</span>
             </div>
+            {skippedCount > 0 && (
+              <div className="flex items-center gap-1.5 bg-white/80 rounded-full px-3 py-1.5 text-xs sm:text-sm border border-gray-200">
+                <MinusCircle className="w-3.5 h-3.5 text-gray-400" />
+                <span className="text-gray-700 font-medium">{skippedCount} skipped</span>
+              </div>
+            )}
             <div className="flex items-center gap-1.5 bg-white/80 rounded-full px-3 py-1.5 text-xs sm:text-sm border border-gray-200">
               <Clock className="w-3.5 h-3.5 text-gray-500" />
               <span className="text-gray-700 font-medium">{formatTime(timeSpent)}</span>
@@ -322,7 +330,8 @@ function ExamReviewPage() {
                 )}
 
                 {(currentQuestion.questionType === "ESSAY" ||
-                  currentQuestion.questionType === "ESSAY_WITH_SUB") && (
+                  currentQuestion.questionType === "ESSAY_WITH_SUB" ||
+                  currentQuestion.questionType === "SHORT_ANSWER") && (
                   <EssayQuestion
                     question={currentQuestion}
                     questionNumber={currentQuestion.questionNumber}
@@ -345,6 +354,7 @@ function ExamReviewPage() {
                   "FILL_IN_BLANK",
                   "ESSAY",
                   "ESSAY_WITH_SUB",
+                  "SHORT_ANSWER",
                 ].includes(currentQuestion.questionType) && (
                   <div className="space-y-4">
                     <p className="text-sm font-medium text-gray-600">

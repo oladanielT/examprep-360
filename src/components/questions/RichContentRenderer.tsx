@@ -118,17 +118,29 @@ function MarkdownBlockRenderer({ block }: { block: MarkdownBlock }) {
   return <div className="prose prose-sm max-w-none">{content}</div>;
 }
 
+function parseLatexValue(value: string): { equation: string; displayMode: boolean } {
+  // Try JSON parse first (legacy format: '{"equation":"x^2","displayMode":false}')
+  try {
+    const parsed = JSON.parse(value);
+    if (parsed.equation) {
+      return { equation: parsed.equation, displayMode: parsed.displayMode ?? false };
+    }
+  } catch {
+    // Not JSON, treat as raw equation
+  }
+
+  // Check for display mode markers $$...$$
+  if (value.startsWith("$$") && value.endsWith("$$")) {
+    return { equation: value.slice(2, -2), displayMode: true };
+  }
+
+  return { equation: value, displayMode: false };
+}
+
 function LatexBlockRenderer({ block }: { block: LatexBlock }) {
-  // Handle both raw string and object format { equation, displayMode }
-  const latex = typeof block.value === "string"
-    ? block.value
-    : (block.value as { equation?: string })?.equation || "";
+  const { equation, displayMode } = useMemo(() => parseLatexValue(block.value), [block.value]);
 
-  const displayMode = typeof block.value === "object"
-    ? (block.value as { displayMode?: boolean })?.displayMode ?? false
-    : false;
-
-  const html = useMemo(() => renderLatex(latex, displayMode), [latex, displayMode]);
+  const html = useMemo(() => renderLatex(equation, displayMode), [equation, displayMode]);
 
   return (
     <span

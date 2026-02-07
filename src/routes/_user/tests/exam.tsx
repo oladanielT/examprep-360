@@ -54,6 +54,8 @@ function ExamPage() {
   const nextQuestion = useExamStore((state) => state.nextQuestion);
   const previousQuestion = useExamStore((state) => state.previousQuestion);
   const updateTimeRemaining = useExamStore((state) => state.updateTimeRemaining);
+  const pauseTimer = useExamStore((state) => state.pauseTimer);
+  const resumeTimer = useExamStore((state) => state.resumeTimer);
 
   // API mutations
   const submitResponse = useSubmitResponse();
@@ -227,15 +229,19 @@ function ExamPage() {
     if (!currentAttempt) return;
 
     if (timerRunning) {
+      pauseTimer();
       pauseExam.mutate(currentAttempt.id, {
         onError: (error: any) => {
+          resumeTimer();
           const message = error?.response?.data?.message || error?.message || "Failed to pause exam.";
           setErrorMessage(message);
         },
       });
     } else {
+      resumeTimer();
       resumeExam.mutate(currentAttempt.id, {
         onError: (error: any) => {
+          pauseTimer();
           const message = error?.response?.data?.message || error?.message || "Failed to resume exam.";
           setErrorMessage(message);
         },

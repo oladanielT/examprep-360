@@ -2,12 +2,20 @@ import { createFileRoute } from "@tanstack/react-router";
 import CustomPageHeader from "@/components/global/custom-page-header";
 import { Card } from "@/components/ui/card";
 import { useLeaderboard, useMyRank } from "@/feature/progress/hooks/useProgress";
+import { useCurrentUser } from "@/stores/authStore";
 import { Loader2, TrendingUp, ChevronRight } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+function getOrdinal(n: number): string {
+  const s = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
 
 function LeaderboardPage() {
   const period = "weekly" as const;
 
+  const currentUser = useCurrentUser();
   const { data: leaderboard, isLoading } = useLeaderboard({ period, limit: 10 });
   const { data: myRank } = useMyRank({ period });
 
@@ -30,7 +38,7 @@ function LeaderboardPage() {
     if (!myRank?.rank) return "Keep pushing to get on the leaderboard!";
 
     const rank = myRank.rank;
-    const ordinal = rank === 1 ? "1st" : rank === 2 ? "2nd" : rank === 3 ? "3rd" : `${rank}th`;
+    const ordinal = getOrdinal(rank);
 
     if (rank === 1) return "You're at the top! Keep up the great work!";
     if (rank <= 3) return `You placed ${ordinal} this ${period === 'weekly' ? 'week' : period === 'monthly' ? 'month' : 'overall'}! Amazing performance!`;
@@ -73,7 +81,7 @@ function LeaderboardPage() {
                       {period === "weekly" ? "This week, you came in" : period === "monthly" ? "This month, you came in" : "Overall, you came in"}
                     </p>
                     <p className="text-base font-semibold text-gray-900">
-                      {myRank.rank === 1 ? "1st" : myRank.rank === 2 ? "2nd" : myRank.rank === 3 ? "3rd" : `${myRank.rank}th`} place
+                      {getOrdinal(myRank.rank)} place
                     </p>
                   </div>
                 </div>
@@ -98,7 +106,7 @@ function LeaderboardPage() {
               {leaderboard.map((entry, index) => {
                 const rank = index + 1;
                 const xp = getXPForPeriod(entry);
-                const isCurrentUser = myRank?.rank === rank;
+                const isCurrentUser = currentUser?.id === entry.id;
 
                 return (
                   <div

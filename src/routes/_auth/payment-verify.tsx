@@ -61,8 +61,13 @@ function PaymentVerifyPage() {
       resetRegistration();
       navigate({ to: "/" });
     } else {
-      // Redirect back to where the payment was initiated from
-      navigate({ to: search.returnUrl || "/checkout" });
+      // Redirect back to where the payment was initiated from (only allow relative paths)
+      const returnUrl = search.returnUrl;
+      const safeUrl =
+        returnUrl && returnUrl.startsWith("/") && !returnUrl.startsWith("//")
+          ? returnUrl
+          : "/checkout";
+      navigate({ to: safeUrl });
     }
   };
 

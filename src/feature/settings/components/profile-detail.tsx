@@ -18,7 +18,7 @@ const profileSchema = z.object({
     .string()
     .min(2, "Name must be at least 2 characters.")
     .max(50, "Name must be at most 50 characters."),
-  email: z.string().email("Please enter a valid email address."),
+  email: z.string(),
   phone: z
     .string()
     .min(10, "Phone number must be at least 10 characters.")
@@ -37,7 +37,7 @@ export const ProfileSettingsForm = () => {
       name: "",
       email: "",
       phone: "",
-      referralCode: "REF123ABC456", // TODO: Get from referral API
+      referralCode: "",
     },
     validators: {
       onSubmit: profileSchema,
@@ -67,8 +67,9 @@ export const ProfileSettingsForm = () => {
       form.setFieldValue("name", profile.fullName || "");
       form.setFieldValue("email", profile.email || "");
       form.setFieldValue("phone", profile.phone || "");
+      form.setFieldValue("referralCode", profile.referralCode || "");
     }
-  }, [profile]);
+  }, [profile, form]);
 
   const handleCopyReferralCode = () => {
     navigator.clipboard.writeText(form.getFieldValue("referralCode") || "");

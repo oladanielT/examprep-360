@@ -32,7 +32,7 @@ export default function Continue() {
             onSuccess: (data: any) => {
                 if (data.exam?.questions) {
                     const examQuestions = data.exam.questions.map((eq: any) => eq.question)
-                    const totalTimeSeconds = data.exam.durationMinutes * 60
+                    const totalTimeSeconds = (data.exam.durationMinutes ?? 0) * 60
                     const timeSpent = data.timeSpentSeconds || 0
                     const remainingTimeMinutes = Math.max(0, (totalTimeSeconds - timeSpent) / 60)
 

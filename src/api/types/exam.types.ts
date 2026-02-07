@@ -501,7 +501,7 @@ export interface PausedExam {
     name: string;
     numQuestions: number;
     subjectId?: string;
-    examTypeEnum?: string;
+    examTypeEnum?: ExamTypeEnum;
     subject?: { name: string } | null;
   };
   _count?: {
@@ -529,6 +529,7 @@ export interface AttemptResponse {
   questionId: string;
   answer: string | string[] | boolean;
   isCorrect?: boolean;
+  marksAwarded?: number;
   timeSpentSeconds: number;
   submittedAt: string;
 }
@@ -578,6 +579,31 @@ export interface QuestionReport {
   details?: string;
   status: "PENDING" | "REVIEWED" | "RESOLVED";
   createdAt: string;
+}
+
+// ==================== EXAM REVIEW (GET /student/exams/attempts/:id/review) ====================
+
+export interface ExamReviewResponse {
+  id: string;
+  totalScore: number;
+  percentage?: number;
+  passed?: boolean;
+  timeSpentSeconds?: number;
+  exam?: {
+    name: string;
+    numQuestions: number;
+    subject?: { name: string } | null;
+    examType?: { name: string };
+  };
+  responses: {
+    id: string;
+    questionId: string;
+    answer: string | string[] | boolean | Record<string, string>;
+    isCorrect: boolean;
+    marksAwarded: number;
+    timeSpentSeconds?: number;
+    question: Question;
+  }[];
 }
 
 export interface ExamSubtype {

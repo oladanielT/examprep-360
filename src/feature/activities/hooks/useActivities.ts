@@ -17,8 +17,8 @@ export const usePausedExams = () => {
       const { data } = await apiClient.get(EXAM_ENDPOINTS.PAUSED);
       // Handle various response structures
       if (Array.isArray(data)) return data;
-      if (data.data && Array.isArray(data.data)) return data.data;
-      if (data.exams && Array.isArray(data.exams)) return data.exams;
+      if (data?.data && Array.isArray(data.data)) return data.data;
+      if (data?.exams && Array.isArray(data.exams)) return data.exams;
       return [];
     },
     staleTime: 0,
@@ -46,7 +46,7 @@ export const useBookmarkedQuestions = () => {
     queryFn: async () => {
       const { data } = await apiClient.get(EXAM_ENDPOINTS.BOOKMARKS);
       // Bookmarks return paginated response with items array
-      if (data.items && Array.isArray(data.items)) return data.items;
+      if (data?.items && Array.isArray(data.items)) return data.items;
       if (Array.isArray(data)) return data;
       return [];
     },
@@ -63,7 +63,7 @@ export const useReportedQuestions = () => {
       const { data } = await apiClient.get(EXAM_ENDPOINTS.REPORTS);
       // Reports return direct array
       if (Array.isArray(data)) return data;
-      if (data.data && Array.isArray(data.data)) return data.data;
+      if (data?.data && Array.isArray(data.data)) return data.data;
       return [];
     },
     staleTime: 0,

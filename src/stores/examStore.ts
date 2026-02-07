@@ -112,7 +112,11 @@ export const useExamStore = create<ExamState>()(
 
       resumeTimer: () => set({ timerRunning: true }),
 
-      clearExam: () => set(initialState),
+      clearExam: () => set({
+        ...initialState,
+        responses: new Map<string, AttemptResponse>(),
+        answers: {},
+      }),
 
       getCurrentQuestion: () => {
         const { questions, currentQuestionIndex } = get();
@@ -147,28 +151,38 @@ export const useExamStore = create<ExamState>()(
       }),
       storage: {
         getItem: (name) => {
-          const str = localStorage.getItem(name);
-          if (!str) return null;
-          const { state } = JSON.parse(str);
-          return {
-            state: {
-              ...state,
-              // Convert responses array back to Map (JSON serialization loses Map type)
-              responses: new Map(state.responses ? Object.entries(state.responses) : []),
-            },
-          };
+          try {
+            const str = localStorage.getItem(name);
+            if (!str) return null;
+            const { state } = JSON.parse(str);
+            return {
+              state: {
+                ...state,
+                // Convert responses object back to Map (JSON serialization loses Map type)
+                responses: new Map(state.responses ? Object.entries(state.responses) : []),
+              },
+            };
+          } catch {
+            // Corrupted data -- remove and return null to start fresh
+            localStorage.removeItem(name);
+            return null;
+          }
         },
         setItem: (name, newValue) => {
-          const str = JSON.stringify({
-            state: {
-              ...newValue.state,
-              // Convert Map to object for JSON serialization
-              responses: newValue.state.responses
-                ? Object.fromEntries(newValue.state.responses)
-                : {},
-            },
-          });
-          localStorage.setItem(name, str);
+          try {
+            const str = JSON.stringify({
+              state: {
+                ...newValue.state,
+                // Convert Map to object for JSON serialization
+                responses: newValue.state.responses
+                  ? Object.fromEntries(newValue.state.responses)
+                  : {},
+              },
+            });
+            localStorage.setItem(name, str);
+          } catch {
+            // QuotaExceededError or serialization failure -- silently ignore
+          }
         },
         removeItem: (name) => localStorage.removeItem(name),
       },
@@ -178,7 +192,12 @@ export const useExamStore = create<ExamState>()(
 
 // Selector hooks
 export const useCurrentAttempt = () => useExamStore((state) => state.currentAttempt);
-export const useCurrentQuestion = () => useExamStore((state) => state.getCurrentQuestion());
-export const useExamProgress = () => useExamStore((state) => state.getProgress());
+export const useCurrentQuestion = () => useExamStore((state) => state.questions[state.currentQuestionIndex] || null);
+export const useExamProgress = () => {
+  const answered = useExamStore((state) => state.responses.size);
+  const total = useExamStore((state) => state.questions.length);
+  const percentage = total > 0 ? Math.round((answered / total) * 100) : 0;
+  return { answered, total, percentage };
+};
 export const useTimeRemaining = () => useExamStore((state) => state.timeRemaining);
 export const useExamPreferencesStore = () => useExamStore((state) => state.preferences);
