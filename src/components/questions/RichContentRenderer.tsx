@@ -79,12 +79,13 @@ function TextBlockRenderer({ block }: { block: TextBlock }) {
   const style = block.style;
 
   // Check if text contains LaTeX patterns
-  const hasLatex = block.value.includes("$");
-  const hasNewlines = block.value.includes("\n");
+  const value = block.value ?? "";
+  const hasLatex = value.includes("$");
+  const hasNewlines = value.includes("\n");
 
   const content = useMemo(() => {
     if (hasLatex) {
-      const nodes = parseTextWithLatex(block.value);
+      const nodes = parseTextWithLatex(value);
       if (!hasNewlines) return nodes;
       // Insert <br /> for newlines within LaTeX-parsed nodes
       const result: React.ReactNode[] = [];
@@ -103,7 +104,7 @@ function TextBlockRenderer({ block }: { block: TextBlock }) {
       return result;
     }
     if (hasNewlines) {
-      const parts = block.value.split("\n");
+      const parts = value.split("\n");
       const result: React.ReactNode[] = [];
       parts.forEach((part, i) => {
         if (i > 0) result.push(<br key={`br-${i}`} />);
@@ -111,8 +112,8 @@ function TextBlockRenderer({ block }: { block: TextBlock }) {
       });
       return result;
     }
-    return block.value;
-  }, [block.value, hasLatex, hasNewlines]);
+    return value;
+  }, [value, hasLatex, hasNewlines]);
 
   return (
     <span
@@ -132,14 +133,15 @@ function TextBlockRenderer({ block }: { block: TextBlock }) {
 
 function MarkdownBlockRenderer({ block }: { block: MarkdownBlock }) {
   // Check if markdown contains LaTeX patterns
-  const hasLatex = block.content.includes("$");
+  const blockContent = block.content ?? "";
+  const hasLatex = blockContent.includes("$");
 
   const content = useMemo(() => {
     if (hasLatex) {
-      return parseTextWithLatex(block.content);
+      return parseTextWithLatex(blockContent);
     }
-    return block.content;
-  }, [block.content, hasLatex]);
+    return blockContent;
+  }, [blockContent, hasLatex]);
 
   return <div className="prose prose-sm max-w-none">{content}</div>;
 }
@@ -210,7 +212,7 @@ function ImageBlockRenderer({ block }: { block: ImageBlock }) {
 function AudioBlockRenderer({ block }: { block: AudioBlock }) {
   return (
     <audio controls className="w-full my-2">
-      <source src={block.url} />
+      <source src={block.url ?? ""} />
       Your browser does not support the audio element.
     </audio>
   );
@@ -218,15 +220,16 @@ function AudioBlockRenderer({ block }: { block: AudioBlock }) {
 
 function VideoBlockRenderer({ block }: { block: VideoBlock }) {
   // Check if it's a YouTube link
-  const isYouTube = block.url.includes("youtube.com") || block.url.includes("youtu.be");
+  const url = block.url ?? "";
+  const isYouTube = url.includes("youtube.com") || url.includes("youtu.be");
 
   if (isYouTube) {
     // Extract video ID and create embed URL
     let videoId = "";
-    if (block.url.includes("youtu.be/")) {
-      videoId = block.url.split("youtu.be/")[1]?.split("?")[0] || "";
-    } else if (block.url.includes("v=")) {
-      videoId = block.url.split("v=")[1]?.split("&")[0] || "";
+    if (url.includes("youtu.be/")) {
+      videoId = url.split("youtu.be/")[1]?.split("?")[0] || "";
+    } else if (url.includes("v=")) {
+      videoId = url.split("v=")[1]?.split("&")[0] || "";
     }
 
     return (
@@ -243,7 +246,7 @@ function VideoBlockRenderer({ block }: { block: VideoBlock }) {
 
   return (
     <video controls className="w-full rounded-lg my-2">
-      <source src={block.url} type="video/mp4" />
+      <source src={url} type="video/mp4" />
       Your browser does not support the video tag.
     </video>
   );
