@@ -288,7 +288,7 @@ The registration is a multi-step wizard tracked by `registrationStore` (persiste
 |---------|-------------|-----|
 | **Question Rendering** | `RichContentRenderer` supports text, markdown, LaTeX, images, audio, video, tables, diagrams, lists | — |
 | **Answer Submission** | Per-question submit | `POST /student/exams/attempts/:id/responses` |
-| **Practice Mode Explanations** | Shows solution, working steps, key points, common mistakes, tips after each answer | — |
+| **Practice Mode Explanations** | Shows solution, working steps, key points, common mistakes, tips after each answer. When structured fields (workingSteps, keyPoints, etc.) are empty, the solution text is parsed for embedded section markers (see Explanation Section Parsing below) | — |
 | **Timer** | Counts down from `timeRemaining`. Auto-completes when timer hits 0 | — |
 | **Pause/Resume** | Toggle timer and save state | `POST .../pause` / `POST .../resume` |
 | **Bookmark** | Toggle bookmark on current question | `POST` (bookmark endpoint) |
@@ -313,10 +313,12 @@ The registration is a multi-step wizard tracked by `registrationStore` (persiste
 
 The `RichContentRenderer` supports 9 block types:
 
-1. **text** — Styled text with bold/italic/color
+1. **text** — Styled text with bold/italic/color. Preserves `\n` newlines by inserting `<br />` elements. Supports inline LaTeX combined with newlines.
 2. **markdown** — Rendered markdown
 3. **latex** — KaTeX rendering (inline `$...$` and display `$$...$$`)
-4. **image** — Image with alt text
+4. **image** — Image with alt text. Handles two data shapes:
+   - **Shape A (typed):** `{ type: "image", url: "https://...", alt: "..." }`
+   - **Shape B (API actual):** `{ type: "image", value: '{"src":"https://...","alt":null,"title":null}' }` — the `value` JSON string is parsed to extract `src` and `alt`, with fallback to raw URL string
 5. **audio** — Audio player
 6. **video** — Video player (with YouTube embed detection)
 7. **table** — Table with headers and rows
@@ -335,6 +337,28 @@ The `RichContentRenderer` supports 9 block types:
   - Question-by-question review with correct/incorrect badges
   - Explanations for each question
   - Previous/Next navigation
+
+#### Explanation Section Parsing
+
+The `Explanation` component renders post-answer explanations. It operates in two modes:
+
+**Mode 1 — Structured Data (preferred):** When `workingSteps`, `keyPoints`, `commonMistakes`, or `tips` are populated by the API, the component renders them in dedicated styled sections (step-by-step cards, checkmark lists, etc.). This is the original behavior.
+
+**Mode 2 — Parsed Sections (fallback):** When all structured fields are empty/undefined, the API typically sends everything in a single `solution` text block containing embedded bold markers. The component extracts the plain text and splits it into named sections using regex pattern matching.
+
+**Detected section markers:**
+
+| Bold Marker Pattern | Section Type | Visual Style |
+|---------------------|-------------|--------------|
+| `**Why other options are incorrect**` / `**Why others are wrong**` | Why Incorrect | Orange bordered card |
+| `**Key Terms**` / `**Key Concepts**` | Key Terms | Blue bordered card |
+| `**Relatable Example**` / `**Real-world Example**` | Example | Green left-border callout |
+| `**References**` | References | Gray bordered card |
+| `**Common Mistakes**` | Common Mistakes | Red bordered card |
+| `**Tips**` | Tips | Purple bordered card |
+| Text before first marker | Main Explanation | Plain prose |
+
+**Fallback:** If no markers are found (only a single "main" section), or if structured data is present, the original rendering path is used unchanged.
 
 ---
 
@@ -797,12 +821,15 @@ interface Question {
 }
 
 interface ExplanationData {
-  solution: RichContentBlock[];
-  workingSteps: string[];
-  keyPoints: string[];
-  commonMistakes: string[];
-  tips: string[];
+  solution: RichContentBlock[];       // Always present; may contain embedded section markers as bold text
+  workingSteps?: WorkingStep[];       // Optional; when empty, solution text is parsed for sections
+  keyPoints?: string[];               // Optional
+  commonMistakes?: string[];          // Optional
+  tips?: string[];                    // Optional
 }
+// Note: When workingSteps/keyPoints/commonMistakes/tips are all empty,
+// the Explanation component parses the solution text for bold markers
+// (e.g. **Key Terms**, **References**) and renders them as styled sections.
 ```
 
 ### Payment Types
