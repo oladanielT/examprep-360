@@ -115,9 +115,11 @@ function TextBlockRenderer({ block }: { block: TextBlock }) {
     return value;
   }, [value, hasLatex, hasNewlines]);
 
+  // Use <p> for block-level text (adds margin between consecutive text blocks)
   return (
-    <span
+    <p
       className={cn(
+        "mb-2 last:mb-0",
         style?.bold && "font-bold",
         style?.italic && "italic",
         style?.underline && "underline",
@@ -127,23 +129,60 @@ function TextBlockRenderer({ block }: { block: TextBlock }) {
       style={{ color: style?.color }}
     >
       {content}
-    </span>
+    </p>
   );
 }
 
 function MarkdownBlockRenderer({ block }: { block: MarkdownBlock }) {
-  // Check if markdown contains LaTeX patterns
-  const blockContent = block.content ?? "";
+  // Handle case where content might be a JSON string (legacy format)
+  let blockContent = block.content ?? "";
+
+  // Try to parse JSON if it looks like JSON
+  if (blockContent.startsWith("{") && blockContent.includes('"content"')) {
+    try {
+      const parsed = JSON.parse(blockContent);
+      blockContent = parsed.content || blockContent;
+    } catch {
+      // Not valid JSON, use as-is
+    }
+  }
+
   const hasLatex = blockContent.includes("$");
+  const hasNewlines = blockContent.includes("\n");
 
   const content = useMemo(() => {
     if (hasLatex) {
-      return parseTextWithLatex(blockContent);
+      const nodes = parseTextWithLatex(blockContent);
+      if (!hasNewlines) return nodes;
+      // Handle newlines within LaTeX-parsed content
+      const result: React.ReactNode[] = [];
+      let brKey = 2000;
+      for (const node of nodes) {
+        if (typeof node === "string") {
+          const parts = node.split("\n");
+          parts.forEach((part, i) => {
+            if (i > 0) result.push(<br key={brKey++} />);
+            if (part) result.push(part);
+          });
+        } else {
+          result.push(node);
+        }
+      }
+      return result;
+    }
+    if (hasNewlines) {
+      const parts = blockContent.split("\n");
+      const result: React.ReactNode[] = [];
+      parts.forEach((part, i) => {
+        if (i > 0) result.push(<br key={`mbr-${i}`} />);
+        if (part) result.push(<span key={`mt-${i}`}>{part}</span>);
+      });
+      return result;
     }
     return blockContent;
-  }, [blockContent, hasLatex]);
+  }, [blockContent, hasLatex, hasNewlines]);
 
-  return <div className="prose prose-sm max-w-none">{content}</div>;
+  return <div className="prose prose-sm max-w-none mb-2 last:mb-0">{content}</div>;
 }
 
 function parseLatexValue(value: string): { equation: string; displayMode: boolean } {

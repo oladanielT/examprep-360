@@ -40,6 +40,7 @@ const difficultyOptions = [
 
 const questionTypeOptions = [
   { label: "All Types", value: "" },
+  { label: "Single Choice", value: "SINGLE_CHOICE" },
   { label: "Multiple Choice", value: "MULTIPLE_CHOICE" },
   { label: "True/False", value: "TRUE_FALSE" },
   { label: "Fill in the Blank", value: "FILL_IN_BLANK" },
@@ -48,7 +49,7 @@ const questionTypeOptions = [
 const currentYear = new Date().getFullYear();
 const yearOptions = [
   { label: "All Years", value: "" },
-  ...Array.from({ length: 10 }, (_, i) => ({
+  ...Array.from({ length: currentYear - 2000 + 1 }, (_, i) => ({
     label: String(currentYear - i),
     value: String(currentYear - i),
   })),
@@ -151,7 +152,7 @@ export default function ConfigurePracticeForm({
                   type="range"
                   min={10}
                   max={100}
-                  step={5}
+                  step={1}
                   value={field.state.value}
                   onChange={(e) => field.handleChange(Number(e.target.value))}
                   className="w-full h-3 bg-muted rounded-full appearance-none cursor-pointer accent-primary [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-primary [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-sm"

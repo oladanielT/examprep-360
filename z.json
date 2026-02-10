@@ -1,470 +1,3238 @@
-{{baseUrl}}/student/exams/attempts/:attemptId/review GET
-
 {
-    "id": "e5853bc9-a3ec-47e0-bcd2-f4a20a86420b",
-    "studentId": "db17e8b7-3824-4657-b5c5-0164b0482444",
-    "examId": "de1d8dbd-ef75-4f4f-81f2-4515038ddf49",
-    "attemptNumber": 1,
-    "status": "COMPLETED",
-    "startedAt": "2026-01-27T14:33:58.771Z",
-    "submittedAt": "2026-01-27T15:07:22.638Z",
-    "completedAt": "2026-01-27T15:07:22.638Z",
-    "timeSpentSeconds": 1064,
-    "totalScore": 2,
-    "percentage": 66.66666666666666,
-    "passed": true,
-    "autoGraded": false,
-    "manualGraded": false,
-    "gradedBy": null,
-    "gradedAt": null,
-    "createdAt": "2026-01-27T14:33:58.771Z",
-    "updatedAt": "2026-01-27T15:07:22.640Z",
-    "exam": {
-        "id": "de1d8dbd-ef75-4f4f-81f2-4515038ddf49",
-        "name": "Mathematics",
-        "description": null,
-        "startDate": "2026-01-27T14:33:57.880Z",
-        "endDate": "2027-01-27T14:33:57.880Z",
-        "durationMinutes": 9999,
-        "numQuestions": 3,
-        "allowedAttempts": 1,
-        "passingScore": 50,
-        "rules": null,
-        "status": "DRAFT",
-        "examTypeId": "404bf6d7-5eed-45d2-ac9b-f5462eb54681",
-        "subjectId": "d5167a52-726f-4943-932a-e2fe6e759e33",
-        "departmentId": null,
-        "courseId": null,
-        "examTypeEnum": "PRACTICE",
-        "createdAt": "2026-01-27T14:33:57.883Z",
-        "updatedAt": "2026-01-27T14:33:57.883Z",
-        "examStatisticsId": null,
-        "subject": {
-            "id": "d5167a52-726f-4943-932a-e2fe6e759e33",
-            "name": "Mathematics",
-            "examTypeId": "404bf6d7-5eed-45d2-ac9b-f5462eb54681",
-            "year": null,
-            "textTutorialCount": 1,
-            "videoTutorialCount": 1,
-            "createdAt": "2026-01-09T03:39:19.222Z",
-            "updatedAt": "2026-01-21T17:40:37.397Z"
-        },
-        "examType": {
-            "id": "404bf6d7-5eed-45d2-ac9b-f5462eb54681",
-            "name": "WAEC",
-            "category": "SECONDARY_SCHOOL",
-            "imageUrl": null,
-            "imagePublicId": null,
-            "createdAt": "2026-01-09T03:38:28.478Z",
-            "updatedAt": "2026-01-09T03:38:28.478Z"
+  "id": "55539242-46e9-4a95-bb48-c96e9813264d",
+  "studentId": "d6162a7e-cfdf-42b5-8bb4-31af9afef5d4",
+  "examId": "58d33f7c-0c01-4e36-b9ae-3b130b4e4b1e",
+  "attemptNumber": 1,
+  "status": "IN_PROGRESS",
+  "startedAt": "2026-02-10T06:45:57.930Z",
+  "submittedAt": null,
+  "completedAt": null,
+  "timeSpentSeconds": 0,
+  "totalScore": null,
+  "percentage": null,
+  "passed": null,
+  "autoGraded": false,
+  "manualGraded": false,
+  "gradedBy": null,
+  "gradedAt": null,
+  "createdAt": "2026-02-10T06:45:57.930Z",
+  "updatedAt": "2026-02-10T06:45:57.930Z",
+  "exam": {
+    "id": "58d33f7c-0c01-4e36-b9ae-3b130b4e4b1e",
+    "name": "Mathematics Practice",
+    "description": null,
+    "startDate": "2026-02-10T06:45:57.896Z",
+    "endDate": "2027-02-10T06:45:57.896Z",
+    "durationMinutes": 9999,
+    "numQuestions": 20,
+    "allowedAttempts": 1,
+    "passingScore": 50,
+    "rules": null,
+    "status": "DRAFT",
+    "examTypeId": "404bf6d7-5eed-45d2-ac9b-f5462eb54681",
+    "subjectId": "d5167a52-726f-4943-932a-e2fe6e759e33",
+    "departmentId": null,
+    "courseId": null,
+    "examTypeEnum": "PRACTICE",
+    "createdAt": "2026-02-10T06:45:57.897Z",
+    "updatedAt": "2026-02-10T06:45:57.897Z",
+    "examStatisticsId": null,
+    "questions": [
+      {
+        "id": "4b07ba3e-77fc-4ea5-98b7-8c0dd27f7ad6",
+        "examId": "58d33f7c-0c01-4e36-b9ae-3b130b4e4b1e",
+        "questionId": "03a792b8-e07e-4cf3-b51c-6e89386e88ad",
+        "order": 1,
+        "question": {
+          "id": "03a792b8-e07e-4cf3-b51c-6e89386e88ad",
+          "questionNumber": 50,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "The mean of the numbers 2, 5, 2x and 7 is less than or equal to 5. Find the range of the values of x ?"
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "x ≤ 3"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "x ≥ 3"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "x < 3"
+                }
+              ],
+              "isCorrect": true
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "x > 3"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "C",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "markdown",
+                "value": "{\"content\":\"ExplanationThis problem requires setting up and solving a linear inequality based on the definition of the mean (average) of a set of numbers.Core Principle: Mean = (Sum of all values) / (Number of values)\",\"formatting\":{\"bold\":true}}"
+              },
+              {
+                "type": "text",
+                "value": "Step-by-Step CalculationWrite the expression for the mean.The numbers are 2, 5, $2x$, and 7.Sum of values: $2 + 5 + 2x + 7 = 14 + 2x$Number of values: There are 4 numbers in the set.Mean: $\\frac{14 + 2x}{4}$"
+              },
+              {
+                "type": "text",
+                "value": "Set up the inequality.The problem states that the mean is less than or equal to 5.$\\frac{14 + 2x}{4} \\le 5$"
+              },
+              {
+                "type": "text",
+                "value": "Solve the inequality for $x$.Multiply both sides by 4 to eliminate the denominator.$14 + 2x \\le 5 \\times 4$$14 + 2x \\le 20$"
+              },
+              {
+                "type": "text",
+                "value": "Subtract 14 from both sides to isolate the $x$ term.$2x \\le 20 - 14$$2x \\le 6$"
+              },
+              {
+                "type": "text",
+                "value": "Divide both sides by 2.$x \\le 3$"
+              },
+              {
+                "type": "text",
+                "value": "ConclusionThe range of values for $x$ is all numbers less than or equal to 3."
+              },
+              {
+                "type": "text",
+                "value": "Why other options are incorrectB) $x \\ge 3$: This would be the result if the inequality sign was incorrectly reversed during the calculation. The sign should only be reversed if multiplying or dividing by a negative number."
+              },
+              {
+                "type": "text",
+                "value": "C) $x < 3$ and D) $x > 3$: These are incorrect because the problem states less than or equal to, which requires the $\\le$ symbol, not the strict $<$ or $>$ symbols."
+              },
+              {
+                "type": "text",
+                "value": "Key TermsMean: The average of a set of numbers.Linear Inequality: A mathematical statement that relates two linear expressions with an inequality sign ($<$, $\\le$, $>$, $\\ge$).Range of Values: The set of all possible values that a variable can take to satisfy a given condition."
+              },
+              {
+                "type": "text",
+                "value": "Relatable ExampleA student has four test scores: 2, 5, 7, and a fourth score which is $2x$. The school requires that the average score for these four tests must not be more than 5 to pass a certain threshold. To find the maximum possible value for $x$, the student would set up and solve the inequality $\\frac{2 + 5 + 7 + 2x}{4} \\le 5$, finding that $x$ must be less than or equal to 3."
+              },
+              {
+                "type": "markdown",
+                "value": "{\"content\":\"ReferencesVarsity Tutors, \\\"Solving Linear Inequalities\\\" – www.varsitytutors.com/hotmath/hotmath_help/topics/solving-linear-inequalitiesChiliMath, \\\"Solving Linear Inequalities\\\" – www.chilimath.com/lessons/intermediate-algebra/solving-linear-inequalities/\",\"formatting\":{\"bold\":true,\"link\":\"http://www.chilimath.com/lessons/intermediate-algebra/solving-linear-inequalities/\"}}"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["Mathematics", "WAEC", "2010"],
+          "cognitiveLevel": null,
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 2010,
+          "createdAt": "2026-02-07T10:02:16.766Z",
+          "updatedAt": "2026-02-08T11:11:14.584Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "WAEC",
+            "subjectCode": "Mathematics"
+          },
+          "metadata": {
+            "tags": ["Mathematics", "WAEC", "2010"],
+            "marks": 1,
+            "status": "PUBLISHED",
+            "examType": "WAEC",
+            "examYear": "2010",
+            "difficulty": "MEDIUM",
+            "examPeriod": "MAY/JUNE",
+            "passingMarks": 1,
+            "cognitiveLevel": "RECALL",
+            "estimatedTimeSeconds": 60
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "WAEC",
+          "examYear": "2010",
+          "subjectCode": "Mathematics",
+          "subjectId": "d5167a52-726f-4943-932a-e2fe6e759e33",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": null,
+          "isBookmarked": true,
+          "isReported": false
         }
-    },
-    "responses": [
-        {
-            "id": "04552cd8-6184-4492-8c1a-5fc4af1f3108",
-            "attemptId": "e5853bc9-a3ec-47e0-bcd2-f4a20a86420b",
-            "questionId": "80d6d1a4-55e7-4021-aa77-279d78e76f39",
-            "answer": "D",
-            "isCorrect": true,
-            "marksAwarded": 1,
-            "timeSpentSeconds": 18,
-            "flaggedForReview": false,
-            "createdAt": "2026-01-27T14:34:20.290Z",
-            "updatedAt": "2026-01-27T15:07:22.045Z",
-            "question": {
-                "id": "80d6d1a4-55e7-4021-aa77-279d78e76f39",
-                "questionNumber": 1,
-                "questionType": "SINGLE_CHOICE",
-                "questionText": [
-                    {
-                        "type": "text",
-                        "value": "vvvvv"
-                    }
-                ],
-                "instruction": "ccccc",
-                "context": null,
-                "options": [
-                    {
-                        "id": "A",
-                        "content": [
-                            {
-                                "type": "text",
-                                "value": "cccc"
-                            }
-                        ],
-                        "isCorrect": false
-                    },
-                    {
-                        "id": "B",
-                        "content": [
-                            {
-                                "type": "text",
-                                "value": "cccc"
-                            }
-                        ],
-                        "isCorrect": false
-                    },
-                    {
-                        "id": "C",
-                        "content": [
-                            {
-                                "type": "text",
-                                "value": "vvvv"
-                            }
-                        ],
-                        "isCorrect": false
-                    },
-                    {
-                        "id": "D",
-                        "content": [
-                            {
-                                "type": "text",
-                                "value": "cccc"
-                            }
-                        ],
-                        "isCorrect": true
-                    }
-                ],
-                "correctAnswer": "D",
-                "correctAnswers": [],
-                "explanation": null,
-                "textExplanation": null,
-                "marks": 1,
-                "marksPerCorrect": null,
-                "negativeMarking": null,
-                "partialCreditAllowed": null,
-                "randomizeOptions": null,
-                "passingMarks": null,
-                "estimatedTimeSeconds": null,
-                "difficulty": "EASY",
-                "status": "PUBLISHED",
-                "tags": [],
-                "cognitiveLevel": null,
-                "skillsAssessed": [],
-                "learningOutcomes": [],
-                "averageScore": null,
-                "attemptCount": 0,
-                "successRate": null,
-                "paper": null,
-                "year": null,
-                "createdAt": "2026-01-17T11:28:33.745Z",
-                "updatedAt": "2026-01-18T09:05:21.904Z",
-                "hierarchy": {
-                    "topic": {
-                        "name": "convex"
-                    },
-                    "subject": "Mathematics",
-                    "examType": "WAEC",
-                    "subjectCode": "Mathematics"
-                },
-                "metadata": {
-                    "tags": [],
-                    "marks": 1,
-                    "status": "PUBLISHED",
-                    "examType": "WAEC",
-                    "examYear": "2026",
-                    "difficulty": "EASY",
-                    "examPeriod": "MAY/JUNE",
-                    "passingMarks": 1,
-                    "cognitiveLevel": "RECALL",
-                    "estimatedTimeSeconds": 60
-                },
-                "crossExamRef": null,
-                "tutorialInfo": null,
-                "pastQuestionReference": null,
-                "accessibility": null,
-                "adaptiveSettings": null,
-                "examType": "WAEC",
-                "examYear": "2026",
-                "trueFalseData": null,
-                "fillInBlankData": null,
-                "essayData": null,
-                "essayWithSubData": null,
-                "shortAnswerData": null,
-                "matchingData": null,
-                "orderingData": null,
-                "calculationData": null,
-                "diagramLabelingData": null,
-                "theoryWithObjectivesData": null,
-                "questionVideoUrls": [],
-                "optionVideoUrls": [],
-                "explanationVideoUrls": [],
-                "topicId": "74dbac8a-3183-4f9c-8af5-48b128248595",
-                "subTopicId": null,
-                "sessionId": null,
-                "universityId": null,
-                "facultyId": null,
-                "departmentId": null,
-                "courseId": null,
-                "tutorialId": null
+      },
+      {
+        "id": "34063802-8eb2-4f11-9f07-24a971372fa7",
+        "examId": "58d33f7c-0c01-4e36-b9ae-3b130b4e4b1e",
+        "questionId": "075bdad9-9c7a-4be3-8197-4b9ea553cbbb",
+        "order": 2,
+        "question": {
+          "id": "075bdad9-9c7a-4be3-8197-4b9ea553cbbb",
+          "questionNumber": 38,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "The mean age of R men in a club is 50 years. Two men aged 55 and 63, left the club and the mean age reduced by 1 year. Find the value of R"
             }
-        },
-        {
-            "id": "ee1d1e95-d688-41b8-a3c2-f18a70d1589b",
-            "attemptId": "e5853bc9-a3ec-47e0-bcd2-f4a20a86420b",
-            "questionId": "bb092a31-cc5f-4522-ac71-8e2622aec4c0",
-            "answer": [
-                "C",
-                "D"
-            ],
-            "isCorrect": true,
-            "marksAwarded": 1,
-            "timeSpentSeconds": 7,
-            "flaggedForReview": false,
-            "createdAt": "2026-01-27T14:34:54.223Z",
-            "updatedAt": "2026-01-27T15:07:22.341Z",
-            "question": {
-                "id": "bb092a31-cc5f-4522-ac71-8e2622aec4c0",
-                "questionNumber": 2,
-                "questionType": "MULTIPLE_CHOICE",
-                "questionText": [
-                    {
-                        "type": "text",
-                        "value": "bbbbbbb"
-                    }
-                ],
-                "instruction": "HOw areu",
-                "context": null,
-                "options": [
-                    {
-                        "id": "A",
-                        "content": [
-                            {
-                                "type": "text",
-                                "value": "bbbb"
-                            }
-                        ],
-                        "isCorrect": false
-                    },
-                    {
-                        "id": "B",
-                        "content": [
-                            {
-                                "type": "text",
-                                "value": "bbbb"
-                            }
-                        ],
-                        "isCorrect": false
-                    },
-                    {
-                        "id": "C",
-                        "content": [
-                            {
-                                "type": "text",
-                                "value": "bbbb"
-                            }
-                        ],
-                        "isCorrect": true
-                    },
-                    {
-                        "id": "D",
-                        "content": [
-                            {
-                                "type": "text",
-                                "value": "bbbb"
-                            }
-                        ],
-                        "isCorrect": true
-                    }
-                ],
-                "correctAnswer": null,
-                "correctAnswers": [
-                    "D",
-                    "C"
-                ],
-                "explanation": null,
-                "textExplanation": null,
-                "marks": 1,
-                "marksPerCorrect": null,
-                "negativeMarking": null,
-                "partialCreditAllowed": null,
-                "randomizeOptions": null,
-                "passingMarks": null,
-                "estimatedTimeSeconds": null,
-                "difficulty": "MEDIUM",
-                "status": "PUBLISHED",
-                "tags": [],
-                "cognitiveLevel": null,
-                "skillsAssessed": [],
-                "learningOutcomes": [],
-                "averageScore": null,
-                "attemptCount": 0,
-                "successRate": null,
-                "paper": null,
-                "year": null,
-                "createdAt": "2026-01-19T12:01:44.150Z",
-                "updatedAt": "2026-01-19T12:06:15.307Z",
-                "hierarchy": {
-                    "topic": {
-                        "name": "convex"
-                    },
-                    "subject": "Mathematics",
-                    "examType": "WAEC",
-                    "subjectCode": "Mathematics"
-                },
-                "metadata": {
-                    "tags": [],
-                    "marks": 1,
-                    "status": "PUBLISHED",
-                    "examType": "WAEC",
-                    "examYear": "2026",
-                    "difficulty": "MEDIUM",
-                    "examPeriod": "MAY/JUNE",
-                    "passingMarks": 1,
-                    "cognitiveLevel": "RECALL",
-                    "estimatedTimeSeconds": 60
-                },
-                "crossExamRef": null,
-                "tutorialInfo": null,
-                "pastQuestionReference": null,
-                "accessibility": null,
-                "adaptiveSettings": null,
-                "examType": "WAEC",
-                "examYear": "2026",
-                "trueFalseData": null,
-                "fillInBlankData": null,
-                "essayData": null,
-                "essayWithSubData": null,
-                "shortAnswerData": null,
-                "matchingData": null,
-                "orderingData": null,
-                "calculationData": null,
-                "diagramLabelingData": null,
-                "theoryWithObjectivesData": null,
-                "questionVideoUrls": [],
-                "optionVideoUrls": [],
-                "explanationVideoUrls": [],
-                "topicId": "74dbac8a-3183-4f9c-8af5-48b128248595",
-                "subTopicId": null,
-                "sessionId": null,
-                "universityId": null,
-                "facultyId": null,
-                "departmentId": null,
-                "courseId": null,
-                "tutorialId": null
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "18"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "20"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "22"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "28"
+                }
+              ],
+              "isCorrect": false
             }
-        },
-        {
-            "id": "29419e30-efb9-41f1-a14b-f83f8ae9c26a",
-            "attemptId": "e5853bc9-a3ec-47e0-bcd2-f4a20a86420b",
-            "questionId": "869540df-12e4-44aa-a482-38a972f77f98",
-            "answer": "Nnnnn",
-            "isCorrect": false,
-            "marksAwarded": 0,
-            "timeSpentSeconds": 8,
-            "flaggedForReview": false,
-            "createdAt": "2026-01-27T14:34:34.337Z",
-            "updatedAt": "2026-01-27T15:07:22.490Z",
-            "question": {
-                "id": "869540df-12e4-44aa-a482-38a972f77f98",
-                "questionNumber": 3,
-                "questionType": "FILL_IN_BLANK",
-                "questionText": [
-                    {
-                        "type": "text",
-                        "value": "eeeee"
-                    }
-                ],
-                "instruction": "eeee",
-                "context": null,
-                "options": null,
-                "correctAnswer": null,
-                "correctAnswers": [],
-                "explanation": null,
-                "textExplanation": null,
-                "marks": 1,
-                "marksPerCorrect": null,
-                "negativeMarking": null,
-                "partialCreditAllowed": null,
-                "randomizeOptions": null,
-                "passingMarks": null,
-                "estimatedTimeSeconds": null,
-                "difficulty": "EASY",
-                "status": "PUBLISHED",
-                "tags": [],
-                "cognitiveLevel": null,
-                "skillsAssessed": [],
-                "learningOutcomes": [],
-                "averageScore": null,
-                "attemptCount": 0,
-                "successRate": null,
-                "paper": null,
-                "year": null,
-                "createdAt": "2026-01-19T12:05:49.446Z",
-                "updatedAt": "2026-01-19T12:17:41.102Z",
-                "hierarchy": {
-                    "topic": {
-                        "name": "convex"
-                    },
-                    "subject": "Mathematics",
-                    "examType": "WAEC",
-                    "subjectCode": "Mathematics"
-                },
-                "metadata": {
-                    "tags": [],
-                    "marks": 1,
-                    "status": "PUBLISHED",
-                    "examType": "WAEC",
-                    "examYear": "2026",
-                    "difficulty": "EASY",
-                    "examPeriod": "MAY/JUNE",
-                    "passingMarks": 1,
-                    "cognitiveLevel": "RECALL",
-                    "estimatedTimeSeconds": 60
-                },
-                "crossExamRef": null,
-                "tutorialInfo": null,
-                "pastQuestionReference": null,
-                "accessibility": null,
-                "adaptiveSettings": null,
-                "examType": "WAEC",
-                "examYear": "2026",
-                "trueFalseData": null,
-                "fillInBlankData": {
-                    "blanks": [
-                        {
-                            "id": "96804bbd-0b0f-4475-9990-7e1b89e262a4",
-                            "hint": "",
-                            "marks": 1,
-                            "inputType": "text",
-                            "caseSensitive": false,
-                            "acceptableAnswers": [
-                                "bbbbbb"
-                            ]
-                        },
-                        {
-                            "id": "a5bb0b8a-a5b5-42af-8b02-51c2da5110e4",
-                            "hint": "",
-                            "marks": 1,
-                            "inputType": "text",
-                            "caseSensitive": false,
-                            "acceptableAnswers": [
-                                "vvvvvvvv"
-                            ]
-                        }
-                    ],
-                    "template": "ccccc_____vvvvv_____"
-                },
-                "essayData": null,
-                "essayWithSubData": null,
-                "shortAnswerData": null,
-                "matchingData": null,
-                "orderingData": null,
-                "calculationData": null,
-                "diagramLabelingData": null,
-                "theoryWithObjectivesData": null,
-                "questionVideoUrls": [],
-                "optionVideoUrls": [],
-                "explanationVideoUrls": [],
-                "topicId": "74dbac8a-3183-4f9c-8af5-48b128248595",
-                "subTopicId": null,
-                "sessionId": null,
-                "universityId": null,
-                "facultyId": null,
-                "departmentId": null,
-                "courseId": null,
-                "tutorialId": null
-            }
+          ],
+          "correctAnswer": "B",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "Explanation\nThis problem involves the concept of the mean (or average). The key to solving it is to use the relationship: Sum of values = Mean × Number of values. We will set up expressions for the sum of ages before and after the two men left and then form an equation.\nStep-by-Step Calculation:\nAnalyze the Initial Situation:\nNumber of men = R\nMean age = 50 years\nInitial total sum of ages = Mean × Number = 50 × R = 50R\nAnalyze the Change:\nTwo men leave. Their ages are 55 and 63.\nSum of ages of the men who left = 55 + 63 = 118 years.\nAnalyze the New Situation:\nNew number of men = R - 2\nNew total sum of ages = (Initial Sum) - (Sum of ages of men who left) = 50R - 118\nNew mean age = (Initial Mean) - 1 = 50 - 1 = 49 years.\nForm an Equation for the New Situation:\nWe know that New Mean = New Sum / New Number.\n49 = (50R - 118) / (R - 2)\nSolve the Equation for R:\nMultiply both sides by (R - 2):\n49(R - 2) = 50R - 118\nExpand the bracket:\n49R - 98 = 50R - 118\nRearrange to solve for R. Move 49R to the right and 118 to the left:\n118 - 98 = 50R - 49R\n20 = R\nWhy other options are incorrect\nA) 18, C) 22, D) 28: These values do not satisfy the conditions. For example, if R=18, the initial sum of ages is 900. After two men (sum 118) leave, the new sum is 782 for 16 men. The new mean would be 782/16 = 48.875, which is not 49. The other options are also incorrect due to similar miscalculations.\nKey Terms\nMean: The average of a set of numbers, calculated by dividing the sum of the numbers by the count of the numbers.\nSum: The result of adding a set of numbers together.\nRelatable Example\nImagine a group of R friends in Lagos who have an average of N5,000 each in their bank accounts. Their total money is 5000R. Two friends, one with N5,500 and another with N6,300, leave the group. The average money of the remaining friends drops by N100 to N4,900. By setting up a similar equation, you could find that there were originally R=20 friends in the group.\nReferences\nKhan Academy, \"Mean, median, and mode review\" - www.khanacademy.org/math/statistics-probability/summarizing-quantitative-data/mean-median-basics/a/mean-median-and-mode-review\nBBC Bitesize, \"Averages - Mean, median and mode\" - www.bbc.co.uk/bitesize/topics/zm49q6f/articles/z6932p3"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["Mathematics", "WAEC", "2010"],
+          "cognitiveLevel": null,
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 2010,
+          "createdAt": "2026-02-06T10:05:47.611Z",
+          "updatedAt": "2026-02-08T06:09:28.447Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "WAEC",
+            "subjectCode": "MAT"
+          },
+          "metadata": {
+            "tags": ["Mathematics", "WAEC", "2010"],
+            "marks": 1,
+            "status": "DRAFT",
+            "examType": "WAEC",
+            "examYear": "2010",
+            "difficulty": "MEDIUM",
+            "examPeriod": "MAY/JUNE"
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "WAEC",
+          "examYear": "2010",
+          "subjectCode": "MAT",
+          "subjectId": "d5167a52-726f-4943-932a-e2fe6e759e33",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": null,
+          "isBookmarked": false,
+          "isReported": false
         }
+      },
+      {
+        "id": "8c6be701-42cd-4c58-8a75-5602033f92bc",
+        "examId": "58d33f7c-0c01-4e36-b9ae-3b130b4e4b1e",
+        "questionId": "07d84fed-212f-4681-997c-0b4d5b1c2eeb",
+        "order": 3,
+        "question": {
+          "id": "07d84fed-212f-4681-997c-0b4d5b1c2eeb",
+          "questionNumber": 43,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "The subtraction below is in base seven. Find the missing number. 416₇ - 3X5₇ = 51₇"
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "2"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "3"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "4"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "5"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "B",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "𝗘𝘅𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\n\nThis problem involves subtraction in base seven. In base seven, the only digits used are 0, 1, 2, 3, 4, 5, and 6. Place values are powers of 7 (1s, 7s, 49s, etc.), and the concept of \"borrowing\" involves borrowing groups of 7, not 10.\nStep-by-Step Calculation:\nWe solve this by working through the subtraction from right to left, column by column.\n  4  1  6₇\n3  X  5₇\n     5  1₇\nUnits (1s) Column:\n6 - 5 = 1. This matches the result in the units column, so it is correct.\nSevens (7s) Column:\n1 - X = 5. We cannot subtract a larger number from a smaller one, so we must borrow from the next column to the left (the 49s column).\nWe take 1 from the 4 in the 7² column. This 1 is worth 7 in the 7¹ column we are working in.\nThe 1 in the sevens column becomes 1 + 7 = 8.\nThe subtraction for this column is now 8 - X = 5.\nTo find X, we solve: X = 8 - 5 = 3.\nForty-nines (7²) Column:\nThe 4 in this column had 1 borrowed from it, so it is now 3.\nThe subtraction is 3 - 3 = 0. This matches the result (there is no digit in this column in the answer).\nThe missing digit X is 3.\n\n𝗪𝗵𝘆 𝗼𝘁𝗵𝗲𝗿 𝗼𝗽𝘁𝗶𝗼𝗻𝘀 𝗮𝗿𝗲 𝗶𝗻𝗰𝗼𝗿𝗿𝗲𝗰𝘁\nA) 2: If X=2, the subtraction in the middle column would be 8 - 2 = 6, not 5.\nC) 4: If X=4, the subtraction would be 8 - 4 = 4, not 5.\nD) 5: If X=5, the subtraction would be 8 - 5 = 3, not 5. This would be true if we forgot to borrow and tried to do 1 - X = 5 and made a mistake.\n\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\nBase (Number System): The number of unique digits, including zero, used to represent numbers. Base 10 (decimal) uses 10 digits (0-9). Base 7 uses 7 digits (0-6).\nPlace Value: The value of a digit based on its position in a number. In base 7, the place values are ..., 7², 7¹, 7⁰.\n\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘𝘅𝗮𝗺𝗽𝗹𝗲\nThink of counting money using only specific Nigerian currency notes: N1 coins, N7 notes, and N49 notes. You have 4 (N49), 1 (N7), and 6 (N1). You need to give away 3 (N49), X (N7), and 5 (N1).\nYou give away 5 N1 coins from your 6, leaving 1 N1 coin.\nYou need to give away X N7 notes, but you only have one. You exchange one of your N49 notes for seven N7 notes. Now you have 1+7=8 N7 notes. After giving X away, you have 5 left. So, 8 - X = 5, which means you gave away X=3 N7 notes.\nYou are left with 3 N49 notes, and you give all 3 away, leaving 0.\n\n𝗥𝗲𝗳𝗲𝗿𝗲𝗻𝗰𝗲𝘀\nMaths is Fun, \"Base Numbers\" - www.mathsisfun.com/numbers/bases.html\nPurplemath, \"Number Bases: Introduction & Octal\" - www.purplemath.com/modules/numbbase.htm"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["Mathematics", "WAEC", "2010"],
+          "cognitiveLevel": null,
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 2010,
+          "createdAt": "2026-02-07T10:02:14.362Z",
+          "updatedAt": "2026-02-08T06:09:28.739Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "WAEC",
+            "subjectCode": "MAT"
+          },
+          "metadata": {
+            "tags": ["Mathematics", "WAEC", "2010"],
+            "marks": 1,
+            "status": "DRAFT",
+            "examType": "WAEC",
+            "examYear": "2010",
+            "difficulty": "MEDIUM",
+            "examPeriod": "MAY/JUNE"
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "WAEC",
+          "examYear": "2010",
+          "subjectCode": "MAT",
+          "subjectId": "d5167a52-726f-4943-932a-e2fe6e759e33",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": null,
+          "isBookmarked": false,
+          "isReported": false
+        }
+      },
+      {
+        "id": "52547d26-3b54-44ec-943a-57509fc0f78b",
+        "examId": "58d33f7c-0c01-4e36-b9ae-3b130b4e4b1e",
+        "questionId": "09a47b67-54d4-4acf-b9da-a8eb7209bed3",
+        "order": 4,
+        "question": {
+          "id": "09a47b67-54d4-4acf-b9da-a8eb7209bed3",
+          "questionNumber": 10,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "What is the value of m in the diagram?"
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "30 degrees"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "45 degrees"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "60 degrees"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "90 degrees"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "A",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "Explanation\nThis geometry problem involves two intersecting straight lines. The key principle needed to solve it is that vertically opposite angles are equal. Vertically opposite angles are the angles on opposite sides of the vertex where two lines cross.\nStep-by-Step Calculation:\nIdentify the relationship between the angles:\nThe two angles given in the diagram, (4m - 15)° and (m + 75)°, are vertically opposite each other.\nSet up the equation:\nBecause vertically opposite angles are equal, we can set their expressions equal to each other:\n4m - 15 = m + 75\nSolve the linear equation for m:\nFirst, gather all terms containing m on one side of the equation. Subtract m from both sides:\n(4m - m) - 15 = 75\n3m - 15 = 75\nNext, gather all the constant terms on the other side. Add 15 to both sides:\n3m = 75 + 15\n3m = 90\nIsolate m:\nDivide both sides by 3:\nm = 90 / 3\nm = 30\nThe value of m is 30.\n(Optional) Verification:\nWe can check our answer by substituting m = 30 back into the expressions for the angles:\nAngle 1: 4(30) - 15 = 120 - 15 = 105°\nAngle 2: 30 + 75 = 105°\nSince both angles are equal (105°), our value for m is correct.\nWhy other options are incorrect\nB) 45 degrees: If m = 45, the angles would be 4(45)-15 = 165° and 45+75 = 120°. These are not equal.\nC) 60 degrees: If m = 60, the angles would be 4(60)-15 = 225° and 60+75 = 135°. These are not equal.\nD) 90 degrees: If m = 90, the angles would be 4(90)-15 = 345° and 90+75 = 165°. These are not equal.\nKey Terms\nIntersecting Lines: Two or more lines that cross each other at a single point (the vertex).\nVertically Opposite Angles: A pair of non-adjacent angles formed when two lines intersect. They are always equal in measure.\nLinear Equation: An algebraic equation in which each term is either a constant or the product of a constant and a single variable (e.g., 3m = 90).\nRelatable Example\nThink of two straight roads intersecting at a junction in Lagos, like the intersection at Allen Avenue. The angle of the corner where a bank is located is (4m - 15)°. The corner directly opposite it, where a supermarket is, has an angle of (m + 75)°. Because the roads are straight, the angles of these opposite corners must be identical. By setting them equal, a city planner can solve for m to ensure their maps are accurate.\nReferences\nMaths is Fun, \"Vertically Opposite Angles\" - www.mathsisfun.com/angle-vertically-opposite.html\nBBC Bitesize, \"Angles on a straight line and in a point\" - www.bbc.co.uk/bitesize/guides/z94j6g8/revision/3"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["Mathematics", "WAEC", "2010"],
+          "cognitiveLevel": null,
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 2010,
+          "createdAt": "2026-02-06T10:05:38.416Z",
+          "updatedAt": "2026-02-08T06:09:30.205Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "WAEC",
+            "subjectCode": "MAT"
+          },
+          "metadata": {
+            "tags": ["Mathematics", "WAEC", "2010"],
+            "marks": 1,
+            "status": "DRAFT",
+            "examType": "WAEC",
+            "examYear": "2010",
+            "difficulty": "MEDIUM",
+            "examPeriod": "MAY/JUNE"
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "WAEC",
+          "examYear": "2010",
+          "subjectCode": "MAT",
+          "subjectId": "d5167a52-726f-4943-932a-e2fe6e759e33",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": null,
+          "isBookmarked": false,
+          "isReported": false
+        }
+      },
+      {
+        "id": "7c8816d5-6736-4d0c-93a3-83748405feaf",
+        "examId": "58d33f7c-0c01-4e36-b9ae-3b130b4e4b1e",
+        "questionId": "0acfd8a2-c9b8-48b0-a20b-e44831c56a93",
+        "order": 5,
+        "question": {
+          "id": "0acfd8a2-c9b8-48b0-a20b-e44831c56a93",
+          "questionNumber": 14,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "The sum of 6 and one-third of x is one more than twice x, find x"
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "3"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "6"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "9"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "12"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "A",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "𝗘𝘅𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\n\nThis problem requires translating a word sentence into a mathematical equation and then solving that equation. The key is to break down the sentence into algebraic expressions.\nStep-by-Step Calculation:\nTranslate the first part of the sentence:\n\"The sum of 6 and one-third of x\" translates to 6 + (1/3)x or 6 + x/3.\nTranslate the second part of the sentence:\n\"one more than twice x\" translates to 2x + 1.\nSet up the equation:\nThe sentence states that the first part \"is\" (equals) the second part.\n6 + x/3 = 2x + 1\nSolve the linear equation for x:\nTo eliminate the fraction, multiply every term in the equation by 3:\n3(6) + 3(x/3) = 3(2x) + 3(1)\n18 + x = 6x + 3\nRearrange the equation to gather x terms on one side and constants on the other. Subtract x from both sides:\n18 = 5x + 3\nSubtract 3 from both sides:\n15 = 5x\nDivide by 5:\nx = 15 / 5\nx = 3\n\n𝗪𝗵𝘆 𝗼𝘁𝗵𝗲𝗿 𝗼𝗽𝘁𝗶𝗼𝗻𝘀 𝗮𝗿𝗲 𝗶𝗻𝗰𝗼𝗿𝗿𝗲𝗰𝘁\nB) 6: If x=6, the left side is 6 + 6/3 = 8 and the right side is 2(6) + 1 = 13. 8 ≠ 13.\nC) 9: If x=9, the left side is 6 + 9/3 = 9 and the right side is 2(9) + 1 = 19. 9 ≠ 19.\nD) 12: If x=12, the left side is 6 + 12/3 = 10 and the right side is 2(12) + 1 = 25. 10 ≠ 25.\n\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\nLinear Equation: An algebraic equation in which the highest power of the variable is one.\nVariable: A symbol (usually a letter like x) that represents a number that can change.\nConstant: A fixed value in an equation that does not change.\n\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘𝘅𝗮𝗺𝗽𝗹𝗲\nImagine the cost of two different transport options in Lagos. A \"Danfo\" bus fare is 6 + x/3 Naira. A \"Keke\" (tricycle) fare for the same distance is 2x + 1 Naira. If you are told that both fares are exactly the same, you can set up the equation 6 + x/3 = 2x + 1 to find the unknown value x that makes this true. Solving it gives x = 3.\n\n𝗥𝗲𝗳𝗲𝗿𝗲𝗻𝗰𝗲𝘀\nVarsity Tutors, \"Translating Words into Algebraic Expressions\" - www.varsitytutors.com/hotmath/hotmath_help/topics/translating-words-into-algebraic-expressions\nChiliMath, \"Solving Linear Equations\" - www.chilimath.com/lessons/intermediate-algebra/solving-linear-equations/"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["Mathematics", "WAEC", "2010"],
+          "cognitiveLevel": null,
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 2010,
+          "createdAt": "2026-02-07T10:02:05.057Z",
+          "updatedAt": "2026-02-08T06:09:31.084Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "WAEC",
+            "subjectCode": "MAT"
+          },
+          "metadata": {
+            "tags": ["Mathematics", "WAEC", "2010"],
+            "marks": 1,
+            "status": "DRAFT",
+            "examType": "WAEC",
+            "examYear": "2010",
+            "difficulty": "MEDIUM",
+            "examPeriod": "MAY/JUNE"
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "WAEC",
+          "examYear": "2010",
+          "subjectCode": "MAT",
+          "subjectId": "d5167a52-726f-4943-932a-e2fe6e759e33",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": null,
+          "isBookmarked": false,
+          "isReported": false
+        }
+      },
+      {
+        "id": "61feb6de-bbf2-487f-8d71-160405f4c1ab",
+        "examId": "58d33f7c-0c01-4e36-b9ae-3b130b4e4b1e",
+        "questionId": "0b7073ee-a8f2-4dc2-a942-c88bb804875b",
+        "order": 6,
+        "question": {
+          "id": "0b7073ee-a8f2-4dc2-a942-c88bb804875b",
+          "questionNumber": 39,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "The table is for the relation y = mx + c where m and c are constants. What is the equation of the line described in the table?"
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "y = 2x"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "y = x + 1"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "y = x"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "y = 1/2x + 1"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "D",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "𝗘𝘅𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\n\nTo find the equation of a straight line, y = mx + c, from a table of values, we need to determine two constants: m (the gradient) and c (the y-intercept).\nStep-by-Step Calculation:\nFind the y-intercept (c):\nThe y-intercept is the value of y when x is 0.\nLooking at the first column of the table, when x = 0, y = 1.\nTherefore, c = 1.\nFind the gradient (m):\nThe gradient is the rate of change, calculated as (change in y) / (change in x) between any two points. Let's use the first two points: (x₁, y₁) = (0, 1) and (x₂, y₂) = (2, 2).\nm = (y₂ - y₁) / (x₂ - x₁)\nm = (2 - 1) / (2 - 0) = 1 / 2\nSo, the gradient m = 1/2.\nWrite the equation of the line:\nNow substitute the values of m and c back into the general form y = mx + c.\ny = (1/2)x + 1\n\n𝗪𝗵𝘆 𝗼𝘁𝗵𝗲𝗿 𝗼𝗽𝘁𝗶𝗼𝗻𝘀 𝗮𝗿𝗲 𝗶𝗻𝗰𝗼𝗿𝗿𝗲𝗰𝘁\nA) y = 2x: This equation has a gradient of 2 and a y-intercept of 0, both of which are incorrect.\nB) y = x + 1: This equation has the correct y-intercept (c=1) but an incorrect gradient (m=1). If the gradient were 1, a change of +2 in x would result in a change of +2 in y, but the table shows a change of +1 in y.\nC) y = x: This equation has an incorrect gradient (m=1) and an incorrect y-intercept (c=0).\n\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\nLinear Equation: The equation for a straight line, commonly written as y = mx + c.\nGradient (m): The measure of the steepness of a line.\nY-intercept (c): The point where the line crosses the vertical y-axis.\n\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘𝘅𝗮𝗺𝗽𝗹𝗲\nThe cost (y) of a \"keke\" ride in Lagos is made up of a fixed starting fee (c) plus a charge for each kilometre travelled (m times x). The provided table is like a fare chart:\n0 km (just getting in) costs N100 (y=1 in hundreds).\n2 km costs N200 (y=2).\n4 km costs N300 (y=3).\nFrom this, you can deduce the starting fee is c = N100. The rate per kilometre is (200-100)/(2-0) = N50/km (m=1/2 in hundreds). The fare formula is Cost = 50x + 100.\n\n𝗥𝗲𝗳𝗲𝗿𝗲𝗻𝗰𝗲𝘀\nKhan Academy, \"Slope-intercept form from a table\" - www.khanacademy.org/math/algebra/x2f8bb11595b61c86:forms-of-linear-equations/x2f8bb11595b61c86:writing-slope-intercept-equations/v/graphs-using-slope-intercept-form\nPurplemath, \"Straight-Line Equations: Slope-Intercept Form\" - www.purplemath.com/modules/strtlneq.htm"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["Mathematics", "WAEC", "2010"],
+          "cognitiveLevel": null,
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 2010,
+          "createdAt": "2026-02-07T10:02:13.078Z",
+          "updatedAt": "2026-02-08T06:09:31.376Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "WAEC",
+            "subjectCode": "MAT"
+          },
+          "metadata": {
+            "tags": ["Mathematics", "WAEC", "2010"],
+            "marks": 1,
+            "status": "DRAFT",
+            "examType": "WAEC",
+            "examYear": "2010",
+            "difficulty": "MEDIUM",
+            "examPeriod": "MAY/JUNE"
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "WAEC",
+          "examYear": "2010",
+          "subjectCode": "MAT",
+          "subjectId": "d5167a52-726f-4943-932a-e2fe6e759e33",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": null,
+          "isBookmarked": false,
+          "isReported": false
+        }
+      },
+      {
+        "id": "b503c49b-915d-461b-b97c-ab82832bc278",
+        "examId": "58d33f7c-0c01-4e36-b9ae-3b130b4e4b1e",
+        "questionId": "0d35965c-e688-4d75-9d3b-419d804c554a",
+        "order": 7,
+        "question": {
+          "id": "0d35965c-e688-4d75-9d3b-419d804c554a",
+          "questionNumber": 41,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "The diagram is a net of a right rectangular pyramid. Calculate the total surface area."
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "208 cm²"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "112 cm²"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "92 cm²"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "76 cm²"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "C",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "Explanation\nThis question requires calculating the Total Surface Area (TSA) of a pyramid from its net. A net is the flat pattern you get if you unfold a 3D shape. The TSA is the sum of the areas of all the individual shapes that make up the net. In this case, the net consists of one central rectangle (the base) and four triangles (the faces).\nStep-by-Step Calculation:\nFind the dimensions and area of the rectangular base (PQRS):\nThe width of the rectangle is given as QR = 5 cm.\nThe overall length of the net (TU = 16 cm) and the side length of the triangle (QT = 8 cm) imply the length of the rectangle PQ is 8 cm.\nArea of Base = length × width = 8 cm × 5 cm = 40 cm².\nFind the areas of the two triangular faces on the longer sides (ΔPQT and ΔRSW):\nThe base of these triangles is the length of the rectangle, which is 8 cm.\nThe overall length of the net (16 cm) is the sum of the heights of these two triangles plus the length of the rectangle. Assuming symmetry, height + 8 + height = 16. This gives 2 × height = 8, so the height of these triangles is 4 cm.\nArea of two triangles = 2 × (1/2 × base × height) = 2 × (1/2 × 8 × 4) = 32 cm².\nFind the areas of the two triangular faces on the shorter sides (ΔXPS and ΔQRU):\nThe base of these triangles is the width of the rectangle, which is 5 cm.\nThe overall width of the net (13 cm) is the sum of the heights of these two triangles plus the width of the rectangle. Assuming symmetry, height + 5 + height = 13. This gives 2 × height = 8, so the height of these triangles is 4 cm.\nArea of two triangles = 2 × (1/2 × base × height) = 2 × (1/2 × 5 × 4) = 20 cm².\nCalculate the Total Surface Area:\nTSA = (Area of Base) + (Area of first pair of triangles) + (Area of second pair of triangles)\nTSA = 40 cm² + 32 cm² + 20 cm² = 92 cm²\nWhy other options are incorrect\nA) 208 cm²: This is the area of the entire bounding box of the net (16 cm × 13 cm = 208 cm²), which incorrectly includes the empty corners.\nB) 112 cm² and D) 76 cm²: These values would result from misinterpreting the dimensions or making errors in the area calculations for the component shapes.\nKey Terms\nNet (of a solid): A 2D pattern that can be folded to form a 3D shape.\nRight Rectangular Pyramid: A pyramid with a rectangular base and whose apex is directly above the center of the base.\nTotal Surface Area (TSA): The sum of the areas of all the faces (including the base) of a 3D object.\nRelatable Example\nImagine you are a packaging designer in Lagos creating a pyramid-shaped box for a new product. You design the flat cardboard cutout (the net) before folding it. To know how much cardboard material you need for one box, you would calculate the area of the rectangular base and the four triangular sides and add them all together. This total is the surface area.\nReferences\nVarsity Tutors, \"Surface Area of a Pyramid\" - www.varsitytutors.com/hotmath/hotmath_help/topics/surface-area-of-a-pyramid\nBBC Bitesize, \"Nets of 3D shapes\" - www.bbc.co.uk/bitesize/guides/z3b9j6f/revision/3"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["Mathematics", "WAEC", "2010"],
+          "cognitiveLevel": null,
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 2010,
+          "createdAt": "2026-02-06T10:05:48.573Z",
+          "updatedAt": "2026-02-08T06:09:33.133Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "WAEC",
+            "subjectCode": "MAT"
+          },
+          "metadata": {
+            "tags": ["Mathematics", "WAEC", "2010"],
+            "marks": 1,
+            "status": "DRAFT",
+            "examType": "WAEC",
+            "examYear": "2010",
+            "difficulty": "MEDIUM",
+            "examPeriod": "MAY/JUNE"
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "WAEC",
+          "examYear": "2010",
+          "subjectCode": "MAT",
+          "subjectId": "d5167a52-726f-4943-932a-e2fe6e759e33",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": null,
+          "isBookmarked": false,
+          "isReported": false
+        }
+      },
+      {
+        "id": "bf1159d3-acdd-4679-9485-f4cdeef69c18",
+        "examId": "58d33f7c-0c01-4e36-b9ae-3b130b4e4b1e",
+        "questionId": "0dc64afb-97c2-4348-a7a9-b778121f9e1e",
+        "order": 8,
+        "question": {
+          "id": "0dc64afb-97c2-4348-a7a9-b778121f9e1e",
+          "questionNumber": 36,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "Bata sold an article for N6,900.00 and made a profit of 15%. If he sold it for N6,600.00 he would make a"
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "profit of 13%"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "loss of 12%"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "Profit of 10%"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "loss of 5%"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "C",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "Explanation\nThis is a two-part problem on profit and loss. First, we must calculate the original Cost Price (CP) of the article. Then, we use that cost price to determine the new profit percentage for the second selling price.\nCore Formulas:\nSelling Price (SP) = Cost Price (CP) × (1 + (Profit % / 100))\nProfit % = (Profit Amount / CP) × 100\nStep-by-Step Calculation:\nFind the Cost Price (CP):\nWe know the first Selling Price (SP₁) is N6,900 and the profit was 15%.\n6,900 = CP × (1 + 15/100)\n6,900 = CP × (1 + 0.15)\n6,900 = CP × 1.15\nCP = 6,900 / 1.15\nCP = 6,000. So, the article originally cost N6,000.\nCalculate the new profit based on the second selling price:\nThe new Selling Price (SP₂) is N6,600.\nThe Cost Price (CP) remains N6,000.\nProfit Amount = SP₂ - CP\nProfit Amount = 6,600 - 6,000 = N600.\nSince the result is positive, it is a profit.\nCalculate the new profit percentage:\nProfit % = (Profit Amount / CP) × 100\nProfit % = (600 / 6,000) × 100\nProfit % = (1 / 10) × 100 = 10%\nThe new sale would result in a profit of 10%.\nWhy other options are incorrect\nA) profit of 13%: This is a miscalculation. A 13% profit on N6,000 would be a selling price of 6000 * 1.13 = N6,780.\nB) loss of 12% and D) loss of 5%: These are incorrect because the second selling price (N6,600) is still higher than the cost price (N6,000), so a profit was made, not a loss.\nKey Terms\nCost Price (CP): The original price at which an item is purchased by a seller.\nSelling Price (SP): The price at which an item is sold to a customer.\nProfit: The financial gain made when the selling price is higher than the cost price (SP > CP).\nLoss: The financial deficit incurred when the selling price is lower than the cost price (SP < CP).\nRelatable Example\nA trader at the Alaba International Market buys a generator for N6,000 (the Cost Price). He puts it in his shop with a price tag of N6,900, which gives him a 15% profit. A customer comes and bargains him down to N6,600. He agrees to the new price. To find his new profit percentage, he calculates his gain (N600) as a percentage of his original cost (N6,000), which comes out to be 10%.\nReferences\nCorporate Finance Institute, \"Profit and Loss Statement\" - corporatefinanceinstitute.com/resources/accounting/profit-and-loss-statement/\nToppr, \"Profit and Loss\" - www.toppr.com/guides/quantitative-aptitude/profit-and-loss/"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["Mathematics", "WAEC", "2010"],
+          "cognitiveLevel": null,
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 2010,
+          "createdAt": "2026-02-06T10:05:46.969Z",
+          "updatedAt": "2026-02-08T06:09:33.426Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "WAEC",
+            "subjectCode": "MAT"
+          },
+          "metadata": {
+            "tags": ["Mathematics", "WAEC", "2010"],
+            "marks": 1,
+            "status": "DRAFT",
+            "examType": "WAEC",
+            "examYear": "2010",
+            "difficulty": "MEDIUM",
+            "examPeriod": "MAY/JUNE"
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "WAEC",
+          "examYear": "2010",
+          "subjectCode": "MAT",
+          "subjectId": "d5167a52-726f-4943-932a-e2fe6e759e33",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": null,
+          "isBookmarked": false,
+          "isReported": false
+        }
+      },
+      {
+        "id": "2aa54676-d346-451d-976c-4a46a8345e50",
+        "examId": "58d33f7c-0c01-4e36-b9ae-3b130b4e4b1e",
+        "questionId": "0e2f6792-287a-4fab-8068-e812ec916307",
+        "order": 9,
+        "question": {
+          "id": "0e2f6792-287a-4fab-8068-e812ec916307",
+          "questionNumber": 30,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "The nth term of the sequence -2, 4, -8, 16.... is given by"
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "Tn = 2ⁿ"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "Tn = (-2)ⁿ"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "Tn = (-2n)"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "Tn = -n²"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "B",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "Explanation\nThe given sequence is a Geometric Progression (G.P.), which is a sequence of numbers where each term after the first is found by multiplying the previous one by a fixed, non-zero number called the common ratio.\nStep-by-Step Calculation:\nIdentify the first term (a):\nThe first term of the sequence is -2.\nCalculate the common ratio (r):\nThe common ratio is found by dividing any term by its preceding term.\nr = (Term 2) / (Term 1) = 4 / -2 = -2\nCheck with other terms: r = (Term 3) / (Term 2) = -8 / 4 = -2.\nThe common ratio is indeed -2.\nUse the formula for the nth term of a G.P.:\nThe standard formula is Tn = a × rⁿ⁻¹.\na = -2\nr = -2\nTn = (-2) × (-2)ⁿ⁻¹\nSimplify the expression using laws of indices:\nThe term (-2) can be written as (-2)¹.\nTn = (-2)¹ × (-2)ⁿ⁻¹\nUsing the rule xᵃ × xᵇ = xᵃ⁺ᵇ, we add the exponents:\nTn = (-2)¹⁺⁽ⁿ⁻¹⁾\nTn = (-2)ⁿ\nWhy other options are incorrect\nA) Tn = 2ⁿ: This would produce the sequence 2, 4, 8, 16... (all positive).\nC) Tn = (-2n): This is a linear sequence, which would produce -2, -4, -6, -8...\nD) Tn = -n²: This would produce the sequence -1², -2², -3², -4²... which is -1, -4, -9, -16...\nKey Terms\nSequence: An ordered list of numbers.\nGeometric Progression (G.P.): A sequence where the ratio between consecutive terms is constant.\nFirst Term (a): The first number in a sequence.\nCommon Ratio (r): The constant factor by which consecutive terms are multiplied in a G.P.\nnth Term (Tn): A formula that allows you to find any term in the sequence given its position n.\nRelatable Example\nImagine a bouncing ball. On its first bounce, it goes down 2cm (represented as -2). On the next bounce, it rebounds up 4cm. On the third, it goes down 8cm. The height of each bounce is -2 times the previous one. This pattern of multiplying by a constant negative number creates an alternating geometric sequence, just like the one in the problem. The formula Tn = (-2)ⁿ predicts the height of the nth bounce.\nReferences\nPurplemath, \"Geometric Sequences\" - www.purplemath.com/modules/geomseq.htm\nBBC Bitesize, \"Geometric sequences - Higher\" - www.bbc.co.uk/bitesize/guides/zscqsbk/revision/3"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["Mathematics", "WAEC", "2010"],
+          "cognitiveLevel": null,
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 2010,
+          "createdAt": "2026-02-06T10:05:44.879Z",
+          "updatedAt": "2026-02-08T06:09:34.016Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "WAEC",
+            "subjectCode": "MAT"
+          },
+          "metadata": {
+            "tags": ["Mathematics", "WAEC", "2010"],
+            "marks": 1,
+            "status": "DRAFT",
+            "examType": "WAEC",
+            "examYear": "2010",
+            "difficulty": "MEDIUM",
+            "examPeriod": "MAY/JUNE"
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "WAEC",
+          "examYear": "2010",
+          "subjectCode": "MAT",
+          "subjectId": "d5167a52-726f-4943-932a-e2fe6e759e33",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": null,
+          "isBookmarked": false,
+          "isReported": false
+        }
+      },
+      {
+        "id": "fa9ae9e1-f2ed-4ab2-a931-c7ecf8c83ab5",
+        "examId": "58d33f7c-0c01-4e36-b9ae-3b130b4e4b1e",
+        "questionId": "0f6c64a0-95e4-4f1c-9604-ad8ecd0feec5",
+        "order": 10,
+        "question": {
+          "id": "0f6c64a0-95e4-4f1c-9604-ad8ecd0feec5",
+          "questionNumber": 47,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "In an athletic competition, the probability that an athlete wins a 100m race is 1/8 and the probability that he wins in high jump is 1/4. What is the probability that he wins only one of the events?"
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "3/8"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "1/2"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "5/8"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "3/4"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "A",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "𝗘𝘅𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\n\nThis problem involves calculating the probability of combined, independent events. The event \"winning only one\" can happen in two mutually exclusive ways:\nHe wins the 100m race AND loses the high jump.\nHe loses the 100m race AND wins the high jump.\nWe calculate the probability of each scenario and then add them together.\nImportant Note: This question is a classic example of a flawed exam question. The mathematically correct answer is 5/16, which is not an option. The answer 3/8 (Option A) is obtained by making a common conceptual error of simply adding the two probabilities (1/8 + 1/4), which would calculate the probability of winning at least one event if they were mutually exclusive. We will present the correct method and then explain why Option A is the likely intended, albeit incorrect, answer.\nCorrect Method:\nList the probabilities of winning and losing:\nP(Win 100m) = 1/8 => P(Lose 100m) = 1 - 1/8 = 7/8\nP(Win HJ) = 1/4 => P(Lose HJ) = 1 - 1/4 = 3/4\nCalculate the probability of each scenario:\nScenario 1 (Win 100m, Lose HJ): P = P(Win 100m) × P(Lose HJ) = (1/8) × (3/4) = 3/32\nScenario 2 (Lose 100m, Win HJ): P = P(Lose 100m) × P(Win HJ) = (7/8) × (1/4) = 7/32\nAdd the probabilities of the two scenarios:\nP(Wins only one) = P(Scenario 1) + P(Scenario 2) = 3/32 + 7/32 = 10/32 = 5/16.\nLikely Intended (but incorrect) Method leading to Option A:\nA common mistake is to add the probabilities of the two events directly, assuming they are mutually exclusive.\nP(Win 100m) + P(Win HJ) = 1/8 + 1/4 = 1/8 + 2/8 = 3/8.\nThis matches Option A. Due to the discrepancy, we select A as the intended answer for exam purposes, while noting the correct answer is 5/16.\n\n𝗪𝗵𝘆 𝗼𝘁𝗵𝗲𝗿 𝗼𝗽𝘁𝗶𝗼𝗻𝘀 𝗮𝗿𝗲 𝗶𝗻𝗰𝗼𝗿𝗿𝗲𝗰𝘁\nBased on the flawed premise, the other options are arithmetically incorrect. The true correct answer (5/16) is not listed.\n\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\nProbability: A measure of how likely an event is to occur.\nIndependent Events: Two events where the outcome of one does not affect the outcome of the other. We multiply their probabilities to find the chance of both occurring.\nMutually Exclusive Events: Two events that cannot happen at the same time. We add their probabilities to find the chance of either occurring.\n\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘𝘅𝗮𝗺𝗽𝗹𝗲\nThe probability of rain in Lagos today is 1/8. The probability of the Super Eagles winning their match is 1/4. The probability that only one of these things happens is: (P(Rain) × P(Eagles Lose)) + (P(No Rain) × P(Eagles Win)) = (1/8 × 3/4) + (7/8 × 1/4) = 3/32 + 7/32 = 10/32 = 5/16.\n\n𝗥𝗲𝗳𝗲𝗿𝗲𝗻𝗰𝗲𝘀\nKhan Academy, \"Compound probability of independent events\" - www.khanacademy.org/math/statistics-probability/probability-library/compound-probability-of-ind-events/v/compound-probability-of-independent-events\nBBC Bitesize, \"Mutually exclusive events and exhaustive events\" - www.bbc.co.uk/bitesize/guides/z3c7hyc/revision/3"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["Mathematics", "WAEC", "2010"],
+          "cognitiveLevel": null,
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 2010,
+          "createdAt": "2026-02-07T10:02:15.804Z",
+          "updatedAt": "2026-02-08T06:09:35.774Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "WAEC",
+            "subjectCode": "MAT"
+          },
+          "metadata": {
+            "tags": ["Mathematics", "WAEC", "2010"],
+            "marks": 1,
+            "status": "DRAFT",
+            "examType": "WAEC",
+            "examYear": "2010",
+            "difficulty": "MEDIUM",
+            "examPeriod": "MAY/JUNE"
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "WAEC",
+          "examYear": "2010",
+          "subjectCode": "MAT",
+          "subjectId": "d5167a52-726f-4943-932a-e2fe6e759e33",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": null,
+          "isBookmarked": false,
+          "isReported": false
+        }
+      },
+      {
+        "id": "e77d34a2-2bb4-429b-acd8-ce814e6871f9",
+        "examId": "58d33f7c-0c01-4e36-b9ae-3b130b4e4b1e",
+        "questionId": "137c255d-0953-4f24-9235-aa295ade0059",
+        "order": 11,
+        "question": {
+          "id": "137c255d-0953-4f24-9235-aa295ade0059",
+          "questionNumber": 34,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "In the diagram, EF = 8 cm, FG = x cm, GH = (x + 2) cm, ∠EFG = 90°. If the area of the shaded portion is 40 cm², find the area of triangle EFG"
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "128 cm²"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "72 cm²"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "64 cm²"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "32 cm²"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "D",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "𝗘𝘅𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\n\nThis problem requires using the formula for the area of a triangle. We must first use the given area of the shaded triangle (ΔEGH) to find the unknown value x, and then use that value to calculate the area of the unshaded triangle (ΔEFG).\nCore Principle: Area of a Triangle = (1/2) × base × height\nStep-by-Step Calculation:\nFind the value of x using the shaded triangle (ΔEGH):\nThe base of ΔEGH is GH = (x + 2) cm.\nThe height of ΔEGH is the perpendicular line EF = 8 cm.\nThe area is given as 40 cm².\nArea = (1/2) × base × height\n40 = (1/2) × (x + 2) × 8\nSimplify the right side: 40 = 4 × (x + 2)\nDivide both sides by 4: 10 = x + 2\nSolve for x: x = 10 - 2 = 8 cm.\nCalculate the area of the unshaded triangle (ΔEFG):\nThe base of ΔEFG is FG = x. Since we found x = 8, the base is 8 cm.\nThe height of ΔEFG is EF = 8 cm.\nArea of ΔEFG = (1/2) × base × height\nArea of ΔEFG = (1/2) × 8 × 8\nArea of ΔEFG = (1/2) × 64 = 32 cm²\n\n𝗪𝗵𝘆 𝗼𝘁𝗵𝗲𝗿 𝗼𝗽𝘁𝗶𝗼𝗻𝘀 𝗮𝗿𝗲 𝗶𝗻𝗰𝗼𝗿𝗿𝗲𝗰𝘁\nA) 128 cm²: This would likely result from several calculation errors.\nB) 72 cm²: This is the area of the entire large triangle ΔEFH. Area = (1/2) × (8 + 10) × 8 = 72 cm². The question asks for the area of the smaller triangle ΔEFG.\nC) 64 cm²: This would be the area of a rectangle with sides 8x8, not a triangle. It results from forgetting to multiply by 1/2.\n\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\nArea: The amount of space inside a two-dimensional shape.\nBase (of a triangle): Any one of the sides of a triangle, to which the height is drawn.\nHeight (of a triangle): The perpendicular distance from the base to the opposite vertex.\n\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘𝘅𝗮𝗺𝗽𝗹𝗲\nA developer has a large, right-angled triangular plot of land (ΔEFH) in a Lagos suburb. A fence (EG) is built, dividing the land into two smaller triangular plots (ΔEFG and ΔEGH). If the developer knows the area of one plot is 40 square metres and a few key boundary lengths, they can use the area formula to calculate the missing dimension x, and then find the exact area of the second plot.\n\n𝗥𝗲𝗳𝗲𝗿𝗲𝗻𝗰𝗲𝘀\nMath Open Reference, \"Area of a triangle\" - www.mathopenref.com/trianglearea.html\nSplashLearn, \"Area of a Triangle\" - www.splashlearn.com/math-vocabulary/area-of-a-triangle"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["Mathematics", "WAEC", "2010"],
+          "cognitiveLevel": null,
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 2010,
+          "createdAt": "2026-02-07T10:02:11.475Z",
+          "updatedAt": "2026-02-08T06:09:38.554Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "WAEC",
+            "subjectCode": "MAT"
+          },
+          "metadata": {
+            "tags": ["Mathematics", "WAEC", "2010"],
+            "marks": 1,
+            "status": "DRAFT",
+            "examType": "WAEC",
+            "examYear": "2010",
+            "difficulty": "MEDIUM",
+            "examPeriod": "MAY/JUNE"
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "WAEC",
+          "examYear": "2010",
+          "subjectCode": "MAT",
+          "subjectId": "d5167a52-726f-4943-932a-e2fe6e759e33",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": null,
+          "isBookmarked": false,
+          "isReported": false
+        }
+      },
+      {
+        "id": "a4f56435-7c62-44ae-817b-6c1e22d090f8",
+        "examId": "58d33f7c-0c01-4e36-b9ae-3b130b4e4b1e",
+        "questionId": "14b86be8-31cb-48f8-b8c9-5de82ed20e93",
+        "order": 12,
+        "question": {
+          "id": "14b86be8-31cb-48f8-b8c9-5de82ed20e93",
+          "questionNumber": 2,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "Question 2\nFactorize: x + y - ax - ay"
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "(x + y)(1 - a)"
+                }
+              ],
+              "isCorrect": true
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "(x - y)(1 + a)"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "(x + y)(1 + a)"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "(x - y)(1 - a)"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "A",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "latex",
+                "value": "A \\times 10^n"
+              },
+              {
+                "type": "text",
+                "value": "To solve this problem, we follow these steps:"
+              },
+              {
+                "type": "text",
+                "value": "Convert each decimal number into standard form."
+              },
+              {
+                "type": "latex",
+                "value": "A"
+              },
+              {
+                "type": "text",
+                "value": "Step-by-Step Calculation:"
+              },
+              {
+                "type": "latex",
+                "value": "0.000215"
+              },
+              {
+                "type": "latex",
+                "value": "1"
+              },
+              {
+                "type": "latex",
+                "value": "0.000215"
+              },
+              {
+                "type": "latex",
+                "value": "4"
+              },
+              {
+                "type": "latex",
+                "value": "0.000215 = 2.15 \\times 10^{-4}"
+              },
+              {
+                "type": "latex",
+                "value": "0.000028"
+              },
+              {
+                "type": "latex",
+                "value": "1"
+              },
+              {
+                "type": "latex",
+                "value": "0.000028"
+              },
+              {
+                "type": "latex",
+                "value": "5"
+              },
+              {
+                "type": "latex",
+                "value": "0.000028 = 2.8 \\times 10^{-5}"
+              },
+              {
+                "type": "text",
+                "value": "Multiply the two numbers in standard form:"
+              },
+              {
+                "type": "latex",
+                "value": "(2.15 \\times 10^{-4}) \\times (2.8 \\times 10^{-5})"
+              },
+              {
+                "type": "text",
+                "value": "First, multiply the coefficients:"
+              },
+              {
+                "type": "latex",
+                "value": "2.15 \\times 2.8 = 6.02"
+              },
+              {
+                "type": "latex",
+                "value": "10"
+              },
+              {
+                "type": "latex",
+                "value": "10^{-4} \\times 10^{-5} = 10^{-9}"
+              },
+              {
+                "type": "text",
+                "value": "Combine the results:"
+              },
+              {
+                "type": "latex",
+                "value": "6.02 \\times 10^{-9}"
+              },
+              {
+                "type": "text",
+                "value": "Why other options are incorrect:"
+              },
+              {
+                "type": "latex",
+                "value": "6.02 \\times 10^{-8}"
+              },
+              {
+                "type": "latex",
+                "value": "(-4) + (-5)"
+              },
+              {
+                "type": "latex",
+                "value": "6.02 \\times 10^{-7}"
+              },
+              {
+                "type": "latex",
+                "value": "0.000215"
+              },
+              {
+                "type": "latex",
+                "value": "6.02 \\times 10^{-6}"
+              },
+              {
+                "type": "latex",
+                "value": "3"
+              },
+              {
+                "type": "text",
+                "value": "Key Terms:"
+              },
+              {
+                "type": "latex",
+                "value": "1"
+              },
+              {
+                "type": "latex",
+                "value": "A"
+              },
+              {
+                "type": "latex",
+                "value": "n"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["mathematics", "waec"],
+          "cognitiveLevel": "APPLICATION",
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 2010,
+          "createdAt": "2026-02-05T03:46:37.151Z",
+          "updatedAt": "2026-02-05T22:56:47.179Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "WAEC",
+            "subjectCode": "Mathematics"
+          },
+          "metadata": {
+            "tags": ["mathematics", "waec"],
+            "marks": 1,
+            "status": "PUBLISHED",
+            "examType": "WAEC",
+            "examYear": "2010",
+            "difficulty": "MEDIUM",
+            "examPeriod": "MAY/JUNE",
+            "passingMarks": 1,
+            "cognitiveLevel": "APPLICATION",
+            "estimatedTimeSeconds": 60
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "WAEC",
+          "examYear": "2010",
+          "subjectCode": "Mathematics",
+          "subjectId": "d5167a52-726f-4943-932a-e2fe6e759e33",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": null,
+          "isBookmarked": false,
+          "isReported": false
+        }
+      },
+      {
+        "id": "413ffade-6882-4f3a-b923-c62a6cfe71d7",
+        "examId": "58d33f7c-0c01-4e36-b9ae-3b130b4e4b1e",
+        "questionId": "15a24db4-3105-4f8f-a323-c63e6452f6b3",
+        "order": 13,
+        "question": {
+          "id": "15a24db4-3105-4f8f-a323-c63e6452f6b3",
+          "questionNumber": 49,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "A boy looks through a window of a building and sees a mango on the ground 50m away from the foot of the building. If the window is 9m from the ground, calculate, correct to the nearest ^{$\\circ$}, the angle of depression of the mango from the window."
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$9$°"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$10$°"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$11$°"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$12$°"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "B",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "This is a trigonometry problem involving a right-angled triangle. We can visualize the situation by drawing a diagram with a vertical line representing the building, a horizontal line representing the ground, and a line of sight from the window to the mango. This forms a right-angled triangle. Opposite side: The height of the window from the ground, which is 9m. This is the side opposite to the angle of elevation from the mango to the window. Adjacent side: The distance of the mango from the foot of the building, which is 50m. Angle of Depression: The angle of depression is the angle between the horizontal line of sight from the window and the line of sight to the mango. In a right-angled triangle, the angle of depression is equal to the angle of elevation of the mango from the foot of the building due to the property of alternate interior angles. To find the angle, we use the trigonometric ratio that relates the opposite and adjacent sides, which is the tangent function (\\tan). \\tan(angle) = Opposite / Adjacent Let the angle of depression be θ. \\tan(θ) = $9$ / $50$ \\tan(θ) = $0.18$ To find the angle θ, we take the inverse tangent (or arctan) of $0.18$: θ = \\tan^(-1)(0.18) Using a calculator, we get: θ ≈ $10.2048$...° The question asks for the angle to be rounded to the nearest ^{$\\circ$}. Since the first digit after the decimal point is $2$, which is less than $5$, we round down. θ ≈ $10$° Why other options are incorrect A) $9$° - This value could result from a student incorrectly assuming the angle is the same as the height of the window, or from a miscalculation. $C$) $11$° - This is an incorrect rounding or miscalculation. The value $10.2048$... rounds to $10$°, not $11$°. $D$) $12$° - This value is far from the correct answer, possibly resulting from a miscalculation or using an incorrect trigonometric ratio. Key Terms Angle of Depression – The angle between the horizontal line from the observer's eye and the line of sight to an object below. Right-angled Triangle – A triangle with one angle equal to $90$ ^{$\\circ$}. Tangent – A trigonometric ratio in a right-angled triangle that is equal to the length of the opposite side divided by the length of the adjacent side. Relatable Example Imagine you are looking down from the window of a multi-storey building in Marina, Lagos, and you see a bola (ball) on the street below. The height of the window from the ground is the opposite side of a right-angled triangle, and the distance from the base of the building to the ball is the adjacent side. By using the \\tan function, you can find the angle at which you are looking down at the ball. Table/Diagram References https://www.khanacademy.org/math/geometry/hs-geo-trig/hs-geo-trig-ratios-intro/v/angle-of-depression-and-elevation-word-problems https://www.mathsisfun.com/geometry/angle-of-depression.html Part $1$: Multiple-Choice Question (MCQ)"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["mathematics", "waec"],
+          "cognitiveLevel": "APPLICATION",
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 2011,
+          "createdAt": "2026-02-02T17:34:02.157Z",
+          "updatedAt": "2026-02-03T08:58:00.805Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "WAEC",
+            "subjectCode": "MAT"
+          },
+          "metadata": {
+            "tags": ["mathematics", "waec"],
+            "marks": 1,
+            "status": "PUBLISHED",
+            "examType": "WAEC",
+            "examYear": "2011",
+            "difficulty": "MEDIUM",
+            "examPeriod": "MAY/JUNE",
+            "cognitiveLevel": "APPLICATION"
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "WAEC",
+          "examYear": "2011",
+          "subjectCode": "MAT",
+          "subjectId": "d5167a52-726f-4943-932a-e2fe6e759e33",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": null,
+          "isBookmarked": false,
+          "isReported": false
+        }
+      },
+      {
+        "id": "61a465bb-7a28-4363-a709-0234737c66ea",
+        "examId": "58d33f7c-0c01-4e36-b9ae-3b130b4e4b1e",
+        "questionId": "201c8695-73c1-4533-86d6-9a532dbd430d",
+        "order": 14,
+        "question": {
+          "id": "201c8695-73c1-4533-86d6-9a532dbd430d",
+          "questionNumber": 22,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "In the diagram, the tangent MN makes an angle of 55 degrees with the chord PS. If O is th"
+            },
+            {
+              "type": "image",
+              "value": "{\"src\":\"https://res.cloudinary.com/dnsjymm8i/image/upload/v1770465807/questions/gj0j5pav8ve2i2skcnzp.png\",\"alt\":null,\"title\":null}"
+            },
+            {
+              "type": "text",
+              "value": "e centre of the circle, find < RPS."
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "35 degrees"
+                }
+              ],
+              "isCorrect": true
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "45 degrees"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "55 degrees"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "65 degrees"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "A",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "𝗘𝘅𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\n\nThis circle geometry problem requires the application of two key circle theorems: the Angle in a Semicircle Theorem and the Alternate Segment Theorem.\nStep-by-Step Calculation:\nApply the Angle in a Semicircle Theorem:\nThe diagram shows the line segment PR passing through the center O. This means PR is a diameter of the circle. The angle subtended by a diameter at any point on the circumference is always a right angle (90°). Therefore, the angle ∠PSR is 90°.\n∠PSR = 90°\nApply the Alternate Segment Theorem:\nThis theorem states that the angle between a tangent and a chord through the point of contact is equal to the angle in the alternate segment.\nThe tangent is MN, and the chord is PS. The angle between them is ∠NSP = 55°.\nThe angle in the alternate segment is the angle subtended by the chord PS at the circumference, which is ∠PRS (or ∠PRQ).\nTherefore, ∠PRS = ∠NSP = 55°.\nUse the sum of angles in a triangle:\nNow consider the triangle ΔPSR. We know two of its angles: ∠PSR = 90° and ∠PRS = 55°. The sum of angles in any triangle is 180°.\n∠RPS + ∠PSR + ∠PRS = 180°\n∠RPS + 90° + 55° = 180°\n∠RPS + 145° = 180°\nSolve for ∠RPS:\n∠RPS = 180° - 145°\n∠RPS = 35°\n\n𝗪𝗵𝘆 𝗼𝘁𝗵𝗲𝗿 𝗼𝗽𝘁𝗶𝗼𝗻𝘀 𝗮𝗿𝗲 𝗶𝗻𝗰𝗼𝗿𝗿𝗲𝗰𝘁\nB) 45 degrees: This would be the answer if ΔPSR were an isosceles right-angled triangle, which it is not.\nC) 55 degrees: This is the value of ∠PRS (from the alternate segment theorem). A student might mistakenly think ∠RPS is equal to ∠PRS.\nD) 65 degrees: This would be a simple miscalculation in the final subtraction step (180 - 145).\n\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\nTangent: A straight line that touches a circle at exactly one point.\nChord: A straight line segment whose endpoints both lie on the circle.\nDiameter: A chord that passes through the center of the circle.\nAngle in a Semicircle Theorem: The angle subtended by a diameter at the circumference is 90°.\nAlternate Segment Theorem: The angle between a tangent and a chord is equal to the angle made by that chord in the alternate segment.\n\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘𝘅𝗮𝗺𝗽𝗹𝗲\nImagine the Lekki-Ikoyi Link Bridge Roundabout as a perfect circle. A straight road (MN) just touches the edge of the roundabout at point S. You draw a straight line (a chord PS) across the roundabout from S. The angle between the road and your line is 55°. You then draw a line from P, through the exact center of the roundabout (O), to the other side at R. The angle at S in the triangle you formed (ΔPSR) will be 90°. The angle at R will be 55°. Therefore, the remaining angle at P must be 35°.\n\n𝗥𝗲𝗳𝗲𝗿𝗲𝗻𝗰𝗲𝘀\nMaths is Fun, \"Alternate Segment Theorem\" - www.mathsisfun.com/geometry/circle-theorems.html (See Item 8)\nBBC Bitesize, \"Circle theorems - Higher\" - www.bbc.co.uk/bitesize/guides/z92cmsg/revision/1"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["Mathematics", "WAEC", "2010"],
+          "cognitiveLevel": null,
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 2010,
+          "createdAt": "2026-02-07T10:02:07.626Z",
+          "updatedAt": "2026-02-07T12:06:14.356Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "WAEC",
+            "subjectCode": "Mathematics"
+          },
+          "metadata": {
+            "tags": ["Mathematics", "WAEC", "2010"],
+            "marks": 1,
+            "status": "PUBLISHED",
+            "examType": "WAEC",
+            "examYear": "2010",
+            "difficulty": "MEDIUM",
+            "examPeriod": "MAY/JUNE",
+            "passingMarks": 1,
+            "cognitiveLevel": "RECALL",
+            "estimatedTimeSeconds": 60
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "WAEC",
+          "examYear": "2010",
+          "subjectCode": "Mathematics",
+          "subjectId": "d5167a52-726f-4943-932a-e2fe6e759e33",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": null,
+          "isBookmarked": false,
+          "isReported": false
+        }
+      },
+      {
+        "id": "07e3155c-ebdc-434f-a275-b30d24f1334a",
+        "examId": "58d33f7c-0c01-4e36-b9ae-3b130b4e4b1e",
+        "questionId": "20a01125-1a65-4504-b620-9a4328798f1a",
+        "order": 15,
+        "question": {
+          "id": "20a01125-1a65-4504-b620-9a4328798f1a",
+          "questionNumber": 49,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "If x km/h = y m/s, then y ="
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "7x / 20"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "11x / 15"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "4x / 15"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "5x / 18"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "D",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "𝗘𝘅𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\n\nThis problem requires a unit conversion from kilometres per hour (km/h) to metres per second (m/s). We need to convert both the distance unit (km to m) and the time unit (hours to seconds).\nCore Conversion Factors:\n1 kilometre = 1000 metres\n1 hour = 60 minutes = 60 × 60 = 3600 seconds\nStep-by-Step Calculation:\nStart with the expression x km/h:\nThis can be written as a fraction: x km / 1 h\nConvert the numerator from km to m:\nReplace km with 1000 m:\n1000x m / 1 h\nConvert the denominator from h to s:\nReplace 1 h with 3600 s:\n1000x m / 3600 s\nSimplify the numerical fraction:\nThe expression is now (1000 / 3600) × (x m/s).\n1000 / 3600 can be simplified by dividing the top and bottom by 100: 10 / 36.\nThen, divide the top and bottom by their greatest common divisor, 2: 5 / 18.\nWrite the final conversion:\nx km/h = (5/18)x m/s\nSince the problem states x km/h = y m/s, we can conclude that y = (5/18)x, or y = 5x / 18.\n\n𝗪𝗵𝘆 𝗼𝘁𝗵𝗲𝗿 𝗼𝗽𝘁𝗶𝗼𝗻𝘀 𝗮𝗿𝗲 𝗶𝗻𝗰𝗼𝗿𝗿𝗲𝗰𝘁\nA), B), C): These options are the result of using incorrect conversion factors or inverting the correct factor. A common error is to calculate 3600/1000 instead of 1000/3600.\n\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\nUnit Conversion: The process of changing a measurement from one unit to another (e.g., from kilometres to metres).\nkm/h (Kilometres per hour): A unit of speed, representing the number of kilometres travelled in one hour.\nm/s (Metres per second): The standard SI unit of speed, representing the number of metres travelled in one second.\n\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘𝘅𝗮𝗺𝗽𝗹𝗲\nWhen driving on the Third Mainland Bridge in Lagos, your car's speedometer might show 90 km/h. To a physicist, this speed is more usefully expressed in m/s. Using the conversion formula, they would calculate:\ny = (5/18) × 90 = 5 × 5 = 25 m/s.\nSo, a speed of 90 km/h is equivalent to travelling 25 metres every second.\n\n𝗥𝗲𝗳𝗲𝗿𝗲𝗻𝗰𝗲𝘀\nUnit Converters, \"Kilometer/hour to Meter/second Conversion\" - www.unitconverters.net/speed/km-h-to-m-s.htm\nOmni Calculator, \"km/h to m/s Converter\" - www.omnicalculator.com/conversion/kmh-to-ms"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["Mathematics", "WAEC", "2010"],
+          "cognitiveLevel": null,
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 2010,
+          "createdAt": "2026-02-07T10:02:16.447Z",
+          "updatedAt": "2026-02-08T06:09:48.815Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "WAEC",
+            "subjectCode": "MAT"
+          },
+          "metadata": {
+            "tags": ["Mathematics", "WAEC", "2010"],
+            "marks": 1,
+            "status": "DRAFT",
+            "examType": "WAEC",
+            "examYear": "2010",
+            "difficulty": "MEDIUM",
+            "examPeriod": "MAY/JUNE"
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "WAEC",
+          "examYear": "2010",
+          "subjectCode": "MAT",
+          "subjectId": "d5167a52-726f-4943-932a-e2fe6e759e33",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": null,
+          "isBookmarked": false,
+          "isReported": false
+        }
+      },
+      {
+        "id": "a5dae212-ce94-4462-b9e8-39075c8a9e61",
+        "examId": "58d33f7c-0c01-4e36-b9ae-3b130b4e4b1e",
+        "questionId": "21467d45-3ac8-4a1f-a0c5-bd6d53441a1e",
+        "order": 16,
+        "question": {
+          "id": "21467d45-3ac8-4a1f-a0c5-bd6d53441a1e",
+          "questionNumber": 50,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "If $E$ = MN / ($S$ + $N$) and $E$ = $75$, $M$ = $120$, $N$ = $500$, find $S$."
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$1000$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$2000$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$300$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$4000$"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "C",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "This problem requires us to solve for an unknown variable, $S$, by rearranging an algebraic formula. We are given the values for $E$, $M$, and $N$, and the formula $E$ = MN / ($S$ + $N$). Substitute the given values into the formula: $E$ = $75$ $M$ = $120$ $N$ = $500$ The equation becomes: $75$ = ($120$ * $500$) / ($S$ + $500$) Simplify the numerator: $120$ * $500$ = $60000$ The equation is now: $75$ = $60000$ / ($S$ + $500$) Rearrange the equation to isolate $S$: To solve for $S$, we first need to get the term ($S$ + $500$) out of the denominator. Multiply both sides of the equation by ($S$ + $500$). $75$ * ($S$ + $500$) = $60000$ Divide both sides by $75$: $S$ + $500$ = $60000$ / $75$ $S$ + $500$ = $800$ Solve for $S$: To find $S$, subtract $500$ from both sides: $S$ = $800$ - $500$ $S$ = $300$ Why other options are incorrect A) $1000$ - This is an incorrect result. It could be obtained if there was a typo in the question and the value of $E$ was different. $B$) $2000$ - This is an incorrect result. $D$) $4000$ - This is an incorrect result. Key Terms Algebraic Expression - A mathematical phrase that contains numbers, variables, and operators. Rearranging a Formula - The process of manipulating an equation to solve for a different variable. Relatable Example Imagine you are calculating the efficiency ($E$) of a solar panel installation on a house in Lagos. The efficiency depends on the amount of sunlight ($M$), the number of panels ($N$), and other factors ($S$). The formula is given by $E$ = MN / ($S$ + $N$). You measure the efficiency, sunlight, and number of panels and want to find the value of the other factors ($S$). To do this, you would use algebra to rearrange the formula to solve for $S$. Table/Diagram THEORY ANSWERS Theory Question: Algebraic Simplification and Logarithmic Properties"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["mathematics", "waec"],
+          "cognitiveLevel": "APPLICATION",
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 2011,
+          "createdAt": "2026-02-02T17:34:02.485Z",
+          "updatedAt": "2026-02-03T08:57:53.283Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "WAEC",
+            "subjectCode": "MAT"
+          },
+          "metadata": {
+            "tags": ["mathematics", "waec"],
+            "marks": 1,
+            "status": "PUBLISHED",
+            "examType": "WAEC",
+            "examYear": "2011",
+            "difficulty": "MEDIUM",
+            "examPeriod": "MAY/JUNE",
+            "cognitiveLevel": "APPLICATION"
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "WAEC",
+          "examYear": "2011",
+          "subjectCode": "MAT",
+          "subjectId": "d5167a52-726f-4943-932a-e2fe6e759e33",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": null,
+          "isBookmarked": false,
+          "isReported": false
+        }
+      },
+      {
+        "id": "0b797dcb-490a-4eaf-ba90-af94b0f42138",
+        "examId": "58d33f7c-0c01-4e36-b9ae-3b130b4e4b1e",
+        "questionId": "233e22c8-b2e4-4eff-bb21-8471f01f687a",
+        "order": 17,
+        "question": {
+          "id": "233e22c8-b2e4-4eff-bb21-8471f01f687a",
+          "questionNumber": 50,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "The mean of the numbers 2, 5, 2x and 7 is less than or equal to 5. Find the range of the values of x"
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "x ≤ 3"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "x ≥ 3"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "x < 3"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "x > 3"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "A",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "Explanation\nThis problem requires setting up and solving a linear inequality based on the definition of the mean (average) of a set of numbers.\nCore Principle: Mean = (Sum of all values) / (Number of values)\nStep-by-Step Calculation:\nWrite the expression for the mean:\nThe numbers are 2, 5, 2x, and 7.\nSum of values: 2 + 5 + 2x + 7 = 14 + 2x\nNumber of values: There are 4 numbers in the set.\nMean: (14 + 2x) / 4\nSet up the inequality:\nThe problem states that the mean is \"less than or equal to 5\".\n(14 + 2x) / 4 ≤ 5\nSolve the inequality for x:\nMultiply both sides by 4 to eliminate the denominator:\n14 + 2x ≤ 5 × 4\n14 + 2x ≤ 20\nSubtract 14 from both sides to isolate the x term:\n2x ≤ 20 - 14\n2x ≤ 6\nDivide both sides by 2:\nx ≤ 3\nConclusion:\nThe range of values for x is all numbers less than or equal to 3.\nWhy other options are incorrect\nB) x ≥ 3: This would be the result if the inequality sign was incorrectly reversed during the calculation. The sign should only be reversed if multiplying or dividing by a negative number.\nC) x < 3 and D) x > 3: These are incorrect because the problem states \"less than or equal to\", which requires the ≤ symbol, not the strict < or > symbols.\nKey Terms\nMean: The average of a set of numbers.\nLinear Inequality: A mathematical statement that relates two linear expressions with an inequality sign (<, ≤, >, ≥).\nRange of Values: The set of all possible values that a variable can take to satisfy a given condition.\nRelatable Example\nA student has four test scores: 2, 5, 7, and a fourth score which is 2x. The school requires that the average score for these four tests must not be more than 5 to pass a certain threshold. To find the maximum possible value for x, the student would set up and solve the inequality (2 + 5 + 7 + 2x) / 4 ≤ 5, finding that x must be less than or equal to 3.\nReferences\nVarsity Tutors, \"Solving Linear Inequalities\" - www.varsitytutors.com/hotmath/hotmath_help/topics/solving-linear-inequalities\nChiliMath, \"Solving Linear Inequalities\" - www.chilimath.com/lessons/intermediate-algebra/solving-linear-inequalities/"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["Mathematics", "WAEC", "2010"],
+          "cognitiveLevel": null,
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 2010,
+          "createdAt": "2026-02-06T10:05:51.468Z",
+          "updatedAt": "2026-02-08T06:09:50.863Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "WAEC",
+            "subjectCode": "MAT"
+          },
+          "metadata": {
+            "tags": ["Mathematics", "WAEC", "2010"],
+            "marks": 1,
+            "status": "DRAFT",
+            "examType": "WAEC",
+            "examYear": "2010",
+            "difficulty": "MEDIUM",
+            "examPeriod": "MAY/JUNE"
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "WAEC",
+          "examYear": "2010",
+          "subjectCode": "MAT",
+          "subjectId": "d5167a52-726f-4943-932a-e2fe6e759e33",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": null,
+          "isBookmarked": false,
+          "isReported": false
+        }
+      },
+      {
+        "id": "9a33b19a-fa63-44ea-8d80-0272d2760b01",
+        "examId": "58d33f7c-0c01-4e36-b9ae-3b130b4e4b1e",
+        "questionId": "24064d2b-e337-4efc-9c86-cd7c3bfb1f88",
+        "order": 18,
+        "question": {
+          "id": "24064d2b-e337-4efc-9c86-cd7c3bfb1f88",
+          "questionNumber": 46,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "In the diagram, <WOX = 60°, <YOE = 50° and <OXY = 30°. What is the bearing of X from Y?"
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "300°"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "240°"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "190°"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "150°"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "B",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "Explanation\nThis is a complex problem involving bearings and the geometry of triangles and parallel lines. The \"bearing of X from Y\" means: stand at point Y, face North, and measure the angle clockwise to the line segment YX.\nStep-by-Step Calculation:\nFind the angles within Triangle OXY:\nThe line WOE is a straight West-East line, so the angle ∠WOE = 180°.\nThe angle ∠XOY is the part of this straight line not taken by ∠WOX and ∠YOE.\n∠XOY = 180° - ∠WOX - ∠YOE = 180° - 60° - 50° = 70°.\nIn ΔOXY, we now know two angles: ∠XOY = 70° and ∠OXY = 30°.\nThe third angle, ∠OYX = 180° - (70° + 30°) = 180° - 100° = 80°.\nFind the Bearing of O from Y (the back bearing):\nFirst, find the bearing of Y from O. This is the angle clockwise from North at O to the line OY.\nThe angle from North to East (OE) is 90°.\nBearing of Y from O = ∠NOE + ∠EOY = 90° + 50° = 140°.\nThe back bearing (Bearing of O from Y) is found by adding 180° to this (since it's less than 180).\nBearing of O from Y = 140° + 180° = 320°. This is the clockwise angle from the North line at Y to the line YO.\nCalculate the Bearing of X from Y:\nImagine standing at Y, facing North. The line to O is at a bearing of 320°.\nFrom the line YO, you need to turn counter-clockwise by ∠OYX (which we found to be 80°) to face X.\nTherefore, the bearing of X from Y is the bearing to O minus the angle ∠OYX.\nBearing of X from Y = (Bearing of O from Y) - ∠OYX\nBearing of X from Y = 320° - 80° = 240°\nWhy other options are incorrect\nA) 300°, C) 190°, D) 150°: These values would result from errors in calculating the angles within the triangle or misunderstanding how to combine bearings and internal angles. For example, adding 80° to 320° or using the bearing of Y from O (140°) incorrectly.\nKey Terms\nBearing: The direction from one point to another, measured as a clockwise angle from the North direction. It is usually given as a three-digit number.\nBack Bearing: The bearing from the second point back to the first. It is found by adding or subtracting 180° from the forward bearing.\nParallel Lines: All North-South lines in a bearing diagram are considered parallel to each other.\nRelatable Example\nA ship leaves the port of Lagos (point O) and sails to a location Y on a bearing of 140°. Another ship is at location X. From the port (O), you can see ship X at an angle that is 60° from the West line. If a person on ship X looks at the port and then at ship Y, the angle is 30°. To find the direction they must sail from ship Y to reach ship X, they would perform this bearing calculation, finding the required course is 240°.\nReferences\nBBC Bitesize, \"Bearings\" - www.bbc.co.uk/bitesize/guides/ztr634j/revision/1\nMaths is Fun, \"Bearings\" - www.mathsisfun.com/algebra/vectors-bearing.html"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["Mathematics", "WAEC", "2010"],
+          "cognitiveLevel": null,
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 2010,
+          "createdAt": "2026-02-06T10:05:50.180Z",
+          "updatedAt": "2026-02-08T06:09:52.176Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "WAEC",
+            "subjectCode": "MAT"
+          },
+          "metadata": {
+            "tags": ["Mathematics", "WAEC", "2010"],
+            "marks": 1,
+            "status": "DRAFT",
+            "examType": "WAEC",
+            "examYear": "2010",
+            "difficulty": "MEDIUM",
+            "examPeriod": "MAY/JUNE"
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "WAEC",
+          "examYear": "2010",
+          "subjectCode": "MAT",
+          "subjectId": "d5167a52-726f-4943-932a-e2fe6e759e33",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": null,
+          "isBookmarked": false,
+          "isReported": false
+        }
+      },
+      {
+        "id": "9abebd0b-d7cc-4788-bfdd-6faafd637684",
+        "examId": "58d33f7c-0c01-4e36-b9ae-3b130b4e4b1e",
+        "questionId": "25f4bc39-53e6-444d-9df7-b2b1c1891616",
+        "order": 19,
+        "question": {
+          "id": "25f4bc39-53e6-444d-9df7-b2b1c1891616",
+          "questionNumber": 40,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "What is the value of x when y = 5?"
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "8"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "9"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "10"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "11"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "A",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "Explanation\nThis question is a continuation of the previous problem. It requires using the equation of the line we just found (y = 1/2x + 1) to determine the value of x for a given value of y.\nImportant Note: This question is flawed. It asks for a numerical value for x, but the options provided are a repeat of the equations from the previous question. The correct procedure is to solve for x and state the numerical answer.\nStep-by-Step Calculation:\nUse the equation of the line:\nFrom"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["Mathematics", "WAEC", "2010"],
+          "cognitiveLevel": null,
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 2010,
+          "createdAt": "2026-02-06T10:05:48.250Z",
+          "updatedAt": "2026-02-08T06:09:53.934Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "WAEC",
+            "subjectCode": "MAT"
+          },
+          "metadata": {
+            "tags": ["Mathematics", "WAEC", "2010"],
+            "marks": 1,
+            "status": "DRAFT",
+            "examType": "WAEC",
+            "examYear": "2010",
+            "difficulty": "MEDIUM",
+            "examPeriod": "MAY/JUNE"
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "WAEC",
+          "examYear": "2010",
+          "subjectCode": "MAT",
+          "subjectId": "d5167a52-726f-4943-932a-e2fe6e759e33",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": null,
+          "isBookmarked": false,
+          "isReported": false
+        }
+      },
+      {
+        "id": "471e22be-245d-4aa7-ae0d-192406b055ba",
+        "examId": "58d33f7c-0c01-4e36-b9ae-3b130b4e4b1e",
+        "questionId": "2642765e-a7de-4abb-b72a-d6828ba9ce02",
+        "order": 20,
+        "question": {
+          "id": "2642765e-a7de-4abb-b72a-d6828ba9ce02",
+          "questionNumber": 45,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "If the sum of the roots of the equation (x - p)(2x - 1) = 0 is 1, find the value of p"
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "1 1/2"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "1/2"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "-3/2"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "-1 1/2"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "B",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "𝗘𝘅𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\n\nThis problem can be solved in two ways: by finding the roots directly from the factored form or by expanding the equation and using the formula for the sum of roots of a quadratic equation.\nMethod 1: Finding Roots Directly (Simpler)\nIdentify the roots: The equation (x - p)(2x - 1) = 0 is already factored. The roots are the values of x that make either factor equal to zero.\nRoot 1: x - p = 0 => x = p\nRoot 2: 2x - 1 = 0 => 2x = 1 => x = 1/2\nUse the given sum of roots:\nThe problem states that the sum of these two roots is 1.\n(Root 1) + (Root 2) = 1\np + 1/2 = 1\nSolve for p:\np = 1 - 1/2\np = 1/2\nMethod 2: Using the Sum of Roots Formula\nExpand the equation into standard quadratic form (ax² + bx + c = 0):\n(x - p)(2x - 1) = 2x² - x - 2px + p = 0\nGroup the x terms: 2x² - (1 + 2p)x + p = 0\nIdentify the coefficients a, b, and c:\na = 2\nb = -(1 + 2p)\nc = p\nApply the sum of roots formula (-b/a):\nSum of roots = -[-(1 + 2p)] / 2 = (1 + 2p) / 2\nSet the sum equal to 1 and solve for p:\n(1 + 2p) / 2 = 1\n1 + 2p = 2\n2p = 1\np = 1/2\n\n𝗪𝗵𝘆 𝗼𝘁𝗵𝗲𝗿 𝗼𝗽𝘁𝗶𝗼𝗻𝘀 𝗮𝗿𝗲 𝗶𝗻𝗰𝗼𝗿𝗿𝗲𝗰𝘁\nA) 1 1/2: If p = 3/2, the sum of roots would be 3/2 + 1/2 = 2, not 1.\nC) -3/2: If p = -3/2, the sum of roots would be -3/2 + 1/2 = -1, not 1.\nD) -1 1/2: This is the same as -3/2, leading to a sum of -1.\n\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\nRoots of an Equation: The values of the variable that make the equation true; also known as solutions.\nQuadratic Equation: An equation of the form ax² + bx + c = 0.\nSum of Roots: For a quadratic equation, the sum of its two roots is always equal to -b/a.\n\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘𝘅𝗮𝗺𝗽𝗹𝗲\nImagine a catapult launches a stone. The points where the stone is at ground level (height = 0) are the roots of a quadratic equation. If an engineer knows the flight path follows the equation (x - p)(2x - 1) = 0 and is told that the sum of the launch and landing points is 1 metre, they can use this information to calculate the unknown parameter p in their model, finding p = 1/2.\n\n𝗥𝗲𝗳𝗲𝗿𝗲𝗻𝗰𝗲𝘀\nPurplemath, \"Roots of a Quadratic\" - www.purplemath.com/modules/quadform.htm\nSparkNotes, \"Quadratic Equations: Sum and Product of Roots\" - www.sparknotes.com/math/algebra2/quadraticequations/section4/"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["Mathematics", "WAEC", "2010"],
+          "cognitiveLevel": null,
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 2010,
+          "createdAt": "2026-02-07T10:02:15.008Z",
+          "updatedAt": "2026-02-08T06:09:54.226Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "WAEC",
+            "subjectCode": "MAT"
+          },
+          "metadata": {
+            "tags": ["Mathematics", "WAEC", "2010"],
+            "marks": 1,
+            "status": "DRAFT",
+            "examType": "WAEC",
+            "examYear": "2010",
+            "difficulty": "MEDIUM",
+            "examPeriod": "MAY/JUNE"
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "WAEC",
+          "examYear": "2010",
+          "subjectCode": "MAT",
+          "subjectId": "d5167a52-726f-4943-932a-e2fe6e759e33",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": null,
+          "isBookmarked": false,
+          "isReported": false
+        }
+      }
     ]
+  }
 }
