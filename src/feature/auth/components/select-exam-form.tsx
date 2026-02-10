@@ -175,7 +175,7 @@ export const SelectExamForm = () => {
                             key={subject.id}
                             value={subject.id}
                             className={cn(
-                              "h-auto py-4 px-3 !rounded-sm border-2",
+                              "h-auto min-h-[56px] py-3 px-2 !rounded-sm border-2",
                               "flex items-center justify-center",
                               "text-xs font-medium text-center",
                               "transition-all duration-200",
@@ -187,7 +187,7 @@ export const SelectExamForm = () => {
                             )}
                             aria-label={subject.name}
                           >
-                            <span className="whitespace-nowrap">
+                            <span className="break-words text-center leading-tight">
                               {subject.name}
                             </span>
                           </ToggleGroupItem>
