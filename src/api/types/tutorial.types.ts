@@ -76,14 +76,22 @@ export interface TutorialChapter {
 
 export interface TutorialQuestionOption {
   id: string;
-  text: string;
+  content: RichContentBlock[];
   isCorrect?: boolean;
 }
 
 export interface TutorialQuestion {
   id: string;
-  questionText: string;
+  questionNumber: number;
+  questionType: "SINGLE_CHOICE" | "MULTIPLE_CHOICE";
+  questionText: RichContentBlock[];
+  instruction: string | null;
   options: TutorialQuestionOption[];
+  correctAnswer: string | null;
+  correctAnswers: string[];
+  explanation: {
+    solution: RichContentBlock[];
+  } | null;
 }
 
 export interface TutorialProgress {

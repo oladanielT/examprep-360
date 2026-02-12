@@ -1,16 +1,19 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useTutorial, useUpdateTutorialProgress, useSubmitTutorialQuestions, useMarkTutorialComplete, useToggleTutorialBookmark } from "@/feature/tutorials/hooks";
+import { useStartPractice } from "@/feature/exams/hooks";
 import { ArrowLeft, Play, CheckCircle, Warning, BookmarkSimple, Trophy } from "@phosphor-icons/react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Progress, ProgressIndicator, ProgressTrack } from "@/components/ui/progress";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
 import { cn, XP_PER_CORRECT_ANSWER } from "@/lib/utils";
 import { toast } from "sonner";
 import type { TutorialChapter, TutorialQuestion, TutorialQuizAnswer } from "@/api/types/tutorial.types";
+import type { SubmitTutorialQuestionsResponse } from "@/api/types/tutorial.types";
 import { RichContentRenderer } from "@/components/questions/RichContentRenderer";
 
 type ViewMode = "lessons" | "lesson-content" | "test";
@@ -183,7 +186,9 @@ function QuizQuestion({
   question,
   questionNumber,
   selectedAnswer,
+  selectedAnswers,
   onSelectAnswer,
+  onToggleAnswer,
   isSubmitted,
   onPrevious,
   onNext,
@@ -194,7 +199,9 @@ function QuizQuestion({
   question: TutorialQuestion;
   questionNumber: number;
   selectedAnswer: string | null;
+  selectedAnswers: string[];
   onSelectAnswer: (optionId: string) => void;
+  onToggleAnswer: (optionId: string) => void;
   isSubmitted: boolean;
   onPrevious: () => void;
   onNext: () => void;
@@ -202,58 +209,113 @@ function QuizQuestion({
   isFirst: boolean;
   isLast: boolean;
 }) {
-  const correctOption = question.options.find((o) => o.isCorrect);
-  const isCorrect = isSubmitted && selectedAnswer === correctOption?.id;
+  const isMultipleChoice = question.questionType === "MULTIPLE_CHOICE";
+
+  const isCorrect = isSubmitted && (
+    isMultipleChoice
+      ? question.correctAnswers.length === selectedAnswers.length &&
+        question.correctAnswers.every((a) => selectedAnswers.includes(a))
+      : selectedAnswer === question.correctAnswer
+  );
 
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="bg-gray-800 text-white p-3 sm:p-4 rounded-lg flex items-start sm:items-center gap-2">
-        <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs shrink-0 mt-0.5 sm:mt-0">i</div>
-        <p className="text-xs sm:text-sm">Choose the option that best conveys the meaning of the underlined portion in the following sentence:</p>
-      </div>
+      {question.instruction && (
+        <div className="bg-gray-800 text-white p-3 sm:p-4 rounded-lg flex items-start sm:items-center gap-2">
+          <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs shrink-0 mt-0.5 sm:mt-0">i</div>
+          <p className="text-xs sm:text-sm">{question.instruction}</p>
+        </div>
+      )}
 
       {/* Question Card */}
       <Card className="p-4 sm:p-6">
         <p className="text-sm text-gray-500 mb-2">Question {questionNumber}</p>
-        <p className="text-base sm:text-lg font-medium mb-4 sm:mb-6">{question.questionText}</p>
+        <div className="text-base sm:text-lg font-medium mb-4 sm:mb-6">
+          <RichContentRenderer content={question.questionText} />
+        </div>
 
-        {/* Options */}
-        <RadioGroup
-          value={selectedAnswer || ""}
-          onValueChange={(value: unknown) => onSelectAnswer(value as string)}
-          className="space-y-3"
-        >
-          {question.options.map((option) => {
-            const isSelected = selectedAnswer === option.id;
-            const showCorrect = isSubmitted && option.isCorrect;
-            const showWrong = isSubmitted && isSelected && !option.isCorrect;
+        {/* Options - Single Choice */}
+        {!isMultipleChoice && (
+          <RadioGroup
+            value={selectedAnswer || ""}
+            onValueChange={(value: unknown) => onSelectAnswer(value as string)}
+            className="space-y-3"
+          >
+            {question.options.map((option) => {
+              const isSelected = selectedAnswer === option.id;
+              const showCorrect = isSubmitted && option.id === question.correctAnswer;
+              const showWrong = isSubmitted && isSelected && option.id !== question.correctAnswer;
 
-            return (
-              <label
-                key={option.id}
-                className={cn(
-                  "flex items-center gap-3 p-3 sm:p-4 rounded-lg border cursor-pointer transition-colors",
-                  !isSubmitted && "hover:bg-gray-50",
-                  isSelected && !isSubmitted && "border-[#F04F54] bg-red-50",
-                  showCorrect && "border-green-500 bg-green-50",
-                  showWrong && "border-red-500 bg-red-50"
-                )}
-              >
-                <RadioGroupItem value={option.id} disabled={isSubmitted} />
-                <span className="text-sm sm:text-base">{option.text}</span>
-              </label>
-            );
-          })}
-        </RadioGroup>
+              return (
+                <label
+                  key={option.id}
+                  className={cn(
+                    "flex items-center gap-3 p-3 sm:p-4 rounded-lg border cursor-pointer transition-colors",
+                    !isSubmitted && "hover:bg-gray-50",
+                    isSelected && !isSubmitted && "border-[#F04F54] bg-red-50",
+                    showCorrect && "border-green-500 bg-green-50",
+                    showWrong && "border-red-500 bg-red-50"
+                  )}
+                >
+                  <RadioGroupItem value={option.id} disabled={isSubmitted} />
+                  <span className="text-sm sm:text-base flex-1">
+                    <RichContentRenderer content={option.content} />
+                  </span>
+                </label>
+              );
+            })}
+          </RadioGroup>
+        )}
+
+        {/* Options - Multiple Choice */}
+        {isMultipleChoice && (
+          <div className="space-y-3">
+            {question.options.map((option) => {
+              const isSelected = selectedAnswers.includes(option.id);
+              const showCorrect = isSubmitted && question.correctAnswers.includes(option.id);
+              const showWrong = isSubmitted && isSelected && !question.correctAnswers.includes(option.id);
+
+              return (
+                <label
+                  key={option.id}
+                  className={cn(
+                    "flex items-center gap-3 p-3 sm:p-4 rounded-lg border cursor-pointer transition-colors",
+                    !isSubmitted && "hover:bg-gray-50",
+                    isSelected && !isSubmitted && "border-[#F04F54] bg-red-50",
+                    showCorrect && "border-green-500 bg-green-50",
+                    showWrong && "border-red-500 bg-red-50"
+                  )}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (!isSubmitted) onToggleAnswer(option.id);
+                  }}
+                >
+                  <Checkbox
+                    checked={isSelected}
+                    disabled={isSubmitted}
+                    onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                  />
+                  <span className="text-sm sm:text-base flex-1">
+                    <RichContentRenderer content={option.content} />
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        )}
 
         {/* Explanation (shown after submit) */}
         {isSubmitted && (
           <div className="mt-4 sm:mt-6 space-y-4">
-            <div className="bg-teal-600 text-white p-3 sm:p-4 rounded-lg">
-              <p className="text-xs uppercase tracking-wide mb-1">Explanation</p>
-              <p className="text-sm">The correct answer demonstrates the intended meaning based on the context.</p>
-            </div>
+            {question.explanation?.solution && (
+              <div className="bg-teal-600 text-white p-3 sm:p-4 rounded-lg">
+                <p className="text-xs uppercase tracking-wide mb-1">Explanation</p>
+                <div className="text-sm">
+                  <RichContentRenderer content={question.explanation.solution} />
+                </div>
+              </div>
+            )}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {isCorrect ? (
@@ -305,11 +367,13 @@ function QuizQuestion({
 
 function TutorialDetailPage() {
   const { tutorialId } = Route.useParams();
+  const navigate = useNavigate();
   const { data: tutorial, isLoading, error } = useTutorial(tutorialId);
   const updateProgress = useUpdateTutorialProgress();
   const submitQuestions = useSubmitTutorialQuestions();
   const markComplete = useMarkTutorialComplete();
   const toggleBookmark = useToggleTutorialBookmark();
+  const startPractice = useStartPractice();
 
   const [activeTab, setActiveTab] = useState<"lessons" | "test">("lessons");
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -322,7 +386,9 @@ function TutorialDetailPage() {
   // Quiz state
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [multiAnswers, setMultiAnswers] = useState<Record<string, string[]>>({});
   const [submittedQuestions, setSubmittedQuestions] = useState<Set<number>>(new Set());
+  const [quizResults, setQuizResults] = useState<SubmitTutorialQuestionsResponse | null>(null);
 
   // Initialize state from tutorial data
   useEffect(() => {
@@ -426,6 +492,18 @@ function TutorialDetailPage() {
   const handleAnswerSelect = (optionId: string) => {
     const question = questions[currentQuestionIndex];
     setAnswers((prev) => ({ ...prev, [question.id]: optionId }));
+    setSubmittedQuestions((prev) => new Set([...prev, currentQuestionIndex]));
+  };
+
+  const handleToggleAnswer = (optionId: string) => {
+    const question = questions[currentQuestionIndex];
+    setMultiAnswers((prev) => {
+      const current = prev[question.id] || [];
+      const updated = current.includes(optionId)
+        ? current.filter((id) => id !== optionId)
+        : [...current, optionId];
+      return { ...prev, [question.id]: updated };
+    });
     setSubmittedQuestions((prev) => new Set([...prev, currentQuestionIndex]));
   };
 
@@ -567,7 +645,7 @@ function TutorialDetailPage() {
             {/* Teacher Info */}
             <div className="flex items-center gap-3 pt-4 border-t">
               <Avatar className="w-10 h-10">
-                <img src="/img/teacher.png" alt="Teacher" />
+                <AvatarFallback>AT</AvatarFallback>
               </Avatar>
               <div>
                 <p className="font-medium text-sm">Audrey Teacher</p>
@@ -612,20 +690,27 @@ function TutorialDetailPage() {
               question={questions[currentQuestionIndex]}
               questionNumber={currentQuestionIndex + 1}
               selectedAnswer={answers[questions[currentQuestionIndex].id] || null}
+              selectedAnswers={multiAnswers[questions[currentQuestionIndex].id] || []}
               onSelectAnswer={handleAnswerSelect}
+              onToggleAnswer={handleToggleAnswer}
               isSubmitted={submittedQuestions.has(currentQuestionIndex)}
               onPrevious={() => setCurrentQuestionIndex((i) => Math.max(0, i - 1))}
               onNext={() => {
                 if (currentQuestionIndex < questions.length - 1) {
                   setCurrentQuestionIndex((i) => i + 1);
                 } else {
-                  const answersList: TutorialQuizAnswer[] = Object.entries(answers).map(
-                    ([questionId, answer]) => ({ questionId, answer })
-                  );
+                  // Build answers list: for multi-choice, join selected IDs with comma
+                  const answersList: TutorialQuizAnswer[] = questions.map((q) => ({
+                    questionId: q.id,
+                    answer: q.questionType === "MULTIPLE_CHOICE"
+                      ? (multiAnswers[q.id] || []).sort().join(",")
+                      : (answers[q.id] || ""),
+                  }));
                   submitQuestions.mutate(
                     { id: tutorialId, answers: { answers: answersList } },
                     {
-                      onSuccess: () => {
+                      onSuccess: (data) => {
+                        setQuizResults(data);
                         toast.success("Quiz submitted successfully!");
                         handleMarkComplete();
                       },
@@ -679,20 +764,63 @@ function TutorialDetailPage() {
             </div>
             <DialogTitle className="text-xl">Congratulations!</DialogTitle>
             <DialogDescription className="text-base">
-              You have successfully completed this tutorial. Keep up the great work!
+              You completed {tutorial.name}
             </DialogDescription>
           </DialogHeader>
-          <div className="flex gap-3">
+
+          {/* Quiz Results */}
+          {quizResults && (
+            <div className="bg-gray-50 rounded-lg p-4 text-left space-y-1">
+              <p className="text-sm font-medium">
+                Score: {quizResults.correctCount}/{quizResults.totalCount} ({quizResults.score}%)
+              </p>
+              <p className="text-sm text-green-600 font-medium">
+                XP Earned: +{quizResults.xpEarned} XP
+              </p>
+            </div>
+          )}
+
+          {/* Practice Prompt */}
+          <div className="text-sm text-gray-600">
+            <p>Ready to test your knowledge?</p>
+            <p>Practice {tutorial.subject?.name || "related"} questions to reinforce what you learned.</p>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Button
+              className="w-full bg-[#F04F54] hover:bg-[#F04F54]/90"
+              disabled={startPractice.isPending}
+              onClick={() => {
+                startPractice.mutate(
+                  {
+                    subjectId: tutorial.subjectId,
+                    topicIds: tutorial.topicId ? [tutorial.topicId] : undefined,
+                  },
+                  {
+                    onSuccess: (data) => {
+                      navigate({ to: "/exam/$attemptId", params: { attemptId: data.id } });
+                    },
+                    onError: (error: any) => {
+                      const message = error?.response?.data?.message || error?.message || "Failed to start practice.";
+                      toast.error(message);
+                    },
+                  }
+                );
+              }}
+            >
+              {startPractice.isPending ? "Starting..." : "Practice Now"}
+            </Button>
             <Button
               variant="outline"
-              className="flex-1"
+              className="w-full"
               onClick={() => setShowCompletionModal(false)}
             >
-              Stay Here
+              Maybe Later
             </Button>
-            <Link to="/tutorials" className="flex-1">
+            <Link to="/tutorials" className="w-full">
               <Button
-                className="w-full bg-[#F04F54] hover:bg-[#F04F54]/90"
+                variant="ghost"
+                className="w-full text-gray-500"
               >
                 Back to Tutorials
               </Button>
