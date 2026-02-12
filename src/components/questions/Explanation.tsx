@@ -21,9 +21,75 @@ interface ParsedSection {
   body: string;
 }
 
+/**
+ * Normalize Unicode mathematical bold characters to **markdown bold**.
+ * Chemistry explanations use chars like 𝗘𝘅𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻 (Math Sans-Serif Bold)
+ * instead of **Explanation**. This converts them so the section parser works.
+ * Has zero effect on text that already uses **markdown bold** or has no bold chars.
+ */
+function normalizeUnicodeBold(text: string): string {
+  const chars = [...text]; // Correctly handles surrogate pairs (chars above U+FFFF)
+
+  function toBoldAscii(cp: number): string | null {
+    // Mathematical Sans-Serif Bold A-Z / a-z
+    if (cp >= 0x1d5d4 && cp <= 0x1d5ed) return String.fromCharCode(65 + (cp - 0x1d5d4));
+    if (cp >= 0x1d5ee && cp <= 0x1d607) return String.fromCharCode(97 + (cp - 0x1d5ee));
+    // Mathematical Bold A-Z / a-z
+    if (cp >= 0x1d400 && cp <= 0x1d419) return String.fromCharCode(65 + (cp - 0x1d400));
+    if (cp >= 0x1d41a && cp <= 0x1d433) return String.fromCharCode(97 + (cp - 0x1d41a));
+    // Mathematical Bold Italic A-Z / a-z
+    if (cp >= 0x1d468 && cp <= 0x1d481) return String.fromCharCode(65 + (cp - 0x1d468));
+    if (cp >= 0x1d482 && cp <= 0x1d49b) return String.fromCharCode(97 + (cp - 0x1d482));
+    return null;
+  }
+
+  let result = "";
+  let boldRun = "";
+  let inBold = false;
+
+  for (let i = 0; i < chars.length; i++) {
+    const cp = chars[i].codePointAt(0)!;
+    const mapped = toBoldAscii(cp);
+
+    if (mapped) {
+      if (!inBold) inBold = true;
+      boldRun += mapped;
+    } else if (inBold && chars[i] === " ") {
+      // Peek ahead: if next char is also bold, keep the space in the run
+      const nextCp = i + 1 < chars.length ? chars[i + 1].codePointAt(0)! : 0;
+      if (toBoldAscii(nextCp)) {
+        boldRun += " ";
+      } else {
+        result += "**" + boldRun.trim() + "**";
+        boldRun = "";
+        inBold = false;
+        result += chars[i];
+      }
+    } else {
+      if (inBold) {
+        result += "**" + boldRun.trim() + "**";
+        boldRun = "";
+        inBold = false;
+      }
+      result += chars[i];
+    }
+  }
+
+  if (inBold && boldRun) {
+    result += "**" + boldRun.trim() + "**";
+  }
+
+  return result;
+}
+
 // Patterns that mark the start of a new section in the solution text.
 // Order matters: first match wins, so more specific patterns come first.
 const SECTION_PATTERNS: { pattern: RegExp; type: ParsedSection["type"]; title: string }[] = [
+  {
+    pattern: /\*\*\s*Explanation\s*\*\*/i,
+    type: "main",
+    title: "Explanation",
+  },
   {
     pattern: /\*\*\s*Why\s+other\s+options?\s+(?:are\s+)?incorrect\s*\*\*/i,
     type: "why-incorrect",
@@ -75,13 +141,15 @@ const SECTION_PATTERNS: { pattern: RegExp; type: ParsedSection["type"]; title: s
  * Extract the full plain text from solution blocks, preserving newlines.
  */
 function extractSolutionText(solution: RichContentBlock[]): string {
-  return solution
+  const raw = solution
     .map((block) => {
       if (block.type === "text") return block.value;
       if (block.type === "markdown") return block.content;
       return "";
     })
     .join("\n");
+  // Normalize Unicode bold headers (chemistry format) → **markdown bold**
+  return normalizeUnicodeBold(raw);
 }
 
 /**
@@ -161,7 +229,7 @@ function SectionRenderer({ section }: { section: ParsedSection }) {
       return (
         <div className="space-y-3">
           <h3 className="text-lg font-semibold text-gray-900">{section.title}</h3>
-          <div className="prose prose-sm max-w-none">
+          <div className="prose prose-sm max-w-none whitespace-pre-wrap">
             <RichContentRenderer content={bodyToBlocks(section.body)} />
           </div>
         </div>
@@ -172,7 +240,7 @@ function SectionRenderer({ section }: { section: ParsedSection }) {
         <div className="space-y-3">
           <h3 className="text-lg font-semibold text-gray-900">{section.title}</h3>
           <div className="rounded-lg border border-orange-200 bg-orange-50 p-4">
-            <div className="prose prose-sm max-w-none text-gray-700">
+            <div className="prose prose-sm max-w-none whitespace-pre-wrap text-gray-700">
               <RichContentRenderer content={bodyToBlocks(section.body)} />
             </div>
           </div>
@@ -184,7 +252,7 @@ function SectionRenderer({ section }: { section: ParsedSection }) {
         <div className="space-y-3">
           <h3 className="text-lg font-semibold text-gray-900">{section.title}</h3>
           <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-            <div className="prose prose-sm max-w-none text-gray-700">
+            <div className="prose prose-sm max-w-none whitespace-pre-wrap text-gray-700">
               <RichContentRenderer content={bodyToBlocks(section.body)} />
             </div>
           </div>
@@ -196,7 +264,7 @@ function SectionRenderer({ section }: { section: ParsedSection }) {
         <div className="space-y-3">
           <h3 className="text-lg font-semibold text-gray-900">{section.title}</h3>
           <div className="rounded-lg border-l-4 border-green-400 bg-green-50 p-4">
-            <div className="prose prose-sm max-w-none text-gray-700">
+            <div className="prose prose-sm max-w-none whitespace-pre-wrap text-gray-700">
               <RichContentRenderer content={bodyToBlocks(section.body)} />
             </div>
           </div>
@@ -208,7 +276,7 @@ function SectionRenderer({ section }: { section: ParsedSection }) {
         <div className="space-y-3">
           <h3 className="text-lg font-semibold text-gray-900">{section.title}</h3>
           <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-            <div className="prose prose-sm max-w-none text-gray-600">
+            <div className="prose prose-sm max-w-none whitespace-pre-wrap text-gray-600">
               <RichContentRenderer content={bodyToBlocks(section.body)} />
             </div>
           </div>
@@ -220,7 +288,7 @@ function SectionRenderer({ section }: { section: ParsedSection }) {
         <div className="space-y-3">
           <h3 className="text-lg font-semibold text-gray-900">{section.title}</h3>
           <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-            <div className="prose prose-sm max-w-none text-gray-700">
+            <div className="prose prose-sm max-w-none whitespace-pre-wrap text-gray-700">
               <RichContentRenderer content={bodyToBlocks(section.body)} />
             </div>
           </div>
@@ -232,7 +300,7 @@ function SectionRenderer({ section }: { section: ParsedSection }) {
         <div className="space-y-3">
           <h3 className="text-lg font-semibold text-gray-900">{section.title}</h3>
           <div className="rounded-lg border border-purple-200 bg-purple-50 p-4">
-            <div className="prose prose-sm max-w-none text-gray-700">
+            <div className="prose prose-sm max-w-none whitespace-pre-wrap text-gray-700">
               <RichContentRenderer content={bodyToBlocks(section.body)} />
             </div>
           </div>
@@ -243,7 +311,7 @@ function SectionRenderer({ section }: { section: ParsedSection }) {
       return (
         <div className="space-y-3">
           <h3 className="text-lg font-semibold text-gray-900">{section.title}</h3>
-          <div className="prose prose-sm max-w-none">
+          <div className="prose prose-sm max-w-none whitespace-pre-wrap">
             <RichContentRenderer content={bodyToBlocks(section.body)} />
           </div>
         </div>
@@ -290,7 +358,7 @@ export function Explanation({ explanation }: ExplanationProps) {
       {explanation.solution && explanation.solution.length > 0 && (
         <div className="space-y-3">
           <h3 className="text-lg font-semibold text-gray-900">Explanation</h3>
-          <div className="prose prose-sm max-w-none">
+          <div className="prose prose-sm max-w-none whitespace-pre-wrap">
             <RichContentRenderer content={explanation.solution} />
           </div>
         </div>

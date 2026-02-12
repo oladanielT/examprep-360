@@ -249,17 +249,54 @@ function ImageBlockRenderer({ block }: { block: ImageBlock }) {
 }
 
 function AudioBlockRenderer({ block }: { block: AudioBlock }) {
+  let src = block.url ?? "";
+
+  // Handle API shape where audio data arrives as a JSON string in `value`
+  if (!src) {
+    const rawValue = (block as unknown as { value?: string }).value;
+    if (rawValue) {
+      try {
+        const parsed = JSON.parse(rawValue);
+        src = parsed.src || parsed.url || rawValue;
+      } catch {
+        src = rawValue;
+      }
+    }
+  }
+
+  if (!src) return null;
+
   return (
     <audio controls className="w-full my-2">
-      <source src={block.url ?? ""} />
+      <source src={src} />
       Your browser does not support the audio element.
     </audio>
   );
 }
 
 function VideoBlockRenderer({ block }: { block: VideoBlock }) {
+  let url = block.url ?? "";
+  let title = "";
+
+  // Handle API shape where video data arrives as a JSON string in `value`
+  // e.g. { type: "video", value: '{"src":"https://...","title":"..."}' }
+  if (!url) {
+    const rawValue = (block as unknown as { value?: string }).value;
+    if (rawValue) {
+      try {
+        const parsed = JSON.parse(rawValue);
+        url = parsed.src || parsed.url || rawValue;
+        title = parsed.title || "";
+      } catch {
+        // value is not JSON — use it as a raw URL
+        url = rawValue;
+      }
+    }
+  }
+
+  if (!url) return null;
+
   // Check if it's a YouTube link
-  const url = block.url ?? "";
   const isYouTube = url.includes("youtube.com") || url.includes("youtu.be");
 
   if (isYouTube) {
@@ -277,17 +314,20 @@ function VideoBlockRenderer({ block }: { block: VideoBlock }) {
           src={`https://www.youtube.com/embed/${videoId}`}
           className="w-full h-full rounded-lg"
           allowFullScreen
-          title="Video content"
+          title={title || "Video content"}
         />
       </div>
     );
   }
 
   return (
-    <video controls className="w-full rounded-lg my-2">
-      <source src={url} type="video/mp4" />
-      Your browser does not support the video tag.
-    </video>
+    <div className="my-2">
+      <video controls className="w-full rounded-lg" playsInline preload="metadata">
+        <source src={url} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      {title && <p className="text-sm text-gray-500 mt-1">{title}</p>}
+    </div>
   );
 }
 

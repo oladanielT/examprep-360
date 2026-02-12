@@ -95,20 +95,55 @@ function ChapterContent({
       <h2 className="text-lg sm:text-xl font-semibold">{chapter.name}</h2>
 
       {/* Video Player */}
-      {videoData && (
-        <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
-          <video
-            src={videoData.src}
-            controls
-            className="w-full h-full"
-          >
-            Your browser does not support the video tag.
-          </video>
-          {videoData.title && (
-            <p className="text-sm text-gray-500 mt-2">{videoData.title}</p>
-          )}
-        </div>
-      )}
+      {videoData && (() => {
+        const isYouTube = videoData.src.includes("youtube.com") || videoData.src.includes("youtu.be");
+
+        if (isYouTube) {
+          let videoId = "";
+          if (videoData.src.includes("youtu.be/")) {
+            videoId = videoData.src.split("youtu.be/")[1]?.split("?")[0] || "";
+          } else if (videoData.src.includes("v=")) {
+            videoId = videoData.src.split("v=")[1]?.split("&")[0] || "";
+          }
+
+          return (
+            <div>
+              <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
+                <iframe
+                  src={`https://www.youtube.com/embed/${videoId}`}
+                  className="w-full h-full"
+                  allowFullScreen
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  title={videoData.title || "Video content"}
+                />
+              </div>
+              {videoData.title && (
+                <p className="text-sm text-gray-500 mt-2">{videoData.title}</p>
+              )}
+            </div>
+          );
+        }
+
+        return (
+          <div>
+            <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
+              <video
+                src={videoData.src}
+                controls
+                playsInline
+                preload="metadata"
+                className="w-full h-full"
+              >
+                <source src={videoData.src} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+            {videoData.title && (
+              <p className="text-sm text-gray-500 mt-2">{videoData.title}</p>
+            )}
+          </div>
+        );
+      })()}
 
       {/* No video placeholder */}
       {!videoData && !hasTextContent && (
