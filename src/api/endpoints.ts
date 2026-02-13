@@ -101,6 +101,7 @@ export const PAYMENT_ENDPOINTS = {
   REDEEM_LICENSE: "/payment/redeem-license",
   START_TRIAL: "/payment/trial",
   INSTITUTIONAL_CODES: "/payment/institutional-codes",
+  CHANGE_SUBJECTS: (id: string) => `/payment/subscriptions/${id}/subjects`,
 } as const;
 
 // Referral endpoints

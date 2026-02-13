@@ -1,3 +1,8 @@
+export interface ChangeSubscriptionSubjectsRequest {
+  subjects: string[];
+  courses: string[];
+}
+
 export interface UserSubscription {
   id: string;
   studentId: string;

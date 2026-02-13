@@ -1,12 +1,14 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Loader2, Trash2, ArrowRightLeft, Plus } from "lucide-react";
+import { Loader2, Trash2, ArrowRightLeft, Plus, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import {
   useSubscriptions,
   useDeleteSubscription,
   useSwitchSubscription,
+  useChangeSubscriptionSubjects,
 } from "./hooks/useSubscription";
-import { useExamPreferences } from "@/feature/exams/hooks";
+import { useExamPreferences, useExamSubjects } from "@/feature/exams/hooks";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,12 +20,31 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { cn } from "@/lib/utils";
+import type { UserSubscription } from "@/api/types";
 
 export const SubscriptionSection = () => {
   const { data: subscriptions, isLoading } = useSubscriptions();
   const { data: preferences } = useExamPreferences();
   const deleteMutation = useDeleteSubscription();
   const switchMutation = useSwitchSubscription();
+  const changeSubjects = useChangeSubscriptionSubjects();
+
+  const [editingSubscription, setEditingSubscription] =
+    useState<UserSubscription | null>(null);
+  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
+
+  const { data: availableSubjects, isLoading: isLoadingSubjects } =
+    useExamSubjects(editingSubscription?.examType ?? "");
 
   // The focused subscription matches the current exam preferences
   const isFocused = (sub: { examType: string; examTypeId: string }) =>
@@ -49,6 +70,31 @@ export const SubscriptionSection = () => {
           error.response?.data?.message || "Failed to switch subscription"
         ),
     });
+  };
+
+  const handleEditSubjects = (sub: UserSubscription) => {
+    setEditingSubscription(sub);
+    setSelectedSubjects(sub.subjects);
+  };
+
+  const handleSaveSubjects = () => {
+    if (!editingSubscription) return;
+    changeSubjects.mutate(
+      {
+        id: editingSubscription.id,
+        request: { subjects: selectedSubjects, courses: [] },
+      },
+      {
+        onSuccess: () => {
+          toast.success("Subjects updated successfully");
+          setEditingSubscription(null);
+        },
+        onError: (error) =>
+          toast.error(
+            error.response?.data?.message || "Failed to update subjects"
+          ),
+      }
+    );
   };
 
   if (isLoading) {
@@ -132,6 +178,15 @@ export const SubscriptionSection = () => {
                     Switch
                   </button>
                 ) : null}
+                {sub.status === "ACTIVE" && (
+                  <button
+                    onClick={() => handleEditSubjects(sub)}
+                    className="inline-flex items-center gap-1 h-8 px-3 text-xs font-medium rounded-4xl border border-border bg-input/30 hover:bg-input/50 transition-colors"
+                  >
+                    <Pencil className="h-3 w-3" />
+                    Edit Subjects
+                  </button>
+                )}
                 <AlertDialog>
                   <AlertDialogTrigger
                     disabled={deleteMutation.isPending}
@@ -164,6 +219,101 @@ export const SubscriptionSection = () => {
           ))}
         </div>
       )}
+
+      {/* Edit Subjects Dialog */}
+      <Dialog
+        open={editingSubscription !== null}
+        onOpenChange={(open) => {
+          if (!open) setEditingSubscription(null);
+        }}
+      >
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Edit Subjects</DialogTitle>
+            <DialogDescription>
+              {editingSubscription?.examType}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="py-4">
+            {isLoadingSubjects ? (
+              <div className="flex items-center gap-2 py-4">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span className="text-gray-500 text-sm">
+                  Loading subjects...
+                </span>
+              </div>
+            ) : availableSubjects && availableSubjects.length > 0 ? (
+              <>
+                <ToggleGroup
+                  multiple
+                  value={selectedSubjects}
+                  onValueChange={(value) => {
+                    if (value.length <= 9) setSelectedSubjects(value);
+                  }}
+                  className="flex flex-wrap gap-2 sm:gap-3"
+                >
+                  {availableSubjects.map((subject) => {
+                    const isSelected = selectedSubjects.includes(subject.id);
+                    const atLimit =
+                      selectedSubjects.length >= 9 && !isSelected;
+                    return (
+                      <ToggleGroupItem
+                        key={subject.id}
+                        value={subject.id}
+                        disabled={atLimit}
+                        className={cn(
+                          "h-auto py-3 sm:py-4 px-3 sm:px-4 rounded-sm! border-2",
+                          "inline-flex items-center justify-center shrink-0",
+                          "text-[11px] sm:text-xs font-medium text-center whitespace-nowrap",
+                          "transition-all duration-200",
+                          "hover:border-accent hover:bg-accent/5",
+                          "data-[state=on]:border-accent/70 data-[state=on]:bg-transparent data-[state=on]:text-black",
+                          isSelected
+                            ? "border-accent"
+                            : "border-[#E5E5E5] text-black",
+                          atLimit && "opacity-50 cursor-not-allowed"
+                        )}
+                        aria-label={subject.name}
+                      >
+                        {subject.name}
+                      </ToggleGroupItem>
+                    );
+                  })}
+                </ToggleGroup>
+                <div className="mt-3 text-xs text-[#6B7280]">
+                  Selected: {selectedSubjects.length}/9
+                </div>
+              </>
+            ) : (
+              <p className="text-sm text-gray-500 py-4">
+                No subjects available for this exam type
+              </p>
+            )}
+          </div>
+
+          <DialogFooter>
+            <button
+              onClick={() => setEditingSubscription(null)}
+              className="px-4 py-2 text-sm font-medium rounded-4xl border border-border hover:bg-input/50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSaveSubjects}
+              disabled={
+                changeSubjects.isPending || selectedSubjects.length === 0
+              }
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-4xl bg-accent text-white hover:bg-accent/80 transition-colors disabled:opacity-50"
+            >
+              {changeSubjects.isPending && (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              )}
+              Save
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };

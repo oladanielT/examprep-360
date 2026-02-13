@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/api/client";
-import { EXAM_SELECTION_ENDPOINTS } from "@/api/endpoints";
-import type { UserSubscription } from "@/api/types";
+import { EXAM_SELECTION_ENDPOINTS, PAYMENT_ENDPOINTS } from "@/api/endpoints";
+import type { UserSubscription, ChangeSubscriptionSubjectsRequest } from "@/api/types";
 import type { AxiosError } from "axios";
 
 interface ApiError {
@@ -44,6 +44,24 @@ export const useSwitchSubscription = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["subscriptions"] });
       queryClient.invalidateQueries({ queryKey: ["profile"] });
+      queryClient.invalidateQueries({ queryKey: ["examPreferences"] });
+    },
+  });
+};
+
+export const useChangeSubscriptionSubjects = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    void,
+    AxiosError<ApiError>,
+    { id: string; request: ChangeSubscriptionSubjectsRequest }
+  >({
+    mutationFn: async ({ id, request }) => {
+      await apiClient.patch(PAYMENT_ENDPOINTS.CHANGE_SUBJECTS(id), request);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["subscriptions"] });
       queryClient.invalidateQueries({ queryKey: ["examPreferences"] });
     },
   });
