@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Bell, Settings, LogOut, User, Menu, X } from "lucide-react";
+import { Bell, Settings, LogOut, User, Menu, X, CreditCard } from "lucide-react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useAuthStore } from "@/stores/authStore";
 import { useLogout } from "@/feature/auth/hooks";
@@ -55,6 +55,7 @@ export default function Nav() {
     { url: "/tutorials", title: "Tutorials" },
     { url: "/activities", title: "Activities" },
     { url: "/leaderboard", title: "Leaderboard" },
+    { url: "/subscription", title: "Subscription" },
   ];
 
   return (
@@ -121,6 +122,13 @@ export default function Nav() {
                   <User className="mr-2 h-4 w-4" />
                   Profile
                 </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => navigate({ to: "/subscription" })}
+                  className="cursor-pointer"
+                >
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Manage Subscription
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={handleLogout}
@@ -157,6 +165,13 @@ export default function Nav() {
               >
                 <User className="mr-2 h-4 w-4" />
                 Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => navigate({ to: "/subscription" })}
+                className="cursor-pointer"
+              >
+                <CreditCard className="mr-2 h-4 w-4" />
+                Manage Subscription
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => navigate({ to: "/settings" })}

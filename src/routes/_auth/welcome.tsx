@@ -5,6 +5,23 @@ import { useRegistrationStore } from "@/stores/registrationStore";
 import { useExamCategories } from "@/feature/exams/hooks";
 import { Loader2, ChevronRight } from "lucide-react";
 
+const CATEGORY_EXAMPLES: Record<string, string> = {
+  "primary": "e.g. Common Entrance",
+  "o'level": "e.g. WAEC, NECO",
+  "a'level": "e.g. IJMB, JUPEB",
+  "post-jamb": "e.g. University Post-UTME",
+  "university": "e.g. Course Exams",
+  "professional": "e.g. ICAN, CIPM",
+};
+
+function getCategoryExample(label: string): string | undefined {
+  const lower = label.toLowerCase();
+  for (const [key, value] of Object.entries(CATEGORY_EXAMPLES)) {
+    if (lower.includes(key)) return value;
+  }
+  return undefined;
+}
+
 function Welcome() {
   const navigate = useNavigate();
   const { setUserType } = useRegistrationStore();
@@ -58,9 +75,16 @@ function Welcome() {
                 onClick={() => handleSelect(category)}
                 className="group relative flex items-center justify-between p-4 rounded-xl border border-gray-200 bg-white hover:border-warning hover:bg-warning/5 transition-all duration-200 text-left"
               >
-                <span className="text-sm font-medium text-[#101828] group-hover:text-[#101828] pr-2">
-                  {category.label}
-                </span>
+                <div className="pr-2">
+                  <span className="text-sm font-medium text-[#101828] group-hover:text-[#101828]">
+                    {category.label}
+                  </span>
+                  {getCategoryExample(category.label) && (
+                    <span className="block text-xs text-gray-400 mt-0.5">
+                      {getCategoryExample(category.label)}
+                    </span>
+                  )}
+                </div>
                 <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-warning shrink-0" />
               </button>
             ))}

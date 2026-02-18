@@ -46,6 +46,7 @@ function ExamPage() {
   const currentAttempt = useExamStore((state) => state.currentAttempt);
   const questions = useExamStore((state) => state.questions);
   const currentQuestionIndex = useExamStore((state) => state.currentQuestionIndex);
+  const responses = useExamStore((state) => state.responses);
   const timeRemaining = useExamStore((state) => state.timeRemaining);
   const timerRunning = useExamStore((state) => state.timerRunning);
 
@@ -106,6 +107,18 @@ function ExamPage() {
     });
     return answered;
   }, [answers, questions]);
+
+  // Correct questions tracking (from submitted responses)
+  const correctQuestions = useMemo(() => {
+    const correct = new Set<number>();
+    questions.forEach((q, index) => {
+      const response = responses.get(q.id);
+      if (response?.isCorrect) {
+        correct.add(index);
+      }
+    });
+    return correct;
+  }, [responses, questions]);
 
   // Reset question timer when question changes
   useEffect(() => {
@@ -463,6 +476,7 @@ function ExamPage() {
                 .map((q, idx) => (submittedQuestions.has(q.id) ? idx : -1))
                 .filter((idx) => idx !== -1)
             )}
+            correctQuestions={correctQuestions}
             timeRemaining={timeRemaining || 0}
             isPaused={!timerRunning}
             isBookmarked={currentQuestion ? bookmarkedQuestions.has(currentQuestion.id) : false}

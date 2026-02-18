@@ -189,7 +189,9 @@ function QuizQuestion({
   selectedAnswers,
   onSelectAnswer,
   onToggleAnswer,
+  onSubmitAnswer,
   isSubmitted,
+  hasAnswer,
   onPrevious,
   onNext,
   onReport,
@@ -202,7 +204,9 @@ function QuizQuestion({
   selectedAnswers: string[];
   onSelectAnswer: (optionId: string) => void;
   onToggleAnswer: (optionId: string) => void;
+  onSubmitAnswer: () => void;
   isSubmitted: boolean;
+  hasAnswer: boolean;
   onPrevious: () => void;
   onNext: () => void;
   onReport: () => void;
@@ -239,7 +243,9 @@ function QuizQuestion({
         {!isMultipleChoice && (
           <RadioGroup
             value={selectedAnswer || ""}
-            onValueChange={(value: unknown) => onSelectAnswer(value as string)}
+            onValueChange={(value: unknown) => {
+              if (!isSubmitted) onSelectAnswer(value as string);
+            }}
             className="space-y-3"
           >
             {question.options.map((option) => {
@@ -253,7 +259,7 @@ function QuizQuestion({
                   className={cn(
                     "flex items-center gap-3 p-3 sm:p-4 rounded-lg border cursor-pointer transition-colors",
                     !isSubmitted && "hover:bg-gray-50",
-                    isSelected && !isSubmitted && "border-[#F04F54] bg-red-50",
+                    isSelected && !isSubmitted && "border-blue-500 bg-blue-50",
                     showCorrect && "border-green-500 bg-green-50",
                     showWrong && "border-red-500 bg-red-50"
                   )}
@@ -282,7 +288,7 @@ function QuizQuestion({
                   className={cn(
                     "flex items-center gap-3 p-3 sm:p-4 rounded-lg border cursor-pointer transition-colors",
                     !isSubmitted && "hover:bg-gray-50",
-                    isSelected && !isSubmitted && "border-[#F04F54] bg-red-50",
+                    isSelected && !isSubmitted && "border-blue-500 bg-blue-50",
                     showCorrect && "border-green-500 bg-green-50",
                     showWrong && "border-red-500 bg-red-50"
                   )}
@@ -303,6 +309,17 @@ function QuizQuestion({
               );
             })}
           </div>
+        )}
+
+        {/* Submit Answer Button */}
+        {!isSubmitted && (
+          <Button
+            onClick={onSubmitAnswer}
+            disabled={!hasAnswer}
+            className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full disabled:opacity-50"
+          >
+            Submit Answer
+          </Button>
         )}
 
         {/* Explanation (shown after submit) */}
@@ -362,6 +379,141 @@ function QuizQuestion({
         </Button>
       </div>
     </div>
+  );
+}
+
+function TutorialQuizNavigator({
+  totalQuestions,
+  currentQuestion,
+  selectedQuestions,
+  submittedQuestions,
+  correctQuestions,
+  onQuestionSelect,
+  onSubmitAnswer,
+  onPrevious,
+  onNext,
+  onFinish,
+  hasAnswer,
+  isCurrentSubmitted,
+  isFirst,
+  isLast,
+  isSubmitting,
+}: {
+  totalQuestions: number;
+  currentQuestion: number;
+  selectedQuestions: Set<number>;  // answered but not submitted
+  submittedQuestions: Set<number>; // submitted (locked in)
+  correctQuestions: Map<number, boolean>;
+  onQuestionSelect: (index: number) => void;
+  onSubmitAnswer: () => void;
+  onPrevious: () => void;
+  onNext: () => void;
+  onFinish: () => void;
+  hasAnswer: boolean;
+  isCurrentSubmitted: boolean;
+  isFirst: boolean;
+  isLast: boolean;
+  isSubmitting: boolean;
+}) {
+  const submitted = submittedQuestions.size;
+  const correct = Array.from(correctQuestions.values()).filter(Boolean).length;
+  const progressPercent = totalQuestions > 0 ? Math.round((submitted / totalQuestions) * 100) : 0;
+
+  return (
+    <Card className="p-3 sm:p-4 space-y-3 sm:space-y-4 lg:sticky lg:top-4">
+      {/* Progress Summary */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between text-sm">
+          <span className="font-medium text-gray-700">Progress</span>
+          <span className="text-gray-500">{submitted}/{totalQuestions}</span>
+        </div>
+        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-blue-500 rounded-full transition-all duration-300"
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
+        {submitted > 0 && (
+          <p className="text-xs text-gray-500">
+            {correct} correct · {submitted - correct} incorrect
+          </p>
+        )}
+      </div>
+
+      {/* Question Grid */}
+      <div className="grid grid-cols-6 sm:grid-cols-8 lg:grid-cols-5 gap-1.5 sm:gap-2">
+        {Array.from({ length: totalQuestions }, (_, i) => {
+          const isCurrent = i === currentQuestion;
+          const isSubmitted = submittedQuestions.has(i);
+          const isSelected = selectedQuestions.has(i);
+          const correctness = correctQuestions.get(i);
+
+          return (
+            <button
+              key={i}
+              onClick={() => onQuestionSelect(i)}
+              className={cn(
+                "w-8 h-8 sm:w-9 sm:h-9 rounded-full text-xs sm:text-sm font-medium transition-colors",
+                "focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500/50",
+                isCurrent && "bg-blue-600 text-white ring-2 ring-blue-400/50",
+                !isCurrent && isSubmitted && correctness === true && "bg-green-500 text-white",
+                !isCurrent && isSubmitted && correctness === false && "bg-red-500 text-white",
+                !isCurrent && !isSubmitted && isSelected && "bg-yellow-100 text-yellow-700 border border-yellow-300",
+                !isCurrent && !isSubmitted && !isSelected && "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              )}
+            >
+              {i + 1}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Legend */}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] sm:text-xs text-gray-500">
+        <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block" /> Current</span>
+        <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-green-500 inline-block" /> Correct</span>
+        <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-red-500 inline-block" /> Wrong</span>
+        <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-yellow-100 border border-yellow-300 inline-block" /> Selected</span>
+        <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-gray-200 inline-block" /> Unanswered</span>
+      </div>
+
+      {/* Submit Answer */}
+      {!isCurrentSubmitted && (
+        <Button
+          onClick={onSubmitAnswer}
+          disabled={!hasAnswer}
+          className="w-full rounded-full bg-blue-600 hover:bg-blue-700 text-white text-sm disabled:opacity-50"
+        >
+          Submit Answer
+        </Button>
+      )}
+      {isCurrentSubmitted && (
+        <p className="text-center text-sm text-green-600 font-medium">Submitted ✓</p>
+      )}
+
+      {/* Navigation */}
+      <div className="grid grid-cols-2 gap-2">
+        <Button
+          variant="outline"
+          onClick={onPrevious}
+          disabled={isFirst}
+          className="rounded-full text-sm"
+        >
+          Previous
+        </Button>
+        <Button
+          variant="outline"
+          onClick={isLast ? onFinish : onNext}
+          disabled={isSubmitting}
+          className={cn(
+            "rounded-full text-sm",
+            isLast && "bg-[#F04F54] text-white hover:bg-[#F04F54]/90 border-[#F04F54]"
+          )}
+        >
+          {isSubmitting ? "Submitting..." : isLast ? "Finish" : "Next"}
+        </Button>
+      </div>
+    </Card>
   );
 }
 
@@ -491,8 +643,11 @@ function TutorialDetailPage() {
 
   const handleAnswerSelect = (optionId: string) => {
     const question = questions[currentQuestionIndex];
-    setAnswers((prev) => ({ ...prev, [question.id]: optionId }));
-    setSubmittedQuestions((prev) => new Set([...prev, currentQuestionIndex]));
+    // Allow re-selecting (changing answer) before submission
+    setAnswers((prev) => ({
+      ...prev,
+      [question.id]: prev[question.id] === optionId ? "" : optionId,
+    }));
   };
 
   const handleToggleAnswer = (optionId: string) => {
@@ -504,7 +659,29 @@ function TutorialDetailPage() {
         : [...current, optionId];
       return { ...prev, [question.id]: updated };
     });
+  };
+
+  const handleSubmitCurrentAnswer = () => {
     setSubmittedQuestions((prev) => new Set([...prev, currentQuestionIndex]));
+  };
+
+  // Track which questions have a selection (but not necessarily submitted)
+  const getSelectedQuestions = () => {
+    const selected = new Set<number>();
+    questions.forEach((q, idx) => {
+      if (answers[q.id]) selected.add(idx);
+      if (multiAnswers[q.id]?.length > 0) selected.add(idx);
+    });
+    return selected;
+  };
+
+  const hasCurrentAnswer = () => {
+    const q = questions[currentQuestionIndex];
+    if (!q) return false;
+    if (q.questionType === "MULTIPLE_CHOICE") {
+      return (multiAnswers[q.id] || []).length > 0;
+    }
+    return !!answers[q.id];
   };
 
   const handleBookmarkToggle = () => {
@@ -685,48 +862,99 @@ function TutorialDetailPage() {
           )}
 
           {/* Test View */}
-          {viewMode === "test" && questions.length > 0 && (
-            <QuizQuestion
-              question={questions[currentQuestionIndex]}
-              questionNumber={currentQuestionIndex + 1}
-              selectedAnswer={answers[questions[currentQuestionIndex].id] || null}
-              selectedAnswers={multiAnswers[questions[currentQuestionIndex].id] || []}
-              onSelectAnswer={handleAnswerSelect}
-              onToggleAnswer={handleToggleAnswer}
-              isSubmitted={submittedQuestions.has(currentQuestionIndex)}
-              onPrevious={() => setCurrentQuestionIndex((i) => Math.max(0, i - 1))}
-              onNext={() => {
-                if (currentQuestionIndex < questions.length - 1) {
-                  setCurrentQuestionIndex((i) => i + 1);
-                } else {
-                  // Build answers list: for multi-choice, join selected IDs with comma
-                  const answersList: TutorialQuizAnswer[] = questions.map((q) => ({
-                    questionId: q.id,
-                    answer: q.questionType === "MULTIPLE_CHOICE"
-                      ? (multiAnswers[q.id] || []).sort().join(",")
-                      : (answers[q.id] || ""),
-                  }));
-                  submitQuestions.mutate(
-                    { id: tutorialId, answers: { answers: answersList } },
-                    {
-                      onSuccess: (data) => {
-                        setQuizResults(data);
-                        toast.success("Quiz submitted successfully!");
-                        handleMarkComplete();
-                      },
-                      onError: (error: any) => {
-                        const message = error?.response?.data?.message || error?.message || "Failed to submit quiz. Please try again.";
-                        toast.error(message);
-                      },
-                    }
-                  );
+          {viewMode === "test" && questions.length > 0 && (() => {
+            // Compute correctness map for navigator
+            const correctMap = new Map<number, boolean>();
+            questions.forEach((q, idx) => {
+              if (!submittedQuestions.has(idx)) return;
+              const isMulti = q.questionType === "MULTIPLE_CHOICE";
+              if (isMulti) {
+                const selected = multiAnswers[q.id] || [];
+                const isCorrect =
+                  q.correctAnswers.length === selected.length &&
+                  q.correctAnswers.every((a) => selected.includes(a));
+                correctMap.set(idx, isCorrect);
+              } else {
+                correctMap.set(idx, answers[q.id] === q.correctAnswer);
+              }
+            });
+
+            const handleFinish = () => {
+              const answersList: TutorialQuizAnswer[] = questions.map((q) => ({
+                questionId: q.id,
+                answer: q.questionType === "MULTIPLE_CHOICE"
+                  ? (multiAnswers[q.id] || []).sort().join(",")
+                  : (answers[q.id] || ""),
+              }));
+              submitQuestions.mutate(
+                { id: tutorialId, answers: { answers: answersList } },
+                {
+                  onSuccess: (data) => {
+                    setQuizResults(data);
+                    toast.success("Quiz submitted successfully!");
+                    handleMarkComplete();
+                  },
+                  onError: (error: any) => {
+                    const message = error?.response?.data?.message || error?.message || "Failed to submit quiz. Please try again.";
+                    toast.error(message);
+                  },
                 }
-              }}
-              onReport={() => {/* TODO: Implement report */}}
-              isFirst={currentQuestionIndex === 0}
-              isLast={currentQuestionIndex === questions.length - 1}
-            />
-          )}
+              );
+            };
+
+            const selectedQs = getSelectedQuestions();
+
+            return (
+              <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
+                {/* Navigator — top on mobile, right side on desktop */}
+                <div className="w-full lg:w-56 lg:order-2 shrink-0">
+                  <TutorialQuizNavigator
+                    totalQuestions={questions.length}
+                    currentQuestion={currentQuestionIndex}
+                    selectedQuestions={selectedQs}
+                    submittedQuestions={submittedQuestions}
+                    correctQuestions={correctMap}
+                    onQuestionSelect={setCurrentQuestionIndex}
+                    onSubmitAnswer={handleSubmitCurrentAnswer}
+                    onPrevious={() => setCurrentQuestionIndex((i) => Math.max(0, i - 1))}
+                    onNext={() => setCurrentQuestionIndex((i) => Math.min(questions.length - 1, i + 1))}
+                    onFinish={handleFinish}
+                    hasAnswer={hasCurrentAnswer()}
+                    isCurrentSubmitted={submittedQuestions.has(currentQuestionIndex)}
+                    isFirst={currentQuestionIndex === 0}
+                    isLast={currentQuestionIndex === questions.length - 1}
+                    isSubmitting={submitQuestions.isPending}
+                  />
+                </div>
+
+                {/* Question Area */}
+                <div className="flex-1 min-w-0 lg:order-1">
+                  <QuizQuestion
+                    question={questions[currentQuestionIndex]}
+                    questionNumber={currentQuestionIndex + 1}
+                    selectedAnswer={answers[questions[currentQuestionIndex].id] || null}
+                    selectedAnswers={multiAnswers[questions[currentQuestionIndex].id] || []}
+                    onSelectAnswer={handleAnswerSelect}
+                    onToggleAnswer={handleToggleAnswer}
+                    onSubmitAnswer={handleSubmitCurrentAnswer}
+                    isSubmitted={submittedQuestions.has(currentQuestionIndex)}
+                    hasAnswer={hasCurrentAnswer()}
+                    onPrevious={() => setCurrentQuestionIndex((i) => Math.max(0, i - 1))}
+                    onNext={() => {
+                      if (currentQuestionIndex < questions.length - 1) {
+                        setCurrentQuestionIndex((i) => i + 1);
+                      } else {
+                        handleFinish();
+                      }
+                    }}
+                    onReport={() => {/* TODO: Implement report */}}
+                    isFirst={currentQuestionIndex === 0}
+                    isLast={currentQuestionIndex === questions.length - 1}
+                  />
+                </div>
+              </div>
+            );
+          })()}
 
           {viewMode === "test" && questions.length === 0 && (
             <p className="text-gray-500 text-center py-10">No test questions available</p>

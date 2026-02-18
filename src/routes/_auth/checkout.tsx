@@ -221,9 +221,9 @@ function CheckoutPage() {
         )}
 
         {!showPaymentOptions ? (
-          // Main options: Free Trial, Pay, License Code
+          // Main options: Pay Now, Free Trial, License Code
           <div className="space-y-4">
-            {/* Free Trial - Primary Option */}
+            {/* Pay Now - Primary/Recommended Option */}
             <div className="bg-gradient-to-br from-accent/5 to-accent/10 rounded-xl p-6 border-2 border-accent/30">
               <div className="flex items-center gap-2 mb-2">
                 <span className="bg-accent text-white text-xs font-semibold px-2 py-1 rounded">
@@ -231,35 +231,33 @@ function CheckoutPage() {
                 </span>
               </div>
               <h3 className="text-lg font-bold text-[#101828] mb-1">
-                Start Free Trial
+                Pay Now
               </h3>
               <p className="text-sm text-gray-600 mb-4">
-                Try all features free for 7 days. No payment required.
+                Choose a subscription plan and get started immediately.
               </p>
               <PrimaryButton
-                onClick={handleStartTrial}
-                disabled={startTrialMutation.isPending || isLoadingPlans || trialStarted}
+                onClick={() => setShowPaymentOptions(true)}
                 className="w-full bg-accent hover:bg-accent/80 text-white text-lg"
-                title={
-                  trialStarted
-                    ? "Trial Started!"
-                    : startTrialMutation.isPending
-                      ? "Starting Trial..."
-                      : isLoadingPlans
-                        ? "Loading..."
-                        : "Start Free Trial"
-                }
+                title="Pay Now"
               />
             </div>
 
-            {/* Pay Now Option */}
+            {/* Free Trial Option */}
             <button
-              onClick={() => setShowPaymentOptions(true)}
-              className="w-full py-4 px-6 border-2 border-gray-200 rounded-xl text-left hover:border-accent/50 transition-colors"
+              onClick={handleStartTrial}
+              disabled={startTrialMutation.isPending || isLoadingPlans || trialStarted}
+              className="w-full py-4 px-6 border-2 border-gray-200 rounded-xl text-left hover:border-accent/50 transition-colors disabled:opacity-50"
             >
-              <h3 className="font-semibold text-[#101828]">Pay Now</h3>
+              <h3 className="font-semibold text-[#101828]">
+                {trialStarted
+                  ? "Trial Started!"
+                  : startTrialMutation.isPending
+                    ? "Starting Trial..."
+                    : "Start Free Trial"}
+              </h3>
               <p className="text-sm text-gray-500">
-                Choose a subscription plan and pay to get started immediately.
+                Try all features free for 7 days. No payment required.
               </p>
             </button>
 

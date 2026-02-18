@@ -9,6 +9,7 @@ interface QuestionNavigatorProps {
   currentQuestion: number;
   answeredQuestions: Set<number>; // 0-indexed question numbers that have been answered
   submittedQuestions: Set<number>; // 0-indexed question numbers that have been submitted
+  correctQuestions?: Set<number>; // 0-indexed question numbers answered correctly
   timeRemaining: number; // in seconds
   isPaused?: boolean;
   isBookmarked?: boolean;
@@ -58,15 +59,16 @@ export function QuestionNavigator({
   onBookmark,
   onReport,
   onSubmitAnswer,
+  correctQuestions = new Set<number>(),
   onCompleteExam,
 }: QuestionNavigatorProps) {
   // Generate array of question numbers - memoized to prevent recreation on every render
   const questions = useMemo(() => Array.from({ length: totalQuestions }, (_, i) => i), [totalQuestions]);
 
   return (
-    <Card className="p-3 sm:p-4 space-y-3 sm:space-y-4 lg:sticky lg:top-4">
-      {/* Timer Header */}
-      <div className="flex items-center gap-2 border border-dashed border-gray-300 rounded-lg p-2.5 sm:p-3">
+    <Card className="p-3 sm:p-4 lg:sticky lg:top-4 max-h-[80vh] lg:max-h-[calc(100vh-2rem)] flex flex-col gap-3 sm:gap-4">
+      {/* Timer Header — always visible */}
+      <div className="flex items-center gap-2 border border-dashed border-gray-300 rounded-lg p-2.5 sm:p-3 shrink-0">
         {onPauseToggle && (
           <button
             onClick={onPauseToggle}
@@ -106,41 +108,54 @@ export function QuestionNavigator({
         )}
       </div>
 
-      {/* Question Grid */}
-      <div className="grid grid-cols-8 sm:grid-cols-10 lg:grid-cols-6 gap-1.5 sm:gap-2">
-        {questions.map((qIndex) => {
-          const isCurrent = qIndex === currentQuestion;
-          const isAnswered = answeredQuestions.has(qIndex);
-          const isSubmitted = submittedQuestions.has(qIndex);
+      {/* Question Grid — scrollable */}
+      <div className="min-h-0 overflow-y-auto overscroll-contain shrink">
+        <div className="grid grid-cols-8 sm:grid-cols-10 lg:grid-cols-6 gap-1.5 sm:gap-2">
+          {questions.map((qIndex) => {
+            const isCurrent = qIndex === currentQuestion;
+            const isAnswered = answeredQuestions.has(qIndex);
+            const isSubmitted = submittedQuestions.has(qIndex);
+            const isCorrect = correctQuestions.has(qIndex);
 
-          return (
-            <button
-              key={qIndex}
-              onClick={() => onQuestionSelect(qIndex)}
-              className={cn(
-                "w-8 h-8 sm:w-9 sm:h-9 rounded-full text-xs sm:text-sm font-medium transition-colors",
-                "focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#F04F54]/50",
-                isCurrent && "bg-[#F04F54] text-white ring-2 ring-[#F04F54]/50",
-                !isCurrent && isSubmitted && "bg-green-500 text-white",
-                !isCurrent && !isSubmitted && isAnswered && "bg-yellow-100 text-yellow-700 border border-yellow-300",
-                !isCurrent && !isAnswered && "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              )}
-            >
-              {qIndex + 1}
-            </button>
-          );
-        })}
+            return (
+              <button
+                key={qIndex}
+                onClick={() => onQuestionSelect(qIndex)}
+                className={cn(
+                  "w-8 h-8 sm:w-9 sm:h-9 rounded-full text-xs sm:text-sm font-medium transition-colors",
+                  "focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500/50",
+                  isCurrent && "bg-blue-600 text-white ring-2 ring-blue-400/50",
+                  !isCurrent && isSubmitted && isCorrect && "bg-green-500 text-white",
+                  !isCurrent && isSubmitted && !isCorrect && "bg-red-500 text-white",
+                  !isCurrent && !isSubmitted && isAnswered && "bg-yellow-100 text-yellow-700 border border-yellow-300",
+                  !isCurrent && !isAnswered && "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                )}
+              >
+                {qIndex + 1}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Legend */}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] sm:text-xs text-gray-500 mt-2">
+          <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block" /> Current</span>
+          <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-green-500 inline-block" /> Correct</span>
+          <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-red-500 inline-block" /> Wrong</span>
+          <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-yellow-100 border border-yellow-300 inline-block" /> Answered</span>
+          <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-gray-200 inline-block" /> Unanswered</span>
+        </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="grid grid-cols-2 lg:grid-cols-1 gap-2 sm:gap-3">
+      {/* Action Buttons — always visible at bottom */}
+      <div className="shrink-0 space-y-2">
         {/* Submit Answer Button */}
         {onSubmitAnswer && (
           <Button
             onClick={onSubmitAnswer}
             disabled={!canSubmit || isSubmitting || isCurrentSubmitted}
             className={cn(
-              "w-full rounded-full text-sm col-span-2 lg:col-span-1",
+              "w-full rounded-full text-sm",
               isCurrentSubmitted
                 ? "bg-green-500 hover:bg-green-500 cursor-default"
                 : "bg-[#F04F54] hover:bg-[#F04F54]/90"
@@ -150,44 +165,51 @@ export function QuestionNavigator({
           </Button>
         )}
 
-        {/* Navigation Buttons */}
-        <Button
-          variant="outline"
-          onClick={onPrevious}
-          disabled={currentQuestion === 0}
-          className="rounded-full text-sm"
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          onClick={onNext}
-          disabled={currentQuestion === totalQuestions - 1}
-          className="rounded-full text-sm"
-        >
-          Next
-        </Button>
-
-        {/* Report Button */}
-        {onReport && (
+        {/* Nav row: Previous + Next side by side */}
+        <div className="grid grid-cols-2 gap-2">
           <Button
             variant="outline"
-            onClick={onReport}
-            className="rounded-full border-[#F04F54] text-[#F04F54] hover:bg-red-50 text-sm col-span-2 lg:col-span-1"
+            onClick={onPrevious}
+            disabled={currentQuestion === 0}
+            className="rounded-full text-sm"
           >
-            Report Question
+            Previous
           </Button>
-        )}
-
-        {/* Complete Exam Button */}
-        {onCompleteExam && (
           <Button
-            onClick={onCompleteExam}
-            disabled={!canCompleteExam || isCompletingExam}
-            className="rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm col-span-2 lg:col-span-1"
+            variant="outline"
+            onClick={onNext}
+            disabled={currentQuestion === totalQuestions - 1}
+            className="rounded-full text-sm"
           >
-            {isCompletingExam ? "Completing..." : "Complete Exam"}
+            Next
           </Button>
+        </div>
+
+        {/* Report + Complete row */}
+        {(onReport || onCompleteExam) && (
+          <div className="grid grid-cols-2 gap-2">
+            {onReport && (
+              <Button
+                variant="outline"
+                onClick={onReport}
+                className="rounded-full border-[#F04F54] text-[#F04F54] hover:bg-red-50 text-xs sm:text-sm"
+              >
+                Report
+              </Button>
+            )}
+            {onCompleteExam && (
+              <Button
+                onClick={onCompleteExam}
+                disabled={!canCompleteExam || isCompletingExam}
+                className={cn(
+                  "rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs sm:text-sm",
+                  !onReport && "col-span-2"
+                )}
+              >
+                {isCompletingExam ? "Completing..." : "Complete Exam"}
+              </Button>
+            )}
+          </div>
         )}
       </div>
     </Card>

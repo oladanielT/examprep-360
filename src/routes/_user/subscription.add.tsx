@@ -40,6 +40,23 @@ const examSelectionSchema = z.object({
   numberOfStudents: z.array(z.number()),
 });
 
+const CATEGORY_EXAMPLES: Record<string, string> = {
+  "primary": "e.g. Common Entrance",
+  "o'level": "e.g. WAEC, NECO",
+  "a'level": "e.g. IJMB, JUPEB",
+  "post-jamb": "e.g. University Post-UTME",
+  "university": "e.g. Course Exams",
+  "professional": "e.g. ICAN, CIPM",
+};
+
+function getCategoryExample(label: string): string | undefined {
+  const lower = label.toLowerCase();
+  for (const [key, value] of Object.entries(CATEGORY_EXAMPLES)) {
+    if (lower.includes(key)) return value;
+  }
+  return undefined;
+}
+
 function AddSubscriptionPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -267,9 +284,16 @@ function AddSubscriptionPage() {
                       onClick={() => handleCategorySelect(cat)}
                       className="group relative flex items-center justify-between p-4 rounded-xl border border-gray-200 bg-white hover:border-warning hover:bg-warning/5 transition-all duration-200 text-left"
                     >
-                      <span className="text-sm font-medium text-[#101828] pr-2">
-                        {cat.label}
-                      </span>
+                      <div className="pr-2">
+                        <span className="text-sm font-medium text-[#101828]">
+                          {cat.label}
+                        </span>
+                        {getCategoryExample(cat.label) && (
+                          <span className="block text-xs text-gray-400 mt-0.5">
+                            {getCategoryExample(cat.label)}
+                          </span>
+                        )}
+                      </div>
                       <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-warning shrink-0" />
                     </button>
                   ))}

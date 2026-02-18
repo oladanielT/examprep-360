@@ -67,11 +67,11 @@ function ExamPage() {
     }))
   );
 
-  // Select responses Map size separately to avoid re-renders on every Map change
-  // We only need the keys for checking submission status
+  // Select responses Map separately to check submission status and correctness
   const responsesKeys = useExamStore(
     useShallow((state) => Array.from(state.responses.keys()))
   );
+  const responses = useExamStore((state) => state.responses);
 
   // Validate that stored attemptId matches URL
   const isValidSession = currentAttempt?.id === attemptId;
@@ -181,6 +181,18 @@ function ExamPage() {
     });
     return answered;
   }, [answers, questions]);
+
+  // Correct questions tracking (from submitted responses)
+  const correctQuestions = useMemo(() => {
+    const correct = new Set<number>();
+    questions.forEach((q, index) => {
+      const response = responses.get(q.id);
+      if (response?.isCorrect) {
+        correct.add(index);
+      }
+    });
+    return correct;
+  }, [responses, questions]);
 
   // Reset question timer when question changes
   useEffect(() => {
@@ -652,6 +664,7 @@ function ExamPage() {
                 .map((q, idx) => (submittedQuestions.has(q.id) ? idx : -1))
                 .filter((idx) => idx !== -1)
             )}
+            correctQuestions={correctQuestions}
             timeRemaining={timeRemaining ?? 0}
             isPaused={!timerRunning}
             isBookmarked={currentQuestion ? bookmarkedQuestions.has(currentQuestion.id) : false}
