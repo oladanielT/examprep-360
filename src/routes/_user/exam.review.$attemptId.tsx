@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { z } from "zod";
 import {
   ArrowLeft,
@@ -35,6 +35,26 @@ function ExamReviewPage() {
   const { data: review, isLoading, isError } = useExamReview(attemptId);
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // All hooks must be called before any early returns (Rules of Hooks)
+  const responses = review?.responses || [];
+  const examQuestions = review?.exam?.questions || [];
+
+  const allItems = useMemo(() => {
+    const responseMap = new Map(responses.map((r: any) => [r.questionId, r]));
+    if (examQuestions.length > 0) {
+      return [...examQuestions]
+        .sort((a: any, b: any) => a.order - b.order)
+        .map((eq: any) => ({
+          question: eq.question,
+          response: responseMap.get(eq.questionId) || null,
+        }));
+    }
+    return responses.map((r: any) => ({
+      question: r.question,
+      response: r,
+    }));
+  }, [examQuestions, responses]);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -61,11 +81,15 @@ function ExamReviewPage() {
     );
   }
 
-  const responses = review.responses || [];
-  const totalQuestions = responses.length;
+  const isPractice = review.exam?.examTypeEnum === "PRACTICE";
+
+  const totalQuestions = review.exam?.numQuestions || allItems.length;
+  const essayTypes = new Set(["ESSAY", "ESSAY_WITH_SUB", "SHORT_ANSWER"]);
   const correctCount = responses.filter((r: any) => r.isCorrect).length;
-  const skippedCount = responses.filter((r: any) => r.answer === null || r.answer === undefined || r.answer === "").length;
-  const incorrectCount = totalQuestions - correctCount - skippedCount;
+  const essayResponseCount = responses.filter((r: any) => essayTypes.has(r.question?.questionType)).length;
+  const answeredWrongCount = responses.filter((r: any) => !r.isCorrect && !essayTypes.has(r.question?.questionType) && r.answer !== null && r.answer !== undefined && r.answer !== "").length;
+  const skippedCount = totalQuestions - correctCount - answeredWrongCount - essayResponseCount;
+  const incorrectCount = answeredWrongCount;
   const percentage = review.percentage ?? 0;
   const passed = review.passed ?? false;
   const timeSpent = review.timeSpentSeconds ?? 0;
@@ -73,8 +97,9 @@ function ExamReviewPage() {
   const subjectName = review.exam?.subject?.name || "";
   const examTypeName = review.exam?.examType?.name || "";
 
-  const currentResponse = responses[currentIndex];
-  const currentQuestion = currentResponse?.question;
+  const currentItem = allItems[currentIndex];
+  const currentQuestion = currentItem?.question;
+  const currentResponse = currentItem?.response;
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -84,7 +109,7 @@ function ExamReviewPage() {
   };
 
   const goTo = (index: number) => {
-    if (index >= 0 && index < totalQuestions) setCurrentIndex(index);
+    if (index >= 0 && index < allItems.length) setCurrentIndex(index);
   };
 
   return (
@@ -190,12 +215,43 @@ function ExamReviewPage() {
             Questions
           </p>
           <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 scrollbar-none">
-            {responses.map((resp: any, idx: number) => {
+            {allItems.map((item: any, idx: number) => {
               const isActive = idx === currentIndex;
-              const isCorrect = resp.isCorrect;
+              const hasResponse = !!item.response;
+              const isCorrect = item.response?.isCorrect;
+              const isSkipped = !hasResponse;
+              const isEssayType = item.question && ["ESSAY", "ESSAY_WITH_SUB", "SHORT_ANSWER"].includes(item.question.questionType);
+
+              // For practice: show green/red for correct/wrong
+              // For mock: show neutral colors (answered vs skipped)
+              // For essay types: always show amber (not auto-graded)
+              const getIndicatorClass = () => {
+                if (isActive) return "bg-white/20 text-white";
+                if (isSkipped) return "bg-gray-100 text-gray-400";
+                if (isEssayType) return "bg-amber-100 text-amber-700";
+                if (isPractice) {
+                  return isCorrect
+                    ? "bg-emerald-100 text-emerald-700"
+                    : "bg-red-100 text-red-600";
+                }
+                // Mock: just show as answered (blue)
+                return "bg-blue-100 text-blue-700";
+              };
+
+              const getIcon = () => {
+                if (isSkipped) return <MinusCircle className="inline w-3.5 h-3.5 ml-1 text-gray-300" />;
+                if (isEssayType) return <Clock className="inline w-3.5 h-3.5 ml-1 text-amber-400" />;
+                if (isPractice) {
+                  return isCorrect
+                    ? <CheckCircle2 className="inline w-3.5 h-3.5 ml-1 text-emerald-400" />
+                    : <XCircle className="inline w-3.5 h-3.5 ml-1 text-red-400" />;
+                }
+                return <CheckCircle2 className="inline w-3.5 h-3.5 ml-1 text-blue-400" />;
+              };
+
               return (
                 <button
-                  key={resp.id}
+                  key={item.question?.id || idx}
                   onClick={() => setCurrentIndex(idx)}
                   className={cn(
                     "shrink-0 flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all border",
@@ -207,22 +263,14 @@ function ExamReviewPage() {
                   <span
                     className={cn(
                       "w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0",
-                      isActive
-                        ? "bg-white/20 text-white"
-                        : isCorrect
-                          ? "bg-emerald-100 text-emerald-700"
-                          : "bg-red-100 text-red-600"
+                      getIndicatorClass()
                     )}
                   >
                     {idx + 1}
                   </span>
                   <span className="hidden lg:inline truncate">
                     Q{idx + 1}
-                    {isCorrect ? (
-                      <CheckCircle2 className="inline w-3.5 h-3.5 ml-1 text-emerald-400" />
-                    ) : (
-                      <XCircle className="inline w-3.5 h-3.5 ml-1 text-red-400" />
-                    )}
+                    {getIcon()}
                   </span>
                 </button>
               );
@@ -236,25 +284,57 @@ function ExamReviewPage() {
             <div className="space-y-4">
               {/* Result badge */}
               <div className="flex items-center justify-between">
-                <div
-                  className={cn(
-                    "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold",
-                    currentResponse.isCorrect
-                      ? "bg-emerald-100 text-emerald-700"
-                      : "bg-red-100 text-red-600"
-                  )}
-                >
-                  {currentResponse.isCorrect ? (
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                  ) : (
-                    <XCircle className="w-3.5 h-3.5" />
-                  )}
-                  {currentResponse.isCorrect ? "Correct" : "Incorrect"}
-                  <span className="text-[10px] opacity-70 ml-1">
-                    ({currentResponse.marksAwarded}/{currentQuestion.marks} marks)
-                  </span>
-                </div>
-                {currentResponse.timeSpentSeconds != null && (
+                {(() => {
+                  const isEssayType = ["ESSAY", "ESSAY_WITH_SUB", "SHORT_ANSWER"].includes(currentQuestion.questionType);
+
+                  if (!currentResponse) {
+                    return (
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-500">
+                        <MinusCircle className="w-3.5 h-3.5" />
+                        Not Attempted
+                      </div>
+                    );
+                  }
+
+                  if (isEssayType) {
+                    return (
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
+                        <Clock className="w-3.5 h-3.5" />
+                        Not Auto-Graded
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div
+                      className={cn(
+                        "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold",
+                        isPractice
+                          ? currentResponse.isCorrect
+                            ? "bg-emerald-100 text-emerald-700"
+                            : "bg-red-100 text-red-600"
+                          : "bg-blue-100 text-blue-700"
+                      )}
+                    >
+                      {isPractice ? (
+                        currentResponse.isCorrect ? (
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                        ) : (
+                          <XCircle className="w-3.5 h-3.5" />
+                        )
+                      ) : (
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                      )}
+                      {isPractice
+                        ? currentResponse.isCorrect ? "Correct" : "Incorrect"
+                        : "Answered"}
+                      <span className="text-[10px] opacity-70 ml-1">
+                        ({currentResponse.marksAwarded}/{currentQuestion.marks} marks)
+                      </span>
+                    </div>
+                  );
+                })()}
+                {currentResponse?.timeSpentSeconds != null && (
                   <span className="text-xs text-gray-400 flex items-center gap-1">
                     <Clock className="w-3 h-3" />
                     {formatTime(currentResponse.timeSpentSeconds)}
@@ -269,7 +349,7 @@ function ExamReviewPage() {
                     question={currentQuestion}
                     questionNumber={currentQuestion.questionNumber}
                     selectedAnswer={
-                      typeof currentResponse.answer === "string"
+                      currentResponse && typeof currentResponse.answer === "string"
                         ? currentResponse.answer
                         : null
                     }
@@ -285,7 +365,7 @@ function ExamReviewPage() {
                     question={currentQuestion}
                     questionNumber={currentQuestion.questionNumber}
                     selectedAnswers={
-                      Array.isArray(currentResponse.answer)
+                      currentResponse && Array.isArray(currentResponse.answer)
                         ? currentResponse.answer
                         : []
                     }
@@ -301,7 +381,7 @@ function ExamReviewPage() {
                     question={currentQuestion}
                     questionNumber={currentQuestion.questionNumber}
                     selectedAnswer={
-                      typeof currentResponse.answer === "boolean"
+                      currentResponse && typeof currentResponse.answer === "boolean"
                         ? currentResponse.answer
                         : null
                     }
@@ -317,6 +397,7 @@ function ExamReviewPage() {
                     question={currentQuestion}
                     questionNumber={currentQuestion.questionNumber}
                     answers={
+                      currentResponse &&
                       typeof currentResponse.answer === "object" &&
                       !Array.isArray(currentResponse.answer)
                         ? (currentResponse.answer as Record<string, string>)
@@ -336,7 +417,7 @@ function ExamReviewPage() {
                     question={currentQuestion}
                     questionNumber={currentQuestion.questionNumber}
                     answer={
-                      typeof currentResponse.answer === "string"
+                      currentResponse && typeof currentResponse.answer === "string"
                         ? currentResponse.answer
                         : ""
                     }
@@ -365,10 +446,12 @@ function ExamReviewPage() {
                         content={currentQuestion.questionText}
                       />
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-600">
-                      <p className="font-medium mb-1">Your answer:</p>
-                      <p>{JSON.stringify(currentResponse.answer)}</p>
-                    </div>
+                    {currentResponse && (
+                      <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-600">
+                        <p className="font-medium mb-1">Your answer:</p>
+                        <p>{JSON.stringify(currentResponse.answer)}</p>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -402,11 +485,11 @@ function ExamReviewPage() {
                   Previous
                 </button>
                 <span className="text-xs text-gray-400">
-                  {currentIndex + 1} / {totalQuestions}
+                  {currentIndex + 1} / {allItems.length}
                 </span>
                 <button
                   onClick={() => goTo(currentIndex + 1)}
-                  disabled={currentIndex === totalQuestions - 1}
+                  disabled={currentIndex === allItems.length - 1}
                   className="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                 >
                   Next

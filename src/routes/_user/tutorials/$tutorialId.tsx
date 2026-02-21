@@ -170,6 +170,34 @@ function ChapterContent({
         </Card>
       )}
 
+      {/* Documents */}
+      {chapter.documents && chapter.documents.length > 0 && (
+        <div>
+          <h3 className="text-sm font-medium text-gray-700 mb-2">Documents</h3>
+          <div className="space-y-2">
+            {chapter.documents.map((doc, idx) => {
+              const sizeInMB = doc.bytes ? (doc.bytes / (1024 * 1024)).toFixed(1) : null;
+              const viewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(doc.url)}&embedded=true`;
+              return (
+                <a
+                  key={idx}
+                  href={viewerUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors"
+                >
+                  <span className="text-lg">📄</span>
+                  <span className="text-sm font-medium text-gray-700">Document {idx + 1}</span>
+                  {sizeInMB && (
+                    <span className="text-xs text-gray-400 ml-auto">{sizeInMB} MB</span>
+                  )}
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <div className="flex justify-center pt-4">
         <Button
           onClick={onComplete}

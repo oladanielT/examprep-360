@@ -280,7 +280,8 @@ function ExamPage() {
   }, [currentQuestion, answers]);
 
   // Check if current question is already submitted
-  const isCurrentQuestionSubmitted = currentQuestion ? submittedQuestions.has(currentQuestion.id) : false;
+  // For mock exams, don't treat as "submitted" so users can re-submit with a different answer
+  const isCurrentQuestionSubmitted = isPracticeExam && currentQuestion ? submittedQuestions.has(currentQuestion.id) : false;
 
   // Check if there are unanswered questions (for warning)
   const hasUnansweredQuestions = useMemo(() => {
@@ -336,13 +337,15 @@ function ExamPage() {
     setShowCompleteConfirm(false);
     setErrorMessage(""); // Clear any previous errors
 
-    // Collect all unsubmitted answers
+    // Collect answers to submit
+    // For practice: only unsubmitted answers (submitted ones are locked)
+    // For mock: all answered questions (user may have changed answers after submitting)
     const unsubmittedResponses = questions
       .filter((q) => {
         const answer = answers[q.id];
         const isSubmitted = submittedQuestions.has(q.id);
-        // Has an answer but not yet submitted
-        if (isSubmitted) return false;
+        // For practice exams, skip already submitted (they're locked)
+        if (isPracticeExam && isSubmitted) return false;
         if (answer === null || answer === undefined) return false;
         if (Array.isArray(answer)) return answer.length > 0;
         if (typeof answer === "string") return answer.length > 0;
@@ -547,6 +550,8 @@ function ExamPage() {
     const questionId = question.id;
     const answer = answers[questionId];
     const isSubmitted = submittedQuestions.has(questionId);
+    // For mock exams, don't lock the question after submission so users can change their answer
+    const isLocked = isPracticeExam && isSubmitted;
     const showCorrectAnswer = isPracticeExam && isSubmitted;
 
     switch (question.questionType) {
@@ -557,7 +562,7 @@ function ExamPage() {
             questionNumber={currentQuestionIndex + 1}
             selectedAnswer={(answer as string) || null}
             onAnswerChange={(value) => handleAnswerChange(questionId, value)}
-            isSubmitted={isSubmitted}
+            isSubmitted={isLocked}
             showCorrectAnswer={showCorrectAnswer}
           />
         );
@@ -569,7 +574,7 @@ function ExamPage() {
             questionNumber={currentQuestionIndex + 1}
             selectedAnswers={(answer as string[]) || []}
             onAnswerChange={(value) => handleAnswerChange(questionId, value)}
-            isSubmitted={isSubmitted}
+            isSubmitted={isLocked}
             showCorrectAnswer={showCorrectAnswer}
           />
         );
@@ -581,7 +586,7 @@ function ExamPage() {
             questionNumber={currentQuestionIndex + 1}
             selectedAnswer={answer as boolean | null}
             onAnswerChange={(value) => handleAnswerChange(questionId, value)}
-            isSubmitted={isSubmitted}
+            isSubmitted={isLocked}
             showCorrectAnswer={showCorrectAnswer}
           />
         );
@@ -593,7 +598,7 @@ function ExamPage() {
             questionNumber={currentQuestionIndex + 1}
             answers={(answer as Record<string, string>) || {}}
             onAnswerChange={(value) => handleAnswerChange(questionId, value)}
-            isSubmitted={isSubmitted}
+            isSubmitted={isLocked}
             showCorrectAnswer={showCorrectAnswer}
           />
         );
@@ -607,7 +612,7 @@ function ExamPage() {
             questionNumber={currentQuestionIndex + 1}
             answer={(answer as string) || ""}
             onAnswerChange={(value) => handleAnswerChange(questionId, value)}
-            isSubmitted={isSubmitted}
+            isSubmitted={isLocked}
           />
         );
 
@@ -659,12 +664,12 @@ function ExamPage() {
             totalQuestions={questions.length}
             currentQuestion={currentQuestionIndex}
             answeredQuestions={answeredQuestions}
-            submittedQuestions={new Set(
+            submittedQuestions={isPracticeExam ? new Set(
               questions
                 .map((q, idx) => (submittedQuestions.has(q.id) ? idx : -1))
                 .filter((idx) => idx !== -1)
-            )}
-            correctQuestions={correctQuestions}
+            ) : new Set<number>()}
+            correctQuestions={isPracticeExam ? correctQuestions : new Set<number>()}
             timeRemaining={timeRemaining ?? 0}
             isPaused={!timerRunning}
             isBookmarked={currentQuestion ? bookmarkedQuestions.has(currentQuestion.id) : false}

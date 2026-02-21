@@ -60,7 +60,8 @@ export interface TutorialVideo {
 export interface TutorialDocument {
   url: string;
   type: "document";
-  format: string; // e.g., "pdf"
+  bytes?: number;
+  publicId?: string;
 }
 
 export interface TutorialChapter {

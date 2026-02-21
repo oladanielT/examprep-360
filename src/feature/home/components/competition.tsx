@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { useAvailableExams, useStartExam } from '@/feature/exams/hooks/useExams'
 import { useNavigate } from '@tanstack/react-router'
 import { Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
 import { Empty, EmptyHeader, EmptyTitle, EmptyDescription } from '@/components/ui/empty'
 import type { AvailableExam } from '@/api/types'
 
@@ -26,6 +27,10 @@ export default function Competition() {
             onSuccess: (data) => {
                 setOpen(false)
                 navigate({ to: `/exam/${data.id}` })
+            },
+            onError: (error: any) => {
+                const message = error?.response?.data?.message || error?.message || "Failed to start exam"
+                toast.error(message)
             },
         })
     }

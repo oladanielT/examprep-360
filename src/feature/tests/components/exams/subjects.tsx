@@ -141,6 +141,10 @@ function MockSelection({
                 onClose?.();
                 navigate({ to: `/exam/${data.id}` });
               },
+              onError: (error: any) => {
+                const message = error?.response?.data?.message || error?.message || "Failed to start mock exam";
+                toast.error(message);
+              },
             });
           }
         }}

@@ -592,8 +592,15 @@ export interface ExamReviewResponse {
   exam?: {
     name: string;
     numQuestions: number;
+    examTypeEnum?: ExamTypeEnum;
     subject?: { name: string } | null;
     examType?: { name: string };
+    questions?: {
+      id: string;
+      questionId: string;
+      order: number;
+      question: Question;
+    }[];
   };
   responses: {
     id: string;
