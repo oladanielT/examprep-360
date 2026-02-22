@@ -12,8 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as UserRouteImport } from './routes/_user'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as UserIndexRouteImport } from './routes/_user/index'
+import { Route as UserWalletRouteImport } from './routes/_user/wallet'
 import { Route as UserSubscriptionRouteImport } from './routes/_user/subscription'
 import { Route as UserSettingsRouteImport } from './routes/_user/settings'
+import { Route as UserReferralRouteImport } from './routes/_user/referral'
 import { Route as UserLeaderboardRouteImport } from './routes/_user/leaderboard'
 import { Route as UserActivitiesRouteImport } from './routes/_user/activities'
 import { Route as AuthWelcomeRouteImport } from './routes/_auth/welcome'
@@ -51,6 +53,11 @@ const UserIndexRoute = UserIndexRouteImport.update({
   path: '/',
   getParentRoute: () => UserRoute,
 } as any)
+const UserWalletRoute = UserWalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
+  getParentRoute: () => UserRoute,
+} as any)
 const UserSubscriptionRoute = UserSubscriptionRouteImport.update({
   id: '/subscription',
   path: '/subscription',
@@ -59,6 +66,11 @@ const UserSubscriptionRoute = UserSubscriptionRouteImport.update({
 const UserSettingsRoute = UserSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => UserRoute,
+} as any)
+const UserReferralRoute = UserReferralRouteImport.update({
+  id: '/referral',
+  path: '/referral',
   getParentRoute: () => UserRoute,
 } as any)
 const UserLeaderboardRoute = UserLeaderboardRouteImport.update({
@@ -190,8 +202,10 @@ export interface FileRoutesByFullPath {
   '/welcome': typeof AuthWelcomeRoute
   '/activities': typeof UserActivitiesRoute
   '/leaderboard': typeof UserLeaderboardRoute
+  '/referral': typeof UserReferralRoute
   '/settings': typeof UserSettingsRoute
   '/subscription': typeof UserSubscriptionRouteWithChildren
+  '/wallet': typeof UserWalletRoute
   '/': typeof UserIndexRoute
   '/exam/$attemptId': typeof UserExamAttemptIdRoute
   '/subscription/add': typeof UserSubscriptionAddRoute
@@ -218,7 +232,9 @@ export interface FileRoutesByTo {
   '/welcome': typeof AuthWelcomeRoute
   '/activities': typeof UserActivitiesRoute
   '/leaderboard': typeof UserLeaderboardRoute
+  '/referral': typeof UserReferralRoute
   '/settings': typeof UserSettingsRoute
+  '/wallet': typeof UserWalletRoute
   '/': typeof UserIndexRoute
   '/exam/$attemptId': typeof UserExamAttemptIdRoute
   '/subscription/add': typeof UserSubscriptionAddRoute
@@ -248,8 +264,10 @@ export interface FileRoutesById {
   '/_auth/welcome': typeof AuthWelcomeRoute
   '/_user/activities': typeof UserActivitiesRoute
   '/_user/leaderboard': typeof UserLeaderboardRoute
+  '/_user/referral': typeof UserReferralRoute
   '/_user/settings': typeof UserSettingsRoute
   '/_user/subscription': typeof UserSubscriptionRouteWithChildren
+  '/_user/wallet': typeof UserWalletRoute
   '/_user/': typeof UserIndexRoute
   '/_user/exam/$attemptId': typeof UserExamAttemptIdRoute
   '/_user/subscription/add': typeof UserSubscriptionAddRoute
@@ -278,8 +296,10 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/activities'
     | '/leaderboard'
+    | '/referral'
     | '/settings'
     | '/subscription'
+    | '/wallet'
     | '/'
     | '/exam/$attemptId'
     | '/subscription/add'
@@ -306,7 +326,9 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/activities'
     | '/leaderboard'
+    | '/referral'
     | '/settings'
+    | '/wallet'
     | '/'
     | '/exam/$attemptId'
     | '/subscription/add'
@@ -335,8 +357,10 @@ export interface FileRouteTypes {
     | '/_auth/welcome'
     | '/_user/activities'
     | '/_user/leaderboard'
+    | '/_user/referral'
     | '/_user/settings'
     | '/_user/subscription'
+    | '/_user/wallet'
     | '/_user/'
     | '/_user/exam/$attemptId'
     | '/_user/subscription/add'
@@ -379,6 +403,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserIndexRouteImport
       parentRoute: typeof UserRoute
     }
+    '/_user/wallet': {
+      id: '/_user/wallet'
+      path: '/wallet'
+      fullPath: '/wallet'
+      preLoaderRoute: typeof UserWalletRouteImport
+      parentRoute: typeof UserRoute
+    }
     '/_user/subscription': {
       id: '/_user/subscription'
       path: '/subscription'
@@ -391,6 +422,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof UserSettingsRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/_user/referral': {
+      id: '/_user/referral'
+      path: '/referral'
+      fullPath: '/referral'
+      preLoaderRoute: typeof UserReferralRouteImport
       parentRoute: typeof UserRoute
     }
     '/_user/leaderboard': {
@@ -601,8 +639,10 @@ const UserSubscriptionRouteWithChildren =
 interface UserRouteChildren {
   UserActivitiesRoute: typeof UserActivitiesRoute
   UserLeaderboardRoute: typeof UserLeaderboardRoute
+  UserReferralRoute: typeof UserReferralRoute
   UserSettingsRoute: typeof UserSettingsRoute
   UserSubscriptionRoute: typeof UserSubscriptionRouteWithChildren
+  UserWalletRoute: typeof UserWalletRoute
   UserIndexRoute: typeof UserIndexRoute
   UserExamAttemptIdRoute: typeof UserExamAttemptIdRoute
   UserTestsExamRoute: typeof UserTestsExamRoute
@@ -618,8 +658,10 @@ interface UserRouteChildren {
 const UserRouteChildren: UserRouteChildren = {
   UserActivitiesRoute: UserActivitiesRoute,
   UserLeaderboardRoute: UserLeaderboardRoute,
+  UserReferralRoute: UserReferralRoute,
   UserSettingsRoute: UserSettingsRoute,
   UserSubscriptionRoute: UserSubscriptionRouteWithChildren,
+  UserWalletRoute: UserWalletRoute,
   UserIndexRoute: UserIndexRoute,
   UserExamAttemptIdRoute: UserExamAttemptIdRoute,
   UserTestsExamRoute: UserTestsExamRoute,

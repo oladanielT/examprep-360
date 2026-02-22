@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Bell, Settings, LogOut, User, Menu, X, CreditCard } from "lucide-react";
+import { Bell, Settings, LogOut, User, Menu, X, CreditCard, Gift, Wallet } from "lucide-react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useAuthStore } from "@/stores/authStore";
 import { useLogout } from "@/feature/auth/hooks";
@@ -129,6 +129,20 @@ export default function Nav() {
                   <CreditCard className="mr-2 h-4 w-4" />
                   Manage Subscription
                 </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => navigate({ to: "/referral" })}
+                  className="cursor-pointer"
+                >
+                  <Gift className="mr-2 h-4 w-4" />
+                  Referral Program
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => navigate({ to: "/wallet" })}
+                  className="cursor-pointer"
+                >
+                  <Wallet className="mr-2 h-4 w-4" />
+                  Wallet
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={handleLogout}
@@ -172,6 +186,20 @@ export default function Nav() {
               >
                 <CreditCard className="mr-2 h-4 w-4" />
                 Manage Subscription
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => navigate({ to: "/referral" })}
+                className="cursor-pointer"
+              >
+                <Gift className="mr-2 h-4 w-4" />
+                Referral Program
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => navigate({ to: "/wallet" })}
+                className="cursor-pointer"
+              >
+                <Wallet className="mr-2 h-4 w-4" />
+                Wallet
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => navigate({ to: "/settings" })}

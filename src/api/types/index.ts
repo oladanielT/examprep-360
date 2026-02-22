@@ -6,3 +6,4 @@ export * from "./progress.types";
 export * from "./tutorial.types";
 export * from "./payment.types";
 export * from "./subscription.types";
+export * from "./wallet.types";

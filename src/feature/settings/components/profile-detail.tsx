@@ -1,5 +1,4 @@
 import { useForm } from "@tanstack/react-form";
-import { Copy, Check } from "lucide-react";
 import {
   Field,
   FieldError,
@@ -9,7 +8,7 @@ import {
 import { InputField } from "@/components/custom/custom-form-field";
 import PrimaryButton from "@/components/buttons/primary-button";
 import * as z from "zod";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useProfile, useUpdateProfile } from "@/feature/profile/hooks/useProfile";
 import { toast } from "sonner";
 
@@ -23,12 +22,9 @@ const profileSchema = z.object({
     .string()
     .min(10, "Phone number must be at least 10 characters.")
     .max(15, "Phone number must be at most 15 characters."),
-  referralCode: z.string(),
 });
 
 export const ProfileSettingsForm = () => {
-  const [copied, setCopied] = useState(false);
-
   const { data: profile, isLoading } = useProfile();
   const updateProfile = useUpdateProfile();
 
@@ -37,7 +33,6 @@ export const ProfileSettingsForm = () => {
       name: "",
       email: "",
       phone: "",
-      referralCode: "",
     },
     validators: {
       onSubmit: profileSchema,
@@ -67,15 +62,8 @@ export const ProfileSettingsForm = () => {
       form.setFieldValue("name", profile.fullName || "");
       form.setFieldValue("email", profile.email || "");
       form.setFieldValue("phone", profile.phone || "");
-      form.setFieldValue("referralCode", profile.referralCode || "");
     }
   }, [profile, form]);
-
-  const handleCopyReferralCode = () => {
-    navigator.clipboard.writeText(form.getFieldValue("referralCode") || "");
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
 
   return (
     <div className="w-full max-w-sm sm:max-w-md lg:max-w-sm">
@@ -167,38 +155,6 @@ export const ProfileSettingsForm = () => {
             }}
           />
 
-          {/* Referral Code Section */}
-          <form.Field
-            name="referralCode"
-            children={(field) => {
-              return (
-                <div className="border border-[#E5E7EB] rounded-[12px] p-[20px] bg-[#F9FAFB]">
-                  <FieldLabel htmlFor="form-referral" className="mb-[12px] block">
-                    Referral Code
-                  </FieldLabel>
-                  <div className="flex items-center gap-[12px]">
-                    <div className="flex-1 px-[16px] py-[12px] bg-white border border-[#E5E7EB] rounded-[8px] text-[14px] text-[#6B7280] font-medium">
-                      {field.state.value}
-                    </div>
-                    <button
-                      type="button"
-                      onClick={handleCopyReferralCode}
-                      className="flex items-center justify-center h-[44px] w-[44px] rounded-[8px] bg-accent hover:bg-accent/90 text-white transition-all"
-                    >
-                      {copied ? (
-                        <Check className="h-[20px] w-[20px]" />
-                      ) : (
-                        <Copy className="h-[20px] w-[20px]" />
-                      )}
-                    </button>
-                  </div>
-                  <p className="text-[12px] text-[#6B7280] mt-[8px]">
-                    Share this code with friends to earn rewards
-                  </p>
-                </div>
-              );
-            }}
-          />
         </FieldGroup>
 
         <PrimaryButton

@@ -24,6 +24,9 @@ interface RegistrationData {
   isInstitutional: boolean;
   students: number;
 
+  // Referral
+  referralCode: string;
+
   // Student ID (from registration response)
   studentId: string;
 }
@@ -38,6 +41,7 @@ interface RegistrationState {
   setBasicInfo: (info: Pick<RegistrationData, "fullName" | "email" | "phone" | "password">) => void;
   setExamSelection: (info: Pick<RegistrationData, "examType" | "examTypeId" | "duration" | "subjects" | "students">) => void;
   setIsInstitutional: (isInstitutional: boolean) => void;
+  setReferralCode: (referralCode: string) => void;
   setStudentId: (studentId: string) => void;
   setStep: (step: number) => void;
   reset: () => void;
@@ -59,6 +63,7 @@ const initialData: RegistrationData = {
   subjects: [],
   isInstitutional: false,
   students: 1,
+  referralCode: "",
   studentId: "",
 };
 
@@ -89,6 +94,11 @@ export const useRegistrationStore = create<RegistrationState>()(
       setIsInstitutional: (isInstitutional) =>
         set((state) => ({
           data: { ...state.data, isInstitutional },
+        })),
+
+      setReferralCode: (referralCode) =>
+        set((state) => ({
+          data: { ...state.data, referralCode },
         })),
 
       setStudentId: (studentId) =>

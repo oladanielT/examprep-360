@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Logo } from "@/components/global/logo";
 import { Progress } from "@/components/ui/progress";
@@ -24,8 +25,17 @@ function getCategoryExample(label: string): string | undefined {
 
 function Welcome() {
   const navigate = useNavigate();
-  const { setUserType } = useRegistrationStore();
+  const { setUserType, setReferralCode } = useRegistrationStore();
   const { data: categories, isLoading, error } = useExamCategories();
+
+  // Capture referral code from URL query param
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get("ref");
+    if (ref) {
+      setReferralCode(ref);
+    }
+  }, [setReferralCode]);
 
   const handleSelect = (category: { value: string; label: string }) => {
     const isUndergraduate =

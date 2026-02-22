@@ -34,6 +34,7 @@ function SummaryPage() {
         examCategory: data.category,
         selectedSubjects: data.subjects,
         ...(data.isInstitutional && { numberOfStudents: data.students }),
+        ...(data.referralCode && { referralCode: data.referralCode }),
       });
 
       // Save student ID from response

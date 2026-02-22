@@ -56,16 +56,9 @@ export interface SaveExamSelectionRequest {
 }
 
 // Referral Types
-export interface ReferralCode {
-  code: string;
-  shareUrl: string;
-}
-
-export interface ReferralStats {
-  totalReferrals: number;
-  successfulConversions: number;
-  pendingRewards: number;
-  totalEarnings: number;
+export interface ReferralReferral {
+  id: string;
+  [key: string]: unknown;
 }
 
 export interface ReferralReward {
@@ -74,4 +67,15 @@ export interface ReferralReward {
   value: number;
   claimed: boolean;
   claimedAt?: string;
+}
+
+export interface ReferralData {
+  code: string;
+  totalReferrals: number;
+  completedReferrals: number;
+  pendingReferrals: number;
+  totalRewards: number;
+  unclaimedRewards: number;
+  referrals: ReferralReferral[];
+  rewards: ReferralReward[];
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Loader2, Trash2, ArrowRightLeft, Plus, Pencil } from "lucide-react";
+import { Loader2, Trash2, ArrowRightLeft, Plus, Pencil, Copy, Check, KeyRound } from "lucide-react";
 import { toast } from "sonner";
 import {
   useSubscriptions,
@@ -8,7 +8,9 @@ import {
   useSwitchSubscription,
   useChangeSubscriptionSubjects,
 } from "./hooks/useSubscription";
+import { useInstitutionalCodes, useRedeemLicense } from "@/feature/payment/hooks";
 import { useExamPreferences, useExamSubjects } from "@/feature/exams/hooks";
+import { useRegistrationStore } from "@/stores/registrationStore";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -42,6 +44,52 @@ export const SubscriptionSection = () => {
   const [editingSubscription, setEditingSubscription] =
     useState<UserSubscription | null>(null);
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
+
+  // License codes
+  const { data: institutionalCodes } = useInstitutionalCodes();
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [showRedeemInput, setShowRedeemInput] = useState(false);
+  const [redeemCode, setRedeemCode] = useState("");
+  const redeemMutation = useRedeemLicense();
+  const { data: registrationData } = useRegistrationStore();
+
+  const handleCopyCode = async (code: string) => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopiedCode(code);
+      toast.success("Code copied to clipboard!");
+      setTimeout(() => setCopiedCode(null), 2000);
+    } catch {
+      toast.error("Failed to copy");
+    }
+  };
+
+  const handleRedeem = () => {
+    if (!redeemCode.trim()) {
+      toast.error("Please enter a license code");
+      return;
+    }
+    redeemMutation.mutate(
+      {
+        code: redeemCode.trim(),
+        studentId: registrationData.studentId || "",
+        subjects: [],
+        courses: [],
+      },
+      {
+        onSuccess: () => {
+          toast.success("License code redeemed successfully!");
+          setRedeemCode("");
+          setShowRedeemInput(false);
+        },
+        onError: (error) => {
+          toast.error(
+            error.response?.data?.message || "Failed to redeem code. Please check and try again."
+          );
+        },
+      }
+    );
+  };
 
   const { data: availableSubjects, isLoading: isLoadingSubjects } =
     useExamSubjects(editingSubscription?.examType ?? "");
@@ -219,6 +267,112 @@ export const SubscriptionSection = () => {
           ))}
         </div>
       )}
+
+      {/* License Codes Section (for institutional buyers) */}
+      {institutionalCodes && institutionalCodes.length > 0 && (
+        <div className="mt-8 sm:mt-10">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Your License Codes
+          </h3>
+          <p className="text-sm text-gray-500 mb-4">
+            Share these codes with your students so they can activate their subscriptions.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {institutionalCodes.map((item) => (
+              <div
+                key={item.code}
+                className="flex items-center justify-between p-3 sm:p-4 rounded-xl border border-gray-200 bg-white"
+              >
+                <div className="min-w-0">
+                  <p className="font-mono text-sm font-semibold tracking-wider truncate">
+                    {item.code}
+                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span
+                      className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
+                        item.status === "ACTIVE"
+                          ? "bg-green-100 text-green-700"
+                          : item.status === "USED"
+                            ? "bg-gray-100 text-gray-500"
+                            : "bg-red-100 text-red-700"
+                      }`}
+                    >
+                      {item.status}
+                    </span>
+                    {item.usedBy && (
+                      <span className="text-[10px] text-gray-400 truncate">
+                        {item.usedBy}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                {item.status === "ACTIVE" && (
+                  <button
+                    onClick={() => handleCopyCode(item.code)}
+                    className="ml-2 shrink-0 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                  >
+                    {copiedCode === item.code ? (
+                      <Check className="h-4 w-4 text-green-600" />
+                    ) : (
+                      <Copy className="h-4 w-4 text-gray-400" />
+                    )}
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Redeem License Code Section (for students) */}
+      <div className="mt-8 sm:mt-10">
+        {!showRedeemInput ? (
+          <button
+            onClick={() => setShowRedeemInput(true)}
+            className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-4xl border border-border bg-white hover:bg-gray-50 transition-colors"
+          >
+            <KeyRound className="h-4 w-4" />
+            Have a License Code?
+          </button>
+        ) : (
+          <div className="max-w-md space-y-3 p-4 rounded-xl border border-gray-200 bg-white">
+            <p className="text-sm font-medium text-gray-900">
+              Redeem License Code
+            </p>
+            <p className="text-xs text-gray-500">
+              Enter the code you received from your school or organization.
+            </p>
+            <input
+              type="text"
+              value={redeemCode}
+              onChange={(e) => setRedeemCode(e.target.value)}
+              placeholder="Enter license code"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-accent focus:outline-none"
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={handleRedeem}
+                disabled={!redeemCode.trim() || redeemMutation.isPending}
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-4xl bg-accent text-white hover:bg-accent/80 transition-colors disabled:opacity-50"
+              >
+                {redeemMutation.isPending && (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                )}
+                Redeem
+              </button>
+              <button
+                onClick={() => {
+                  setShowRedeemInput(false);
+                  setRedeemCode("");
+                }}
+                className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Edit Subjects Dialog */}
       <Dialog

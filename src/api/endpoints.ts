@@ -111,3 +111,11 @@ export const REFERRAL_ENDPOINTS = {
   STATS: "/user/referral/stats",
   CLAIM_REWARD: (rewardId: string) => `/user/referral/rewards/${rewardId}/claim`,
 } as const;
+
+// Wallet endpoints
+export const WALLET_ENDPOINTS = {
+  BALANCE: "/user/wallet/balance",
+  TRANSACTIONS: "/user/wallet/transactions",
+  WITHDRAW: "/user/wallet/withdraw",
+  WITHDRAWALS: "/user/wallet/withdrawals",
+} as const;
