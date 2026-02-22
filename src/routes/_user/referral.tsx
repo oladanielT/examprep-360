@@ -2,13 +2,13 @@ import { createFileRoute } from "@tanstack/react-router";
 import CustomPageHeader from "@/components/global/custom-page-header";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useReferralData, useClaimReward } from "@/feature/referral/hooks";
+import { useReferralData } from "@/feature/referral/hooks";
 import { Loader2, Copy, Users, CheckCircle, Clock, DollarSign } from "lucide-react";
 import { toast } from "sonner";
 
 function ReferralPage() {
   const { data, isLoading } = useReferralData();
-  const claimReward = useClaimReward();
+  // const claimReward = useClaimReward();
 
   const copyToClipboard = async (text: string, label: string) => {
     try {
