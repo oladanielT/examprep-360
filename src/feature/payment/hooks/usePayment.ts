@@ -14,6 +14,7 @@ import type {
   StartTrialRequest,
   StartTrialResponse,
   InstitutionalCode,
+  CodeRedemption,
 } from "@/api/types";
 import type { AxiosError } from "axios";
 
@@ -82,6 +83,22 @@ export const useInstitutionalCodes = () => {
       return data;
     },
     enabled: isAuthenticated,
+  });
+};
+
+// Fetch redemption history for a specific license code
+export const useCodeRedemptions = (codeId: string) => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  return useQuery<CodeRedemption[]>({
+    queryKey: ["codeRedemptions", codeId],
+    queryFn: async () => {
+      const { data } = await apiClient.get<CodeRedemption[]>(
+        PAYMENT_ENDPOINTS.CODE_REDEMPTIONS(codeId)
+      );
+      return data;
+    },
+    enabled: isAuthenticated && !!codeId,
   });
 };
 

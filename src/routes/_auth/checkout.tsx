@@ -4,7 +4,7 @@ import PrimaryButton from "@/components/buttons/primary-button";
 import { Alert } from "@/components/ui/alert";
 import { useRegistrationStore } from "@/stores/registrationStore";
 import { usePaymentPlans, useInitializePayment, useRedeemLicense, useStartTrial } from "@/feature/payment/hooks";
-import { Check, Loader2 } from "lucide-react";
+import { Check, Loader2, Upload, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -18,6 +18,9 @@ function CheckoutPage() {
   const [licenseCode, setLicenseCode] = useState("");
   const [trialStarted, setTrialStarted] = useState(false);
   const navigationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [studentEmails, setStudentEmails] = useState<string[]>([]);
+  const [bulkEmailText, setBulkEmailText] = useState("");
+  const csvInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     return () => {
@@ -52,14 +55,112 @@ function CheckoutPage() {
       : selectedPlan.basePrice
     : 0;
 
+  const validateStudentEmails = (): boolean => {
+    if (!registrationData.isInstitutional) return true;
+
+    if (studentEmails.length !== registrationData.students) {
+      toast.error(`Please add all ${registrationData.students} student emails (currently ${studentEmails.length})`);
+      return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    for (let i = 0; i < studentEmails.length; i++) {
+      if (!emailRegex.test(studentEmails[i])) {
+        toast.error(`Invalid email format: ${studentEmails[i]}`);
+        return false;
+      }
+    }
+
+    const unique = new Set(studentEmails);
+    if (unique.size !== studentEmails.length) {
+      toast.error("Each student must have a unique email address");
+      return false;
+    }
+
+    return true;
+  };
+
+  const parseAndAddEmails = (raw: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const parts = raw.split(/[,;\n\r]+/).map((s) => s.trim().toLowerCase()).filter(Boolean);
+
+    const invalid: string[] = [];
+    const valid: string[] = [];
+    for (const part of parts) {
+      if (emailRegex.test(part)) {
+        valid.push(part);
+      } else {
+        invalid.push(part);
+      }
+    }
+
+    if (invalid.length > 0) {
+      toast.warning(`${invalid.length} invalid email${invalid.length > 1 ? "s" : ""} skipped`);
+    }
+
+    const existingSet = new Set(studentEmails);
+    const duplicates: string[] = [];
+    const newEmails: string[] = [];
+    for (const email of valid) {
+      if (existingSet.has(email) || newEmails.includes(email)) {
+        duplicates.push(email);
+      } else {
+        newEmails.push(email);
+      }
+    }
+
+    if (duplicates.length > 0) {
+      toast.warning(`${duplicates.length} duplicate email${duplicates.length > 1 ? "s" : ""} skipped`);
+    }
+
+    const maxTotal = registrationData.students;
+    const available = maxTotal - studentEmails.length;
+    const toAdd = newEmails.slice(0, available);
+
+    if (newEmails.length > available) {
+      toast.warning(`Only ${available} more email${available !== 1 ? "s" : ""} can be added (max ${maxTotal})`);
+    }
+
+    if (toAdd.length > 0) {
+      setStudentEmails((prev) => [...prev, ...toAdd]);
+      toast.success(`${toAdd.length} email${toAdd.length > 1 ? "s" : ""} added`);
+    }
+
+    setBulkEmailText("");
+    if (csvInputRef.current) csvInputRef.current.value = "";
+  };
+
+  const handleCsvUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const text = ev.target?.result as string;
+      // For CSV: extract first column from each row
+      const emails = text
+        .split(/\r?\n/)
+        .map((line) => line.split(",")[0]?.trim())
+        .filter(Boolean)
+        .join("\n");
+      parseAndAddEmails(emails);
+    };
+    reader.readAsText(file);
+  };
+
   const handlePayNow = async () => {
     if (!selectedPlan || !registrationData.studentId) {
       console.error("Missing required data for payment");
       return;
     }
 
+    if (!validateStudentEmails()) return;
+
     try {
       const callbackUrl = `${window.location.origin}/payment-verify?returnUrl=${encodeURIComponent("/checkout")}`;
+      const trimmedEmails = registrationData.isInstitutional
+        ? studentEmails.map((e) => e.trim().toLowerCase()).filter(Boolean)
+        : undefined;
 
       const response = await initializePaymentMutation.mutateAsync({
         studentId: registrationData.studentId,
@@ -68,6 +169,7 @@ function CheckoutPage() {
         subscriptionType: registrationData.isInstitutional ? "BODY" : "INDIVIDUAL",
         numberOfSubjects: registrationData.subjects.length,
         numberOfStudents: registrationData.isInstitutional ? registrationData.students : 1,
+        ...(trimmedEmails && { studentEmails: trimmedEmails }),
         schoolType: examCategory,
         examType: examType,
         numberOfDays: selectedPlan.duration,
@@ -119,8 +221,17 @@ function CheckoutPage() {
           navigate({ to: "/sign-in" });
         }, 1000);
       }
-    } catch (error) {
-      console.error("License redemption failed:", error);
+    } catch (error: any) {
+      const status = error?.response?.status;
+      const message = error?.response?.data?.message;
+
+      if (status === 403) {
+        toast.error("This code was assigned to a different email address. Please contact your institution.");
+      } else if (status === 404) {
+        toast.error("This license code is invalid. Please check and try again.");
+      } else {
+        toast.error(message || "Failed to redeem license code.");
+      }
     }
   };
 
@@ -365,6 +476,95 @@ function CheckoutPage() {
                     );
                   })}
                 </div>
+
+                {/* Student Emails (for institutional/BODY purchases) */}
+                {registrationData.isInstitutional && selectedPlanId && (
+                  <div className="space-y-3 p-4 border-2 border-gray-200 rounded-xl">
+                    <div>
+                      <h4 className="text-sm font-semibold text-[#101828]">
+                        Student Email Addresses
+                      </h4>
+                      <p className="text-xs text-gray-500 mt-0.5">
+                        Each student will receive a unique code that only they can redeem.
+                      </p>
+                    </div>
+
+                    {/* Textarea for bulk paste */}
+                    <div className="space-y-2">
+                      <textarea
+                        value={bulkEmailText}
+                        onChange={(e) => setBulkEmailText(e.target.value)}
+                        placeholder="Paste student emails here (one per line, or separated by commas)"
+                        rows={4}
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-accent focus:outline-none resize-y"
+                      />
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => parseAndAddEmails(bulkEmailText)}
+                          disabled={!bulkEmailText.trim()}
+                          className="px-4 py-2 bg-accent text-white text-sm rounded-lg disabled:opacity-50 hover:bg-accent/80 transition-colors"
+                        >
+                          Add Emails
+                        </button>
+                        <input
+                          ref={csvInputRef}
+                          type="file"
+                          accept=".csv,.txt"
+                          onChange={handleCsvUpload}
+                          className="hidden"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => csvInputRef.current?.click()}
+                          className="inline-flex items-center gap-1.5 px-4 py-2 border border-gray-200 text-sm rounded-lg text-gray-700 hover:border-accent/50 transition-colors"
+                        >
+                          <Upload className="h-3.5 w-3.5" />
+                          Upload CSV
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Counter and Clear All */}
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs text-gray-500">
+                        {studentEmails.length} of {registrationData.students} emails added
+                      </p>
+                      {studentEmails.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => setStudentEmails([])}
+                          className="text-xs text-red-500 hover:text-red-700 transition-colors"
+                        >
+                          Clear All
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Email chips */}
+                    {studentEmails.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 max-h-48 overflow-y-auto">
+                        {studentEmails.map((email, index) => (
+                          <span
+                            key={index}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 bg-accent/10 text-accent text-xs rounded-full"
+                          >
+                            {email}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setStudentEmails(studentEmails.filter((_, i) => i !== index))
+                              }
+                              className="hover:text-red-500 transition-colors"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 <PrimaryButton
                   onClick={handlePayNow}

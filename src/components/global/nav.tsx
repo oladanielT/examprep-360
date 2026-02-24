@@ -8,7 +8,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Bell, Settings, LogOut, User, Menu, X, CreditCard, Gift, Wallet } from "lucide-react";
+import { Settings, LogOut, User, Menu, X, CreditCard, Gift, Wallet } from "lucide-react";
+import NotificationBell from "@/components/global/notification-bell";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useAuthStore } from "@/stores/authStore";
 import { useLogout } from "@/feature/auth/hooks";
@@ -92,7 +93,7 @@ export default function Nav() {
         {/* Desktop right actions */}
         <ul className="hidden lg:flex gap-5 items-center">
           <li>
-            <Bell className="cursor-pointer" />
+            <NotificationBell />
           </li>
           <li>
             <Link to="/settings">
@@ -159,7 +160,7 @@ export default function Nav() {
 
         {/* Mobile: right actions + hamburger */}
         <div className="flex lg:hidden items-center gap-3">
-          <Bell className="cursor-pointer w-5 h-5" />
+          <NotificationBell className="w-5 h-5" />
           <DropdownMenu>
             <DropdownMenuTrigger className="focus:outline-none focus:ring-2 focus:ring-primary rounded-full">
               <Avatar className="w-8 h-8">
