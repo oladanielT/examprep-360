@@ -4,7 +4,7 @@ import PrimaryButton from "@/components/buttons/primary-button";
 import { Alert } from "@/components/ui/alert";
 import { useRegistrationStore } from "@/stores/registrationStore";
 import { usePaymentPlans, useInitializePayment, useRedeemLicense, useStartTrial } from "@/feature/payment/hooks";
-import { Check, Loader2 } from "lucide-react";
+import { Check, Loader2, Plus, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -18,6 +18,11 @@ function CheckoutPage() {
   const [licenseCode, setLicenseCode] = useState("");
   const [trialStarted, setTrialStarted] = useState(false);
   const navigationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [studentEmails, setStudentEmails] = useState<string[]>(
+    registrationData.isInstitutional
+      ? Array(registrationData.students).fill("")
+      : []
+  );
 
   useEffect(() => {
     return () => {
@@ -52,14 +57,50 @@ function CheckoutPage() {
       : selectedPlan.basePrice
     : 0;
 
+  const validateStudentEmails = (): boolean => {
+    if (!registrationData.isInstitutional) return true;
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const trimmed = studentEmails.map((e) => e.trim().toLowerCase());
+
+    for (let i = 0; i < trimmed.length; i++) {
+      if (!trimmed[i]) {
+        toast.error(`Please enter email for student ${i + 1}`);
+        return false;
+      }
+      if (!emailRegex.test(trimmed[i])) {
+        toast.error(`Invalid email format for student ${i + 1}`);
+        return false;
+      }
+    }
+
+    const unique = new Set(trimmed);
+    if (unique.size !== trimmed.length) {
+      toast.error("Each student must have a unique email address");
+      return false;
+    }
+
+    if (trimmed.length !== registrationData.students) {
+      toast.error(`The number of emails must match the number of students (${registrationData.students})`);
+      return false;
+    }
+
+    return true;
+  };
+
   const handlePayNow = async () => {
     if (!selectedPlan || !registrationData.studentId) {
       console.error("Missing required data for payment");
       return;
     }
 
+    if (!validateStudentEmails()) return;
+
     try {
       const callbackUrl = `${window.location.origin}/payment-verify?returnUrl=${encodeURIComponent("/checkout")}`;
+      const trimmedEmails = registrationData.isInstitutional
+        ? studentEmails.map((e) => e.trim().toLowerCase()).filter(Boolean)
+        : undefined;
 
       const response = await initializePaymentMutation.mutateAsync({
         studentId: registrationData.studentId,
@@ -68,6 +109,7 @@ function CheckoutPage() {
         subscriptionType: registrationData.isInstitutional ? "BODY" : "INDIVIDUAL",
         numberOfSubjects: registrationData.subjects.length,
         numberOfStudents: registrationData.isInstitutional ? registrationData.students : 1,
+        ...(trimmedEmails && { studentEmails: trimmedEmails }),
         schoolType: examCategory,
         examType: examType,
         numberOfDays: selectedPlan.duration,
@@ -119,8 +161,17 @@ function CheckoutPage() {
           navigate({ to: "/sign-in" });
         }, 1000);
       }
-    } catch (error) {
-      console.error("License redemption failed:", error);
+    } catch (error: any) {
+      const status = error?.response?.status;
+      const message = error?.response?.data?.message;
+
+      if (status === 403) {
+        toast.error("This code was assigned to a different email address. Please contact your institution.");
+      } else if (status === 404) {
+        toast.error("This license code is invalid. Please check and try again.");
+      } else {
+        toast.error(message || "Failed to redeem license code.");
+      }
     }
   };
 
@@ -365,6 +416,61 @@ function CheckoutPage() {
                     );
                   })}
                 </div>
+
+                {/* Student Emails (for institutional/BODY purchases) */}
+                {registrationData.isInstitutional && selectedPlanId && (
+                  <div className="space-y-3 p-4 border-2 border-gray-200 rounded-xl">
+                    <div>
+                      <h4 className="text-sm font-semibold text-[#101828]">
+                        Student Email Addresses
+                      </h4>
+                      <p className="text-xs text-gray-500 mt-0.5">
+                        Each student will receive a unique code that only they can redeem.
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      {studentEmails.map((email, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => {
+                              const updated = [...studentEmails];
+                              updated[index] = e.target.value;
+                              setStudentEmails(updated);
+                            }}
+                            placeholder={`Student ${index + 1} email`}
+                            className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-accent focus:outline-none"
+                          />
+                          {studentEmails.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setStudentEmails(studentEmails.filter((_, i) => i !== index))
+                              }
+                              className="p-1.5 text-gray-400 hover:text-red-500 transition-colors"
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    {studentEmails.length < registrationData.students && (
+                      <button
+                        type="button"
+                        onClick={() => setStudentEmails([...studentEmails, ""])}
+                        className="inline-flex items-center gap-1 text-xs font-medium text-accent hover:text-accent/80"
+                      >
+                        <Plus className="h-3 w-3" />
+                        Add Another Email
+                      </button>
+                    )}
+                    <p className="text-[10px] text-gray-400">
+                      {studentEmails.filter((e) => e.trim()).length} of {registrationData.students} emails entered
+                    </p>
+                  </div>
+                )}
 
                 <PrimaryButton
                   onClick={handlePayNow}

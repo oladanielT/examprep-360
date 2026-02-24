@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Loader2, Trash2, ArrowRightLeft, Plus, Pencil, Copy, Check, KeyRound } from "lucide-react";
+import { Loader2, Trash2, ArrowRightLeft, Plus, Pencil, Copy, Check, KeyRound, Mail } from "lucide-react";
 import { toast } from "sonner";
 import {
   useSubscriptions,
@@ -11,6 +11,7 @@ import {
 import { useInstitutionalCodes, useRedeemLicense } from "@/feature/payment/hooks";
 import { useExamPreferences, useExamSubjects } from "@/feature/exams/hooks";
 import { useRegistrationStore } from "@/stores/registrationStore";
+import type { InstitutionalCode } from "@/api/types";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -53,6 +54,26 @@ export const SubscriptionSection = () => {
   const redeemMutation = useRedeemLicense();
   const { data: registrationData } = useRegistrationStore();
 
+  const getCodeStatus = (item: InstitutionalCode) => {
+    if (item.redemptionCount >= item.maxRedemptions) return "Redeemed";
+    if (!item.isActive) return "Inactive";
+    if (item.expiresAt && new Date(item.expiresAt) < new Date()) return "Expired";
+    return "Pending";
+  };
+
+  const getCodeStatusStyle = (status: string) => {
+    switch (status) {
+      case "Redeemed":
+        return "bg-blue-100 text-blue-700";
+      case "Inactive":
+        return "bg-gray-100 text-gray-500";
+      case "Expired":
+        return "bg-red-100 text-red-700";
+      default:
+        return "bg-green-100 text-green-700";
+    }
+  };
+
   const handleCopyCode = async (code: string) => {
     try {
       await navigator.clipboard.writeText(code);
@@ -83,9 +104,15 @@ export const SubscriptionSection = () => {
           setShowRedeemInput(false);
         },
         onError: (error) => {
-          toast.error(
-            error.response?.data?.message || "Failed to redeem code. Please check and try again."
-          );
+          const status = error.response?.status;
+          const message = error.response?.data?.message;
+          if (status === 403) {
+            toast.error(message || "This code is assigned to a different email address.");
+          } else if (status === 404) {
+            toast.error("Invalid license code. Please check and try again.");
+          } else {
+            toast.error(message || "Failed to redeem code. Please try again.");
+          }
         },
       }
     );
@@ -275,51 +302,67 @@ export const SubscriptionSection = () => {
             Your License Codes
           </h3>
           <p className="text-sm text-gray-500 mb-4">
-            Share these codes with your students so they can activate their subscriptions.
+            Each code is assigned to a specific student email. Share the code with the corresponding student.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {institutionalCodes.map((item) => (
-              <div
-                key={item.code}
-                className="flex items-center justify-between p-3 sm:p-4 rounded-xl border border-gray-200 bg-white"
-              >
-                <div className="min-w-0">
-                  <p className="font-mono text-sm font-semibold tracking-wider truncate">
-                    {item.code}
-                  </p>
-                  <div className="flex items-center gap-2 mt-1">
+            {institutionalCodes.map((item) => {
+              const status = getCodeStatus(item);
+              const isAvailable = status === "Pending";
+
+              return (
+                <div
+                  key={item.id}
+                  className="p-3 sm:p-4 rounded-xl border border-gray-200 bg-white space-y-2"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="font-mono text-sm font-semibold tracking-wider truncate">
+                      {item.code}
+                    </p>
+                    {isAvailable && (
+                      <button
+                        onClick={() => handleCopyCode(item.code)}
+                        className="shrink-0 p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                      >
+                        {copiedCode === item.code ? (
+                          <Check className="h-4 w-4 text-green-600" />
+                        ) : (
+                          <Copy className="h-4 w-4 text-gray-400" />
+                        )}
+                      </button>
+                    )}
+                  </div>
+
+                  {item.authorizedEmail && (
+                    <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                      <Mail className="h-3 w-3 shrink-0" />
+                      <span className="truncate">{item.authorizedEmail}</span>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-2">
                     <span
-                      className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
-                        item.status === "ACTIVE"
-                          ? "bg-green-100 text-green-700"
-                          : item.status === "USED"
-                            ? "bg-gray-100 text-gray-500"
-                            : "bg-red-100 text-red-700"
-                      }`}
+                      className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${getCodeStatusStyle(status)}`}
                     >
-                      {item.status}
+                      {status}
                     </span>
-                    {item.usedBy && (
+                    {item.redeemedBy && (
                       <span className="text-[10px] text-gray-400 truncate">
-                        {item.usedBy}
+                        Redeemed by {item.redeemedBy}
+                      </span>
+                    )}
+                    {item.redeemedAt && (
+                      <span className="text-[10px] text-gray-400">
+                        {new Date(item.redeemedAt).toLocaleDateString()}
                       </span>
                     )}
                   </div>
+
+                  <div className="text-[10px] text-gray-400">
+                    {item.subscription.name} &middot; {item.redemptionCount}/{item.maxRedemptions} used
+                  </div>
                 </div>
-                {item.status === "ACTIVE" && (
-                  <button
-                    onClick={() => handleCopyCode(item.code)}
-                    className="ml-2 shrink-0 p-2 rounded-lg hover:bg-gray-100 transition-colors"
-                  >
-                    {copiedCode === item.code ? (
-                      <Check className="h-4 w-4 text-green-600" />
-                    ) : (
-                      <Copy className="h-4 w-4 text-gray-400" />
-                    )}
-                  </button>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}

@@ -101,6 +101,7 @@ export const PAYMENT_ENDPOINTS = {
   REDEEM_LICENSE: "/payment/redeem-license",
   START_TRIAL: "/payment/trial",
   INSTITUTIONAL_CODES: "/payment/institutional-codes",
+  CODE_REDEMPTIONS: (id: string) => `/payment/institutional-codes/${id}/redemptions`,
   CHANGE_SUBJECTS: (id: string) => `/payment/subscriptions/${id}/subjects`,
 } as const;
 

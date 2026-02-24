@@ -36,10 +36,13 @@ export interface InitializePaymentRequest {
   subscriptionType: "INDIVIDUAL" | "BODY";
   numberOfSubjects: number;
   numberOfStudents: number;
+  studentEmails?: string[];
   schoolType: string;
   examType: string;
   courseCode?: string;
   numberOfDays: number;
+  promoCode?: string;
+  useReferralBenefit?: boolean;
   metadata: {
     callbackUrl: string;
   };
@@ -99,9 +102,37 @@ export interface StartTrialResponse {
 }
 
 export interface InstitutionalCode {
+  id: string;
   code: string;
-  status: "ACTIVE" | "USED" | "EXPIRED";
-  usedBy?: string;
-  usedAt?: string;
-  expiresAt: string;
+  authorizedEmail: string | null;
+  isActive: boolean;
+  redemptionCount: number;
+  maxRedemptions: number;
+  redeemedBy: string | null;
+  redeemedAt: string | null;
+  expiresAt: string | null;
+  createdAt: string;
+  subscription: {
+    name: string;
+    duration: number;
+    basePrice: number;
+  };
+  _count: {
+    redemptions: number;
+  };
+}
+
+export interface CodeRedemption {
+  id: string;
+  studentId: string;
+  subscriptionId: string;
+  startDate: string;
+  endDate: string;
+  status: string;
+  student: {
+    id: string;
+    fullName: string;
+    email: string;
+    registrationDate: string;
+  };
 }

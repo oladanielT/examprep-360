@@ -23,6 +23,7 @@ interface RegistrationData {
   // Institutional license
   isInstitutional: boolean;
   students: number;
+  studentEmails: string[];
 
   // Referral
   referralCode: string;
@@ -63,6 +64,7 @@ const initialData: RegistrationData = {
   subjects: [],
   isInstitutional: false,
   students: 1,
+  studentEmails: [],
   referralCode: "",
   studentId: "",
 };
