@@ -1,8 +1,11 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import Nav from "@/components/global/nav";
 import { useAuthStore } from "@/stores/authStore";
+import { usePushNotifications } from "@/feature/notifications/hooks/usePushNotifications";
 
 function UserLayout() {
+  usePushNotifications();
+
   return (
     <div className="bg-white min-h-screen font-sans">
       <Nav />

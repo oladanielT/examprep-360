@@ -44,6 +44,8 @@ const questionTypeOptions = [
   { label: "Multiple Choice", value: "MULTIPLE_CHOICE" },
   { label: "True/False", value: "TRUE_FALSE" },
   { label: "Fill in the Blank", value: "FILL_IN_BLANK" },
+  { label: "Essay", value: "ESSAY" },
+  { label: "Essay with Sub-questions", value: "ESSAY_WITH_SUB" },
 ];
 
 const currentYear = new Date().getFullYear();
@@ -95,7 +97,8 @@ export default function ConfigurePracticeForm({
                   | "MULTIPLE_CHOICE"
                   | "TRUE_FALSE"
                   | "FILL_IN_BLANK"
-                  | "ESSAY",
+                  | "ESSAY"
+                  | "ESSAY_WITH_SUB",
               ]
             : undefined,
           year: value.year ? parseInt(value.year) : undefined,

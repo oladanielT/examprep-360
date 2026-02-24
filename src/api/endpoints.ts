@@ -23,6 +23,7 @@ export const PROFILE_ENDPOINTS = {
   STATISTICS: "/user/profile/statistics",
   UPLOAD_PICTURE: "/user/profile/picture",
   REMOVE_PICTURE: "/user/profile/picture",
+  FCM_TOKEN: "/user/profile/fcm-token",
 } as const;
 
 // Exam endpoints
@@ -119,4 +120,11 @@ export const WALLET_ENDPOINTS = {
   TRANSACTIONS: "/user/wallet/transactions",
   WITHDRAW: "/user/wallet/withdraw",
   WITHDRAWALS: "/user/wallet/withdrawals",
+} as const;
+
+// Notification endpoints
+export const NOTIFICATION_ENDPOINTS = {
+  LIST: "/user/notifications",
+  MARK_READ: (id: string) => `/user/notifications/${id}/read`,
+  MARK_ALL_READ: "/user/notifications/read-all",
 } as const;

@@ -16,6 +16,7 @@ import { Route as UserWalletRouteImport } from './routes/_user/wallet'
 import { Route as UserSubscriptionRouteImport } from './routes/_user/subscription'
 import { Route as UserSettingsRouteImport } from './routes/_user/settings'
 import { Route as UserReferralRouteImport } from './routes/_user/referral'
+import { Route as UserNotificationsRouteImport } from './routes/_user/notifications'
 import { Route as UserLeaderboardRouteImport } from './routes/_user/leaderboard'
 import { Route as UserActivitiesRouteImport } from './routes/_user/activities'
 import { Route as AuthWelcomeRouteImport } from './routes/_auth/welcome'
@@ -71,6 +72,11 @@ const UserSettingsRoute = UserSettingsRouteImport.update({
 const UserReferralRoute = UserReferralRouteImport.update({
   id: '/referral',
   path: '/referral',
+  getParentRoute: () => UserRoute,
+} as any)
+const UserNotificationsRoute = UserNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => UserRoute,
 } as any)
 const UserLeaderboardRoute = UserLeaderboardRouteImport.update({
@@ -202,6 +208,7 @@ export interface FileRoutesByFullPath {
   '/welcome': typeof AuthWelcomeRoute
   '/activities': typeof UserActivitiesRoute
   '/leaderboard': typeof UserLeaderboardRoute
+  '/notifications': typeof UserNotificationsRoute
   '/referral': typeof UserReferralRoute
   '/settings': typeof UserSettingsRoute
   '/subscription': typeof UserSubscriptionRouteWithChildren
@@ -232,6 +239,7 @@ export interface FileRoutesByTo {
   '/welcome': typeof AuthWelcomeRoute
   '/activities': typeof UserActivitiesRoute
   '/leaderboard': typeof UserLeaderboardRoute
+  '/notifications': typeof UserNotificationsRoute
   '/referral': typeof UserReferralRoute
   '/settings': typeof UserSettingsRoute
   '/wallet': typeof UserWalletRoute
@@ -264,6 +272,7 @@ export interface FileRoutesById {
   '/_auth/welcome': typeof AuthWelcomeRoute
   '/_user/activities': typeof UserActivitiesRoute
   '/_user/leaderboard': typeof UserLeaderboardRoute
+  '/_user/notifications': typeof UserNotificationsRoute
   '/_user/referral': typeof UserReferralRoute
   '/_user/settings': typeof UserSettingsRoute
   '/_user/subscription': typeof UserSubscriptionRouteWithChildren
@@ -296,6 +305,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/activities'
     | '/leaderboard'
+    | '/notifications'
     | '/referral'
     | '/settings'
     | '/subscription'
@@ -326,6 +336,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/activities'
     | '/leaderboard'
+    | '/notifications'
     | '/referral'
     | '/settings'
     | '/wallet'
@@ -357,6 +368,7 @@ export interface FileRouteTypes {
     | '/_auth/welcome'
     | '/_user/activities'
     | '/_user/leaderboard'
+    | '/_user/notifications'
     | '/_user/referral'
     | '/_user/settings'
     | '/_user/subscription'
@@ -429,6 +441,13 @@ declare module '@tanstack/react-router' {
       path: '/referral'
       fullPath: '/referral'
       preLoaderRoute: typeof UserReferralRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/_user/notifications': {
+      id: '/_user/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof UserNotificationsRouteImport
       parentRoute: typeof UserRoute
     }
     '/_user/leaderboard': {
@@ -639,6 +658,7 @@ const UserSubscriptionRouteWithChildren =
 interface UserRouteChildren {
   UserActivitiesRoute: typeof UserActivitiesRoute
   UserLeaderboardRoute: typeof UserLeaderboardRoute
+  UserNotificationsRoute: typeof UserNotificationsRoute
   UserReferralRoute: typeof UserReferralRoute
   UserSettingsRoute: typeof UserSettingsRoute
   UserSubscriptionRoute: typeof UserSubscriptionRouteWithChildren
@@ -658,6 +678,7 @@ interface UserRouteChildren {
 const UserRouteChildren: UserRouteChildren = {
   UserActivitiesRoute: UserActivitiesRoute,
   UserLeaderboardRoute: UserLeaderboardRoute,
+  UserNotificationsRoute: UserNotificationsRoute,
   UserReferralRoute: UserReferralRoute,
   UserSettingsRoute: UserSettingsRoute,
   UserSubscriptionRoute: UserSubscriptionRouteWithChildren,

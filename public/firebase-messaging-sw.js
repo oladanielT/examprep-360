@@ -1,0 +1,30 @@
+/* eslint-disable no-undef */
+importScripts(
+  "https://www.gstatic.com/firebasejs/12.9.0/firebase-app-compat.js"
+);
+importScripts(
+  "https://www.gstatic.com/firebasejs/12.9.0/firebase-messaging-compat.js"
+);
+
+firebase.initializeApp({
+  apiKey: "AIzaSyBLl4YmMvCXj3Ft7b0WVFfkH-MNGYiOK2w",
+  authDomain: "examprep-485211.firebaseapp.com",
+  projectId: "examprep-485211",
+  storageBucket: "examprep-485211.firebasestorage.app",
+  messagingSenderId: "107672743367",
+  appId: "1:107672743367:web:47cdc8b879c4839f7f7de2",
+  measurementId: "G-MX80S9GNVS",
+});
+
+const messaging = firebase.messaging();
+
+messaging.onBackgroundMessage((payload) => {
+  const title = payload.notification?.title || "New Notification";
+  const options = {
+    body: payload.notification?.body || "",
+    icon: "/favicon.ico",
+    data: payload.data,
+  };
+
+  self.registration.showNotification(title, options);
+});
