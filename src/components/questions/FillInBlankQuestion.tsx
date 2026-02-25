@@ -37,12 +37,19 @@ export function FillInBlankQuestion({
     onAnswerChange({ ...answers, [blankId]: value });
   };
 
+  const getAcceptedAnswers = (blank: typeof fillData.blanks[0]) => {
+    return blank.acceptedAnswers || blank.acceptableAnswers || [];
+  };
+
   const isAnswerCorrect = (blankId: string, userAnswer: string) => {
     const blank = fillData.blanks.find((b) => b.id === blankId);
     if (!blank || !userAnswer) return false;
 
-    return blank.acceptableAnswers.some(
-      (acceptable) => acceptable.toLowerCase().trim() === userAnswer.toLowerCase().trim()
+    const accepted = getAcceptedAnswers(blank);
+    if (accepted.length === 0) return false;
+
+    return accepted.some(
+      (answer) => answer.toLowerCase().trim() === userAnswer.toLowerCase().trim()
     );
   };
 
@@ -51,19 +58,38 @@ export function FillInBlankQuestion({
     isAnswerCorrect(blank.id, answers[blank.id] || "")
   );
 
-  // Parse template and replace [[id]] or ____ with input fields
+  // Parse template and replace placeholders with input fields
   const renderTemplate = () => {
-    const template = fillData.template;
+    // Use fillData.template if available, otherwise extract from questionText
+    const template = fillData.template
+      || (Array.isArray(question.questionText)
+        ? question.questionText.map((block) => block.value).join("")
+        : String(question.questionText || ""));
 
-    // Check if template uses [[id]] format or ____ (underscore) format
+    // Check which placeholder format the template uses
     const usesIdFormat = /\[\[\d+\]\]/.test(template);
+    const usesCurlyFormat = /\{blank_?\w*\}/.test(template);
     const usesUnderscoreFormat = /_{2,}/.test(template);
 
     if (usesIdFormat) {
-      // Original [[id]] format
+      // [[id]] format
       const parts = template.split(/(\[\[\d+\]\])/g);
       return parts.map((part, index) => {
         const match = part.match(/\[\[(\d+)\]\]/);
+        if (match) {
+          const blankId = match[1];
+          const blank = fillData.blanks.find((b) => b.id === blankId);
+          const userAnswer = answers[blankId] || "";
+          const isCorrect = isAnswerCorrect(blankId, userAnswer);
+          return renderInputField(blankId, blank, userAnswer, isCorrect, index);
+        }
+        return <span key={index}>{part}</span>;
+      });
+    } else if (usesCurlyFormat) {
+      // {blank_1} or {blank_id} format — replace inline
+      const parts = template.split(/(\{blank_?\w*\})/g);
+      return parts.map((part, index) => {
+        const match = part.match(/^\{(blank_?\w*)\}$/);
         if (match) {
           const blankId = match[1];
           const blank = fillData.blanks.find((b) => b.id === blankId);
@@ -156,10 +182,12 @@ export function FillInBlankQuestion({
       <div className="space-y-3 sm:space-y-4">
         <p className="text-xs sm:text-sm font-medium text-gray-600">Question {questionNumber}</p>
 
-        {/* Question Text */}
-        <div className="text-base sm:text-lg font-semibold text-gray-900 break-words overflow-hidden [word-break:break-word]">
-          <RichContentRenderer content={question.questionText} />
-        </div>
+        {/* Only show question text separately if template comes from fillData, not questionText */}
+        {fillData.template && (
+          <div className="text-base sm:text-lg font-semibold text-gray-900 break-words overflow-hidden [word-break:break-word]">
+            <RichContentRenderer content={question.questionText} />
+          </div>
+        )}
       </div>
 
       {/* Fill in the blank template */}
@@ -174,7 +202,7 @@ export function FillInBlankQuestion({
           <ul className="space-y-1 text-sm">
             {fillData.blanks.map((blank) => (
               <li key={blank.id}>
-                Blank {blank.id}: {blank.acceptableAnswers.join(" or ")}
+                Blank {blank.id}: {getAcceptedAnswers(blank).join(" or ") || "N/A"}
               </li>
             ))}
           </ul>

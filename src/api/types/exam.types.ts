@@ -131,18 +131,21 @@ export interface ChoiceOption {
 
 // Fill in the blank data
 export interface FillInBlankData {
-  template: string;
+  template?: string;
   blanks: Array<{
     id: string;
-    acceptableAnswers: string[];
+    acceptedAnswers?: string[];
+    acceptableAnswers?: string[];
     inputType?: "text" | "number";
     hint?: string;
+    marks?: number;
+    caseSensitive?: boolean;
   }>;
 }
 
 // True/False data
 export interface TrueFalseData {
-  correctAnswer: boolean;
+  correctAnswer?: boolean;
   justificationRequired?: boolean;
 }
 
@@ -169,41 +172,52 @@ export interface EssayWithSubData {
 
 // Short answer data
 export interface ShortAnswerData {
-  acceptableAnswers: string[];
+  acceptedAnswers?: string[];
+  acceptableAnswers?: string[];
   caseSensitive?: boolean;
   answerFormat?: "text" | "number";
 }
 
 // Matching data
 export interface MatchingData {
-  leftColumn: Array<{
+  pairs?: Array<{
+    left: RichContentBlock[];
+    right: RichContentBlock[];
+  }>;
+  leftColumn?: Array<{
     id: string;
     text: string;
   }>;
-  rightColumn: Array<{
+  rightColumn?: Array<{
     id: string;
     text: string;
   }>;
-  correctMatches: string[]; // Format: "L1-R1"
+  correctMatches?: string[]; // Format: "L1-R1"
 }
 
 // Ordering data
 export interface OrderingData {
   items: Array<{
     id: string;
-    text: string;
+    text?: string;
+    content?: RichContentBlock[];
   }>;
-  correctOrder: string[];
+  correctOrder?: string[];
 }
 
 // Calculation data
 export interface CalculationData {
-  problem: string;
-  steps: Array<{
+  formula?: string;
+  expectedAnswer?: {
+    unit?: string;
+    value: number;
+  };
+  problem?: string;
+  steps?: Array<{
     step: string;
     formula: string;
   }>;
-  finalAnswer: number;
+  finalAnswer?: number;
   precision?: number;
 }
 
