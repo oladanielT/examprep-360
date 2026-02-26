@@ -217,7 +217,8 @@ function parseSolutionIntoSections(text: string): ParsedSection[] {
  * with the existing RichContentRenderer.
  */
 function bodyToBlocks(body: string): RichContentBlock[] {
-  return [{ type: "text" as const, value: body, style: {} }];
+  // Use markdown type so **bold** and other markdown is rendered properly
+  return [{ type: "markdown" as const, content: body }];
 }
 
 /**

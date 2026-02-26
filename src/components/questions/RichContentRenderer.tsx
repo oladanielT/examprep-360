@@ -133,6 +133,37 @@ function TextBlockRenderer({ block }: { block: TextBlock }) {
   );
 }
 
+/**
+ * Parse basic inline markdown (**bold**, *italic*) into React nodes.
+ */
+function parseInlineMarkdown(text: string): React.ReactNode[] {
+  const nodes: React.ReactNode[] = [];
+  // Match **bold** or *italic* (bold first to avoid conflict)
+  const regex = /(\*\*[^*]+\*\*|\*[^*]+\*)/g;
+  let lastIndex = 0;
+  let match;
+  let key = 0;
+
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      nodes.push(<span key={key++}>{text.slice(lastIndex, match.index)}</span>);
+    }
+    const m = match[0];
+    if (m.startsWith("**")) {
+      nodes.push(<strong key={key++}>{m.slice(2, -2)}</strong>);
+    } else {
+      nodes.push(<em key={key++}>{m.slice(1, -1)}</em>);
+    }
+    lastIndex = regex.lastIndex;
+  }
+
+  if (lastIndex < text.length) {
+    nodes.push(<span key={key++}>{text.slice(lastIndex)}</span>);
+  }
+
+  return nodes.length > 0 ? nodes : [<span key={0}>{text}</span>];
+}
+
 function MarkdownBlockRenderer({ block }: { block: MarkdownBlock }) {
   // Handle case where content might be a JSON string (legacy format)
   let blockContent = block.content ?? "";
@@ -148,39 +179,58 @@ function MarkdownBlockRenderer({ block }: { block: MarkdownBlock }) {
   }
 
   const hasLatex = blockContent.includes("$");
-  const hasNewlines = blockContent.includes("\n");
+  const hasMarkdown = blockContent.includes("**") || blockContent.includes("*");
 
   const content = useMemo(() => {
     if (hasLatex) {
       const nodes = parseTextWithLatex(blockContent);
-      if (!hasNewlines) return nodes;
-      // Handle newlines within LaTeX-parsed content
+      // Handle newlines
       const result: React.ReactNode[] = [];
       let brKey = 2000;
       for (const node of nodes) {
-        if (typeof node === "string") {
+        if (typeof node === "object" && node !== null && "props" in node) {
+          // It's a React element (LaTeX span) - check if its children have newlines
+          result.push(node);
+        } else if (typeof node === "string") {
           const parts = node.split("\n");
           parts.forEach((part, i) => {
             if (i > 0) result.push(<br key={brKey++} />);
-            if (part) result.push(part);
+            if (part) {
+              if (hasMarkdown) {
+                result.push(...parseInlineMarkdown(part).map((n, j) =>
+                  typeof n === "object" && n !== null ? { ...n, key: `md-${brKey++}-${j}` } : n
+                ));
+              } else {
+                result.push(part);
+              }
+            }
           });
-        } else {
-          result.push(node);
         }
       }
       return result;
     }
-    if (hasNewlines) {
-      const parts = blockContent.split("\n");
-      const result: React.ReactNode[] = [];
-      parts.forEach((part, i) => {
-        if (i > 0) result.push(<br key={`mbr-${i}`} />);
-        if (part) result.push(<span key={`mt-${i}`}>{part}</span>);
-      });
-      return result;
-    }
-    return blockContent;
-  }, [blockContent, hasLatex, hasNewlines]);
+
+    // Split by newlines, parse markdown in each line
+    const lines = blockContent.split("\n");
+    const result: React.ReactNode[] = [];
+    lines.forEach((line, i) => {
+      if (i > 0) result.push(<br key={`mbr-${i}`} />);
+      if (line) {
+        if (hasMarkdown) {
+          parseInlineMarkdown(line).forEach((node, j) => {
+            result.push(
+              typeof node === "object" && node !== null
+                ? { ...node, key: `ml-${i}-${j}` }
+                : <span key={`ml-${i}-${j}`}>{node}</span>
+            );
+          });
+        } else {
+          result.push(<span key={`mt-${i}`}>{line}</span>);
+        }
+      }
+    });
+    return result;
+  }, [blockContent, hasLatex, hasMarkdown]);
 
   return <div className="prose prose-sm max-w-none mb-2 last:mb-0">{content}</div>;
 }

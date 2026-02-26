@@ -19,6 +19,10 @@ import {
   TrueFalseQuestion,
   FillInBlankQuestion,
   EssayQuestion,
+  ShortAnswerQuestion,
+  CalculationQuestion,
+  OrderingQuestion,
+  MatchingQuestion,
   RichContentRenderer,
   Explanation,
 } from "@/components/questions";
@@ -402,8 +406,6 @@ function ExamPage() {
         );
 
       case "ESSAY":
-      case "ESSAY_WITH_SUB":
-      case "SHORT_ANSWER":
         return (
           <EssayQuestion
             question={question}
@@ -411,6 +413,65 @@ function ExamPage() {
             answer={(answer as string) || ""}
             onAnswerChange={(value) => handleAnswerChange(questionId, value)}
             isSubmitted={isSubmitted}
+          />
+        );
+
+      case "ESSAY_WITH_SUB":
+        return (
+          <EssayQuestion
+            question={question}
+            questionNumber={currentQuestionIndex + 1}
+            answer={(answer as Record<string, string>) || {}}
+            onAnswerChange={(value) => handleAnswerChange(questionId, value)}
+            isSubmitted={isSubmitted}
+          />
+        );
+
+      case "SHORT_ANSWER":
+        return (
+          <ShortAnswerQuestion
+            question={question}
+            questionNumber={currentQuestionIndex + 1}
+            answer={(answer as string) || ""}
+            onAnswerChange={(value) => handleAnswerChange(questionId, value)}
+            isSubmitted={isSubmitted}
+            showCorrectAnswer={showCorrectAnswer}
+          />
+        );
+
+      case "CALCULATION":
+        return (
+          <CalculationQuestion
+            question={question}
+            questionNumber={currentQuestionIndex + 1}
+            answer={(answer as Record<string, string>) || {}}
+            onAnswerChange={(value) => handleAnswerChange(questionId, value)}
+            isSubmitted={isSubmitted}
+            showCorrectAnswer={showCorrectAnswer}
+          />
+        );
+
+      case "ORDERING":
+        return (
+          <OrderingQuestion
+            question={question}
+            questionNumber={currentQuestionIndex + 1}
+            answer={(answer as string[]) || []}
+            onAnswerChange={(value) => handleAnswerChange(questionId, value)}
+            isSubmitted={isSubmitted}
+            showCorrectAnswer={showCorrectAnswer}
+          />
+        );
+
+      case "MATCHING":
+        return (
+          <MatchingQuestion
+            question={question}
+            questionNumber={currentQuestionIndex + 1}
+            answers={(answer as Record<string, string>) || {}}
+            onAnswerChange={(value) => handleAnswerChange(questionId, value)}
+            isSubmitted={isSubmitted}
+            showCorrectAnswer={showCorrectAnswer}
           />
         );
 

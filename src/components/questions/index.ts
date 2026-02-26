@@ -11,6 +11,10 @@ export { MultipleChoiceQuestion } from "./MultipleChoiceQuestion";
 export { TrueFalseQuestion } from "./TrueFalseQuestion";
 export { FillInBlankQuestion } from "./FillInBlankQuestion";
 export { EssayQuestion } from "./EssayQuestion";
+export { ShortAnswerQuestion } from "./ShortAnswerQuestion";
+export { CalculationQuestion } from "./CalculationQuestion";
+export { OrderingQuestion } from "./OrderingQuestion";
+export { MatchingQuestion } from "./MatchingQuestion";
 
 // Explanation
 export { Explanation } from "./Explanation";

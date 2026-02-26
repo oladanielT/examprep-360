@@ -21,6 +21,10 @@ import {
   FillInBlankQuestion,
   TrueFalseQuestion,
   EssayQuestion,
+  ShortAnswerQuestion,
+  CalculationQuestion,
+  OrderingQuestion,
+  MatchingQuestion,
   RichContentRenderer,
   Explanation,
 } from "@/components/questions";
@@ -410,9 +414,7 @@ function ExamReviewPage() {
                   />
                 )}
 
-                {(currentQuestion.questionType === "ESSAY" ||
-                  currentQuestion.questionType === "ESSAY_WITH_SUB" ||
-                  currentQuestion.questionType === "SHORT_ANSWER") && (
+                {currentQuestion.questionType === "ESSAY" && (
                   <EssayQuestion
                     question={currentQuestion}
                     questionNumber={currentQuestion.questionNumber}
@@ -427,6 +429,85 @@ function ExamReviewPage() {
                   />
                 )}
 
+                {currentQuestion.questionType === "ESSAY_WITH_SUB" && (
+                  <EssayQuestion
+                    question={currentQuestion}
+                    questionNumber={currentQuestion.questionNumber}
+                    answer={
+                      currentResponse && typeof currentResponse.answer === "object" && !Array.isArray(currentResponse.answer)
+                        ? (currentResponse.answer as Record<string, string>)
+                        : {}
+                    }
+                    onAnswerChange={() => {}}
+                    isSubmitted
+                    disabled
+                  />
+                )}
+
+                {currentQuestion.questionType === "SHORT_ANSWER" && (
+                  <ShortAnswerQuestion
+                    question={currentQuestion}
+                    questionNumber={currentQuestion.questionNumber}
+                    answer={
+                      currentResponse && typeof currentResponse.answer === "string"
+                        ? currentResponse.answer
+                        : ""
+                    }
+                    onAnswerChange={() => {}}
+                    isSubmitted
+                    disabled
+                    showCorrectAnswer
+                  />
+                )}
+
+                {currentQuestion.questionType === "CALCULATION" && (
+                  <CalculationQuestion
+                    question={currentQuestion}
+                    questionNumber={currentQuestion.questionNumber}
+                    answer={
+                      currentResponse && typeof currentResponse.answer === "object" && !Array.isArray(currentResponse.answer)
+                        ? (currentResponse.answer as Record<string, string>)
+                        : {}
+                    }
+                    onAnswerChange={() => {}}
+                    isSubmitted
+                    disabled
+                    showCorrectAnswer
+                  />
+                )}
+
+                {currentQuestion.questionType === "ORDERING" && (
+                  <OrderingQuestion
+                    question={currentQuestion}
+                    questionNumber={currentQuestion.questionNumber}
+                    answer={
+                      currentResponse && Array.isArray(currentResponse.answer)
+                        ? (currentResponse.answer as string[])
+                        : []
+                    }
+                    onAnswerChange={() => {}}
+                    isSubmitted
+                    disabled
+                    showCorrectAnswer
+                  />
+                )}
+
+                {currentQuestion.questionType === "MATCHING" && (
+                  <MatchingQuestion
+                    question={currentQuestion}
+                    questionNumber={currentQuestion.questionNumber}
+                    answers={
+                      currentResponse && typeof currentResponse.answer === "object" && !Array.isArray(currentResponse.answer)
+                        ? (currentResponse.answer as Record<string, string>)
+                        : {}
+                    }
+                    onAnswerChange={() => {}}
+                    isSubmitted
+                    disabled
+                    showCorrectAnswer
+                  />
+                )}
+
                 {/* Fallback for unsupported types */}
                 {![
                   "SINGLE_CHOICE",
@@ -436,6 +517,9 @@ function ExamReviewPage() {
                   "ESSAY",
                   "ESSAY_WITH_SUB",
                   "SHORT_ANSWER",
+                  "CALCULATION",
+                  "ORDERING",
+                  "MATCHING",
                 ].includes(currentQuestion.questionType) && (
                   <div className="space-y-4">
                     <p className="text-sm font-medium text-gray-600">
