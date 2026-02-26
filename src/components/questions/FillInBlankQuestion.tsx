@@ -63,7 +63,7 @@ export function FillInBlankQuestion({
     // Use fillData.template if available, otherwise extract from questionText
     const template = fillData.template
       || (Array.isArray(question.questionText)
-        ? question.questionText.map((block) => block.value).join("")
+        ? question.questionText.map((block) => "value" in block ? block.value : "content" in block ? block.content : "").join("")
         : String(question.questionText || ""));
 
     // Check which placeholder format the template uses
