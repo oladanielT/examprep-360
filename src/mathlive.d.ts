@@ -1,10 +1,10 @@
-import type { DetailedHTMLProps, HTMLAttributes } from "react";
+import "react";
 
-declare global {
+declare module "react" {
   namespace JSX {
     interface IntrinsicElements {
-      "math-field": DetailedHTMLProps<
-        HTMLAttributes<HTMLElement> & {
+      "math-field": React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement> & {
           "virtual-keyboard-mode"?: "auto" | "manual" | "off";
           "math-virtual-keyboard-policy"?: "auto" | "manual" | "sandboxed";
           "read-only"?: boolean;
