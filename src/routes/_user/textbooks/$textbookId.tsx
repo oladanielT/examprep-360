@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import type { TutorialChapter, TutorialQuestion, TutorialQuizAnswer } from "@/api/types/tutorial.types";
 import type { SubmitTutorialQuestionsResponse } from "@/api/types/tutorial.types";
 import { RichContentRenderer } from "@/components/questions/RichContentRenderer";
+import { Explanation } from "@/components/questions/Explanation";
 
 type ViewMode = "lessons" | "lesson-content" | "test";
 
@@ -242,12 +243,7 @@ function QuizQuestion({
         {isSubmitted && (
           <div className="mt-4 sm:mt-6 space-y-4">
             {question.explanation?.solution && (
-              <div className="bg-teal-600 text-white p-3 sm:p-4 rounded-lg">
-                <p className="text-xs uppercase tracking-wide mb-1">Explanation</p>
-                <div className="text-sm">
-                  <RichContentRenderer content={question.explanation.solution} />
-                </div>
-              </div>
+              <Explanation explanation={{ solution: question.explanation.solution }} />
             )}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">

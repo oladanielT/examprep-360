@@ -138,6 +138,15 @@ const SECTION_PATTERNS: { pattern: RegExp; type: ParsedSection["type"]; title: s
 ];
 
 /**
+ * Merge adjacent bold markers split across lines/spaces.
+ * e.g. "**Key**\n**Terms**" → "**Key Terms**"
+ *      "**Relatable** **Example**" → "**Relatable Example**"
+ */
+function mergeSplitBoldMarkers(text: string): string {
+  return text.replace(/\*\*([^*]+)\*\*[\s\n]+\*\*([^*]+)\*\*/g, "**$1 $2**");
+}
+
+/**
  * Extract the full plain text from solution blocks, preserving newlines.
  */
 function extractSolutionText(solution: RichContentBlock[]): string {
@@ -149,7 +158,9 @@ function extractSolutionText(solution: RichContentBlock[]): string {
     })
     .join("\n");
   // Normalize Unicode bold headers (chemistry format) → **markdown bold**
-  return normalizeUnicodeBold(raw);
+  const normalized = normalizeUnicodeBold(raw);
+  // Merge split bold markers (e.g. **Key**\n**Terms** → **Key Terms**)
+  return mergeSplitBoldMarkers(normalized);
 }
 
 /**
@@ -327,19 +338,23 @@ export function Explanation({ explanation }: ExplanationProps) {
     (explanation.commonMistakes && explanation.commonMistakes.length > 0) ||
     (explanation.tips && explanation.tips.length > 0);
 
-  // Parse sections from solution text when no structured data is present
-  const parsedSections = useMemo(() => {
+  // Extract and normalize solution text for section parsing and fallback rendering
+  const extractedText = useMemo(() => {
     if (hasStructuredData) return null;
     if (!explanation.solution || explanation.solution.length === 0) return null;
-
     const text = extractSolutionText(explanation.solution);
-    if (!text.trim()) return null;
+    return text.trim() || null;
+  }, [explanation.solution, hasStructuredData]);
 
-    const sections = parseSolutionIntoSections(text);
+  // Parse sections from solution text when no structured data is present
+  const parsedSections = useMemo(() => {
+    if (!extractedText) return null;
+
+    const sections = parseSolutionIntoSections(extractedText);
     // Only use parsed sections if we actually found markers (more than just "main")
     if (sections.length <= 1) return null;
     return sections;
-  }, [explanation.solution, hasStructuredData]);
+  }, [extractedText]);
 
   // If we successfully parsed sections from the solution text, render them
   if (parsedSections) {
@@ -355,12 +370,14 @@ export function Explanation({ explanation }: ExplanationProps) {
   // Otherwise, fall back to the existing behavior
   return (
     <div className="mt-6 space-y-6 border-t pt-6">
-      {/* Solution */}
+      {/* Solution — render as markdown so **bold** is parsed even from "text" blocks */}
       {explanation.solution && explanation.solution.length > 0 && (
         <div className="space-y-3">
           <h3 className="text-lg font-semibold text-gray-900">Explanation</h3>
           <div className="prose prose-sm max-w-none whitespace-pre-wrap">
-            <RichContentRenderer content={explanation.solution} />
+            <RichContentRenderer
+              content={extractedText ? bodyToBlocks(extractedText) : explanation.solution}
+            />
           </div>
         </div>
       )}
