@@ -1,10 +1,10 @@
 {
-  "id": "5ff2f2ee-ff9b-4b35-b204-7664ad58318e",
-  "studentId": "b83aad07-072b-4f3b-a527-6e8f2fbea2b9",
-  "examId": "862e4205-8c73-48ef-88c9-6e7fbaf1f1d8",
+  "id": "740786a8-029e-44a9-9ab7-3f7737a7461a",
+  "studentId": "cce4eb4a-d9eb-4f0b-9853-5143bd3963a9",
+  "examId": "030d422d-b8b9-4851-b5b9-7a9a0c1efa78",
   "attemptNumber": 1,
   "status": "IN_PROGRESS",
-  "startedAt": "2026-02-26T15:44:55.416Z",
+  "startedAt": "2026-03-04T09:39:45.690Z",
   "submittedAt": null,
   "completedAt": null,
   "timeSpentSeconds": 0,
@@ -15,2303 +15,45 @@
   "manualGraded": false,
   "gradedBy": null,
   "gradedAt": null,
-  "createdAt": "2026-02-26T15:44:55.416Z",
-  "updatedAt": "2026-02-26T15:44:55.416Z",
+  "createdAt": "2026-03-04T09:39:45.690Z",
+  "updatedAt": "2026-03-04T09:39:45.690Z",
   "exam": {
-    "id": "862e4205-8c73-48ef-88c9-6e7fbaf1f1d8",
-    "name": "Commerce Practice",
+    "id": "030d422d-b8b9-4851-b5b9-7a9a0c1efa78",
+    "name": "Mathematics Practice",
     "description": null,
-    "startDate": "2026-02-26T15:44:55.364Z",
-    "endDate": "2027-02-26T15:44:55.364Z",
+    "startDate": "2026-03-04T09:39:45.653Z",
+    "endDate": "2027-03-04T09:39:45.653Z",
     "durationMinutes": 9999,
-    "numQuestions": 20,
+    "numQuestions": 10,
     "allowedAttempts": 1,
     "passingScore": 50,
     "rules": null,
     "status": "DRAFT",
-    "examTypeId": "a1bd165b-a5fe-46c7-a002-1bca3c2c5480",
-    "subjectId": "a9611f6d-dcba-4f92-82af-83a86402e77f",
+    "examTypeId": "5b5ae2a0-1c37-4cfa-80df-7e5a26edc328",
+    "subjectId": "f8145a30-be77-474f-b197-8aee6d802225",
     "departmentId": null,
     "courseId": null,
     "examTypeEnum": "PRACTICE",
-    "createdAt": "2026-02-26T15:44:55.365Z",
-    "updatedAt": "2026-02-26T15:44:55.365Z",
+    "createdAt": "2026-03-04T09:39:45.654Z",
+    "updatedAt": "2026-03-04T09:39:45.654Z",
     "examStatisticsId": null,
     "questions": [
       {
-        "id": "c63b9b93-6b18-44d9-822b-6ca8e9253d89",
-        "examId": "862e4205-8c73-48ef-88c9-6e7fbaf1f1d8",
-        "questionId": "15fa8cc0-f59a-421c-93be-e58677394a06",
+        "id": "692af805-7ac1-4478-aab7-0d3617e072ab",
+        "examId": "030d422d-b8b9-4851-b5b9-7a9a0c1efa78",
+        "questionId": "2c4e59b0-5c59-41e3-bfc5-467840078a45",
         "order": 1,
         "question": {
-          "id": "15fa8cc0-f59a-421c-93be-e58677394a06",
-          "questionNumber": 52,
-          "questionType": "ESSAY_WITH_SUB",
-          "questionText": [
-            {
-              "type": "text",
-              "value": "Answer the following questions."
-            }
-          ],
-          "instruction": "Answer all parts of the question in detail.",
-          "context": null,
-          "options": null,
-          "correctAnswer": null,
-          "correctAnswers": [],
-          "explanation": {
-            "solution": [
-              {
-                "type": "text",
-                "value": "𝗛𝗲𝗿𝗲 𝗶𝘀 𝗮 𝘀𝗮𝗺𝗽𝗹𝗲 𝗮𝗻𝘀𝘄𝗲𝗿 𝗳𝗿𝗼𝗺 𝗮𝗻 𝗲𝘅𝗮𝗺𝗶𝗻𝗲𝗿\n\n(𝗮) 𝗪𝗵𝗮𝘁 𝗶𝘀 𝗽𝗿𝗼𝗱𝘂𝗰𝘁𝗶𝗼𝗻?\nProduction is the process of creating goods and services to satisfy human wants. It involves the use of raw materials, labour, and capital to create a new product that has a higher value. Production can be classified into three main categories: primary production, secondary production, and tertiary production.\n(𝗯) 𝗘𝘅𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻𝘀 𝗼𝗳 𝗙𝗮𝗰𝘁𝗼𝗿𝘀 𝗼𝗳 𝗣𝗿𝗼𝗱𝘂𝗰𝘁𝗶𝗼𝗻\n𝗟𝗮𝗻𝗱: This factor of production includes all natural resources that are used in the production process. It includes the physical ground, minerals, forests, and water. The reward for land is rent.\n𝗟𝗮𝗯𝗼𝘂𝗿: This factor of production includes all human effort, both physical and mental, that is used in the production process. The reward for labour is wages or a salary.\n𝗖𝗮𝗽𝗶𝘁𝗮𝗹: This factor of production includes all man-made resources that are used to produce other goods and services. It includes machinery, buildings, and tools. The reward for capital is interest.\n(𝗰) 𝗧𝗵𝗿𝗲𝗲 𝗙𝘂𝗻𝗰𝘁𝗶𝗼𝗻𝘀 𝗼𝗳 𝗮𝗻 𝗘𝗻𝘁𝗿𝗲𝗽𝗿𝗲𝗻𝗲𝘂𝗿\n𝗥𝗶𝘀𝗸 𝗕𝗲𝗮𝗿𝗶𝗻𝗴: An entrepreneur is a person who bears the risk of the business. They are the one who is responsible for all the risks of the business, and they will lose their money and their time if the business fails.\n𝗢𝗿𝗴𝗮𝗻𝗶𝘇𝗮𝘁𝗶𝗼𝗻: An entrepreneur is responsible for organizing the factors of production, such as land, labour, and capital, to produce goods and services.\n𝗜𝗻𝗻𝗼𝘃𝗮𝘁𝗶𝗼𝗻: An entrepreneur is a person who introduces a new product, a new process, or a new idea to a business."
-              }
-            ]
-          },
-          "textExplanation": null,
-          "marks": 1,
-          "marksPerCorrect": null,
-          "negativeMarking": null,
-          "partialCreditAllowed": null,
-          "randomizeOptions": null,
-          "passingMarks": null,
-          "estimatedTimeSeconds": null,
-          "difficulty": "MEDIUM",
-          "status": "PUBLISHED",
-          "tags": [],
-          "cognitiveLevel": null,
-          "skillsAssessed": [],
-          "learningOutcomes": [],
-          "averageScore": null,
-          "attemptCount": 0,
-          "successRate": null,
-          "paper": null,
-          "year": 2010,
-          "createdAt": "2026-02-23T17:17:02.812Z",
-          "updatedAt": "2026-02-25T04:25:20.252Z",
-          "assignedExaminerId": null,
-          "editStatus": null,
-          "lastEditedById": null,
-          "lastEditedAt": null,
-          "originalVersion": null,
-          "editedVersion": null,
-          "reviewFeedback": null,
-          "deletionRequestedById": null,
-          "deletionRequestedAt": null,
-          "hierarchy": {
-            "topic": {
-              "name": "General"
-            },
-            "subject": "Commerce",
-            "examType": "WAEC",
-            "subjectCode": "CMS"
-          },
-          "metadata": {
-            "marks": 20,
-            "status": "DRAFT",
-            "examType": "WAEC",
-            "examYear": "2010",
-            "difficulty": "MEDIUM",
-            "examPeriod": "MAY/JUNE"
-          },
-          "crossExamRef": null,
-          "tutorialInfo": null,
-          "pastQuestionReference": null,
-          "accessibility": null,
-          "adaptiveSettings": null,
-          "examType": "WAEC",
-          "examYear": "2010",
-          "subjectCode": "CMS",
-          "subjectId": "a9611f6d-dcba-4f92-82af-83a86402e77f",
-          "trueFalseData": null,
-          "fillInBlankData": null,
-          "essayData": {
-            "maxWords": 1000,
-            "minWords": 100,
-            "expectedPoints": [
-              "process of creating goods and services",
-              "satisfy human wants",
-              "primary, secondary, and tertiary production",
-              "Land: natural resources",
-              "Labour: human effort",
-              "Capital: man-made resources",
-              "Risk Bearing",
-              "Organization",
-              "Innovation"
-            ]
-          },
-          "essayWithSubData": {
-            "mainQuestion": [
-              {
-                "type": "text",
-                "value": "Production and Entrepreneurship"
-              }
-            ],
-            "subQuestions": [
-              {
-                "marks": 6,
-                "subId": "a",
-                "questionText": [
-                  {
-                    "type": "text",
-                    "value": "What is production?"
-                  }
-                ]
-              },
-              {
-                "marks": 6,
-                "subId": "b",
-                "questionText": [
-                  {
-                    "type": "text",
-                    "value": "Explain the following factors of production: i. Land ii. Labour iii. Capital"
-                  }
-                ]
-              },
-              {
-                "marks": 6,
-                "subId": "c",
-                "questionText": [
-                  {
-                    "type": "text",
-                    "value": "State three functions of an entrepreneur"
-                  }
-                ]
-              }
-            ]
-          },
-          "shortAnswerData": null,
-          "matchingData": null,
-          "orderingData": null,
-          "calculationData": null,
-          "diagramLabelingData": null,
-          "theoryWithObjectivesData": null,
-          "questionVideoUrls": [],
-          "optionVideoUrls": [],
-          "explanationVideoUrls": [],
-          "topicId": null,
-          "subTopicId": null,
-          "sessionId": null,
-          "universityId": null,
-          "facultyId": null,
-          "departmentId": null,
-          "courseId": null,
-          "tutorialId": null,
-          "isBookmarked": false,
-          "isReported": false
-        }
-      },
-      {
-        "id": "3629f0b9-86cb-4126-a0c6-c0b2b7696b1d",
-        "examId": "862e4205-8c73-48ef-88c9-6e7fbaf1f1d8",
-        "questionId": "1ab98913-eebb-43c7-98d8-0bbc99e41ce6",
-        "order": 2,
-        "question": {
-          "id": "1ab98913-eebb-43c7-98d8-0bbc99e41ce6",
-          "questionNumber": 55,
-          "questionType": "ESSAY_WITH_SUB",
-          "questionText": [
-            {
-              "type": "text",
-              "value": "Answer the following questions."
-            }
-          ],
-          "instruction": "Answer all parts of the question in detail.",
-          "context": null,
-          "options": null,
-          "correctAnswer": null,
-          "correctAnswers": [],
-          "explanation": {
-            "solution": [
-              {
-                "type": "text",
-                "value": "𝗛𝗲𝗿𝗲 𝗶𝘀 𝗮 𝘀𝗮𝗺𝗽𝗹𝗲 𝗮𝗻𝘀𝘄𝗲𝗿 𝗳𝗿𝗼𝗺 𝗮𝗻 𝗲𝘅𝗮𝗺𝗶𝗻𝗲𝗿\n\n(𝗮) 𝗙𝗶𝘃𝗲 𝗠𝗲𝗮𝘀𝘂𝗿𝗲𝘀 𝘁𝗼 𝗦𝗼𝗹𝘃𝗲 𝗨𝗻𝗳𝗮𝘃𝗼𝘂𝗿𝗮𝗯𝗹𝗲 𝗕𝗮𝗹𝗮𝗻𝗰𝗲 𝗼𝗳 𝗧𝗿𝗮𝗱𝗲\n𝗗𝗲𝘃𝗮𝗹𝘂𝗮𝘁𝗶𝗼𝗻 𝗼𝗳 𝗖𝘂𝗿𝗿𝗲𝗻𝗰𝘆: A country can devalue its currency to make its exports cheaper and its imports more expensive. This will increase the demand for its exports and decrease the demand for its imports.\n𝗜𝗺𝗽𝗼𝘀𝗶𝘁𝗶𝗼𝗻 𝗼𝗳 𝗧𝗮𝗿𝗶𝗳𝗳𝘀 𝗮𝗻𝗱 𝗤𝘂𝗼𝘁𝗮𝘀: A country can impose tariffs and quotas on imports. This will make imports more expensive and will reduce the demand for them.\n𝗦𝘂𝗯𝘀𝗶𝗱𝗶𝗲𝘀 𝗼𝗻 𝗘𝘅𝗽𝗼𝗿𝘁𝘀: A country can provide subsidies to its exporters. This will make its exports cheaper and will increase the demand for them.\n𝗘𝗻𝗰𝗼𝘂𝗿𝗮𝗴𝗶𝗻𝗴 𝗜𝗺𝗽𝗼𝗿𝘁 𝗦𝘂𝗯𝘀𝘁𝗶𝘁𝘂𝘁𝗶𝗼𝗻: A country can encourage local production of goods to replace imports.\n𝗣𝗿𝗼𝗺𝗼𝘁𝗶𝗻𝗴 𝗧𝗼𝘂𝗿𝗶𝘀𝗺: A country can promote its tourism industry to attract more foreign visitors, who will spend money in the country, which is a form of invisible export.\n(𝗯) 𝗙𝗶𝘃𝗲 𝗔𝗱𝘃𝗮𝗻𝘁𝗮𝗴𝗲𝘀 𝗼𝗳 𝗜𝗻𝘁𝗲𝗿𝗻𝗮𝘁𝗶𝗼𝗻𝗮𝗹 𝗧𝗿𝗮𝗱𝗲\n𝗔𝗰𝗰𝗲𝘀𝘀 𝘁𝗼 𝗮 𝗪𝗶𝗱𝗲𝗿 𝗩𝗮𝗿𝗶𝗲𝘁𝘆 𝗼𝗳 𝗚𝗼𝗼𝗱𝘀: International trade gives a country access to a wider variety of goods and services that it would not be able to produce on its own.\n𝗜𝗻𝗰𝗿𝗲𝗮𝘀𝗲𝘀 𝗖𝗼𝗺𝗽𝗲𝘁𝗶𝘁𝗶𝗼𝗻: International trade increases competition in the market, which can lead to a lower price and a higher quality of goods for consumers.\n𝗣𝗿𝗼𝗺𝗼𝘁𝗲𝘀 𝗦𝗽𝗲𝗰𝗶𝗮𝗹𝗶𝘇𝗮𝘁𝗶𝗼𝗻: International trade promotes specialization, which leads to greater efficiency and a higher total output.\n𝗧𝗿𝗮𝗻𝘀𝗳𝗲𝗿 𝗼𝗳 𝗧𝗲𝗰𝗵𝗻𝗼𝗹𝗼𝗴𝘆: International trade facilitates the transfer of technology and ideas between countries.\n𝗜𝗻𝗰𝗿𝗲𝗮𝘀𝗲𝘀 𝗘𝗺𝗽𝗹𝗼𝘆𝗺𝗲𝗻𝘁: International trade can increase employment in a country, as the production of goods for export requires more labor."
-              }
-            ]
-          },
-          "textExplanation": null,
-          "marks": 1,
-          "marksPerCorrect": null,
-          "negativeMarking": null,
-          "partialCreditAllowed": null,
-          "randomizeOptions": null,
-          "passingMarks": null,
-          "estimatedTimeSeconds": null,
-          "difficulty": "MEDIUM",
-          "status": "PUBLISHED",
-          "tags": [],
-          "cognitiveLevel": null,
-          "skillsAssessed": [],
-          "learningOutcomes": [],
-          "averageScore": null,
-          "attemptCount": 0,
-          "successRate": null,
-          "paper": null,
-          "year": 2010,
-          "createdAt": "2026-02-23T17:17:02.871Z",
-          "updatedAt": "2026-02-25T04:25:20.252Z",
-          "assignedExaminerId": null,
-          "editStatus": null,
-          "lastEditedById": null,
-          "lastEditedAt": null,
-          "originalVersion": null,
-          "editedVersion": null,
-          "reviewFeedback": null,
-          "deletionRequestedById": null,
-          "deletionRequestedAt": null,
-          "hierarchy": {
-            "topic": {
-              "name": "General"
-            },
-            "subject": "Commerce",
-            "examType": "WAEC",
-            "subjectCode": "CMS"
-          },
-          "metadata": {
-            "marks": 20,
-            "status": "DRAFT",
-            "examType": "WAEC",
-            "examYear": "2010",
-            "difficulty": "MEDIUM",
-            "examPeriod": "MAY/JUNE"
-          },
-          "crossExamRef": null,
-          "tutorialInfo": null,
-          "pastQuestionReference": null,
-          "accessibility": null,
-          "adaptiveSettings": null,
-          "examType": "WAEC",
-          "examYear": "2010",
-          "subjectCode": "CMS",
-          "subjectId": "a9611f6d-dcba-4f92-82af-83a86402e77f",
-          "trueFalseData": null,
-          "fillInBlankData": null,
-          "essayData": {
-            "maxWords": 1000,
-            "minWords": 100,
-            "expectedPoints": [
-              "Devaluation of Currency",
-              "Imposition of Tariffs and Quotas",
-              "Subsidies on Exports",
-              "Encouraging Import Substitution",
-              "Promoting Tourism",
-              "Access to a Wider Variety of Goods",
-              "Increases Competition",
-              "Promotes Specialization",
-              "Transfer of Technology",
-              "Increases Employment"
-            ]
-          },
-          "essayWithSubData": {
-            "mainQuestion": [
-              {
-                "type": "text",
-                "value": "International Trade"
-              }
-            ],
-            "subQuestions": [
-              {
-                "marks": 10,
-                "subId": "a",
-                "questionText": [
-                  {
-                    "type": "text",
-                    "value": "Explain five measures a country could take to solve its unfavourable balance of trade."
-                  }
-                ]
-              },
-              {
-                "marks": 10,
-                "subId": "b",
-                "questionText": [
-                  {
-                    "type": "text",
-                    "value": "State five advantages of international trade"
-                  }
-                ]
-              }
-            ]
-          },
-          "shortAnswerData": null,
-          "matchingData": null,
-          "orderingData": null,
-          "calculationData": null,
-          "diagramLabelingData": null,
-          "theoryWithObjectivesData": null,
-          "questionVideoUrls": [],
-          "optionVideoUrls": [],
-          "explanationVideoUrls": [],
-          "topicId": null,
-          "subTopicId": null,
-          "sessionId": null,
-          "universityId": null,
-          "facultyId": null,
-          "departmentId": null,
-          "courseId": null,
-          "tutorialId": null,
-          "isBookmarked": false,
-          "isReported": false
-        }
-      },
-      {
-        "id": "d8d548f6-fa4b-48f8-bd15-d3b9b39fa72a",
-        "examId": "862e4205-8c73-48ef-88c9-6e7fbaf1f1d8",
-        "questionId": "1ac29925-7ace-4c69-8a91-d4d565b935f7",
-        "order": 3,
-        "question": {
-          "id": "1ac29925-7ace-4c69-8a91-d4d565b935f7",
-          "questionNumber": 6,
-          "questionType": "ESSAY",
-          "questionText": [
-            {
-              "type": "text",
-              "value": "Explain five roles of the Central Bank."
-            }
-          ],
-          "instruction": null,
-          "context": null,
-          "options": null,
-          "correctAnswer": null,
-          "correctAnswers": [],
-          "explanation": {
-            "solution": [
-              {
-                "type": "text",
-                "value": "𝗛𝗲𝗿𝗲 𝗶𝘀 𝗮 𝘀𝗮𝗺𝗽𝗹𝗲 𝗮𝗻𝘀𝘄𝗲𝗿 𝗳𝗿𝗼𝗺 𝗮𝗻 𝗲𝘅𝗮𝗺𝗶𝗻𝗲𝗿\n\n\n\n𝗘𝘅𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\n\n(1) Banker to the Government: The Central Bank keeps the accounts of government departments and advises the government on financial matters.\n(2) Bankers' Bank: Commercial banks keep a portion of their cash reserves with the Central Bank. It also clears balances between them.\n(3) Issuance of Currency: It has the sole legal right to print and issue the national currency (e.g., Naira notes).\n(4) Lender of Last Resort: It provides emergency liquidity to commercial banks that are facing temporary cash shortages.\n(5) Control of Monetary Policy: It regulates the money supply and interest rates to manage inflation and stabilize the economy.\n\n\n\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\n\nCentral Bank – The apex financial institution of a country.\nMonetary Policy – Actions taken to manage the money supply.\n\n\n\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘𝘅𝗮𝗺𝗽𝗹𝗲\n\nIf you look at any Naira note in your wallet, you will see it is issued by the Central Bank of Nigeria (CBN). No other bank like GTBank or Zenith can print money."
-              }
-            ]
-          },
-          "textExplanation": null,
-          "marks": 1,
-          "marksPerCorrect": null,
-          "negativeMarking": null,
-          "partialCreditAllowed": null,
-          "randomizeOptions": null,
-          "passingMarks": null,
-          "estimatedTimeSeconds": null,
-          "difficulty": "EASY",
-          "status": "PUBLISHED",
-          "tags": [],
-          "cognitiveLevel": null,
-          "skillsAssessed": [],
-          "learningOutcomes": [],
-          "averageScore": null,
-          "attemptCount": 0,
-          "successRate": null,
-          "paper": null,
-          "year": 2010,
-          "createdAt": "2026-02-25T04:38:45.111Z",
-          "updatedAt": "2026-02-25T04:53:35.960Z",
-          "assignedExaminerId": null,
-          "editStatus": null,
-          "lastEditedById": null,
-          "lastEditedAt": null,
-          "originalVersion": null,
-          "editedVersion": null,
-          "reviewFeedback": null,
-          "deletionRequestedById": null,
-          "deletionRequestedAt": null,
-          "hierarchy": {
-            "topic": {
-              "name": "General"
-            },
-            "subject": "Commerce",
-            "examType": "WAEC",
-            "subjectCode": "COM"
-          },
-          "metadata": {
-            "marks": 1,
-            "status": "DRAFT",
-            "examType": "WAEC",
-            "examYear": "2010",
-            "difficulty": "EASY"
-          },
-          "crossExamRef": null,
-          "tutorialInfo": null,
-          "pastQuestionReference": null,
-          "accessibility": null,
-          "adaptiveSettings": null,
-          "examType": "WAEC",
-          "examYear": "2010",
-          "subjectCode": "COM",
-          "subjectId": "a9611f6d-dcba-4f92-82af-83a86402e77f",
-          "trueFalseData": null,
-          "fillInBlankData": null,
-          "essayData": {
-            "maxWords": 500,
-            "minWords": 50,
-            "expectedPoints": [
-              "Banker to the government",
-              "Bankers' bank",
-              "Issuance of currency",
-              "Lender of last resort",
-              "Control of monetary policy"
-            ]
-          },
-          "essayWithSubData": null,
-          "shortAnswerData": null,
-          "matchingData": null,
-          "orderingData": null,
-          "calculationData": null,
-          "diagramLabelingData": null,
-          "theoryWithObjectivesData": null,
-          "questionVideoUrls": [],
-          "optionVideoUrls": [],
-          "explanationVideoUrls": [],
-          "topicId": null,
-          "subTopicId": null,
-          "sessionId": null,
-          "universityId": null,
-          "facultyId": null,
-          "departmentId": null,
-          "courseId": null,
-          "tutorialId": null,
-          "isBookmarked": false,
-          "isReported": false
-        }
-      },
-      {
-        "id": "24643917-25a4-41e7-9ff8-6fa3d5e877be",
-        "examId": "862e4205-8c73-48ef-88c9-6e7fbaf1f1d8",
-        "questionId": "2c154d0a-3437-44b9-9ace-9ad2f841fb6a",
-        "order": 4,
-        "question": {
-          "id": "2c154d0a-3437-44b9-9ace-9ad2f841fb6a",
-          "questionNumber": 53,
-          "questionType": "ESSAY_WITH_SUB",
-          "questionText": [
-            {
-              "type": "text",
-              "value": "Answer the following questions."
-            }
-          ],
-          "instruction": "Answer all parts of the question in detail.",
-          "context": null,
-          "options": null,
-          "correctAnswer": null,
-          "correctAnswers": [],
-          "explanation": {
-            "solution": [
-              {
-                "type": "text",
-                "value": "𝗛𝗲𝗿𝗲 𝗶𝘀 𝗮 𝘀𝗮𝗺𝗽𝗹𝗲 𝗮𝗻𝘀𝘄𝗲𝗿 𝗳𝗿𝗼𝗺 𝗮𝗻 𝗲𝘅𝗮𝗺𝗶𝗻𝗲𝗿\n\n(𝗮) 𝗙𝗼𝘂𝗿 𝗦𝘁𝗲𝗽𝘀 𝘁𝗼 𝗘𝗻𝘀𝘂𝗿𝗲 𝗙𝗮𝗶𝗿 𝗗𝗲𝗮𝗹𝗶𝗻𝗴 𝘄𝗶𝘁𝗵 𝗮 𝗧𝗿𝗮𝗱𝗲𝗿\n𝗗𝗲𝗺𝗮𝗻𝗱 𝗮 𝗥𝗲𝗰𝗲𝗶𝗽𝘁: A customer should always demand a receipt from a trader. The receipt is a proof of the transaction and can be used as a reference in case of a dispute.\n𝗘𝘅𝗮𝗺𝗶𝗻𝗲 𝗚𝗼𝗼𝗱𝘀 𝗧𝗵𝗼𝗿𝗼𝘂𝗴𝗵𝗹𝘆: A customer should examine goods thoroughly before making a purchase. This is the principle of caveat emptor, which means \"let the buyer beware.\"\n𝗖𝗵𝗲𝗰𝗸 𝗳𝗼𝗿 𝗘𝘅𝗽𝗶𝗿𝘆 𝗗𝗮𝘁𝗲: A customer should check for the expiry date of a product. A product that has expired may be unsafe or of low quality.\n𝗖𝗼𝗺𝗽𝗮𝗿𝗲 𝗣𝗿𝗶𝗰𝗲𝘀: A customer should compare the prices of goods in different shops to ensure that they are getting a fair price.\n(𝗯) 𝗦𝗶𝘅 𝗙𝘂𝗻𝗰𝘁𝗶𝗼𝗻𝘀 𝗼𝗳 𝗖𝗼𝗺𝗺𝗲𝗿𝗰𝗶𝗮𝗹 𝗕𝗮𝗻𝗸𝘀\n𝗔𝗰𝗰𝗲𝗽𝘁𝗮𝗻𝗰𝗲 𝗼𝗳 𝗗𝗲𝗽𝗼𝘀𝗶𝘁𝘀: A commercial bank accepts deposits from the public, which can be in a savings account, a current account, or a fixed deposit account.\n𝗚𝗿𝗮𝗻𝘁𝗶𝗻𝗴 𝗼𝗳 𝗟𝗼𝗮𝗻𝘀: A commercial bank grants loans to individuals and businesses to finance their needs.\n𝗣𝗿𝗼𝘃𝗶𝘀𝗶𝗼𝗻 𝗼𝗳 𝗣𝗮𝘆𝗺𝗲𝗻𝘁 𝗦𝗲𝗿𝘃𝗶𝗰𝗲𝘀: A commercial bank provides a variety of payment services, such as a cheque, a bank draft, and a credit card.\n𝗧𝗿𝗮𝗻𝘀𝗳𝗲𝗿 𝗼𝗳 𝗙𝘂𝗻𝗱𝘀: A commercial bank provides a service for the transfer of funds from one account to another, both within a country and internationally.\n𝗣𝗿𝗼𝘃𝗶𝘀𝗶𝗼𝗻 𝗼𝗳 𝗦𝗮𝗳𝗲 𝗖𝘂𝘀𝘁𝗼𝗱𝘆: A commercial bank provides a safe custody service for its customers' valuables, such as jewelry and important documents.\n𝗣𝗿𝗼𝘃𝗶𝘀𝗶𝗼𝗻 𝗼𝗳 𝗙𝗶𝗻𝗮𝗻𝗰𝗶𝗮𝗹 𝗔𝗱𝘃𝗶𝗰𝗲: A commercial bank provides financial advice to its customers on matters such as investment and savings."
-              }
-            ]
-          },
-          "textExplanation": null,
-          "marks": 1,
-          "marksPerCorrect": null,
-          "negativeMarking": null,
-          "partialCreditAllowed": null,
-          "randomizeOptions": null,
-          "passingMarks": null,
-          "estimatedTimeSeconds": null,
-          "difficulty": "MEDIUM",
-          "status": "PUBLISHED",
-          "tags": [],
-          "cognitiveLevel": null,
-          "skillsAssessed": [],
-          "learningOutcomes": [],
-          "averageScore": null,
-          "attemptCount": 0,
-          "successRate": null,
-          "paper": null,
-          "year": 2010,
-          "createdAt": "2026-02-23T17:17:02.833Z",
-          "updatedAt": "2026-02-25T04:25:20.252Z",
-          "assignedExaminerId": null,
-          "editStatus": null,
-          "lastEditedById": null,
-          "lastEditedAt": null,
-          "originalVersion": null,
-          "editedVersion": null,
-          "reviewFeedback": null,
-          "deletionRequestedById": null,
-          "deletionRequestedAt": null,
-          "hierarchy": {
-            "topic": {
-              "name": "General"
-            },
-            "subject": "Commerce",
-            "examType": "WAEC",
-            "subjectCode": "CMS"
-          },
-          "metadata": {
-            "marks": 20,
-            "status": "DRAFT",
-            "examType": "WAEC",
-            "examYear": "2010",
-            "difficulty": "MEDIUM",
-            "examPeriod": "MAY/JUNE"
-          },
-          "crossExamRef": null,
-          "tutorialInfo": null,
-          "pastQuestionReference": null,
-          "accessibility": null,
-          "adaptiveSettings": null,
-          "examType": "WAEC",
-          "examYear": "2010",
-          "subjectCode": "CMS",
-          "subjectId": "a9611f6d-dcba-4f92-82af-83a86402e77f",
-          "trueFalseData": null,
-          "fillInBlankData": null,
-          "essayData": {
-            "maxWords": 1000,
-            "minWords": 100,
-            "expectedPoints": [
-              "Demand a Receipt",
-              "Examine Goods Thoroughly",
-              "Check for Expiry Date",
-              "Compare Prices",
-              "Acceptance of Deposits",
-              "Granting of Loans",
-              "Provision of Payment Services",
-              "Transfer of Funds",
-              "Provision of Safe Custody",
-              "Provision of Financial Advice"
-            ]
-          },
-          "essayWithSubData": {
-            "mainQuestion": [
-              {
-                "type": "text",
-                "value": "Commercial Banking"
-              }
-            ],
-            "subQuestions": [
-              {
-                "marks": 10,
-                "subId": "a",
-                "questionText": [
-                  {
-                    "type": "text",
-                    "value": "State four steps that can be taken by a customer to ensure fair dealing with a trader."
-                  }
-                ]
-              },
-              {
-                "marks": 10,
-                "subId": "b",
-                "questionText": [
-                  {
-                    "type": "text",
-                    "value": "Explain six functions of commercial banks."
-                  }
-                ]
-              }
-            ]
-          },
-          "shortAnswerData": null,
-          "matchingData": null,
-          "orderingData": null,
-          "calculationData": null,
-          "diagramLabelingData": null,
-          "theoryWithObjectivesData": null,
-          "questionVideoUrls": [],
-          "optionVideoUrls": [],
-          "explanationVideoUrls": [],
-          "topicId": null,
-          "subTopicId": null,
-          "sessionId": null,
-          "universityId": null,
-          "facultyId": null,
-          "departmentId": null,
-          "courseId": null,
-          "tutorialId": null,
-          "isBookmarked": false,
-          "isReported": false
-        }
-      },
-      {
-        "id": "9b45ef9c-d120-4c72-bc84-a1c420424099",
-        "examId": "862e4205-8c73-48ef-88c9-6e7fbaf1f1d8",
-        "questionId": "43798270-8e5c-45be-9958-c7f3d3477152",
-        "order": 5,
-        "question": {
-          "id": "43798270-8e5c-45be-9958-c7f3d3477152",
-          "questionNumber": 2,
-          "questionType": "MULTIPLE_CHOICE",
-          "questionText": [
-            {
-              "type": "text",
-              "value": "International trade involves various documents for shipping, payment, and customs."
-            }
-          ],
-          "instruction": "Select two documents used in international trade.",
-          "context": null,
-          "options": [
-            {
-              "id": "A",
-              "content": [
-                {
-                  "type": "text",
-                  "value": "Bill of Lading"
-                }
-              ],
-              "isCorrect": false
-            },
-            {
-              "id": "B",
-              "content": [
-                {
-                  "type": "text",
-                  "value": "Waybill"
-                }
-              ],
-              "isCorrect": false
-            },
-            {
-              "id": "C",
-              "content": [
-                {
-                  "type": "text",
-                  "value": "Consular Invoice"
-                }
-              ],
-              "isCorrect": false
-            },
-            {
-              "id": "D",
-              "content": [
-                {
-                  "type": "text",
-                  "value": "Clock card"
-                }
-              ],
-              "isCorrect": false
-            }
-          ],
-          "correctAnswer": null,
-          "correctAnswers": ["A", "C"],
-          "explanation": {
-            "solution": [
-              {
-                "type": "text",
-                "value": "𝗛𝗲𝗿𝗲 𝗶𝘀 𝗮 𝘀𝗮𝗺𝗽𝗹𝗲 𝗮𝗻𝘀𝘄𝗲𝗿 𝗳𝗿𝗼𝗺 𝗮𝗻 𝗲𝘅𝗮𝗺𝗶𝗻𝗲𝗿\n\n\n\n𝗘𝘅𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\n\nIn international trade, a Bill of Lading acts as a receipt for goods shipped on board a vessel, and a Consular Invoice is required by some countries to control and track imports.\n\n\n\n𝗪𝗵𝘆 𝗼𝘁𝗵𝗲𝗿 𝗼𝗽𝘁𝗶𝗼𝗻𝘀 𝗮𝗿𝗲 𝗶𝗻𝗰𝗼𝗿𝗿𝗲𝗰𝘁\n\nA Waybill is typically used for inland transport, and a Clock Card is an internal document used in human resources to track employee working hours.\n\n\n\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\n\nBill of Lading – A legal document issued by a carrier to a shipper.\nConsular Invoice – A document certifying a shipment of goods.\n\n\n\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘𝘅𝗮𝗺𝗽𝗹𝗲\n\nIf you are importing cars from Germany to Lagos, the shipping company will give you a Bill of Lading to prove they have your cars on their ship."
-              }
-            ]
-          },
-          "textExplanation": null,
-          "marks": 1,
-          "marksPerCorrect": null,
-          "negativeMarking": 0,
-          "partialCreditAllowed": false,
-          "randomizeOptions": false,
-          "passingMarks": null,
-          "estimatedTimeSeconds": null,
-          "difficulty": "EASY",
-          "status": "PUBLISHED",
-          "tags": [],
-          "cognitiveLevel": null,
-          "skillsAssessed": [],
-          "learningOutcomes": [],
-          "averageScore": null,
-          "attemptCount": 0,
-          "successRate": null,
-          "paper": null,
-          "year": 2010,
-          "createdAt": "2026-02-25T04:38:45.036Z",
-          "updatedAt": "2026-02-25T04:53:35.960Z",
-          "assignedExaminerId": null,
-          "editStatus": null,
-          "lastEditedById": null,
-          "lastEditedAt": null,
-          "originalVersion": null,
-          "editedVersion": null,
-          "reviewFeedback": null,
-          "deletionRequestedById": null,
-          "deletionRequestedAt": null,
-          "hierarchy": {
-            "topic": {
-              "name": "General"
-            },
-            "subject": "Commerce",
-            "examType": "WAEC",
-            "subjectCode": "COM"
-          },
-          "metadata": {
-            "marks": 1,
-            "status": "DRAFT",
-            "examType": "WAEC",
-            "examYear": "2010",
-            "difficulty": "EASY"
-          },
-          "crossExamRef": null,
-          "tutorialInfo": null,
-          "pastQuestionReference": null,
-          "accessibility": null,
-          "adaptiveSettings": null,
-          "examType": "WAEC",
-          "examYear": "2010",
-          "subjectCode": "COM",
-          "subjectId": "a9611f6d-dcba-4f92-82af-83a86402e77f",
-          "trueFalseData": null,
-          "fillInBlankData": null,
-          "essayData": null,
-          "essayWithSubData": null,
-          "shortAnswerData": null,
-          "matchingData": null,
-          "orderingData": null,
-          "calculationData": null,
-          "diagramLabelingData": null,
-          "theoryWithObjectivesData": null,
-          "questionVideoUrls": [],
-          "optionVideoUrls": [],
-          "explanationVideoUrls": [],
-          "topicId": null,
-          "subTopicId": null,
-          "sessionId": null,
-          "universityId": null,
-          "facultyId": null,
-          "departmentId": null,
-          "courseId": null,
-          "tutorialId": null,
-          "isBookmarked": false,
-          "isReported": false
-        }
-      },
-      {
-        "id": "dbf2a195-4d2d-465b-8554-eec70aec3c24",
-        "examId": "862e4205-8c73-48ef-88c9-6e7fbaf1f1d8",
-        "questionId": "50d73820-6fe0-4f0f-b0e9-2c193cf3a5db",
-        "order": 6,
-        "question": {
-          "id": "50d73820-6fe0-4f0f-b0e9-2c193cf3a5db",
-          "questionNumber": 57,
-          "questionType": "ESSAY_WITH_SUB",
-          "questionText": [
-            {
-              "type": "text",
-              "value": "Answer the following questions."
-            }
-          ],
-          "instruction": "Answer all parts of the question in detail.",
-          "context": null,
-          "options": null,
-          "correctAnswer": null,
-          "correctAnswers": [],
-          "explanation": {
-            "solution": [
-              {
-                "type": "text",
-                "value": "𝗛𝗲𝗿𝗲 𝗶𝘀 𝗮 𝘀𝗮𝗺𝗽𝗹𝗲 𝗮𝗻𝘀𝘄𝗲𝗿 𝗳𝗿𝗼𝗺 𝗮𝗻 𝗲𝘅𝗮𝗺𝗶𝗻𝗲𝗿\n\n(𝗮) 𝗗𝗲𝗳𝗶𝗻𝗲 𝗰𝗼𝗺𝗺𝘂𝗻𝗶𝗰𝗮𝘁𝗶𝗼𝗻\nCommunication is the process of sending and receiving information, ideas, or feelings from a sender to a receiver. It is a two-way process that requires both the sender and the receiver to understand the message.\n(𝗯) 𝗙𝗶𝘃𝗲 𝗙𝘂𝗻𝗰𝘁𝗶𝗼𝗻𝘀 𝗼𝗳 𝘁𝗵𝗲 𝗣𝗼𝘀𝘁 𝗢𝗳𝗳𝗶𝗰𝗲\n𝗠𝗮𝗶𝗹 𝗦𝗲𝗿𝘃𝗶𝗰𝗲𝘀: The post office provides a mail service for sending and receiving letters, postcards, and parcels.\n𝗙𝗶𝗻𝗮𝗻𝗰𝗶𝗮𝗹 𝗦𝗲𝗿𝘃𝗶𝗰𝗲𝘀: The post office provides a variety of financial services, such as a money order and a postal order, for sending and receiving money.\n𝗜𝗻𝘀𝘂𝗿𝗮𝗻𝗰𝗲 𝗦𝗲𝗿𝘃𝗶𝗰𝗲𝘀: The post office provides a life insurance and an endowment policy.\n𝗘𝘅𝗽𝗿𝗲𝘀𝘀 𝗗𝗲𝗹𝗶𝘃𝗲𝗿𝘆: The post office provides an express delivery service for sending important documents and valuable items.\n𝗦𝗮𝗹𝗲 𝗼𝗳 𝗦𝘁𝗮𝗺𝗽𝘀: The post office sells stamps, which are used to pay for postal services."
-              }
-            ]
-          },
-          "textExplanation": null,
-          "marks": 1,
-          "marksPerCorrect": null,
-          "negativeMarking": null,
-          "partialCreditAllowed": null,
-          "randomizeOptions": null,
-          "passingMarks": null,
-          "estimatedTimeSeconds": null,
-          "difficulty": "MEDIUM",
-          "status": "PUBLISHED",
-          "tags": [],
-          "cognitiveLevel": null,
-          "skillsAssessed": [],
-          "learningOutcomes": [],
-          "averageScore": null,
-          "attemptCount": 0,
-          "successRate": null,
-          "paper": null,
-          "year": 2010,
-          "createdAt": "2026-02-23T17:17:02.909Z",
-          "updatedAt": "2026-02-25T04:25:20.252Z",
-          "assignedExaminerId": null,
-          "editStatus": null,
-          "lastEditedById": null,
-          "lastEditedAt": null,
-          "originalVersion": null,
-          "editedVersion": null,
-          "reviewFeedback": null,
-          "deletionRequestedById": null,
-          "deletionRequestedAt": null,
-          "hierarchy": {
-            "topic": {
-              "name": "General"
-            },
-            "subject": "Commerce",
-            "examType": "WAEC",
-            "subjectCode": "CMS"
-          },
-          "metadata": {
-            "marks": 20,
-            "status": "DRAFT",
-            "examType": "WAEC",
-            "examYear": "2010",
-            "difficulty": "MEDIUM",
-            "examPeriod": "MAY/JUNE"
-          },
-          "crossExamRef": null,
-          "tutorialInfo": null,
-          "pastQuestionReference": null,
-          "accessibility": null,
-          "adaptiveSettings": null,
-          "examType": "WAEC",
-          "examYear": "2010",
-          "subjectCode": "CMS",
-          "subjectId": "a9611f6d-dcba-4f92-82af-83a86402e77f",
-          "trueFalseData": null,
-          "fillInBlankData": null,
-          "essayData": {
-            "maxWords": 1000,
-            "minWords": 100,
-            "expectedPoints": [
-              "process of sending and receiving information",
-              "two-way process",
-              "Mail Services",
-              "Financial Services",
-              "Insurance Services",
-              "Express Delivery",
-              "Sale of Stamps"
-            ]
-          },
-          "essayWithSubData": {
-            "mainQuestion": [
-              {
-                "type": "text",
-                "value": "Communication and Postal Services"
-              }
-            ],
-            "subQuestions": [
-              {
-                "marks": 10,
-                "subId": "a",
-                "questionText": [
-                  {
-                    "type": "text",
-                    "value": "Define communication"
-                  }
-                ]
-              },
-              {
-                "marks": 10,
-                "subId": "b",
-                "questionText": [
-                  {
-                    "type": "text",
-                    "value": "State and explain five functions of the post office."
-                  }
-                ]
-              }
-            ]
-          },
-          "shortAnswerData": null,
-          "matchingData": null,
-          "orderingData": null,
-          "calculationData": null,
-          "diagramLabelingData": null,
-          "theoryWithObjectivesData": null,
-          "questionVideoUrls": [],
-          "optionVideoUrls": [],
-          "explanationVideoUrls": [],
-          "topicId": null,
-          "subTopicId": null,
-          "sessionId": null,
-          "universityId": null,
-          "facultyId": null,
-          "departmentId": null,
-          "courseId": null,
-          "tutorialId": null,
-          "isBookmarked": false,
-          "isReported": false
-        }
-      },
-      {
-        "id": "1dbda32d-88ac-4495-b080-da5a13d978c7",
-        "examId": "862e4205-8c73-48ef-88c9-6e7fbaf1f1d8",
-        "questionId": "60c4c68a-9e7e-4a3f-a60e-9d4d2c72b12d",
-        "order": 7,
-        "question": {
-          "id": "60c4c68a-9e7e-4a3f-a60e-9d4d2c72b12d",
-          "questionNumber": 58,
-          "questionType": "ESSAY_WITH_SUB",
-          "questionText": [
-            {
-              "type": "text",
-              "value": "Answer the following questions."
-            }
-          ],
-          "instruction": "Answer all parts of the question in detail.",
-          "context": null,
-          "options": null,
-          "correctAnswer": null,
-          "correctAnswers": [],
-          "explanation": {
-            "solution": [
-              {
-                "type": "text",
-                "value": "𝗛𝗲𝗿𝗲 𝗶𝘀 𝗮 𝘀𝗮𝗺𝗽𝗹𝗲 𝗮𝗻𝘀𝘄𝗲𝗿 𝗳𝗿𝗼𝗺 𝗮𝗻 𝗲𝘅𝗮𝗺𝗶𝗻𝗲𝗿\n\n(𝗮) 𝗪𝗵𝗮𝘁 𝗶𝘀 𝗺𝗮𝗿𝗸𝗲𝘁𝗶𝗻𝗴?\nMarketing is a business function that involves the process of identifying a customer's needs and wants and then creating a product that meets those needs. It is a strategic process that involves all the activities that are used to promote and sell a product.\n(𝗯) 𝗙𝗶𝘃𝗲 𝗜𝗺𝗽𝗼𝗿𝘁𝗮𝗻𝗰𝗲 𝗼𝗳 𝗠𝗮𝗿𝗸𝗲𝘁𝗶𝗻𝗴 𝗶𝗻 𝗮𝗻 𝗘𝗰𝗼𝗻𝗼𝗺𝘆\n𝗖𝗿𝗲𝗮𝘁𝗶𝗼𝗻 𝗼𝗳 𝗔𝘄𝗮𝗿𝗲𝗻𝗲𝘀𝘀: Marketing is used to create awareness of a product, a service, or an idea. This awareness helps to create a demand for the product.\n𝗙𝗮𝗰𝗶𝗹𝗶𝘁𝗮𝘁𝗲𝘀 𝗜𝗻𝘁𝗲𝗿𝗻𝗮𝘁𝗶𝗼𝗻𝗮𝗹 𝗧𝗿𝗮𝗱𝗲: Marketing is a crucial component of international trade. It helps a country to market its products in other countries and to find new markets for its exports.\n𝗜𝗻𝗰𝗿𝗲𝗮𝘀𝗲𝘀 𝗘𝗺𝗽𝗹𝗼𝘆𝗺𝗲𝗻𝘁: Marketing creates numerous job opportunities in a country, such as a market researcher, a salesperson, and an advertiser.\n𝗜𝗺𝗽𝗿𝗼𝘃𝗲𝘀 𝘁𝗵𝗲 𝗦𝘁𝗮𝗻𝗱𝗮𝗿𝗱 𝗼𝗳 𝗟𝗶𝘃𝗶𝗻𝗴: Marketing makes a wide variety of goods and services available to consumers, which improves their standard of living.\n𝗗𝗿𝗶𝘃𝗲𝘀 𝗘𝗰𝗼𝗻𝗼𝗺𝗶𝗰 𝗚𝗿𝗼𝘄𝘁𝗵: Marketing drives economic growth by creating a demand for products and services, which leads to increased production and consumption."
-              }
-            ]
-          },
-          "textExplanation": null,
-          "marks": 1,
-          "marksPerCorrect": null,
-          "negativeMarking": null,
-          "partialCreditAllowed": null,
-          "randomizeOptions": null,
-          "passingMarks": null,
-          "estimatedTimeSeconds": null,
-          "difficulty": "MEDIUM",
-          "status": "PUBLISHED",
-          "tags": [],
-          "cognitiveLevel": null,
-          "skillsAssessed": [],
-          "learningOutcomes": [],
-          "averageScore": null,
-          "attemptCount": 0,
-          "successRate": null,
-          "paper": null,
-          "year": 2010,
-          "createdAt": "2026-02-23T17:17:02.926Z",
-          "updatedAt": "2026-02-25T04:25:20.252Z",
-          "assignedExaminerId": null,
-          "editStatus": null,
-          "lastEditedById": null,
-          "lastEditedAt": null,
-          "originalVersion": null,
-          "editedVersion": null,
-          "reviewFeedback": null,
-          "deletionRequestedById": null,
-          "deletionRequestedAt": null,
-          "hierarchy": {
-            "topic": {
-              "name": "General"
-            },
-            "subject": "Commerce",
-            "examType": "WAEC",
-            "subjectCode": "CMS"
-          },
-          "metadata": {
-            "marks": 20,
-            "status": "DRAFT",
-            "examType": "WAEC",
-            "examYear": "2010",
-            "difficulty": "MEDIUM",
-            "examPeriod": "MAY/JUNE"
-          },
-          "crossExamRef": null,
-          "tutorialInfo": null,
-          "pastQuestionReference": null,
-          "accessibility": null,
-          "adaptiveSettings": null,
-          "examType": "WAEC",
-          "examYear": "2010",
-          "subjectCode": "CMS",
-          "subjectId": "a9611f6d-dcba-4f92-82af-83a86402e77f",
-          "trueFalseData": null,
-          "fillInBlankData": null,
-          "essayData": {
-            "maxWords": 1000,
-            "minWords": 100,
-            "expectedPoints": [
-              "identifying customer needs and wants",
-              "creating a product that meets those needs",
-              "Creation of Awareness",
-              "Facilitates International Trade",
-              "Increases Employment",
-              "Improves the Standard of Living",
-              "Drives Economic Growth"
-            ]
-          },
-          "essayWithSubData": {
-            "mainQuestion": [
-              {
-                "type": "text",
-                "value": "Marketing"
-              }
-            ],
-            "subQuestions": [
-              {
-                "marks": 10,
-                "subId": "a",
-                "questionText": [
-                  {
-                    "type": "text",
-                    "value": "What is marketing?"
-                  }
-                ]
-              },
-              {
-                "marks": 10,
-                "subId": "b",
-                "questionText": [
-                  {
-                    "type": "text",
-                    "value": "Explain five importance of marketing in an economy."
-                  }
-                ]
-              }
-            ]
-          },
-          "shortAnswerData": null,
-          "matchingData": null,
-          "orderingData": null,
-          "calculationData": null,
-          "diagramLabelingData": null,
-          "theoryWithObjectivesData": null,
-          "questionVideoUrls": [],
-          "optionVideoUrls": [],
-          "explanationVideoUrls": [],
-          "topicId": null,
-          "subTopicId": null,
-          "sessionId": null,
-          "universityId": null,
-          "facultyId": null,
-          "departmentId": null,
-          "courseId": null,
-          "tutorialId": null,
-          "isBookmarked": false,
-          "isReported": false
-        }
-      },
-      {
-        "id": "c7fab0e1-2daf-46ab-bac6-e87c01a41cbc",
-        "examId": "862e4205-8c73-48ef-88c9-6e7fbaf1f1d8",
-        "questionId": "60d8ce69-d949-4340-a0fe-f67df21facf3",
-        "order": 8,
-        "question": {
-          "id": "60d8ce69-d949-4340-a0fe-f67df21facf3",
-          "questionNumber": 10,
-          "questionType": "CALCULATION",
-          "questionText": [
-            {
-              "type": "text",
-              "value": "A company has a Cost of Goods Sold of ₦400 and a Gross Profit of ₦100."
-            }
-          ],
-          "instruction": "Calculate the Sales figure.",
-          "context": null,
-          "options": null,
-          "correctAnswer": null,
-          "correctAnswers": [],
-          "explanation": {
-            "solution": [
-              {
-                "type": "text",
-                "value": "𝗛𝗲𝗿𝗲 𝗶𝘀 𝗮 𝘀𝗮𝗺𝗽𝗹𝗲 𝗮𝗻𝘀𝘄𝗲𝗿 𝗳𝗿𝗼𝗺 𝗮𝗻 𝗲𝘅𝗮𝗺𝗶𝗻𝗲𝗿\n\n\n\n𝗘𝘅𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\n\nIn a Trading Account, the Gross Profit is calculated as the difference between Net Sales and the Cost of Goods Sold (COGS). \nTherefore, the formula is: \nGross Profit = Sales - Cost of Goods Sold.\nRearranging the formula to find Sales gives:\nSales = Cost of Goods Sold + Gross Profit.\n\nCalculation:\nSales = ₦400 + ₦100 = ₦500.\n\n\n\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\n\nCost of Goods Sold (COGS) – The direct costs attributable to the production of the goods sold in a company.\nGross Profit – The profit a company makes after deducting the costs associated with making and selling its products.\n\n\n\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘𝘅𝗮𝗺𝗽𝗹𝗲\n\nIf you buy shoes for ₦400 (Cost) and you want to make a profit of ₦100, you must sell the shoes for ₦500 (Sales)."
-              }
-            ]
-          },
-          "textExplanation": null,
-          "marks": 1,
-          "marksPerCorrect": null,
-          "negativeMarking": null,
-          "partialCreditAllowed": null,
-          "randomizeOptions": null,
-          "passingMarks": null,
-          "estimatedTimeSeconds": null,
-          "difficulty": "EASY",
-          "status": "PUBLISHED",
-          "tags": [],
-          "cognitiveLevel": null,
-          "skillsAssessed": [],
-          "learningOutcomes": [],
-          "averageScore": null,
-          "attemptCount": 0,
-          "successRate": null,
-          "paper": null,
-          "year": 2010,
-          "createdAt": "2026-02-25T04:38:45.209Z",
-          "updatedAt": "2026-02-25T04:53:35.960Z",
-          "assignedExaminerId": null,
-          "editStatus": null,
-          "lastEditedById": null,
-          "lastEditedAt": null,
-          "originalVersion": null,
-          "editedVersion": null,
-          "reviewFeedback": null,
-          "deletionRequestedById": null,
-          "deletionRequestedAt": null,
-          "hierarchy": {
-            "topic": {
-              "name": "General"
-            },
-            "subject": "Commerce",
-            "examType": "WAEC",
-            "subjectCode": "COM"
-          },
-          "metadata": {
-            "marks": 1,
-            "status": "DRAFT",
-            "examType": "WAEC",
-            "examYear": "2010",
-            "difficulty": "EASY"
-          },
-          "crossExamRef": null,
-          "tutorialInfo": null,
-          "pastQuestionReference": null,
-          "accessibility": null,
-          "adaptiveSettings": null,
-          "examType": "WAEC",
-          "examYear": "2010",
-          "subjectCode": "COM",
-          "subjectId": "a9611f6d-dcba-4f92-82af-83a86402e77f",
-          "trueFalseData": null,
-          "fillInBlankData": null,
-          "essayData": null,
-          "essayWithSubData": null,
-          "shortAnswerData": null,
-          "matchingData": null,
-          "orderingData": null,
-          "calculationData": {
-            "formula": "Sales = Cost of Goods Sold + Gross Profit",
-            "expectedAnswer": {
-              "unit": "₦",
-              "value": 500
-            }
-          },
-          "diagramLabelingData": null,
-          "theoryWithObjectivesData": null,
-          "questionVideoUrls": [],
-          "optionVideoUrls": [],
-          "explanationVideoUrls": [],
-          "topicId": null,
-          "subTopicId": null,
-          "sessionId": null,
-          "universityId": null,
-          "facultyId": null,
-          "departmentId": null,
-          "courseId": null,
-          "tutorialId": null,
-          "isBookmarked": false,
-          "isReported": false
-        }
-      },
-      {
-        "id": "f9007760-da5f-4e99-ac4f-5de0e2821160",
-        "examId": "862e4205-8c73-48ef-88c9-6e7fbaf1f1d8",
-        "questionId": "65ec845a-18d1-48ab-b35a-d5706076e5d5",
-        "order": 9,
-        "question": {
-          "id": "65ec845a-18d1-48ab-b35a-d5706076e5d5",
-          "questionNumber": 7,
-          "questionType": "ESSAY_WITH_SUB",
-          "questionText": [
-            {
-              "type": "text",
-              "value": "Trade is a fundamental concept in Commerce."
-            }
-          ],
-          "instruction": "Answer the following questions on trade.",
-          "context": null,
-          "options": null,
-          "correctAnswer": null,
-          "correctAnswers": [],
-          "explanation": {
-            "solution": [
-              {
-                "type": "text",
-                "value": "𝗛𝗲𝗿𝗲 𝗶𝘀 𝗮 𝘀𝗮𝗺𝗽𝗹𝗲 𝗮𝗻𝘀𝘄𝗲𝗿 𝗳𝗿𝗼𝗺 𝗮𝗻 𝗲𝘅𝗮𝗺𝗶𝗻𝗲𝗿\n\n\n\n𝗘𝘅𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\n\n(a) Define Trade\nTrade is the act of buying and selling of goods and services with the primary aim of making a profit. It is the core component of Commerce that ensures goods move from producers to consumers.\n\n(b) Two divisions of trade\n1. Home Trade (Domestic Trade): This is buying and selling within the borders of a country. It includes wholesale and retail trade.\n2. Foreign Trade (International Trade): This is buying and selling across national borders. It includes imports and exports.\n\n\n\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\n\nCommerce – The distribution and exchange of goods and services.\nHome Trade – Trade within a country.\nForeign Trade – Trade between different countries.\n\n\n\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘𝘅𝗮𝗺𝗽𝗹𝗲\n\nIf you buy a phone from Computer Village in Lagos, that is Home Trade. If the seller imported that phone from China, that importation is Foreign Trade."
-              }
-            ]
-          },
-          "textExplanation": null,
-          "marks": 1,
-          "marksPerCorrect": null,
-          "negativeMarking": null,
-          "partialCreditAllowed": null,
-          "randomizeOptions": null,
-          "passingMarks": null,
-          "estimatedTimeSeconds": null,
-          "difficulty": "EASY",
-          "status": "PUBLISHED",
-          "tags": [],
-          "cognitiveLevel": null,
-          "skillsAssessed": [],
-          "learningOutcomes": [],
-          "averageScore": null,
-          "attemptCount": 0,
-          "successRate": null,
-          "paper": null,
-          "year": 2010,
-          "createdAt": "2026-02-25T04:38:45.131Z",
-          "updatedAt": "2026-02-25T04:53:35.960Z",
-          "assignedExaminerId": null,
-          "editStatus": null,
-          "lastEditedById": null,
-          "lastEditedAt": null,
-          "originalVersion": null,
-          "editedVersion": null,
-          "reviewFeedback": null,
-          "deletionRequestedById": null,
-          "deletionRequestedAt": null,
-          "hierarchy": {
-            "topic": {
-              "name": "General"
-            },
-            "subject": "Commerce",
-            "examType": "WAEC",
-            "subjectCode": "COM"
-          },
-          "metadata": {
-            "marks": 1,
-            "status": "DRAFT",
-            "examType": "WAEC",
-            "examYear": "2010",
-            "difficulty": "EASY"
-          },
-          "crossExamRef": null,
-          "tutorialInfo": null,
-          "pastQuestionReference": null,
-          "accessibility": null,
-          "adaptiveSettings": null,
-          "examType": "WAEC",
-          "examYear": "2010",
-          "subjectCode": "COM",
-          "subjectId": "a9611f6d-dcba-4f92-82af-83a86402e77f",
-          "trueFalseData": null,
-          "fillInBlankData": null,
-          "essayData": null,
-          "essayWithSubData": {
-            "mainQuestion": [
-              {
-                "type": "text",
-                "value": "Answer the following questions on trade."
-              }
-            ],
-            "subQuestions": [
-              {
-                "marks": 5,
-                "subId": "a",
-                "questionText": [
-                  {
-                    "type": "text",
-                    "value": "Define Trade"
-                  }
-                ]
-              },
-              {
-                "marks": 5,
-                "subId": "b",
-                "questionText": [
-                  {
-                    "type": "text",
-                    "value": "List two divisions of trade"
-                  }
-                ]
-              }
-            ]
-          },
-          "shortAnswerData": null,
-          "matchingData": null,
-          "orderingData": null,
-          "calculationData": null,
-          "diagramLabelingData": null,
-          "theoryWithObjectivesData": null,
-          "questionVideoUrls": [],
-          "optionVideoUrls": [],
-          "explanationVideoUrls": [],
-          "topicId": null,
-          "subTopicId": null,
-          "sessionId": null,
-          "universityId": null,
-          "facultyId": null,
-          "departmentId": null,
-          "courseId": null,
-          "tutorialId": null,
-          "isBookmarked": false,
-          "isReported": false
-        }
-      },
-      {
-        "id": "a3295699-824f-4552-9ff9-70ce810be4c3",
-        "examId": "862e4205-8c73-48ef-88c9-6e7fbaf1f1d8",
-        "questionId": "6cd44477-3188-4c65-9403-857bacaa9f91",
-        "order": 10,
-        "question": {
-          "id": "6cd44477-3188-4c65-9403-857bacaa9f91",
-          "questionNumber": 9,
-          "questionType": "ORDERING",
-          "questionText": [
-            {
-              "type": "text",
-              "value": "The production process turns raw materials into finished goods that reach the consumer."
-            }
-          ],
-          "instruction": "Order the stages of production from first to last.",
-          "context": null,
-          "options": null,
-          "correctAnswer": null,
-          "correctAnswers": [],
-          "explanation": {
-            "solution": [
-              {
-                "type": "text",
-                "value": "𝗛𝗲𝗿𝗲 𝗶𝘀 𝗮 𝘀𝗮𝗺𝗽𝗹𝗲 𝗮𝗻𝘀𝘄𝗲𝗿 𝗳𝗿𝗼𝗺 𝗮𝗻 𝗲𝘅𝗮𝗺𝗶𝗻𝗲𝗿\n\n\n\n𝗘𝘅𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\n\nProduction is a continuous process that follows a logical sequence to turn raw resources into consumer-ready items.\n1. Primary Production: Extracting raw materials (e.g., farming, mining).\n2. Secondary Production: Processing or manufacturing raw materials into finished goods.\n3. Tertiary Production: Distributing the finished goods and providing commercial services.\n\n\n\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\n\nPrimary Production – Extractive industries.\nTertiary Production – Services and distribution.\n\n\n\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘𝘅𝗮𝗺𝗽𝗹𝗲\n\nFirst, crude oil is pumped from the ground (Primary). Next, it is refined into petrol (Secondary). Finally, a filling station sells the petrol to you (Tertiary)."
-              }
-            ]
-          },
-          "textExplanation": null,
-          "marks": 1,
-          "marksPerCorrect": null,
-          "negativeMarking": null,
-          "partialCreditAllowed": null,
-          "randomizeOptions": null,
-          "passingMarks": null,
-          "estimatedTimeSeconds": null,
-          "difficulty": "EASY",
-          "status": "PUBLISHED",
-          "tags": [],
-          "cognitiveLevel": null,
-          "skillsAssessed": [],
-          "learningOutcomes": [],
-          "averageScore": null,
-          "attemptCount": 0,
-          "successRate": null,
-          "paper": null,
-          "year": 2010,
-          "createdAt": "2026-02-25T04:38:45.179Z",
-          "updatedAt": "2026-02-25T04:53:35.960Z",
-          "assignedExaminerId": null,
-          "editStatus": null,
-          "lastEditedById": null,
-          "lastEditedAt": null,
-          "originalVersion": null,
-          "editedVersion": null,
-          "reviewFeedback": null,
-          "deletionRequestedById": null,
-          "deletionRequestedAt": null,
-          "hierarchy": {
-            "topic": {
-              "name": "General"
-            },
-            "subject": "Commerce",
-            "examType": "WAEC",
-            "subjectCode": "COM"
-          },
-          "metadata": {
-            "marks": 1,
-            "status": "DRAFT",
-            "examType": "WAEC",
-            "examYear": "2010",
-            "difficulty": "EASY"
-          },
-          "crossExamRef": null,
-          "tutorialInfo": null,
-          "pastQuestionReference": null,
-          "accessibility": null,
-          "adaptiveSettings": null,
-          "examType": "WAEC",
-          "examYear": "2010",
-          "subjectCode": "COM",
-          "subjectId": "a9611f6d-dcba-4f92-82af-83a86402e77f",
-          "trueFalseData": null,
-          "fillInBlankData": null,
-          "essayData": null,
-          "essayWithSubData": null,
-          "shortAnswerData": null,
-          "matchingData": null,
-          "orderingData": {
-            "items": [
-              {
-                "id": "1",
-                "content": [
-                  {
-                    "type": "text",
-                    "value": "Primary Production"
-                  }
-                ]
-              },
-              {
-                "id": "2",
-                "content": [
-                  {
-                    "type": "text",
-                    "value": "Secondary Production"
-                  }
-                ]
-              },
-              {
-                "id": "3",
-                "content": [
-                  {
-                    "type": "text",
-                    "value": "Tertiary Production"
-                  }
-                ]
-              }
-            ]
-          },
-          "calculationData": null,
-          "diagramLabelingData": null,
-          "theoryWithObjectivesData": null,
-          "questionVideoUrls": [],
-          "optionVideoUrls": [],
-          "explanationVideoUrls": [],
-          "topicId": null,
-          "subTopicId": null,
-          "sessionId": null,
-          "universityId": null,
-          "facultyId": null,
-          "departmentId": null,
-          "courseId": null,
-          "tutorialId": null,
-          "isBookmarked": false,
-          "isReported": false
-        }
-      },
-      {
-        "id": "cba7ef73-d6cc-47eb-a5f7-bd463cd8285a",
-        "examId": "862e4205-8c73-48ef-88c9-6e7fbaf1f1d8",
-        "questionId": "78dff4c9-7a28-4b08-bddb-4d49a1235591",
-        "order": 11,
-        "question": {
-          "id": "78dff4c9-7a28-4b08-bddb-4d49a1235591",
-          "questionNumber": 4,
-          "questionType": "FILL_IN_BLANK",
-          "questionText": [
-            {
-              "type": "text",
-              "value": "The reward for entrepreneurship is {blank_1}."
-            }
-          ],
-          "instruction": null,
-          "context": null,
-          "options": null,
-          "correctAnswer": null,
-          "correctAnswers": [],
-          "explanation": {
-            "solution": [
-              {
-                "type": "text",
-                "value": "𝗛𝗲𝗿𝗲 𝗶𝘀 𝗮 𝘀𝗮𝗺𝗽𝗹𝗲 𝗮𝗻𝘀𝘄𝗲𝗿 𝗳𝗿𝗼𝗺 𝗮𝗻 𝗲𝘅𝗮𝗺𝗶𝗻𝗲𝗿\n\n\n\n𝗘𝘅𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\n\nThe entrepreneur is the factor of production that organizes land, labour, and capital to produce goods and services. Because they bear the ultimate risk of the business failing, their designated economic reward is profit (or they suffer a loss).\n\n\n\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\n\nEntrepreneurship – The activity of setting up a business or businesses, taking on financial risks in the hope of profit.\nProfit – A financial gain, the difference between the amount earned and the amount spent.\n\n\n\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘𝘅𝗮𝗺𝗽𝗹𝗲\n\nAliko Dangote is an entrepreneur. He invests his money and organizes resources to build a refinery. The reward he gets for successfully managing these risks is profit."
-              }
-            ]
-          },
-          "textExplanation": null,
-          "marks": 1,
-          "marksPerCorrect": null,
-          "negativeMarking": null,
-          "partialCreditAllowed": null,
-          "randomizeOptions": null,
-          "passingMarks": null,
-          "estimatedTimeSeconds": null,
-          "difficulty": "EASY",
-          "status": "PUBLISHED",
-          "tags": [],
-          "cognitiveLevel": null,
-          "skillsAssessed": [],
-          "learningOutcomes": [],
-          "averageScore": null,
-          "attemptCount": 0,
-          "successRate": null,
-          "paper": null,
-          "year": 2010,
-          "createdAt": "2026-02-25T04:38:45.076Z",
-          "updatedAt": "2026-02-25T04:53:35.960Z",
-          "assignedExaminerId": null,
-          "editStatus": null,
-          "lastEditedById": null,
-          "lastEditedAt": null,
-          "originalVersion": null,
-          "editedVersion": null,
-          "reviewFeedback": null,
-          "deletionRequestedById": null,
-          "deletionRequestedAt": null,
-          "hierarchy": {
-            "topic": {
-              "name": "General"
-            },
-            "subject": "Commerce",
-            "examType": "WAEC",
-            "subjectCode": "COM"
-          },
-          "metadata": {
-            "marks": 1,
-            "status": "DRAFT",
-            "examType": "WAEC",
-            "examYear": "2010",
-            "difficulty": "EASY"
-          },
-          "crossExamRef": null,
-          "tutorialInfo": null,
-          "pastQuestionReference": null,
-          "accessibility": null,
-          "adaptiveSettings": null,
-          "examType": "WAEC",
-          "examYear": "2010",
-          "subjectCode": "COM",
-          "subjectId": "a9611f6d-dcba-4f92-82af-83a86402e77f",
-          "trueFalseData": null,
-          "fillInBlankData": {
-            "blanks": [
-              {
-                "id": "blank_1",
-                "marks": 1,
-                "caseSensitive": false,
-                "acceptedAnswers": ["profit", "profit/loss", "loss"]
-              }
-            ]
-          },
-          "essayData": null,
-          "essayWithSubData": null,
-          "shortAnswerData": null,
-          "matchingData": null,
-          "orderingData": null,
-          "calculationData": null,
-          "diagramLabelingData": null,
-          "theoryWithObjectivesData": null,
-          "questionVideoUrls": [],
-          "optionVideoUrls": [],
-          "explanationVideoUrls": [],
-          "topicId": null,
-          "subTopicId": null,
-          "sessionId": null,
-          "universityId": null,
-          "facultyId": null,
-          "departmentId": null,
-          "courseId": null,
-          "tutorialId": null,
-          "isBookmarked": false,
-          "isReported": false
-        }
-      },
-      {
-        "id": "62bc8563-8985-45ab-88e5-87b3e3d5ed03",
-        "examId": "862e4205-8c73-48ef-88c9-6e7fbaf1f1d8",
-        "questionId": "8d23fb66-dfc4-4430-9a72-1428813e31ae",
-        "order": 12,
-        "question": {
-          "id": "8d23fb66-dfc4-4430-9a72-1428813e31ae",
-          "questionNumber": 54,
-          "questionType": "ESSAY_WITH_SUB",
-          "questionText": [
-            {
-              "type": "text",
-              "value": "Answer the following questions."
-            }
-          ],
-          "instruction": "Answer all parts of the question in detail.",
-          "context": null,
-          "options": null,
-          "correctAnswer": null,
-          "correctAnswers": [],
-          "explanation": {
-            "solution": [
-              {
-                "type": "text",
-                "value": "𝗛𝗲𝗿𝗲 𝗶𝘀 𝗮 𝘀𝗮𝗺𝗽𝗹𝗲 𝗮𝗻𝘀𝘄𝗲𝗿 𝗳𝗿𝗼𝗺 𝗮𝗻 𝗲𝘅𝗮𝗺𝗶𝗻𝗲𝗿\n\n(𝗮) 𝗙𝗶𝘃𝗲 𝗙𝗲𝗮𝘁𝘂𝗿𝗲𝘀 𝗖𝗼𝗺𝗺𝗼𝗻 𝘁𝗼 𝗕𝗼𝘁𝗵 𝗣𝘂𝗯𝗹𝗶𝗰 𝗮𝗻𝗱 𝗣𝗿𝗶𝘃𝗮𝘁𝗲 𝗟𝗶𝗺𝗶𝘁𝗲𝗱 𝗖𝗼𝗺𝗽𝗮𝗻𝗶𝗲𝘀\n𝗦𝗲𝗽𝗮𝗿𝗮𝘁𝗲 𝗟𝗲𝗴𝗮𝗹 𝗘𝗻𝘁𝗶𝘁𝘆: Both a public and a private limited company are separate legal entities from their owners.\n𝗟𝗶𝗺𝗶𝘁𝗲𝗱 𝗟𝗶𝗮𝗯𝗶𝗹𝗶𝘁𝘆: Both types of companies have limited liability.\n𝗕𝗼𝗮𝗿𝗱 𝗼𝗳 𝗗𝗶𝗿𝗲𝗰𝘁𝗼𝗿𝘀: Both types of companies are managed by a Board of Directors.\n𝗖𝗲𝗿𝘁𝗶𝗳𝗶𝗰𝗮𝘁𝗲 𝗼𝗳 𝗜𝗻𝗰𝗼𝗿𝗽𝗼𝗿𝗮𝘁𝗶𝗼𝗻: Both types of companies must have a certificate of incorporation to have a legal existence.\n𝗣𝗲𝗿𝗽𝗲𝘁𝘂𝗮𝗹 𝗦𝘂𝗰𝗰𝗲𝘀𝘀𝗶𝗼𝗻: Both types of companies have perpetual succession.\n(𝗯) 𝗧𝗵𝗿𝗲𝗲 𝗙𝘂𝗻𝗰𝘁𝗶𝗼𝗻𝘀 𝗼𝗳 𝗮 𝗠𝗲𝗺𝗼𝗿𝗮𝗻𝗱𝘂𝗺 𝗼𝗳 𝗔𝘀𝘀𝗼𝗰𝗶𝗮𝘁𝗶𝗼𝗻\n𝗗𝗲𝗳𝗶𝗻𝗲𝘀 𝘁𝗵𝗲 𝗖𝗼𝗺𝗽𝗮𝗻𝘆'𝘀 𝗦𝗰𝗼𝗽𝗲: The memorandum defines the company's scope and objectives.\nDefines the Company's Relationship with the Public: The memorandum defines the company's relationship with the public, including its name and location.\n𝗗𝗲𝗳𝗶𝗻𝗲𝘀 𝘁𝗵𝗲 𝗖𝗼𝗺𝗽𝗮𝗻𝘆'𝘀 𝗖𝗮𝗽𝗶𝘁𝗮𝗹 𝗦𝘁𝗿𝘂𝗰𝘁𝘂𝗿𝗲: The memorandum defines the company's authorized capital and its share structure."
-              }
-            ]
-          },
-          "textExplanation": null,
-          "marks": 1,
-          "marksPerCorrect": null,
-          "negativeMarking": null,
-          "partialCreditAllowed": null,
-          "randomizeOptions": null,
-          "passingMarks": null,
-          "estimatedTimeSeconds": null,
-          "difficulty": "MEDIUM",
-          "status": "PUBLISHED",
-          "tags": [],
-          "cognitiveLevel": null,
-          "skillsAssessed": [],
-          "learningOutcomes": [],
-          "averageScore": null,
-          "attemptCount": 0,
-          "successRate": null,
-          "paper": null,
-          "year": 2010,
-          "createdAt": "2026-02-23T17:17:02.858Z",
-          "updatedAt": "2026-02-25T04:25:20.252Z",
-          "assignedExaminerId": null,
-          "editStatus": null,
-          "lastEditedById": null,
-          "lastEditedAt": null,
-          "originalVersion": null,
-          "editedVersion": null,
-          "reviewFeedback": null,
-          "deletionRequestedById": null,
-          "deletionRequestedAt": null,
-          "hierarchy": {
-            "topic": {
-              "name": "General"
-            },
-            "subject": "Commerce",
-            "examType": "WAEC",
-            "subjectCode": "CMS"
-          },
-          "metadata": {
-            "marks": 20,
-            "status": "DRAFT",
-            "examType": "WAEC",
-            "examYear": "2010",
-            "difficulty": "MEDIUM",
-            "examPeriod": "MAY/JUNE"
-          },
-          "crossExamRef": null,
-          "tutorialInfo": null,
-          "pastQuestionReference": null,
-          "accessibility": null,
-          "adaptiveSettings": null,
-          "examType": "WAEC",
-          "examYear": "2010",
-          "subjectCode": "CMS",
-          "subjectId": "a9611f6d-dcba-4f92-82af-83a86402e77f",
-          "trueFalseData": null,
-          "fillInBlankData": null,
-          "essayData": {
-            "maxWords": 1000,
-            "minWords": 100,
-            "expectedPoints": [
-              "Separate Legal Entity",
-              "Limited Liability",
-              "Board of Directors",
-              "Certificate of Incorporation",
-              "Perpetual Succession",
-              "Defines the Company's Scope",
-              "Relationship with the Public",
-              "Capital Structure"
-            ]
-          },
-          "essayWithSubData": {
-            "mainQuestion": [
-              {
-                "type": "text",
-                "value": "Company Law and Governance"
-              }
-            ],
-            "subQuestions": [
-              {
-                "marks": 10,
-                "subId": "a",
-                "questionText": [
-                  {
-                    "type": "text",
-                    "value": "State five features common to both public and private limited companies."
-                  }
-                ]
-              },
-              {
-                "marks": 10,
-                "subId": "b",
-                "questionText": [
-                  {
-                    "type": "text",
-                    "value": "State three functions of a memorandum of association."
-                  }
-                ]
-              }
-            ]
-          },
-          "shortAnswerData": null,
-          "matchingData": null,
-          "orderingData": null,
-          "calculationData": null,
-          "diagramLabelingData": null,
-          "theoryWithObjectivesData": null,
-          "questionVideoUrls": [],
-          "optionVideoUrls": [],
-          "explanationVideoUrls": [],
-          "topicId": null,
-          "subTopicId": null,
-          "sessionId": null,
-          "universityId": null,
-          "facultyId": null,
-          "departmentId": null,
-          "courseId": null,
-          "tutorialId": null,
-          "isBookmarked": false,
-          "isReported": false
-        }
-      },
-      {
-        "id": "b287cb96-8d1a-4c3c-9891-066553adf8d8",
-        "examId": "862e4205-8c73-48ef-88c9-6e7fbaf1f1d8",
-        "questionId": "94e6d62c-73be-4e37-a817-8fb9ed5e89b0",
-        "order": 13,
-        "question": {
-          "id": "94e6d62c-73be-4e37-a817-8fb9ed5e89b0",
-          "questionNumber": 56,
-          "questionType": "ESSAY_WITH_SUB",
-          "questionText": [
-            {
-              "type": "text",
-              "value": "Answer the following questions."
-            }
-          ],
-          "instruction": "Answer all parts of the question in detail.",
-          "context": null,
-          "options": null,
-          "correctAnswer": null,
-          "correctAnswers": [],
-          "explanation": {
-            "solution": [
-              {
-                "type": "text",
-                "value": "𝗛𝗲𝗿𝗲 𝗶𝘀 𝗮 𝘀𝗮𝗺𝗽𝗹𝗲 𝗮𝗻𝘀𝘄𝗲𝗿 𝗳𝗿𝗼𝗺 𝗮𝗻 𝗲𝘅𝗮𝗺𝗶𝗻𝗲𝗿\n\n(𝗮) 𝗪𝗵𝗮𝘁 𝗶𝘀 𝗮 𝗰𝗼𝗻𝘁𝗿𝗮𝗰𝘁?\nA contract is a legally binding agreement between two or more parties that is enforceable by law. It is a formal agreement that creates a legal obligation for the parties to perform a specific action.\n(𝗯) 𝗙𝗶𝘃𝗲 𝗘𝗹𝗲𝗺𝗲𝗻𝘁𝘀 𝗼𝗳 𝗮 𝗖𝗼𝗻𝘁𝗿𝗮𝗰𝘁\n𝗢𝗳𝗳𝗲𝗿: An offer is a proposal to enter into a contract.\n𝗔𝗰𝗰𝗲𝗽𝘁𝗮𝗻𝗰𝗲: An acceptance is an agreement to the terms of an offer.\n𝗖𝗼𝗻𝘀𝗶𝗱𝗲𝗿𝗮𝘁𝗶𝗼𝗻: Consideration is something of value that is exchanged between the parties.\n𝗖𝗮𝗽𝗮𝗰𝗶𝘁𝘆: The parties must be legally able to enter a contract.\n𝗟𝗲𝗴𝗮𝗹𝗶𝘁𝘆: The purpose of the contract must be legal.\n(𝗰) 𝗦𝗶𝘅 𝗖𝗼𝗻𝗱𝗶𝘁𝗶𝗼𝗻𝘀 𝗳𝗼𝗿 𝘁𝗵𝗲 𝗧𝗲𝗿𝗺𝗶𝗻𝗮𝘁𝗶𝗼𝗻 𝗼𝗳 𝗮 𝗖𝗼𝗻𝘁𝗿𝗮𝗰𝘁\n𝗣𝗲𝗿𝗳𝗼𝗿𝗺𝗮𝗻𝗰𝗲: When both parties have fulfilled their obligations as per the contract.\n𝗔𝗴𝗿𝗲𝗲𝗺𝗲𝗻𝘁: When the parties mutually agree to terminate the contract.\n𝗕𝗿𝗲𝗮𝗰𝗵: When one party fails to fulfill their obligations, which gives the other party the right to terminate the contract and seek damages.\n𝗙𝗿𝘂𝘀𝘁𝗿𝗮𝘁𝗶𝗼𝗻: When an unforeseen event makes the performance of the contract impossible.\n𝗟𝗮𝗽𝘀𝗲 𝗼𝗳 𝗧𝗶𝗺𝗲: When a contract has a specific time frame, it is terminated when the time expires.\n𝗢𝗽𝗲𝗿𝗮𝘁𝗶𝗼𝗻 𝗼𝗳 𝗟𝗮𝘄: A contract can be terminated by a court order."
-              }
-            ]
-          },
-          "textExplanation": null,
-          "marks": 1,
-          "marksPerCorrect": null,
-          "negativeMarking": null,
-          "partialCreditAllowed": null,
-          "randomizeOptions": null,
-          "passingMarks": null,
-          "estimatedTimeSeconds": null,
-          "difficulty": "MEDIUM",
-          "status": "PUBLISHED",
-          "tags": [],
-          "cognitiveLevel": null,
-          "skillsAssessed": [],
-          "learningOutcomes": [],
-          "averageScore": null,
-          "attemptCount": 0,
-          "successRate": null,
-          "paper": null,
-          "year": 2010,
-          "createdAt": "2026-02-23T17:17:02.891Z",
-          "updatedAt": "2026-02-25T04:25:20.252Z",
-          "assignedExaminerId": null,
-          "editStatus": null,
-          "lastEditedById": null,
-          "lastEditedAt": null,
-          "originalVersion": null,
-          "editedVersion": null,
-          "reviewFeedback": null,
-          "deletionRequestedById": null,
-          "deletionRequestedAt": null,
-          "hierarchy": {
-            "topic": {
-              "name": "General"
-            },
-            "subject": "Commerce",
-            "examType": "WAEC",
-            "subjectCode": "CMS"
-          },
-          "metadata": {
-            "marks": 20,
-            "status": "DRAFT",
-            "examType": "WAEC",
-            "examYear": "2010",
-            "difficulty": "MEDIUM",
-            "examPeriod": "MAY/JUNE"
-          },
-          "crossExamRef": null,
-          "tutorialInfo": null,
-          "pastQuestionReference": null,
-          "accessibility": null,
-          "adaptiveSettings": null,
-          "examType": "WAEC",
-          "examYear": "2010",
-          "subjectCode": "CMS",
-          "subjectId": "a9611f6d-dcba-4f92-82af-83a86402e77f",
-          "trueFalseData": null,
-          "fillInBlankData": null,
-          "essayData": {
-            "maxWords": 1000,
-            "minWords": 100,
-            "expectedPoints": [
-              "legally binding agreement",
-              "enforceable by law",
-              "Offer",
-              "Acceptance",
-              "Consideration",
-              "Capacity",
-              "Legality",
-              "Performance",
-              "Agreement",
-              "Breach",
-              "Frustration",
-              "Lapse of Time",
-              "Operation of Law"
-            ]
-          },
-          "essayWithSubData": {
-            "mainQuestion": [
-              {
-                "type": "text",
-                "value": "Contract Law"
-              }
-            ],
-            "subQuestions": [
-              {
-                "marks": 6,
-                "subId": "a",
-                "questionText": [
-                  {
-                    "type": "text",
-                    "value": "What is an contract?"
-                  }
-                ]
-              },
-              {
-                "marks": 6,
-                "subId": "b",
-                "questionText": [
-                  {
-                    "type": "text",
-                    "value": "List five elements of a contract"
-                  }
-                ]
-              },
-              {
-                "marks": 6,
-                "subId": "c",
-                "questionText": [
-                  {
-                    "type": "text",
-                    "value": "Explain six conditions that could lead to the termination of a contract"
-                  }
-                ]
-              }
-            ]
-          },
-          "shortAnswerData": null,
-          "matchingData": null,
-          "orderingData": null,
-          "calculationData": null,
-          "diagramLabelingData": null,
-          "theoryWithObjectivesData": null,
-          "questionVideoUrls": [],
-          "optionVideoUrls": [],
-          "explanationVideoUrls": [],
-          "topicId": null,
-          "subTopicId": null,
-          "sessionId": null,
-          "universityId": null,
-          "facultyId": null,
-          "departmentId": null,
-          "courseId": null,
-          "tutorialId": null,
-          "isBookmarked": false,
-          "isReported": false
-        }
-      },
-      {
-        "id": "26d40a5b-ad6b-417b-96f0-74ce79d6a001",
-        "examId": "862e4205-8c73-48ef-88c9-6e7fbaf1f1d8",
-        "questionId": "9702badf-6b17-4441-8174-6bc9457b4cd7",
-        "order": 14,
-        "question": {
-          "id": "9702badf-6b17-4441-8174-6bc9457b4cd7",
-          "questionNumber": 3,
-          "questionType": "TRUE_FALSE",
-          "questionText": [
-            {
-              "type": "text",
-              "value": "A sole trader has limited liability."
-            }
-          ],
-          "instruction": null,
-          "context": null,
-          "options": null,
-          "correctAnswer": null,
-          "correctAnswers": [],
-          "explanation": {
-            "solution": [
-              {
-                "type": "text",
-                "value": "𝗛𝗲𝗿𝗲 𝗶𝘀 𝗮 𝘀𝗮𝗺𝗽𝗹𝗲 𝗮𝗻𝘀𝘄𝗲𝗿 𝗳𝗿𝗼𝗺 𝗮𝗻 𝗲𝘅𝗮𝗺𝗶𝗻𝗲𝗿\n\n\n\n𝗘𝘅𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\n\nA sole trader does not have limited liability; they have unlimited liability. This means there is no legal distinction between the owner and the business entity.\n\n\n\n𝗪𝗵𝘆 𝗼𝘁𝗵𝗲𝗿 𝗼𝗽𝘁𝗶𝗼𝗻𝘀 𝗮𝗿𝗲 𝗶𝗻𝗰𝗼𝗿𝗿𝗲𝗰𝘁\n\nTrue is incorrect because if a sole proprietorship goes bankrupt, the owner's personal assets (like their house or car) can be sold to clear the business debts.\n\n\n\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\n\nSole Trader – A business owned and run by one person.\nUnlimited Liability – Full legal responsibility that business owners assume for all business debts.\n\n\n\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘𝘅𝗮𝗺𝗽𝗹𝗲\n\nIf a woman running a small provisions shop takes a loan of ₦1,000,000 and the business fails, the bank can seize her personal car to recover the money because she has unlimited liability."
-              }
-            ]
-          },
-          "textExplanation": null,
-          "marks": 1,
-          "marksPerCorrect": null,
-          "negativeMarking": null,
-          "partialCreditAllowed": null,
-          "randomizeOptions": null,
-          "passingMarks": null,
-          "estimatedTimeSeconds": null,
-          "difficulty": "EASY",
-          "status": "PUBLISHED",
-          "tags": [],
-          "cognitiveLevel": null,
-          "skillsAssessed": [],
-          "learningOutcomes": [],
-          "averageScore": null,
-          "attemptCount": 0,
-          "successRate": null,
-          "paper": null,
-          "year": 2010,
-          "createdAt": "2026-02-25T04:38:45.054Z",
-          "updatedAt": "2026-02-25T04:53:35.960Z",
-          "assignedExaminerId": null,
-          "editStatus": null,
-          "lastEditedById": null,
-          "lastEditedAt": null,
-          "originalVersion": null,
-          "editedVersion": null,
-          "reviewFeedback": null,
-          "deletionRequestedById": null,
-          "deletionRequestedAt": null,
-          "hierarchy": {
-            "topic": {
-              "name": "General"
-            },
-            "subject": "Commerce",
-            "examType": "WAEC",
-            "subjectCode": "COM"
-          },
-          "metadata": {
-            "marks": 1,
-            "status": "DRAFT",
-            "examType": "WAEC",
-            "examYear": "2010",
-            "difficulty": "EASY"
-          },
-          "crossExamRef": null,
-          "tutorialInfo": null,
-          "pastQuestionReference": null,
-          "accessibility": null,
-          "adaptiveSettings": null,
-          "examType": "WAEC",
-          "examYear": "2010",
-          "subjectCode": "COM",
-          "subjectId": "a9611f6d-dcba-4f92-82af-83a86402e77f",
-          "trueFalseData": {
-            "justificationRequired": false
-          },
-          "fillInBlankData": null,
-          "essayData": null,
-          "essayWithSubData": null,
-          "shortAnswerData": null,
-          "matchingData": null,
-          "orderingData": null,
-          "calculationData": null,
-          "diagramLabelingData": null,
-          "theoryWithObjectivesData": null,
-          "questionVideoUrls": [],
-          "optionVideoUrls": [],
-          "explanationVideoUrls": [],
-          "topicId": null,
-          "subTopicId": null,
-          "sessionId": null,
-          "universityId": null,
-          "facultyId": null,
-          "departmentId": null,
-          "courseId": null,
-          "tutorialId": null,
-          "isBookmarked": false,
-          "isReported": false
-        }
-      },
-      {
-        "id": "1c85b9f3-6948-47ea-a4c4-88a6336441d9",
-        "examId": "862e4205-8c73-48ef-88c9-6e7fbaf1f1d8",
-        "questionId": "9e749d20-a7f3-4556-a767-28bc12da9c19",
-        "order": 15,
-        "question": {
-          "id": "9e749d20-a7f3-4556-a767-28bc12da9c19",
-          "questionNumber": 51,
-          "questionType": "ESSAY_WITH_SUB",
-          "questionText": [
-            {
-              "type": "text",
-              "value": "Answer the following questions."
-            }
-          ],
-          "instruction": "Answer all parts of the question in detail.",
-          "context": null,
-          "options": null,
-          "correctAnswer": null,
-          "correctAnswers": [],
-          "explanation": {
-            "solution": [
-              {
-                "type": "text",
-                "value": "𝗛𝗲𝗿𝗲 𝗶𝘀 𝗮 𝘀𝗮𝗺𝗽𝗹𝗲 𝗮𝗻𝘀𝘄𝗲𝗿 𝗳𝗿𝗼𝗺 𝗮𝗻 𝗲𝘅𝗮𝗺𝗶𝗻𝗲𝗿\n\n(𝗮) 𝗗𝗲𝗳𝗶𝗻𝗲 𝗰𝗼𝗺𝗺𝗲𝗿𝗰𝗲\nCommerce is a branch of business that is concerned with the exchange and distribution of goods and services from the producer to the final consumer. It includes trade and all the activities that facilitate it, such as transportation, banking, and insurance. The purpose of commerce is to bridge the gap between producers and consumers.\n(𝗯) 𝗦𝗶𝘅 𝗙𝘂𝗻𝗰𝘁𝗶𝗼𝗻𝘀 𝗼𝗳 𝗖𝗼𝗺𝗺𝗲𝗿𝗰𝗲 𝗶𝗻 𝗮𝗻 𝗘𝗰𝗼𝗻𝗼𝗺𝘆\n𝗖𝗿𝗲𝗮𝘁𝗶𝗼𝗻 𝗼𝗳 𝗨𝘁𝗶𝗹𝗶𝘁𝘆: Commerce provides various types of utility to goods. Place utility is created by transporting goods from the producer to the consumer. Time utility is created by storing goods in a warehouse until they are needed.\n𝗖𝗿𝗲𝗮𝘁𝗶𝗼𝗻 𝗼𝗳 𝗘𝗺𝗽𝗹𝗼𝘆𝗺𝗲𝗻𝘁: Commerce creates numerous job opportunities for a nation's workforce. From wholesalers and retailers to bankers, transporters, and insurance agents, a wide range of occupations are directly linked to the distribution and exchange of goods.\n𝗘𝗰𝗼𝗻𝗼𝗺𝗶𝗰 𝗚𝗿𝗼𝘄𝘁𝗵 𝗮𝗻𝗱 𝗗𝗲𝘃𝗲𝗹𝗼𝗽𝗺𝗲𝗻𝘁: Commerce facilitates the flow of goods and services, which is the basis of a functioning economy. It enables the efficient exchange of products from producers to consumers, leading to increased production and consumption. The revenue generated from these activities contributes to a nation's Gross Domestic Product (GDP) and fuels overall economic growth.\n𝗣𝗿𝗼𝗺𝗼𝘁𝗲𝘀 𝗦𝗽𝗲𝗰𝗶𝗮𝗹𝗶𝘇𝗮𝘁𝗶𝗼𝗻: By enabling the exchange of goods and services, commerce allows individuals, businesses, and even nations to specialize in the production of what they do best. This specialization leads to greater efficiency, higher quality goods, and a more productive economy.\n𝗥𝗮𝗶𝘀𝗲𝘀 𝗟𝗶𝘃𝗶𝗻𝗴 𝗦𝘁𝗮𝗻𝗱𝗮𝗿𝗱𝘀: Commerce makes a wide variety of goods and services available to consumers, improving their quality of life. Through trade, people can access products from different parts of the world that they would not be able to produce themselves. The availability of diverse goods enhances consumer choice and contributes to a better standard of living.\n𝗙𝗮𝗰𝗶𝗹𝗶𝘁𝗮𝘁𝗲𝘀 𝗜𝗻𝘁𝗲𝗿𝗻𝗮𝘁𝗶𝗼𝗻𝗮𝗹 𝗧𝗿𝗮𝗱𝗲: Commerce is the foundation of international trade. It helps a nation earn foreign exchange through exports and acquire essential goods through imports. This international exchange of goods and services is crucial for a country's balance of payments and its ability to participate in the global economy."
-              }
-            ]
-          },
-          "textExplanation": null,
-          "marks": 1,
-          "marksPerCorrect": null,
-          "negativeMarking": null,
-          "partialCreditAllowed": null,
-          "randomizeOptions": null,
-          "passingMarks": null,
-          "estimatedTimeSeconds": null,
-          "difficulty": "MEDIUM",
-          "status": "PUBLISHED",
-          "tags": [],
-          "cognitiveLevel": null,
-          "skillsAssessed": [],
-          "learningOutcomes": [],
-          "averageScore": null,
-          "attemptCount": 0,
-          "successRate": null,
-          "paper": null,
-          "year": 2010,
-          "createdAt": "2026-02-23T17:17:02.789Z",
-          "updatedAt": "2026-02-25T04:25:20.252Z",
-          "assignedExaminerId": null,
-          "editStatus": null,
-          "lastEditedById": null,
-          "lastEditedAt": null,
-          "originalVersion": null,
-          "editedVersion": null,
-          "reviewFeedback": null,
-          "deletionRequestedById": null,
-          "deletionRequestedAt": null,
-          "hierarchy": {
-            "topic": {
-              "name": "General"
-            },
-            "subject": "Commerce",
-            "examType": "WAEC",
-            "subjectCode": "CMS"
-          },
-          "metadata": {
-            "marks": 20,
-            "status": "DRAFT",
-            "examType": "WAEC",
-            "examYear": "2010",
-            "difficulty": "MEDIUM",
-            "examPeriod": "MAY/JUNE"
-          },
-          "crossExamRef": null,
-          "tutorialInfo": null,
-          "pastQuestionReference": null,
-          "accessibility": null,
-          "adaptiveSettings": null,
-          "examType": "WAEC",
-          "examYear": "2010",
-          "subjectCode": "CMS",
-          "subjectId": "a9611f6d-dcba-4f92-82af-83a86402e77f",
-          "trueFalseData": null,
-          "fillInBlankData": null,
-          "essayData": {
-            "maxWords": 1000,
-            "minWords": 100,
-            "expectedPoints": [
-              "branch of business",
-              "exchange and distribution of goods and services",
-              "producer to the final consumer",
-              "trade and all the activities that facilitate it",
-              "Creation of Utility",
-              "Creation of Employment",
-              "Economic Growth and Development",
-              "Promotes Specialization",
-              "Raises Living Standards",
-              "Facilitates International Trade"
-            ]
-          },
-          "essayWithSubData": {
-            "mainQuestion": [
-              {
-                "type": "text",
-                "value": "Commerce and its Functions"
-              }
-            ],
-            "subQuestions": [
-              {
-                "marks": 10,
-                "subId": "a",
-                "questionText": [
-                  {
-                    "type": "text",
-                    "value": "Define commerce"
-                  }
-                ]
-              },
-              {
-                "marks": 10,
-                "subId": "b",
-                "questionText": [
-                  {
-                    "type": "text",
-                    "value": "Explain six functions of commerce in an economy"
-                  }
-                ]
-              }
-            ]
-          },
-          "shortAnswerData": null,
-          "matchingData": null,
-          "orderingData": null,
-          "calculationData": null,
-          "diagramLabelingData": null,
-          "theoryWithObjectivesData": null,
-          "questionVideoUrls": [],
-          "optionVideoUrls": [],
-          "explanationVideoUrls": [],
-          "topicId": null,
-          "subTopicId": null,
-          "sessionId": null,
-          "universityId": null,
-          "facultyId": null,
-          "departmentId": null,
-          "courseId": null,
-          "tutorialId": null,
-          "isBookmarked": false,
-          "isReported": false
-        }
-      },
-      {
-        "id": "72822dd1-e786-4481-a382-b3404f335942",
-        "examId": "862e4205-8c73-48ef-88c9-6e7fbaf1f1d8",
-        "questionId": "a3e8ecc2-ff10-47da-8c7e-c4e147dd1e21",
-        "order": 16,
-        "question": {
-          "id": "a3e8ecc2-ff10-47da-8c7e-c4e147dd1e21",
-          "questionNumber": 8,
-          "questionType": "MATCHING",
-          "questionText": [
-            {
-              "type": "text",
-              "value": "Different factors of production yield different types of economic rewards."
-            }
-          ],
-          "instruction": "Match the factors of production to their corresponding rewards.",
-          "context": null,
-          "options": null,
-          "correctAnswer": null,
-          "correctAnswers": [],
-          "explanation": {
-            "solution": [
-              {
-                "type": "text",
-                "value": "𝗛𝗲𝗿𝗲 𝗶𝘀 𝗮 𝘀𝗮𝗺𝗽𝗹𝗲 𝗮𝗻𝘀𝘄𝗲𝗿 𝗳𝗿𝗼𝗺 𝗮𝗻 𝗲𝘅𝗮𝗺𝗶𝗻𝗲𝗿\n\n\n\n𝗘𝘅𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\n\nFactors of production are the resources used to produce goods and services, and each earns a specific economic reward.\n1. Land earns Rent because it is a fixed natural resource.\n2. Labour earns Wages or Salaries as compensation for human effort.\n3. Capital earns Interest because it involves investing money or machinery to generate future value.\n\n\n\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\n\nFactors of Production – Inputs used in creating goods or services.\nCapital – Man-made wealth used to produce further wealth.\n\n\n\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘𝘅𝗮𝗺𝗽𝗹𝗲\n\nIf you own a shop space, you charge Rent (Land). You pay the shop attendant a Wage (Labour). If you borrowed money from the bank to stock the shop, you pay the bank Interest (Capital)."
-              }
-            ]
-          },
-          "textExplanation": null,
-          "marks": 1,
-          "marksPerCorrect": null,
-          "negativeMarking": null,
-          "partialCreditAllowed": null,
-          "randomizeOptions": null,
-          "passingMarks": null,
-          "estimatedTimeSeconds": null,
-          "difficulty": "EASY",
-          "status": "PUBLISHED",
-          "tags": [],
-          "cognitiveLevel": null,
-          "skillsAssessed": [],
-          "learningOutcomes": [],
-          "averageScore": null,
-          "attemptCount": 0,
-          "successRate": null,
-          "paper": null,
-          "year": 2010,
-          "createdAt": "2026-02-25T04:38:45.151Z",
-          "updatedAt": "2026-02-25T04:53:35.960Z",
-          "assignedExaminerId": null,
-          "editStatus": null,
-          "lastEditedById": null,
-          "lastEditedAt": null,
-          "originalVersion": null,
-          "editedVersion": null,
-          "reviewFeedback": null,
-          "deletionRequestedById": null,
-          "deletionRequestedAt": null,
-          "hierarchy": {
-            "topic": {
-              "name": "General"
-            },
-            "subject": "Commerce",
-            "examType": "WAEC",
-            "subjectCode": "COM"
-          },
-          "metadata": {
-            "marks": 1,
-            "status": "DRAFT",
-            "examType": "WAEC",
-            "examYear": "2010",
-            "difficulty": "EASY"
-          },
-          "crossExamRef": null,
-          "tutorialInfo": null,
-          "pastQuestionReference": null,
-          "accessibility": null,
-          "adaptiveSettings": null,
-          "examType": "WAEC",
-          "examYear": "2010",
-          "subjectCode": "COM",
-          "subjectId": "a9611f6d-dcba-4f92-82af-83a86402e77f",
-          "trueFalseData": null,
-          "fillInBlankData": null,
-          "essayData": null,
-          "essayWithSubData": null,
-          "shortAnswerData": null,
-          "matchingData": {
-            "pairs": [
-              {
-                "left": [
-                  {
-                    "type": "text",
-                    "value": "Land"
-                  }
-                ],
-                "right": [
-                  {
-                    "type": "text",
-                    "value": "Rent"
-                  }
-                ]
-              },
-              {
-                "left": [
-                  {
-                    "type": "text",
-                    "value": "Labour"
-                  }
-                ],
-                "right": [
-                  {
-                    "type": "text",
-                    "value": "Wages"
-                  }
-                ]
-              },
-              {
-                "left": [
-                  {
-                    "type": "text",
-                    "value": "Capital"
-                  }
-                ],
-                "right": [
-                  {
-                    "type": "text",
-                    "value": "Interest"
-                  }
-                ]
-              }
-            ]
-          },
-          "orderingData": null,
-          "calculationData": null,
-          "diagramLabelingData": null,
-          "theoryWithObjectivesData": null,
-          "questionVideoUrls": [],
-          "optionVideoUrls": [],
-          "explanationVideoUrls": [],
-          "topicId": null,
-          "subTopicId": null,
-          "sessionId": null,
-          "universityId": null,
-          "facultyId": null,
-          "departmentId": null,
-          "courseId": null,
-          "tutorialId": null,
-          "isBookmarked": false,
-          "isReported": false
-        }
-      },
-      {
-        "id": "68a721f2-de1f-4c71-b146-02126155958f",
-        "examId": "862e4205-8c73-48ef-88c9-6e7fbaf1f1d8",
-        "questionId": "a7806ed2-c726-4afe-9a93-4157ceb20f07",
-        "order": 17,
-        "question": {
-          "id": "a7806ed2-c726-4afe-9a93-4157ceb20f07",
+          "id": "2c4e59b0-5c59-41e3-bfc5-467840078a45",
           "questionNumber": 1,
           "questionType": "SINGLE_CHOICE",
           "questionText": [
             {
               "type": "text",
-              "value": "Which of the following is a primary product?"
+              "value": "𝗜𝗳 $M$ 𝗿𝗲𝗽𝗿𝗲𝘀𝗲𝗻𝘁𝘀 𝘁𝗵𝗲 𝗺𝗲𝗱𝗶𝗮𝗻 𝗮𝗻𝗱 $D$ 𝘁𝗵𝗲 𝗺𝗼𝗱𝗲 𝗼𝗳 𝘁𝗵𝗲 𝗺𝗲𝗮𝘀𝘂𝗿𝗲𝗺𝗲𝗻𝘁𝘀 $5$, $9$, $3$, $5$, $8$, 𝘁𝗵𝗲𝗻 $(M,D)$ 𝗶𝘀"
             }
           ],
-          "instruction": null,
+          "instruction": "Choose the correct answer",
           "context": null,
           "options": [
             {
@@ -2319,7 +61,7 @@
               "content": [
                 {
                   "type": "text",
-                  "value": "Shoes"
+                  "value": "$(6,5)$"
                 }
               ],
               "isCorrect": false
@@ -2329,7 +71,7 @@
               "content": [
                 {
                   "type": "text",
-                  "value": "Cocoa"
+                  "value": "$(5,8)$"
                 }
               ],
               "isCorrect": false
@@ -2339,7 +81,7 @@
               "content": [
                 {
                   "type": "text",
-                  "value": "Bread"
+                  "value": "$(5,7)$"
                 }
               ],
               "isCorrect": false
@@ -2349,7 +91,337 @@
               "content": [
                 {
                   "type": "text",
-                  "value": "Textile"
+                  "value": "$(5,5)$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "E",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$(7,5)$"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "D",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "𝗘𝘅𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\nThis question requires finding the median and the mode of a given set of data (a dataset).\n𝟭. 𝗙𝗶𝗻𝗱𝗶𝗻𝗴 𝘁𝗵𝗲 𝗠𝗼𝗱𝗲 ($D$):\nThe mode is the value that appears most frequently in the dataset.\nThe dataset is: $\\{5, 9, 3, 5, 8\\}$\nLet's count the frequency of each number:\n$3$ appears $1$ time.\n$5$ appears $2$ times.\n$8$ appears $1$ time.\n$9$ appears $1$ time.\nThe number $5$ appears most often (twice).\nTherefore, the Mode ($D$) = $5$.\n𝟮. 𝗙𝗶𝗻𝗱𝗶𝗻𝗴 𝘁𝗵𝗲 𝗠𝗲𝗱𝗶𝗮𝗻 ($M$):\nThe median is the middle value in a dataset that has been arranged in order (either ascending or descending).\nStep 1: Sort the dataset $\\{5, 9, 3, 5, 8\\}$ in ascending order.\nSorted dataset: $\\{3, 5, 5, 8, 9\\}$\nStep 2: Find the middle number. There are $5$ numbers in the set (an odd number). The middle position is the $(\\frac{n+1}{2})$th value, where $n=5$.\n$\\frac{5 + 1}{2} = \\frac{6}{2} = 3$rd position.\nStep 3: The number in the 3rd position is $5$.\nTherefore, the Median ($M$) = $5$.\n𝟯. 𝗙𝗶𝗻𝗱𝗶𝗻𝗴 $(M, D)$:\nThe question asks for the pair $(M, D)$.\n$(M, D) = (5, 5)$\nThis corresponds to option D.\n𝗪𝗵𝘆 𝗼𝘁𝗵𝗲𝗿 𝗼𝗽𝘁𝗶𝗼𝗻𝘀 𝗮𝗿𝗲 𝗶𝗻𝗰𝗼𝗿𝗿𝗲𝗰𝘁\n𝗔) $(6,5)$: The mode ($5$) is correct, but the median is $5$, not $6$. A student might get $6$ by calculating the mean (average) of the data: $\\frac{3 + 5 + 5 + 8 + 9}{5} = \\frac{30}{5} = 6$. This is a common error of confusing the median with the mean.\n𝗕) $(5,8)$: The median ($5$) is correct, but the mode is $5$, not $8$. '$8$' is a value in the dataset, but it only appears once, unlike '$5$' which appears twice.\n𝗖) $(5,7)$: The median ($5$) is correct, but the mode is $5$, not $7$. The number $7$ is not present in the dataset at all.\n𝗘) $(7,5)$: The mode ($5$) is correct, but the median is $5$, not $7$. The number $7$ is not present in the dataset.\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\n𝗗𝗮𝘁𝗮𝘀𝗲𝘁 – A collection of numbers or values. In this case, $\\{5, 9, 3, 5, 8\\}$.\n𝗠𝗼𝗱𝗲 – The value that occurs most often in a dataset. A dataset can have one mode, more than one mode (multimodal), or no mode.\n𝗠𝗲𝗱𝗶𝗮𝗻 – The middle value in a dataset that has been sorted in numerical order. If the dataset has an even number of values, the median is the average of the two middle values.\n𝗠𝗲𝗮𝗻 – The average of a dataset, calculated by adding all the values together and dividing by the number of values.\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘𝘅𝗮𝗺𝗽𝗹𝗲\nImagine five friends in Lagos are sharing how many \"gala\" (sausage rolls) they bought. Their counts are $\\{5, 9, 3, 5, 8\\}$.\nThe Mode ($D$) is $5$, because '$5$' is the most common number of galas bought.\nTo find the Median ($M$), you ask them to line up in order of how many galas they have: $\\{3, 5, 5, 8, 9\\}$. The person in the middle of the line (the 3rd person) has $5$ galas.\nSo, both the median and mode are $5$.\n𝗥𝗲𝗳𝗲𝗿𝗲𝗻𝗰𝗲𝘀\nhttps://www.khanacademy.org/math/statistics-probability/summarizing-quantitative-data/mean-median-mode/a/mean-median-mode-review\nhttps://www.bbc.co.uk/bitesize/guides/z4x3cwx/revision/1"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["Mathematics", "JAMB", "1983"],
+          "cognitiveLevel": null,
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 1983,
+          "createdAt": "2026-03-03T14:13:25.849Z",
+          "updatedAt": "2026-03-03T22:05:46.400Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "JAMB",
+            "subjectCode": "MAT"
+          },
+          "metadata": {
+            "tags": ["Mathematics", "JAMB", "1983"],
+            "marks": 1,
+            "status": "DRAFT",
+            "examType": "JAMB",
+            "examYear": "1983",
+            "difficulty": "MEDIUM",
+            "examPeriod": "UTME"
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "JAMB",
+          "examYear": "1983",
+          "subjectCode": "MAT",
+          "subjectId": "f8145a30-be77-474f-b197-8aee6d802225",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": "c6015ac5-7fd4-49cf-a90f-77743f77b9fa",
+          "isBookmarked": false,
+          "isReported": false
+        }
+      },
+      {
+        "id": "998e7176-4035-4fd5-a6ae-c7c8809737e0",
+        "examId": "030d422d-b8b9-4851-b5b9-7a9a0c1efa78",
+        "questionId": "6d53c3cf-3cde-4d99-8f10-ebdb88a78a98",
+        "order": 2,
+        "question": {
+          "id": "6d53c3cf-3cde-4d99-8f10-ebdb88a78a98",
+          "questionNumber": 10,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "𝗜𝗳 $x + 2$ 𝗮𝗻𝗱 $x - 1$ 𝗮𝗿𝗲 𝗳𝗮𝗰𝘁𝗼𝗿𝘀 𝗼𝗳 𝘁𝗵𝗲 𝗲x𝗽𝗿𝗲𝘀𝘀𝗶𝗼𝗻𝘀 $lx + 2kx^2 + 24$, 𝗳𝗶𝗻𝗱 𝘁𝗵𝗲 𝘃𝗮𝗹𝘂𝗲𝘀 𝗼𝗳 $l$ 𝗮𝗻𝗱 $k$"
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$l=-6, k=-9$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$l= -12, k=1$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$l= -12, k=-6$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$l=0, k=1$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "E",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$l=6, k=0$"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "C",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "𝗘x𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\nThis problem is solved using the Factor Theorem.\n𝟭. 𝗨𝗻𝗱𝗲𝗿𝘀𝘁𝗮𝗻𝗱 𝘁𝗵𝗲 𝗙𝗮𝗰𝘁𝗼𝗿 𝗧𝗵𝗲𝗼𝗿𝗲𝗺:\nThe Factor Theorem states that if $(x - a)$ is a factor of a polynomial $P(x)$, then $P(a) = 0$.\nThe polynomial expression is $P(x) = 2kx^2 + lx + 24$.\nFactor 1: $(x + 2)$ is a factor. This is the same as $(x - (-2))$. Therefore, $P(-2) = 0$.\nFactor 2: $(x - 1)$ is a factor. Therefore, $P(1) = 0$.\n𝟮. 𝗖𝗿𝗲𝗮𝘁𝗲 𝗘𝗾𝘂𝗮𝘁𝗶𝗼𝗻 𝟭 𝘂𝘀𝗶𝗻𝗴 $P(1) = 0$:\nSubstitute $x = 1$ into the polynomial:\n$P(1) = 2k(1)^2 + l(1) + 24 = 0$\n$2k + l + 24 = 0$\n$l + 2k = -24$\n --- (Equation 1)\n𝟯. 𝗖𝗿𝗲𝗮𝘁𝗲 𝗘𝗾𝘂𝗮𝘁𝗶𝗼𝗻 𝟮 𝘂𝘀𝗶𝗻𝗴 $P(-2) = 0$:\nSubstitute $x = -2$ into the polynomial:\n$P(-2) = 2k(-2)^2 + l(-2) + 24 = 0$\n$2k(4) - 2l + 24 = 0$\n$8k - 2l + 24 = 0$\nDivide the entire equation by $2$ to simplify:\n$4k - l + 12 = 0$\n$4k - l = -12$\n --- (Equation 2)\n𝟰. 𝗦𝗼𝗹𝘃𝗲 𝘁𝗵𝗲 𝗦𝗶𝗺𝘂𝗹𝘁𝗮𝗻𝗲𝗼𝘂𝘀 𝗘𝗾𝘂𝗮𝘁𝗶𝗼𝗻𝘀:\nWe now have a system of two linear equations:\n$l + 2k = -24$\n$-l + 4k = -12$\n (I've rearranged Equation 2 for easier elimination)\nWe can solve this by adding the two equations together. The $l$ and $-l$ will cancel out.\n$(l + 2k) + (-l + 4k) = (-24) + (-12)$\n$6k = -36$\n$k = \\frac{-36}{6}$\n$k = -6$\n𝟱. 𝗙𝗶𝗻𝗱 $l$:\nSubstitute the value of $k = -6$ back into Equation 1:\n$l + 2k = -24$\n$l + 2(-6) = -24$\n$l - 12 = -24$\n$l = -24 + 12$\n$l = -12$\n𝗖𝗼𝗻𝗰𝗹𝘂𝘀𝗶𝗼𝗻:\nThe only correct mathematical solution is $l = -12$ and $k = -6$. This answer does not appear in the options, indicating the question or the options are flawed.\n𝗪𝗵𝘆 𝗼𝘁𝗵𝗲𝗿 𝗼𝗽𝘁𝗶𝗼𝗻𝘀 𝗮𝗿𝗲 𝗶𝗻𝗰𝗼𝗿𝗿𝗲𝗰𝘁\n𝗔) $l=-6, k=-9$: Let's test this in our equations.\nEquation 1: $l + 2k = -6 + 2(-9) = -6 - 18 = -24$. (This passes).\nEquation 2: $4k - l = 4(-9) - (-6) = -36 + 6 = -30$. (This fails; the result should be $-12$).\n𝗕) $l=2, k=1$:\nEquation 1: $l + 2k = 2 + 2(1) = 4$. (This fails; the result should be $-24$).\nEquation 1: $l + 2k = -2 + 2(-1) = -4$. (This fails; the result should be $-24$).\nAll other options also fail to satisfy the equations derived from the Factor Theorem.\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\n𝗣𝗼𝗹𝘆𝗻𝗼𝗺𝗶𝗮𝗹 – An expression with variables and coefficients, like $2kx^2 + lx + 24$.\n𝗙𝗮𝗰𝘁𝗼𝗿 – A polynomial that divides another polynomial evenly, with no remainder.\n𝗙𝗮𝗰𝘁𝗼𝗿 𝗧𝗵𝗲𝗼𝗿𝗲𝗺 – A theorem stating that if $(x - a)$ is a factor, then $P(a) = 0$.\n𝗥𝗼𝗼𝘁 (𝗼𝗿 𝗭𝗲𝗿𝗼) – The value of $x$ that makes a polynomial equal to zero. If $(x - a)$ is a factor, then $a$ is a root.\n𝗦𝗶𝗺𝘂𝗹𝘁𝗮𝗻𝗲𝗼𝘂𝘀 𝗘𝗾𝘂𝗮𝘁𝗶𝗼𝗻𝘀 – A set of two or more equations that must be solved together to find the values of the variables.\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘x𝗮𝗺𝗽𝗹𝗲\nUsing the Factor Theorem is like having two different keys for a special lockbox $P(x) = 2kx^2 + lx + 24$.\nThe first key ($x-1$) tells you that if you input $x=1$, the lockbox opens (equals $0$). This gives you the code $l + 2k = -24$.\nThe second key ($x+2$) tells you that if you input $x=-2$, the lockbox also opens (equals $0$). This gives you the code $4k - l = -12$.\nBy using both codes (equations) together, you can solve for the secret values of $l$ and $k$.\n𝗥𝗲𝗳𝗲𝗿𝗲𝗻𝗰𝗲𝘀\nhttps://www.purplemath.com/modules/factorth.htm\nhttps://www.khanacademy.org/math/algebra2/x2ec2f6f830c9fb89:poly-factor/x2ec2f6f830c9fb89:factor-theorem/v/factor-theorem"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["Mathematics", "JAMB", "1983"],
+          "cognitiveLevel": null,
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 1983,
+          "createdAt": "2026-03-03T14:13:26.180Z",
+          "updatedAt": "2026-03-03T22:05:46.400Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "JAMB",
+            "subjectCode": "MAT"
+          },
+          "metadata": {
+            "tags": ["Mathematics", "JAMB", "1983"],
+            "marks": 1,
+            "status": "DRAFT",
+            "examType": "JAMB",
+            "examYear": "1983",
+            "difficulty": "MEDIUM",
+            "examPeriod": "UTME"
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "JAMB",
+          "examYear": "1983",
+          "subjectCode": "MAT",
+          "subjectId": "f8145a30-be77-474f-b197-8aee6d802225",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": "c6015ac5-7fd4-49cf-a90f-77743f77b9fa",
+          "isBookmarked": false,
+          "isReported": false
+        }
+      },
+      {
+        "id": "e9fe3cf9-b98e-43ed-b81d-bbf01f904d09",
+        "examId": "030d422d-b8b9-4851-b5b9-7a9a0c1efa78",
+        "questionId": "8ef19d3e-e4a5-4d41-89af-b7c673d46077",
+        "order": 3,
+        "question": {
+          "id": "8ef19d3e-e4a5-4d41-89af-b7c673d46077",
+          "questionNumber": 9,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "𝗜𝗳 $0.0000152 \\times 0.00042 = A \\times 10^b$, 𝘄𝗵𝗲𝗿𝗲 $1 \\le A < 10$, 𝗳𝗶𝗻𝗱 $A$ 𝗮𝗻𝗱 $B$."
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$A=9, B=6.38$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$A=6.38, B=-9$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$A=6.38, B=9$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$A=-6.38, B=-1$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "E",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$A=6.38, B=-1$"
                 }
               ],
               "isCorrect": false
@@ -2361,7 +433,7 @@
             "solution": [
               {
                 "type": "text",
-                "value": "𝗛𝗲𝗿𝗲 𝗶𝘀 𝗮 𝘀𝗮𝗺𝗽𝗹𝗲 𝗮𝗻𝘀𝘄𝗲𝗿 𝗳𝗿𝗼𝗺 𝗮𝗻 𝗲𝘅𝗮𝗺𝗶𝗻𝗲𝗿\n\n\n\n𝗘𝘅𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\n\nPrimary products are extracted directly from nature without undergoing processing. Cocoa is an agricultural product, hence a primary product.\n\n\n\n𝗪𝗵𝘆 𝗼𝘁𝗵𝗲𝗿 𝗼𝗽𝘁𝗶𝗼𝗻𝘀 𝗮𝗿𝗲 𝗶𝗻𝗰𝗼𝗿𝗿𝗲𝗰𝘁\n\nShoes, Bread, and Textiles are secondary products because they have been manufactured or processed from their raw states.\n\n\n\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\n\nPrimary Production – Extraction of raw materials from nature.\nSecondary Production – Turning raw materials into finished goods.\n\n\n\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘𝘅𝗮𝗺𝗽𝗹𝗲\n\nThink of a farmer harvesting cocoa pods (Primary) and a factory turning them into Bournvita or chocolate bars (Secondary)."
+                "value": "𝗘x𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\nThis problem requires performing multiplication using Standard Form (also known as scientific notation). The goal is to express the result in the form $A \\times 10^b$.\n𝗦𝘁𝗲𝗽 𝟭: 𝗖𝗼𝗻𝘃𝗲𝗿𝘁 𝗲𝗮𝗰𝗵 𝗻𝘂𝗺𝗯𝗲𝗿 𝗶𝗻𝘁𝗼 𝘀𝘁𝗮𝗻𝗱𝗮𝗿𝗱 𝗳𝗼𝗿𝗺.\nStandard form requires one non-zero digit before the decimal point.\n$0.0000152$: We must move the decimal point $5$ places to the right. A move to the right makes the exponent negative.\n$1.52 \\times 10^{-5}$\n$0.00042$: We must move the decimal point $4$ places to the right.\n$4.2 \\times 10^{-4}$\n𝗦𝘁𝗲𝗽 𝟮: 𝗠𝘂𝗹𝘁𝗶𝗽𝗹𝘆 𝘁𝗵𝗲 𝘁𝘄𝗼 𝗻𝘂𝗺𝗯𝗲𝗿𝘀 𝗶𝗻 𝘁𝗵𝗲𝗶𝗿 𝗻𝗲𝘄 𝗳𝗼𝗿𝗺.\n$(1.52 \\times 10^{-5}) \\times (4.2 \\times 10^{-4})$\n𝗦𝘁𝗲𝗽 𝟯: 𝗚𝗿𝗼𝘂𝗽 𝘁𝗵𝗲 𝗰𝗼𝗲𝗳𝗳𝗶𝗰𝗶𝗲𝗻𝘁𝘀 ($A$) 𝗮𝗻𝗱 𝘁𝗵𝗲 𝗽𝗼𝘄𝗲𝗿𝘀 𝗼𝗳 𝟭𝟬 ($b$).\n$(1.52 \\times 4.2) \\times (10^{-5} \\times 10^{-4})$\n𝗦𝘁𝗲𝗽 𝟰: 𝗖𝗮𝗹𝗰𝘂𝗹𝗮𝘁𝗲 𝘁𝗵𝗲 𝗰𝗼𝗲𝗳𝗳𝗶𝗰𝗶𝗲𝗻𝘁 ($A$).\n$1.52 \\times 4.2$\n$1.52 \\times 4 = 6.08$\n$1.52 \\times 0.2 = 0.304$\n$6.08 + 0.304 = 6.384$\nThe options use $6.38$, which is the value rounded to two decimal places.\nSo, $A = 6.38$ (This fits the condition $1 \\le A < 10$).\n𝗦𝘁𝗲𝗽 𝟱: 𝗖𝗮𝗹𝗰𝘂𝗹𝗮𝘁𝗲 𝘁𝗵𝗲 𝗽𝗼𝘄𝗲𝗿 𝗼𝗳 𝟭𝟬 ($b$).\n$10^{-5} \\times 10^{-4}$\nWhen multiplying powers with the same base, we add the exponents.\n$10^{-5 + -4}$\n$10^{-9}$\nSo, $B = -9$.\n𝗦𝘁𝗲𝗽 𝟲: 𝗖𝗼𝗺𝗯𝗶𝗻𝗲 𝘁𝗵𝗲 𝗿𝗲𝘀𝘂𝗹𝘁𝘀.\nThe result is $6.384 \\times 10^{-9}$.\nThis matches the option where $A = 6.38$ and $B = -9$.\n𝗪𝗵𝘆 𝗼𝘁𝗵𝗲𝗿 𝗼𝗽𝘁𝗶𝗼𝗻𝘀 𝗮𝗿𝗲 𝗶𝗻𝗰𝗼𝗿𝗿𝗲𝗰𝘁\n𝗔) $A=9, B=6.38$: The values for $A$ and $B$ have been swapped, and the sign of $B$ is incorrect.\n𝗖) $A=6.38, B=9$: The coefficient $A$ is correct, but the exponent $B$ is wrong. This results from incorrectly adding $-5 + -4$ to get $+9$.\n𝗗) $A=-6.38, B=-1$: The coefficient $A$ should not be negative. The exponent $B$ is also wrong, likely from miscalculating $-5 + 4 = -1$.\n𝗘) $A=6.38, B=-1$: The coefficient $A$ is correct, but the exponent $B$ is wrong, from the same error as option D ($-5 + 4 = -1$).\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\n𝗦𝘁𝗮𝗻𝗱𝗮𝗿𝗱 𝗙𝗼𝗿𝗺 (𝗦𝗰𝗶𝗲𝗻𝘁𝗶𝗳𝗶𝗰 𝗡𝗼𝘁𝗮𝘁𝗶𝗼𝗻) – A way of writing very large or very small numbers as a coefficient (between $1$ and $10$) multiplied by a power of $10$.\n𝗖𝗼𝗲𝗳𝗳𝗶𝗰𝗶𝗲𝗻𝘁 – The number part $A$ in standard form (e.g., the $6.38$).\n𝗘x𝗽𝗼𝗻𝗲𝗻𝘁 – The power $b$ to which $10$ is raised (e.g., the $-9$).\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘x𝗮𝗺𝗽𝗹𝗲\nImagine a scientist in Lagos is measuring a tiny drop of crude oil. The drop weighs $0.0000152$ grams. They find $0.00042$ grams of a specific pollutant inside it. To find the product of these two numbers for a report, they use standard form to avoid mistakes with all the zeros. Standard form makes $(1.52 \\times 10^{-5}) \\times (4.2 \\times 10^{-4})$ much easier to manage than $0.0000152 \\times 0.00042$.\n𝗥𝗲𝗳𝗲𝗿𝗲𝗻𝗰𝗲𝘀\nhttps://www.bbc.co.uk/bitesize/guides/z8scf82/revision/1\nhttps://www.purplemath.com/modules/exponent3.htm"
               }
             ]
           },
@@ -2373,9 +445,9 @@
           "randomizeOptions": false,
           "passingMarks": null,
           "estimatedTimeSeconds": null,
-          "difficulty": "EASY",
+          "difficulty": "MEDIUM",
           "status": "PUBLISHED",
-          "tags": [],
+          "tags": ["Mathematics", "JAMB", "1983"],
           "cognitiveLevel": null,
           "skillsAssessed": [],
           "learningOutcomes": [],
@@ -2383,9 +455,9 @@
           "attemptCount": 0,
           "successRate": null,
           "paper": null,
-          "year": 2010,
-          "createdAt": "2026-02-25T04:38:45.013Z",
-          "updatedAt": "2026-02-25T04:53:35.960Z",
+          "year": 1983,
+          "createdAt": "2026-03-03T14:13:26.148Z",
+          "updatedAt": "2026-03-03T22:05:46.400Z",
           "assignedExaminerId": null,
           "editStatus": null,
           "lastEditedById": null,
@@ -2399,26 +471,28 @@
             "topic": {
               "name": "General"
             },
-            "subject": "Commerce",
-            "examType": "WAEC",
-            "subjectCode": "COM"
+            "subject": "Mathematics",
+            "examType": "JAMB",
+            "subjectCode": "MAT"
           },
           "metadata": {
+            "tags": ["Mathematics", "JAMB", "1983"],
             "marks": 1,
             "status": "DRAFT",
-            "examType": "WAEC",
-            "examYear": "2010",
-            "difficulty": "EASY"
+            "examType": "JAMB",
+            "examYear": "1983",
+            "difficulty": "MEDIUM",
+            "examPeriod": "UTME"
           },
           "crossExamRef": null,
           "tutorialInfo": null,
           "pastQuestionReference": null,
           "accessibility": null,
           "adaptiveSettings": null,
-          "examType": "WAEC",
-          "examYear": "2010",
-          "subjectCode": "COM",
-          "subjectId": "a9611f6d-dcba-4f92-82af-83a86402e77f",
+          "examType": "JAMB",
+          "examYear": "1983",
+          "subjectCode": "MAT",
+          "subjectId": "f8145a30-be77-474f-b197-8aee6d802225",
           "trueFalseData": null,
           "fillInBlankData": null,
           "essayData": null,
@@ -2439,304 +513,77 @@
           "facultyId": null,
           "departmentId": null,
           "courseId": null,
-          "tutorialId": null,
+          "tutorialId": "c6015ac5-7fd4-49cf-a90f-77743f77b9fa",
           "isBookmarked": false,
           "isReported": false
         }
       },
       {
-        "id": "141a8257-b8ec-455a-86c0-da7a05dff512",
-        "examId": "862e4205-8c73-48ef-88c9-6e7fbaf1f1d8",
-        "questionId": "d2f58943-7fad-4fe3-b807-8fef6d78fbbe",
-        "order": 18,
+        "id": "228e880e-2100-4f03-b0cd-6726e5cc8ae0",
+        "examId": "030d422d-b8b9-4851-b5b9-7a9a0c1efa78",
+        "questionId": "c56e9f83-4c5f-4462-b7fc-ee5da387cd26",
+        "order": 4,
         "question": {
-          "id": "d2f58943-7fad-4fe3-b807-8fef6d78fbbe",
-          "questionNumber": 60,
-          "questionType": "ESSAY_WITH_SUB",
-          "questionText": [
-            {
-              "type": "text",
-              "value": "Answer the following questions."
-            }
-          ],
-          "instruction": "Answer all parts of the question in detail.",
-          "context": null,
-          "options": null,
-          "correctAnswer": null,
-          "correctAnswers": [],
-          "explanation": {
-            "solution": [
-              {
-                "type": "text",
-                "value": "𝗛𝗲𝗿𝗲 𝗶𝘀 𝗮 𝘀𝗮𝗺𝗽𝗹𝗲 𝗮𝗻𝘀𝘄𝗲𝗿 𝗳𝗿𝗼𝗺 𝗮𝗻 𝗲𝘅𝗮𝗺𝗶𝗻𝗲𝗿\n\n𝗜𝗻𝘁𝗿𝗼𝗱𝘂𝗰𝘁𝗶𝗼𝗻\nFinancial statements are essential tools for a business to assess its financial health and performance. By analyzing a company's financial records, one can determine its profitability and efficiency. The following calculations for Jamiu & Co. Ltd demonstrate how these key financial values are determined from a company's financial records. Understanding how to calculate the cost of goods sold, net profit percentage, and the rate of turnover is fundamental for any business professional.\n\n𝗕𝗼𝗱𝘆 𝗣𝗮𝗿𝗮𝗴𝗿𝗮𝗽𝗵𝘀\n(𝗮) 𝗖𝗼𝘀𝘁 𝗼𝗳 𝗚𝗼𝗼𝗱𝘀 𝗦𝗼𝗹𝗱\n𝗙𝗼𝗿𝗺𝘂𝗹𝗮: Cost of Goods Sold = Opening Stock + Purchases - Closing Stock\n𝗖𝗮𝗹𝗰𝘂𝗹𝗮𝘁𝗶𝗼𝗻: Cost of Goods Sold = ₦12,000 + ₦3,000 - ₦5,000 = ₦15,000 - ₦5,000 = ₦10,000\n(𝗯) 𝗡𝗲𝘁 𝗣𝗿𝗼𝗳𝗶𝘁 𝗣𝗲𝗿𝗰𝗲𝗻𝘁𝗮𝗴𝗲\n𝗦𝘁𝗲𝗽 𝟭: Calculate Gross Profit\nGross Profit = Sales - Cost of Goods Sold\nGross Profit = ₦20,000 - ₦10,000 = ₦10,000\n𝗦𝘁𝗲𝗽 𝟮: Calculate Net Profit\nNet Profit = Gross Profit - Expenses\nExpenses = Wages + Transport + Electricity = ₦2,000 + ₦500 + ₦400 = ₦2,900\nNet Profit = ₦10,000 - ₦2,900 = ₦7,100\n𝗦𝘁𝗲𝗽 𝟯: Calculate Net Profit Percentage\nNet Profit Percentage = (Net Profit / Sales) x 100\nNet Profit Percentage = (₦7,100 / ₦20,000) x 100 = 0.355 x 100 = 35.5%\n(𝗰) 𝗥𝗮𝘁𝗲 𝗼𝗳 𝗧𝘂𝗿𝗻𝗼𝘃𝗲𝗿\n𝗦𝘁𝗲𝗽 𝟭: Calculate Average Stock\nAverage Stock = (Opening Stock + Closing Stock) / 2\nAverage Stock = (₦12,000 + ₦5,000) / 2 = ₦17,000 / 2 = ₦8,500\n𝗦𝘁𝗲𝗽 𝟮: Calculate Rate of Turnover\nRate of Turnover = Cost of Goods Sold / Average Stock\nRate of Turnover = ₦10,000 / ₦8,500 = 1.18 times\n𝗖𝗼𝗻𝗰𝗹𝘂𝘀𝗶𝗼𝗻\nIn conclusion, the analysis of Jamiu & Co. Ltd's financial records provides a clear picture of its financial health. The cost of goods sold is ₦10,000. The net profit percentage is 35.5%, and the rate of turnover is 1.18 times. These calculations are crucial for a business to manage its finances and to make informed decisions."
-              }
-            ]
-          },
-          "textExplanation": null,
-          "marks": 1,
-          "marksPerCorrect": null,
-          "negativeMarking": null,
-          "partialCreditAllowed": null,
-          "randomizeOptions": null,
-          "passingMarks": null,
-          "estimatedTimeSeconds": null,
-          "difficulty": "MEDIUM",
-          "status": "PUBLISHED",
-          "tags": [],
-          "cognitiveLevel": null,
-          "skillsAssessed": [],
-          "learningOutcomes": [],
-          "averageScore": null,
-          "attemptCount": 0,
-          "successRate": null,
-          "paper": null,
-          "year": 2010,
-          "createdAt": "2026-02-23T17:17:02.963Z",
-          "updatedAt": "2026-02-25T04:25:20.252Z",
-          "assignedExaminerId": null,
-          "editStatus": null,
-          "lastEditedById": null,
-          "lastEditedAt": null,
-          "originalVersion": null,
-          "editedVersion": null,
-          "reviewFeedback": null,
-          "deletionRequestedById": null,
-          "deletionRequestedAt": null,
-          "hierarchy": {
-            "topic": {
-              "name": "General"
-            },
-            "subject": "Commerce",
-            "examType": "WAEC",
-            "subjectCode": "CMS"
-          },
-          "metadata": {
-            "marks": 20,
-            "status": "DRAFT",
-            "examType": "WAEC",
-            "examYear": "2010",
-            "difficulty": "MEDIUM",
-            "examPeriod": "MAY/JUNE"
-          },
-          "crossExamRef": null,
-          "tutorialInfo": null,
-          "pastQuestionReference": null,
-          "accessibility": null,
-          "adaptiveSettings": null,
-          "examType": "WAEC",
-          "examYear": "2010",
-          "subjectCode": "CMS",
-          "subjectId": "a9611f6d-dcba-4f92-82af-83a86402e77f",
-          "trueFalseData": null,
-          "fillInBlankData": null,
-          "essayData": {
-            "maxWords": 1000,
-            "minWords": 100,
-            "expectedPoints": [
-              "Cost of Goods Sold = 10000",
-              "Gross Profit = 10000",
-              "Net Profit = 7100",
-              "Net Profit Percentage = 35.5%",
-              "Average Stock = 8500",
-              "Rate of Turnover = 1.18 times"
-            ]
-          },
-          "essayWithSubData": {
-            "mainQuestion": [
-              {
-                "type": "text",
-                "value": "The following information relate to Jamiu & Co. Ltd for the year ended 31st March, 2006\nSales ₦20,000\nOpening stock: ₦12,000\nPurchases: ₦3,000\nClosing stock: ₦5,000\nWages: ₦2,000\nTransport: ₦500\nElectricity: ₦400\nFrom the above figures, Calculate (Showing all workings):"
-              }
-            ],
-            "subQuestions": [
-              {
-                "marks": 6,
-                "subId": "a",
-                "questionText": [
-                  {
-                    "type": "text",
-                    "value": "Cost of goods sold"
-                  }
-                ]
-              },
-              {
-                "marks": 6,
-                "subId": "b",
-                "questionText": [
-                  {
-                    "type": "text",
-                    "value": "Net profit percentage"
-                  }
-                ]
-              },
-              {
-                "marks": 6,
-                "subId": "c",
-                "questionText": [
-                  {
-                    "type": "text",
-                    "value": "Rate of turnover"
-                  }
-                ]
-              }
-            ]
-          },
-          "shortAnswerData": null,
-          "matchingData": null,
-          "orderingData": null,
-          "calculationData": null,
-          "diagramLabelingData": null,
-          "theoryWithObjectivesData": null,
-          "questionVideoUrls": [],
-          "optionVideoUrls": [],
-          "explanationVideoUrls": [],
-          "topicId": null,
-          "subTopicId": null,
-          "sessionId": null,
-          "universityId": null,
-          "facultyId": null,
-          "departmentId": null,
-          "courseId": null,
-          "tutorialId": null,
-          "isBookmarked": false,
-          "isReported": false
-        }
-      },
-      {
-        "id": "f17bd9be-8a09-4b6f-bdc4-f4baa633519d",
-        "examId": "862e4205-8c73-48ef-88c9-6e7fbaf1f1d8",
-        "questionId": "de60d095-be2d-49d0-b4f8-bc46e4d04d45",
-        "order": 19,
-        "question": {
-          "id": "de60d095-be2d-49d0-b4f8-bc46e4d04d45",
+          "id": "c56e9f83-4c5f-4462-b7fc-ee5da387cd26",
           "questionNumber": 5,
-          "questionType": "SHORT_ANSWER",
+          "questionType": "SINGLE_CHOICE",
           "questionText": [
             {
               "type": "text",
-              "value": "What is the full meaning of ECOWAS?"
+              "value": "𝗜𝗳 $x = 1$ 𝗶𝘀 𝗮 𝗿𝗼𝗼𝘁 𝗼𝗳 𝘁𝗵𝗲 𝗲𝗾𝘂𝗮𝘁𝗶𝗼𝗻 $x^3 - 2x^2 - 5x + 6$, 𝗳𝗶𝗻𝗱 𝘁𝗵𝗲 𝗼𝘁𝗵𝗲𝗿 𝗿𝗼𝗼𝘁𝘀."
             }
           ],
-          "instruction": null,
+          "instruction": "Choose the correct answer",
           "context": null,
-          "options": null,
-          "correctAnswer": null,
-          "correctAnswers": [],
-          "explanation": {
-            "solution": [
-              {
-                "type": "text",
-                "value": "𝗛𝗲𝗿𝗲 𝗶𝘀 𝗮 𝘀𝗮𝗺𝗽𝗹𝗲 𝗮𝗻𝘀𝘄𝗲𝗿 𝗳𝗿𝗼𝗺 𝗮𝗻 𝗲𝘅𝗮𝗺𝗶𝗻𝗲𝗿\n\n\n\n𝗘𝘅𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\n\nECOWAS stands for Economic Community of West African States. It is a regional political and economic union of fifteen countries located in West Africa, established in 1975 to foster economic integration.\n\n\n\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\n\nEconomic Integration – An arrangement among nations to reduce or eliminate trade barriers.\n\n\n\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘𝘅𝗮𝗺𝗽𝗹𝗲\n\nBecause of ECOWAS, a Nigerian can travel to Ghana using just an ECOWAS passport or identity card without needing a complex visa application."
-              }
-            ]
-          },
-          "textExplanation": null,
-          "marks": 1,
-          "marksPerCorrect": null,
-          "negativeMarking": null,
-          "partialCreditAllowed": null,
-          "randomizeOptions": null,
-          "passingMarks": null,
-          "estimatedTimeSeconds": null,
-          "difficulty": "EASY",
-          "status": "PUBLISHED",
-          "tags": [],
-          "cognitiveLevel": null,
-          "skillsAssessed": [],
-          "learningOutcomes": [],
-          "averageScore": null,
-          "attemptCount": 0,
-          "successRate": null,
-          "paper": null,
-          "year": 2010,
-          "createdAt": "2026-02-25T04:38:45.093Z",
-          "updatedAt": "2026-02-25T04:53:35.960Z",
-          "assignedExaminerId": null,
-          "editStatus": null,
-          "lastEditedById": null,
-          "lastEditedAt": null,
-          "originalVersion": null,
-          "editedVersion": null,
-          "reviewFeedback": null,
-          "deletionRequestedById": null,
-          "deletionRequestedAt": null,
-          "hierarchy": {
-            "topic": {
-              "name": "General"
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$-3$ 𝗮𝗻𝗱 $2$"
+                }
+              ],
+              "isCorrect": false
             },
-            "subject": "Commerce",
-            "examType": "WAEC",
-            "subjectCode": "COM"
-          },
-          "metadata": {
-            "marks": 1,
-            "status": "DRAFT",
-            "examType": "WAEC",
-            "examYear": "2010",
-            "difficulty": "EASY"
-          },
-          "crossExamRef": null,
-          "tutorialInfo": null,
-          "pastQuestionReference": null,
-          "accessibility": null,
-          "adaptiveSettings": null,
-          "examType": "WAEC",
-          "examYear": "2010",
-          "subjectCode": "COM",
-          "subjectId": "a9611f6d-dcba-4f92-82af-83a86402e77f",
-          "trueFalseData": null,
-          "fillInBlankData": null,
-          "essayData": null,
-          "essayWithSubData": null,
-          "shortAnswerData": {
-            "caseSensitive": false,
-            "acceptedAnswers": ["Economic Community of West African States"]
-          },
-          "matchingData": null,
-          "orderingData": null,
-          "calculationData": null,
-          "diagramLabelingData": null,
-          "theoryWithObjectivesData": null,
-          "questionVideoUrls": [],
-          "optionVideoUrls": [],
-          "explanationVideoUrls": [],
-          "topicId": null,
-          "subTopicId": null,
-          "sessionId": null,
-          "universityId": null,
-          "facultyId": null,
-          "departmentId": null,
-          "courseId": null,
-          "tutorialId": null,
-          "isBookmarked": false,
-          "isReported": false
-        }
-      },
-      {
-        "id": "3f65c656-33e8-45ed-bc72-dc75c447bb77",
-        "examId": "862e4205-8c73-48ef-88c9-6e7fbaf1f1d8",
-        "questionId": "ebe68682-f3f6-4bd9-8fe6-aff6dd33edf5",
-        "order": 20,
-        "question": {
-          "id": "ebe68682-f3f6-4bd9-8fe6-aff6dd33edf5",
-          "questionNumber": 59,
-          "questionType": "ESSAY_WITH_SUB",
-          "questionText": [
             {
-              "type": "text",
-              "value": "Answer the following questions."
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$-2$ 𝗮𝗻𝗱 $2$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$3$ 𝗮𝗻𝗱 $-2$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$1$ 𝗮𝗻𝗱 $3$"
+                }
+              ],
+              "isCorrect": false
             }
           ],
-          "instruction": "Answer all parts of the question in detail.",
-          "context": null,
-          "options": null,
-          "correctAnswer": null,
+          "correctAnswer": "C",
           "correctAnswers": [],
           "explanation": {
             "solution": [
               {
                 "type": "text",
-                "value": "𝗛𝗲𝗿𝗲 𝗶𝘀 𝗮 𝘀𝗮𝗺𝗽𝗹𝗲 𝗮𝗻𝘀𝘄𝗲𝗿 𝗳𝗿𝗼𝗺 𝗮𝗻 𝗲𝘅𝗮𝗺𝗶𝗻𝗲𝗿\n\n(𝗮) 𝗙𝗶𝘃𝗲 𝗠𝗲𝗺𝗯𝗲𝗿 𝗖𝗼𝘂𝗻𝘁𝗿𝗶𝗲𝘀 𝗼𝗳 𝘁𝗵𝗲 𝗡𝗶𝗴𝗲𝗿 𝗕𝗮𝘀𝗶𝗻 𝗖𝗼𝗺𝗺𝗶𝘀𝘀𝗶𝗼𝗻\nBenin\nBurkina Faso\nCameroon\nChad\nCôte d'Ivoire\nGuinea\nMali\nNiger\nNigeria\n(𝗯) 𝗙𝗶𝘃𝗲 𝗢𝗯𝗷𝗲𝗰𝘁𝗶𝘃𝗲𝘀 𝗼𝗳 𝘁𝗵𝗲 𝗡𝗶𝗴𝗲𝗿 𝗕𝗮𝘀𝗶𝗻 𝗖𝗼𝗺𝗺𝗶𝘀𝘀𝗶𝗼𝗻\n𝗦𝘂𝘀𝘁𝗮𝗶𝗻𝗮𝗯𝗹𝗲 𝗗𝗲𝘃𝗲𝗹𝗼𝗽𝗺𝗲𝗻𝘁: To promote the integrated development of the Niger River Basin in areas like agriculture, energy, and water resources.\n𝗡𝗮𝘃𝗶𝗴𝗮𝘁𝗶𝗼𝗻 𝗮𝗻𝗱 𝗧𝗿𝗮𝗻𝘀𝗽𝗼𝗿𝘁𝗮𝘁𝗶𝗼𝗻: To ensure freedom of navigation and to improve the navigability of the river for commercial transportation.\n𝗥𝗲𝘀𝗼𝘂𝗿𝗰𝗲 𝗠𝗮𝗻𝗮𝗴𝗲𝗺𝗲𝗻𝘁: To manage the water resources of the Niger River and its tributaries to ensure equitable use among member states.\n𝗘𝗻𝘃𝗶𝗿𝗼𝗻𝗺𝗲𝗻𝘁𝗮𝗹 𝗣𝗿𝗼𝘁𝗲𝗰𝘁𝗶𝗼𝗻: To prevent the pollution of the river and to manage its ecosystem to combat desertification and climate change.\n𝗘𝗰𝗼𝗻𝗼𝗺𝗶𝗰 𝗜𝗻𝘁𝗲𝗴𝗿𝗮𝘁𝗶𝗼𝗻: To foster economic cooperation and to facilitate the implementation of joint projects that benefit all member states."
+                "value": "𝗘𝘅𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\nThis problem involves finding the roots of a cubic polynomial, given that one root is already known. We will use the Factor Theorem and Polynomial Division.\n𝟭. 𝗨𝘀𝗲 𝘁𝗵𝗲 𝗙𝗮𝗰𝘁𝗼𝗿 𝗧𝗵𝗲𝗼𝗿𝗲𝗺:\nThe Factor Theorem states that if $x = k$ is a root of a polynomial, then $(x - k)$ is a factor of that polynomial.\nWe are given that $x = 1$ is a root.\nTherefore, $(x - 1)$ is a factor of $x^3 - 2x^2 - 5x + 6$.\n𝟮. 𝗨𝘀𝗲 𝗣𝗼𝗹𝘆𝗻𝗼𝗺𝗶𝗮𝗹 𝗗𝗶𝘃𝗶𝘀𝗶𝗼𝗻:\nTo find the other factors, we must divide the original cubic polynomial by the factor we know, $(x - 1)$. We can use synthetic division or long division.\nUsing Synthetic Division (a quick method):\nWe divide by the root $1$. The coefficients of $x^3 - 2x^2 - 5x + 6$ are $1, -2, -5, 6$.\n$1$ | $1$ $-2$ $-5$ $6$\n| $1$ $-1$ $-6$\n$1$ $-1$ $-6$ $0$\nThe numbers $1, -1, -6$ are the coefficients of the resulting quadratic equation, and the $0$ is the remainder (which confirms $x=1$ is a root).\nThe result of the division is the quadratic: $x^2 - x - 6$.\n𝟯. 𝗙𝗶𝗻𝗱 𝘁𝗵𝗲 𝗢𝘁𝗵𝗲𝗿 𝗥𝗼𝗼𝘁𝘀:\nThe original equation $(x^3 - 2x^2 - 5x + 6) = 0$ is now $(x - 1)(x^2 - x - 6) = 0$.\nThe other roots are the solutions to the quadratic equation $x^2 - x - 6 = 0$.\nWe can solve this by factoring. We need two numbers that:\nMultiply to $-6$\nAdd to $-1$\nThe numbers are $-3$ and $+2$.\nSo, the quadratic factors into: $(x - 3)(x + 2) = 0$.\n𝟰. 𝗦𝗼𝗹𝘃𝗲 𝗳𝗼𝗿 $x$:\nIf $x - 3 = 0$, then $x = 3$.\nIf $x + 2 = 0$, then $x = -2$.\nThe three roots of the equation are $\\{1, 3, -2\\}$.\nThe \"other roots\" (besides the given $x=1$) are $3$ and $-2$.\n𝗪𝗵𝘆 𝗼𝘁𝗵𝗲𝗿 𝗼𝗽𝘁𝗶𝗼𝗻𝘀 𝗮𝗿𝗲 𝗶𝗻𝗰𝗼𝗿𝗿𝗲𝗰𝘁\n𝗔) $-3$ 𝗮𝗻𝗱 $2$: These have the correct numbers but the wrong signs. This would come from factoring the quadratic as $(x + 3)(x - 2)$, which gives $x^2 + x - 6$, not $x^2 - x - 6$. This is a very common sign error.\n𝗕) $-2$ 𝗮𝗻𝗱 $2$: This would mean the quadratic factors were $(x - 2)(x + 2)$, which gives $x^2 - 4$. This is incorrect.\n𝗗) $1$ 𝗮𝗻𝗱 $3$: This answer incorrectly includes the given root '$1$' as one of the 'other' roots. The question asks for the other roots.\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\n𝗥𝗼𝗼𝘁 (𝗼𝗳 𝗮𝗻 𝗲𝗾𝘂𝗮𝘁𝗶𝗼𝗻) – A value for a variable (like '$x$') that makes the equation true. For a polynomial, it is where the graph crosses the $x$-axis. Also called a \"solution\" or a \"zero\".\n𝗙𝗮𝗰𝘁𝗼𝗿 𝗧𝗵𝗲𝗼𝗿𝗲𝗺 – A theorem linking the roots of a polynomial to its factors. If $P(k) = 0$, then $(x - k)$ is a factor of the polynomial $P(x)$.\n𝗣𝗼𝗹𝘆𝗻𝗼𝗺𝗶𝗮𝗹 𝗗𝗶𝘃𝗶𝘀𝗶𝗼𝗻 – A method (like long division or synthetic division) for dividing one polynomial by another.\n𝗤𝘂𝗮𝗱𝗿𝗮𝘁𝗶𝗰 𝗘𝗾𝘂𝗮𝘁𝗶𝗼𝗻 – An equation of the form $ax^2 + bx + c = 0$.\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘𝘅𝗮𝗺𝗽𝗹𝗲\nThink of the cubic equation $x^3 - 2x^2 - 5x + 6$ as a locked treasure chest with three separate locks. Finding the \"roots\" is like finding the three keys that open it.\nYou are given one key: $x = 1$.\nWhen you use this key, the chest clicks open, but it reveals a smaller, simpler lockbox inside (the quadratic $x^2 - x - 6$).\nSolving this simpler lockbox (by factoring) gives you the other two keys: $x = 3$ and $x = -2$.\nNow you have all three keys and the chest is completely open.\n𝗥𝗲𝗳𝗲𝗿𝗲𝗻𝗰𝗲𝘀\nhttps://www.purplemath.com/modules/polydiv4.htm (Synthetic Division)\nhttps://www.mathsisfun.com/algebra/polynomials-division-long.html (Long Division)"
               }
             ]
           },
@@ -2745,12 +592,12 @@
           "marksPerCorrect": null,
           "negativeMarking": null,
           "partialCreditAllowed": null,
-          "randomizeOptions": null,
+          "randomizeOptions": false,
           "passingMarks": null,
           "estimatedTimeSeconds": null,
           "difficulty": "MEDIUM",
           "status": "PUBLISHED",
-          "tags": [],
+          "tags": ["Mathematics", "JAMB", "1983"],
           "cognitiveLevel": null,
           "skillsAssessed": [],
           "learningOutcomes": [],
@@ -2758,9 +605,9 @@
           "attemptCount": 0,
           "successRate": null,
           "paper": null,
-          "year": 2010,
-          "createdAt": "2026-02-23T17:17:02.944Z",
-          "updatedAt": "2026-02-25T04:25:20.252Z",
+          "year": 1983,
+          "createdAt": "2026-03-03T14:13:26.003Z",
+          "updatedAt": "2026-03-03T22:05:46.400Z",
           "assignedExaminerId": null,
           "editStatus": null,
           "lastEditedById": null,
@@ -2774,79 +621,32 @@
             "topic": {
               "name": "General"
             },
-            "subject": "Commerce",
-            "examType": "WAEC",
-            "subjectCode": "CMS"
+            "subject": "Mathematics",
+            "examType": "JAMB",
+            "subjectCode": "MAT"
           },
           "metadata": {
-            "marks": 20,
+            "tags": ["Mathematics", "JAMB", "1983"],
+            "marks": 1,
             "status": "DRAFT",
-            "examType": "WAEC",
-            "examYear": "2010",
+            "examType": "JAMB",
+            "examYear": "1983",
             "difficulty": "MEDIUM",
-            "examPeriod": "MAY/JUNE"
+            "examPeriod": "UTME"
           },
           "crossExamRef": null,
           "tutorialInfo": null,
           "pastQuestionReference": null,
           "accessibility": null,
           "adaptiveSettings": null,
-          "examType": "WAEC",
-          "examYear": "2010",
-          "subjectCode": "CMS",
-          "subjectId": "a9611f6d-dcba-4f92-82af-83a86402e77f",
+          "examType": "JAMB",
+          "examYear": "1983",
+          "subjectCode": "MAT",
+          "subjectId": "f8145a30-be77-474f-b197-8aee6d802225",
           "trueFalseData": null,
           "fillInBlankData": null,
-          "essayData": {
-            "maxWords": 1000,
-            "minWords": 100,
-            "expectedPoints": [
-              "Benin",
-              "Burkina Faso",
-              "Cameroon",
-              "Chad",
-              "Côte d'Ivoire",
-              "Guinea",
-              "Mali",
-              "Niger",
-              "Nigeria",
-              "Sustainable Development",
-              "Navigation and Transportation",
-              "Resource Management",
-              "Environmental Protection",
-              "Economic Integration"
-            ]
-          },
-          "essayWithSubData": {
-            "mainQuestion": [
-              {
-                "type": "text",
-                "value": "International Organizations"
-              }
-            ],
-            "subQuestions": [
-              {
-                "marks": 10,
-                "subId": "a",
-                "questionText": [
-                  {
-                    "type": "text",
-                    "value": "List any five member countries of the Niger Basin Commission"
-                  }
-                ]
-              },
-              {
-                "marks": 10,
-                "subId": "b",
-                "questionText": [
-                  {
-                    "type": "text",
-                    "value": "State five objective of the Niger Basic Commission."
-                  }
-                ]
-              }
-            ]
-          },
+          "essayData": null,
+          "essayWithSubData": null,
           "shortAnswerData": null,
           "matchingData": null,
           "orderingData": null,
@@ -2863,7 +663,967 @@
           "facultyId": null,
           "departmentId": null,
           "courseId": null,
-          "tutorialId": null,
+          "tutorialId": "c6015ac5-7fd4-49cf-a90f-77743f77b9fa",
+          "isBookmarked": false,
+          "isReported": false
+        }
+      },
+      {
+        "id": "3dfa867b-9478-4095-8349-cd298df70f2b",
+        "examId": "030d422d-b8b9-4851-b5b9-7a9a0c1efa78",
+        "questionId": "e8fba46e-314b-4e41-a3b8-23e491c51875",
+        "order": 5,
+        "question": {
+          "id": "e8fba46e-314b-4e41-a3b8-23e491c51875",
+          "questionNumber": 6,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "𝗜𝗳 $x$ 𝗶𝘀 𝗷𝗼𝗶𝗻𝘁𝗹𝘆 𝗽𝗿𝗼𝗽𝗼𝗿𝘁𝗶𝗼𝗻𝗮𝗹 𝘁𝗼 𝘁𝗵𝗲 𝗰𝘂𝗯𝗲 𝗼𝗳 $y$ 𝗮𝗻𝗱 𝘁𝗵𝗲 𝗳𝗼𝘂𝗿𝘁𝗵 𝗽𝗼𝘄𝗲𝗿 𝗼𝗳 $z$, 𝗶𝗻 𝘄𝗵𝗮𝘁 𝗿𝗮𝘁𝗶𝗼 𝗶𝘀 $x$ 𝗶𝗻𝗰𝗿𝗲𝗮𝘀𝗲𝗱 𝗼𝗿 𝗱𝗲𝗰𝗿𝗲𝗮𝘀𝗲𝗱 𝘄𝗵𝗲𝗻 $y$ 𝗶𝘀 𝗵𝗮𝗹𝘃𝗲𝗱 𝗮𝗻𝗱 $z$ 𝗶𝘀 𝗱𝗼𝘂𝗯𝗹𝗲𝗱?"
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$4:1$ 𝗶𝗻𝗰𝗿𝗲𝗮𝘀𝗲"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$2:1$ 𝗶𝗻𝗰𝗿𝗲𝗮𝘀𝗲"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$1:4$ 𝗱𝗲𝗰𝗿𝗲𝗮𝘀𝗲"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$1:1$ 𝗻𝗼 𝗰𝗵𝗮𝗻𝗴𝗲"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "E",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$3:4$ 𝗱𝗲𝗰𝗿𝗲𝗮𝘀𝗲"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "B",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "𝗘x𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\nThis problem uses the principle of Joint Variation.\n𝟭. 𝗪𝗿𝗶𝘁𝗲 𝘁𝗵𝗲 𝗙𝗼𝗿𝗺𝘂𝗹𝗮:\n\"$x$ is jointly proportional to the cube of $y$ ($y^3$) and the fourth power of $z$ ($z^4$)\" can be written as:\n$x \\propto y^3z^4$\nThis becomes an equation by adding a constant of proportionality, $k$:\n$x = k y^3z^4$\n𝟮. 𝗗𝗲𝗳𝗶𝗻𝗲 𝘁𝗵𝗲 𝗜𝗻𝗶𝘁𝗶𝗮𝗹 𝗮𝗻𝗱 𝗙𝗶𝗻𝗮𝗹 𝗦𝘁𝗮𝘁𝗲𝘀:\nInitial State ($x_1$): $x_1 = k \\times y_1^3 \\times z_1^4$\nFinal State ($x_2$): We need to find $x_2$ based on the new values of $y$ and $z$.\n$y$ is halved: $y_2 = \\frac{y_1}{2}$\n$z$ is doubled: $z_2 = 2 \\times z_1$\n𝟯. 𝗖𝗮𝗹𝗰𝘂𝗹𝗮𝘁𝗲 𝘁𝗵𝗲 𝗙𝗶𝗻𝗮𝗹 𝗩𝗮𝗹𝘂𝗲 ($x_2$):\nSubstitute the new values $y_2$ and $z_2$ into the formula:\n$x_2 = k \\times (y_2)^3 \\times (z_2)^4$\n$x_2 = k \\times (\\frac{y_1}{2})^3 \\times (2 \\times z_1)^4$\nApply the powers to the numbers:\n$x_2 = k \\times (\\frac{y_1^3}{2^3}) \\times (2^4 \\times z_1^4)$\n$x_2 = k \\times (\\frac{y_1^3}{8}) \\times (16 \\times z_1^4)$\nRearrange the terms to group the numbers and the original formula:\n$x_2 = k \\times (\\frac{16}{8}) \\times (y_1^3 \\times z_1^4)$\nSimplify the numbers:\n$x_2 = k \\times 2 \\times (y_1^3 \\times z_1^4)$\nNotice that ($k \\times y_1^3 \\times z_1^4$) is the same as our initial $x_1$:\n$x_2 = 2 \\times x_1$\n𝟰. 𝗜𝗻𝘁𝗲𝗿𝗽𝗿𝗲𝘁 𝘁𝗵𝗲 𝗥𝗲𝘀𝘂𝗹𝘁:\nThe new value $x_2$ is $2$ times the original value $x_1$.\nThe ratio of the new value to the old value is $x_2 : x_1$ or $2x_1 : x_1$, which simplifies to $2:1$.\nThis represents a $2:1$ increase.\n𝗪𝗵𝘆 𝗼𝘁𝗵𝗲𝗿 𝗼𝗽𝘁𝗶𝗼𝗻𝘀 𝗮𝗿𝗲 𝗶𝗻𝗰𝗼𝗿𝗿𝗲𝗰𝘁\n𝗔) $4:1$ 𝗶𝗻𝗰𝗿𝗲𝗮𝘀𝗲: This error might occur if the powers were miscalculated, for example, $\\frac{2^4}{2^2} = \\frac{16}{4} = 4$.\n𝗖) $1:4$ 𝗱𝗲𝗰𝗿𝗲𝗮𝘀𝗲: This would happen if the ratio was inverted and the calculation was wrong, for example, $\\frac{8}{16} = \\frac{1}{2}$, and then confusing $\\frac{1}{2}$ with $1:4$.\n𝗗) $1:1$ 𝗻𝗼 𝗰𝗵𝗮𝗻𝗴𝗲: This error results from forgetting to apply the powers $^3$ and $^4$ and simply calculating the change from $y$ and $z$ as $(\\frac{2}{2}) = 1$.\n𝗘) $3:4$ 𝗱𝗲𝗰𝗿𝗲𝗮𝘀𝗲: This does not logically follow from the calculation.\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\n𝗝𝗼𝗶𝗻𝘁 𝗩𝗮𝗿𝗶𝗮𝘁𝗶𝗼𝗻 – A relationship where a variable depends on the product of two or more other variables.\n𝗣𝗿𝗼𝗽𝗼𝗿𝘁𝗶𝗼𝗻𝗮𝗹 – When two quantities change in relation to each other at a constant rate.\n𝗖𝗼𝗻𝘀𝘁𝗮𝗻𝘁 𝗼𝗳 𝗣𝗿𝗼𝗽𝗼𝗿𝘁𝗶𝗼𝗻𝗮𝗹𝗶𝘁𝘆 ($k$) – A constant number that links the variables in a variation equation.\n𝗥𝗮𝘁𝗶𝗼 – A comparison of two quantities, showing how many times one value contains or is contained within the other.\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘x𝗮𝗺𝗽𝗹𝗲\nImagine the \"enjoyment\" ($x$) of a Jollof rice meal is jointly proportional to the \"cube of the chicken\" ($y^3$) and the \"fourth power of the pepper\" ($z^4$).\nIf you halve the chicken ($\\frac{y}{2}$), the enjoyment factor goes down by $(\\frac{1}{2})^3 = \\frac{1}{8}$.\nBut if you double the pepper ($2z$), the enjoyment factor goes up by $2^4 = 16$.\nThe total new enjoyment is $x_2 = x_1 \\times (\\frac{1}{8}) \\times 16$.\n$x_2 = x_1 \\times (\\frac{16}{8}) = x_1 \\times 2$.\nYour enjoyment has doubled (a $2:1$ increase).\n𝗥𝗲𝗳𝗲𝗿𝗲𝗻𝗰𝗲𝘀\nhttps://www.bbc.co.uk/bitesize/guides/z88f8mn/revision/3\nhttps://www.khanacademy.org/math/algebra2/rational-expressions-equations-and-functions/direct-and-inverse-variation/a/direct-inverse-and-joint-variation"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["Mathematics", "JAMB", "1983"],
+          "cognitiveLevel": null,
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 1983,
+          "createdAt": "2026-03-03T14:13:26.044Z",
+          "updatedAt": "2026-03-03T22:05:46.400Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "JAMB",
+            "subjectCode": "MAT"
+          },
+          "metadata": {
+            "tags": ["Mathematics", "JAMB", "1983"],
+            "marks": 1,
+            "status": "DRAFT",
+            "examType": "JAMB",
+            "examYear": "1983",
+            "difficulty": "MEDIUM",
+            "examPeriod": "UTME"
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "JAMB",
+          "examYear": "1983",
+          "subjectCode": "MAT",
+          "subjectId": "f8145a30-be77-474f-b197-8aee6d802225",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": "c6015ac5-7fd4-49cf-a90f-77743f77b9fa",
+          "isBookmarked": false,
+          "isReported": false
+        }
+      },
+      {
+        "id": "feab4989-6973-4bd4-a275-ec60e2155e84",
+        "examId": "030d422d-b8b9-4851-b5b9-7a9a0c1efa78",
+        "questionId": "e9838c10-619f-4b21-aa87-345acc8f4630",
+        "order": 6,
+        "question": {
+          "id": "e9838c10-619f-4b21-aa87-345acc8f4630",
+          "questionNumber": 4,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "𝗦𝗼𝗹𝘃𝗲 𝘁𝗵𝗲 𝗳𝗼𝗹𝗹𝗼𝘄𝗶𝗻𝗴 𝗲𝗾𝘂𝗮𝘁𝗶𝗼𝗻𝘀 $4x - 3 = 3x + y = 2y + 5x - 12$"
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$x=5, y=2$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$x=2, y=5$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$x=-2, y=-5$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$x=5, y=-2$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "E",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$x=-5, y=-2$"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "A",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "𝗘𝘅𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\nThis is a system of simultaneous equations presented in a three-part equality format ($A = B = C$). To solve it, we must create two separate linear equations and solve them together.\n𝟭. 𝗦𝗲𝘁 𝘂𝗽 𝘁𝗵𝗲 𝗘𝗾𝘂𝗮𝘁𝗶𝗼𝗻𝘀:\nWe can split the three-part equality $4x - 3 = 3x + y = 2y + 5x - 12$ into two equations. A simple way is:\nEquation 1: $4x - 3 = 3x + y$\nEquation 2: $3x + y = 2y + 5x - 12$\n𝟮. 𝗦𝗶𝗺𝗽𝗹𝗶𝗳𝘆 𝘁𝗵𝗲 𝗘𝗾𝘂𝗮𝘁𝗶𝗼𝗻𝘀:\nWe need to arrange them into the standard $Ax + By = C$ format.\nEquation 1:\n$4x - 3 = 3x + y$\nMove '$3x$' to the left and '$-3$' to the right:\n$4x - 3x - y = 3$\n$x - y = 3$\n --- (This is our new Equation 1)\nEquation 2:\n$3x + y = 2y + 5x - 12$\nMove '$5x$' and '$2y$' to the left, or move '$3x$' and '$y$' to the right. Let's move all variables to the left.\n$3x - 5x + y - 2y = -12$\n$-2x - y = -12$\n(Multiply by $-1$ to make it cleaner):\n$2x + y = 12$\n --- (This is our new Equation 2)\n𝟯. 𝗦𝗼𝗹𝘃𝗲 𝘁𝗵𝗲 𝗦𝘆𝘀𝘁𝗲𝗺:\nWe now have a simple system to solve:\n$x - y = 3$\n$2x + y = 12$\nWe can use the Elimination Method. Notice that the '$-y$' and '$+y$' will cancel if we add the two equations together.\n$(x - y) + (2x + y) = 3 + 12$\n$3x = 15$\nDivide by $3$:\n$x = 5$\n𝟰. 𝗦𝘂𝗯𝘀𝘁𝗶𝘁𝘂𝘁𝗲 𝘁𝗼 𝗳𝗶𝗻𝗱 $y$:\nNow, substitute $x = 5$ back into one of the simplified equations (Equation 1 is easiest).\n$x - y = 3$\n$5 - y = 3$\n$5 - 3 = y$\n$y = 2$\nThe solution is ($x = 5, y = 2$).\n𝗪𝗵𝘆 𝗼𝘁𝗵𝗲𝗿 𝗼𝗽𝘁𝗶𝗼𝗻𝘀 𝗮𝗿𝗲 𝗶𝗻𝗰𝗼𝗿𝗿𝗲𝗰𝘁\n𝗕) $x=2, y=5$: This is a common error of swapping the final values for $x$ and $y$. If we test $x=2, y=5$ in our first equation ($x - y = 3$), we get $2 - 5 = -3$, which is not $3$.\n𝗖) $x=-2, y=-5$: This results from sign errors during rearrangement. Let's test it: $x - y = (-2) - (-5) = -2 + 5 = 3$. This solution correctly solves the first equation. However, in the second ($2x + y = 12$), we get $2(-2) + (-5) = -4 - 5 = -9$. This is not $12$.\n𝗗) $x=5, y=-2$: This is a sign error for $y$. Let's test it: $x - y = 5 - (-2) = 7$. This is not $3$.\n𝗘) $x=-5, y=-2$: This is a sign error for $x$. Let's test it: $x - y = (-5) - (-2) = -3$. This is not $3$.\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\n𝗦𝗶𝗺𝘂𝗹𝘁𝗮𝗻𝗲𝗼𝘂𝘀 𝗘𝗾𝘂𝗮𝘁𝗶𝗼𝗻𝘀 – A set of two or more equations with the same variables. The goal is to find the values of the variables that satisfy all equations at the same time.\n𝗦𝘆𝘀𝘁𝗲𝗺 𝗼𝗳 𝗘𝗾𝘂𝗮𝘁𝗶𝗼𝗻𝘀 – Another name for simultaneous equations.\n𝗘𝗹𝗶𝗺𝗶𝗻𝗮𝘁𝗶𝗼𝗻 𝗠𝗲𝘁𝗵𝗼𝗱 – A technique for solving systems of equations by adding or subtracting the equations to eliminate one of the variables.\n𝗦𝘂𝗯𝘀𝘁𝗶𝘁𝘂𝘁𝗶𝗼𝗻 𝗠𝗲𝘁𝗵𝗼𝗱 – A technique for solving systems by isolating one variable in one equation (e.g., $x = 3 + y$) and substituting that expression into the other equation.\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘𝘅𝗮𝗺𝗽𝗹𝗲\nImagine you are at Balogun Market in Lagos. You are told that the price of $4$ shirts minus $₦3$ is the same as the price of $3$ shirts plus $1$ cap. You are also told that this same price ($3$ shirts + $1$ cap) is equal to the price of $2$ caps, $5$ shirts, minus $₦12$. This is a confusing puzzle!\nBy setting up these relationships as two separate equations, you can solve for '$x$' (the price of one shirt) and '$y$' (the price of one cap) to find their exact values.\n𝗥𝗲𝗳𝗲𝗿𝗲𝗻𝗰𝗲𝘀\nhttps://www.purplemath.com/modules/systlin1.htm\nhttps://www.bbc.co.uk/bitesize/guides/z9y9jty/revision/1"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["Mathematics", "JAMB", "1983"],
+          "cognitiveLevel": null,
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 1983,
+          "createdAt": "2026-03-03T14:13:25.971Z",
+          "updatedAt": "2026-03-03T22:05:46.400Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "JAMB",
+            "subjectCode": "MAT"
+          },
+          "metadata": {
+            "tags": ["Mathematics", "JAMB", "1983"],
+            "marks": 1,
+            "status": "DRAFT",
+            "examType": "JAMB",
+            "examYear": "1983",
+            "difficulty": "MEDIUM",
+            "examPeriod": "UTME"
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "JAMB",
+          "examYear": "1983",
+          "subjectCode": "MAT",
+          "subjectId": "f8145a30-be77-474f-b197-8aee6d802225",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": "c6015ac5-7fd4-49cf-a90f-77743f77b9fa",
+          "isBookmarked": false,
+          "isReported": false
+        }
+      },
+      {
+        "id": "d155e966-bbb8-4125-a410-3efbf1907b67",
+        "examId": "030d422d-b8b9-4851-b5b9-7a9a0c1efa78",
+        "questionId": "ea3dc4d8-f323-4a08-9fa2-d7af18b135c5",
+        "order": 7,
+        "question": {
+          "id": "ea3dc4d8-f323-4a08-9fa2-d7af18b135c5",
+          "questionNumber": 3,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "𝗚𝗶𝘃𝗲𝗻 𝗮 𝗿𝗲𝗴𝘂𝗹𝗮𝗿 𝗵𝗲𝘅𝗮𝗴𝗼𝗻, 𝗰𝗮𝗹𝗰𝘂𝗹𝗮𝘁𝗲 𝗲𝗮𝗰𝗵 𝗶𝗻𝘁𝗲𝗿𝗶𝗼𝗿 𝗮𝗻𝗴𝗹𝗲 𝗼𝗳 𝘁𝗵𝗲 𝗵𝗲𝘅𝗮𝗴𝗼𝗻."
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$60^\\circ$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$30^\\circ$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$120^\\circ$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$45^\\circ$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "E",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$135^\\circ$"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "C",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "𝗘𝘅𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\nThis problem requires knowledge of the properties of polygons, specifically a regular hexagon.\n𝟭. 𝗜𝗱𝗲𝗻𝘁𝗶𝗳𝘆 𝘁𝗵𝗲 𝗣𝗼𝗹𝘆𝗴𝗼𝗻:\nA hexagon is a polygon with $6$ sides. So, $n = 6$.\nA regular hexagon means all $6$ sides are equal in length, and all $6$ interior angles are equal in measure.\n𝟮. 𝗙𝗼𝗿𝗺𝘂𝗹𝗮 𝗳𝗼𝗿 𝗦𝘂𝗺 𝗼𝗳 𝗜𝗻𝘁𝗲𝗿𝗶𝗼𝗿 𝗔𝗻𝗴𝗹𝗲𝘀:\nThe formula for the sum of all interior angles of any n-sided polygon is:\n$Sum = (n - 2) \\times 180^\\circ$\n𝟯. 𝗖𝗮𝗹𝗰𝘂𝗹𝗮𝘁𝗲 𝘁𝗵𝗲 𝗦𝘂𝗺 𝗳𝗼𝗿 𝗮 𝗛𝗲𝘅𝗮𝗴𝗼𝗻 ($n=6$):\n$Sum = (6 - 2) \\times 180^\\circ$\n$Sum = 4 \\times 180^\\circ$\n$Sum = 720^\\circ$\nThis $720^\\circ$ is the total sum of all $6$ angles inside the hexagon.\n𝟰. 𝗖𝗮𝗹𝗰𝘂𝗹𝗮𝘁𝗲 𝗘𝗮𝗰𝗵 𝗜𝗻𝘁𝗲𝗿𝗶𝗼𝗿 𝗔𝗻𝗴𝗹𝗲:\nSince the hexagon is regular, all $6$ angles are identical.\nTo find the measure of each angle, we divide the total sum by the number of angles (which is $n$).\n$Each Angle = \\frac{Total Sum}{n}$\n$Each Angle = \\frac{720^\\circ}{6}$\n$Each Angle = 120^\\circ$\n𝗪𝗵𝘆 𝗼𝘁𝗵𝗲𝗿 𝗼𝗽𝘁𝗶𝗼𝗻𝘀 𝗮𝗿𝗲 𝗶𝗻𝗰𝗼𝗿𝗿𝗲𝗰𝘁\n𝗔) $60^\\circ$: This is the measure of the exterior angle of a regular hexagon (calculated as $\\frac{360^\\circ}{n} = \\frac{360^\\circ}{6} = 60^\\circ$). It is also the measure of the interior angle of a regular triangle (an equilateral triangle).\n𝗕) $30^\\circ$: This value does not correspond to a standard angle calculation for a hexagon.\n𝗗) $45^\\circ$: This is the measure of the exterior angle of a regular octagon ($8$ sides), calculated as $\\frac{360^\\circ}{8} = 45^\\circ$.\n𝗘) $135^\\circ$: This is the measure of the interior angle of a regular octagon ($8$ sides), calculated as $\\frac{(8 - 2) \\times 180^\\circ}{8} = \\frac{1080^\\circ}{8} = 135^\\circ$.\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\n𝗣𝗼𝗹𝘆𝗴𝗼𝗻 – A flat, 2-dimensional shape with straight sides.\n𝗛𝗲𝘅𝗮𝗴𝗼𝗻 – A polygon with $6$ sides and $6$ angles.\n𝗥𝗲𝗴𝘂𝗹𝗮𝗿 𝗣𝗼𝗹𝘆𝗴𝗼𝗻 – A polygon where all sides are equal in length and all interior angles are equal in measure.\n𝗜𝗻𝘁𝗲𝗿𝗶𝗼𝗿 𝗔𝗻𝗴𝗹𝗲 – An angle inside a shape, formed by two adjacent sides.\n𝗘𝘅𝘁𝗲𝗿𝗶𝗼𝗿 𝗔𝗻𝗴𝗹𝗲 – An angle formed by one side of a polygon and the extension of an adjacent side. The interior angle and its corresponding exterior angle always add up to $180^\\circ$.\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘𝘅𝗮𝗺𝗽𝗹𝗲\nThink of the pattern in a honeycomb. Bees build their comb using perfect hexagons. Each time three walls meet at a corner inside one of those hexagonal cells, the angle they form is $120^\\circ$. This shape is very strong and fits together perfectly, which is why it's used in nature and also in things like paving stones for walkways.\n𝗥𝗲𝗳𝗲𝗿𝗲𝗻𝗰𝗲𝘀\nhttps://www.mathsisfun.com/geometry/interior-angles-polygons.html\nhttps://www.khanacademy.org/math/geometry/hs-geo-foundations/hs-geo-polygons/v/sum-of-interior-angles-of-a-polygon"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["Mathematics", "JAMB", "1983"],
+          "cognitiveLevel": null,
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 1983,
+          "createdAt": "2026-03-03T14:13:25.929Z",
+          "updatedAt": "2026-03-03T22:05:46.400Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "JAMB",
+            "subjectCode": "MAT"
+          },
+          "metadata": {
+            "tags": ["Mathematics", "JAMB", "1983"],
+            "marks": 1,
+            "status": "DRAFT",
+            "examType": "JAMB",
+            "examYear": "1983",
+            "difficulty": "MEDIUM",
+            "examPeriod": "UTME"
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "JAMB",
+          "examYear": "1983",
+          "subjectCode": "MAT",
+          "subjectId": "f8145a30-be77-474f-b197-8aee6d802225",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": "c6015ac5-7fd4-49cf-a90f-77743f77b9fa",
+          "isBookmarked": false,
+          "isReported": false
+        }
+      },
+      {
+        "id": "c08130d7-b357-4f54-b258-7734650b3e98",
+        "examId": "030d422d-b8b9-4851-b5b9-7a9a0c1efa78",
+        "questionId": "f558d791-74fc-4a3d-b9a0-0d4dc52442ba",
+        "order": 8,
+        "question": {
+          "id": "f558d791-74fc-4a3d-b9a0-0d4dc52442ba",
+          "questionNumber": 7,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "$PQR = 60^\\circ$, $QPR = 90^\\circ$, $PRS = 90^\\circ$, $RPS = 45^\\circ$, $QR= 8$𝗰𝗺. 𝗗𝗲𝘁𝗲𝗿𝗺𝗶𝗻𝗲 $PS$."
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$2\\sqrt{3}$𝗰𝗺"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$4\\sqrt{6}$𝗰𝗺"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$2\\sqrt{6}$𝗰𝗺"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$8\\sqrt{6}$𝗰𝗺"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "E",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$8$𝗰𝗺"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "B",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "𝗘x𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\nThis problem involves using trigonometry (SOH CAH TOA) on two connected right-angled triangles (PQR and PSR). The side $PR$ is common to both and must be found first.\n𝗦𝘁𝗲𝗽 𝟭: 𝗙𝗶𝗻𝗱 𝘁𝗵𝗲 𝗹𝗲𝗻𝗴𝘁𝗵 𝗼𝗳 $PR$ 𝘂𝘀𝗶𝗻𝗴 𝗧𝗿𝗶𝗮𝗻𝗴𝗹𝗲 𝗣𝗤𝗥.\nIn Triangle PQR, the angle at $P$ is $90^\\circ$ ($QPR = 90^\\circ$).\nThis makes $QR$ (the side opposite the $90^\\circ$ angle) the Hypotenuse. $QR = 8$cm.\nWe are given Angle $PQR = 60^\\circ$.\nThe side $PR$ is Opposite this $60^\\circ$ angle.\nWe use the Sine ratio (SOH: Sin = Opposite / Hypotenuse).\n$\\sin(PQR) = \\frac{PR}{QR}$\n$\\sin(60^\\circ) = \\frac{PR}{8}$\nSolve for $PR$: $PR = 8 \\times \\sin(60^\\circ)$\nWe know the exact value: $\\sin(60^\\circ) = \\frac{\\sqrt{3}}{2}$\n$PR = 8 \\times ( \\frac{\\sqrt{3}}{2} )$\n$PR = 4\\sqrt{3} \\text{ cm}$\n𝗦𝘁𝗲𝗽 𝟮: 𝗙𝗶𝗻𝗱 𝘁𝗵𝗲 𝗹𝗲𝗻𝗴𝘁𝗵 𝗼𝗳 $PS$ 𝘂𝘀𝗶𝗻𝗴 𝗧𝗿𝗶𝗮𝗻𝗴𝗹𝗲 𝗣𝗦𝗥.\nIn Triangle PSR, the angle at $R$ is $90^\\circ$ ($PRS = 90^\\circ$).\nThis makes $PS$ (the side opposite the $90^\\circ$ angle) the Hypotenuse. This is what we must find.\nWe are given Angle $RPS = 45^\\circ$.\nThe side $PR$, which we found to be $4\\sqrt{3}$ cm, is Adjacent to this $45^\\circ$ angle.\nWe use the Cosine ratio (CAH: Cos = Adjacent / Hypotenuse).\n$\\cos(RPS) = \\frac{PR}{PS}$\n$\\cos(45^\\circ) = \\frac{4\\sqrt{3}}{PS}$\nSolve for $PS$: $PS = \\frac{4\\sqrt{3}}{\\cos(45^\\circ)}$\nWe know the exact value: $\\cos(45^\\circ) = \\frac{1}{\\sqrt{2}}$\n$PS = \\frac{4\\sqrt{3}}{ \\frac{1}{\\sqrt{2}} }$\nTo divide by a fraction, we multiply by its reciprocal:\n$PS = (4\\sqrt{3}) \\times (\\frac{\\sqrt{2}}{1})$\n$PS = 4 \\times (\\sqrt{3} \\times \\sqrt{2})$\n$PS = 4\\sqrt{3 \\times 2}$\n$PS = 4\\sqrt{6} \\text{ cm}$\n𝗪𝗵𝘆 𝗼𝘁𝗵𝗲𝗿 𝗼𝗽𝘁𝗶𝗼𝗻𝘀 𝗮𝗿𝗲 𝗶𝗻𝗰𝗼𝗿𝗿𝗲𝗰𝘁\n𝗔) $2\\sqrt{3}$𝗰𝗺: This might be a miscalculation, perhaps $\\frac{PR}{2}$.\n𝗖) $2\\sqrt{6}$𝗰𝗺: This could result from an error in the first step, for example, finding $PR = 2\\sqrt{3}$, which would lead to $PS = 2\\sqrt{6}$.\n𝗗) $8\\sqrt{6}$𝗰𝗺: This could result from an error in the first step, such as $PR = 8\\sqrt{3}$ (forgetting to divide by $2$), which would then lead to $PS = 8\\sqrt{6}$.\n𝗘) $8$𝗰𝗺: This is the length of $QR$. A student might mistakenly assume $PS$ is the same length.\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\n𝗦𝗢𝗛 𝗖𝗔𝗛 𝗧𝗢𝗔 – A mnemonic for the main trigonometric ratios: Sine = Opposite/ Hypotenuse, Cosine = Adjacent/ Hypotenuse, Tangent = Opposite/ Adjacent.\n𝗥𝗶𝗴𝗵𝘁-𝗔𝗻𝗴𝗹𝗲𝗱 𝗧𝗿𝗶𝗮𝗻𝗴𝗹𝗲 – A triangle with one angle measuring exactly $90^\\circ$.\n𝗛𝘆𝗽𝗼𝘁𝗲𝗻𝘂𝘀𝗲 – The longest side of a right-angled triangle, always opposite the $90^\\circ$ angle.\n𝗢𝗽𝗽𝗼𝘀𝗶𝘁𝗲 – The side of a right-angled triangle across from a given angle.\n𝗔𝗱𝗷𝗮𝗰𝗲𝗻𝘁 – The side of a right-angled triangle next to a given angle (that is not the hypotenuse).\n𝗦𝘂𝗿𝗱 – A number expressed using a root symbol (e.g., $\\sqrt{3}$, $\\sqrt{6}$).\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘x𝗮𝗺𝗽𝗹𝗲\nImagine a tall mast $PR$ at the National Stadium in Surulere. A spectator at $Q$ sees the top of the mast $P$. The angle at $P$ ($QPR$) is $90^\\circ$, and the spectator's distance to the top $P$ (the hypotenuse $QR$) is $80$ meters, at an angle $PQR$ of $60^\\circ$. You, standing at point $S$, see the mast from a $90^\\circ$ angle ($PRS$) and look up at a $45^\\circ$ angle ($RPS$) to the top $P$. This problem allows you to use the spectator's measurements at $Q$ to find your own distance $PS$ to the top of the mast.\n𝗥𝗲𝗳𝗲𝗿𝗲𝗻𝗰𝗲𝘀\nhttps://www.mathsisfun.com/algebra/sohcahtoa.html\nhttps://www.khanacademy.org/math/geometry/hs-geo-trig/hs-geo-trig-ratios-solve/v/solve-for-a-side-in-right-triangles"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["Mathematics", "JAMB", "1983"],
+          "cognitiveLevel": null,
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 1983,
+          "createdAt": "2026-03-03T14:13:26.080Z",
+          "updatedAt": "2026-03-03T22:05:46.400Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "JAMB",
+            "subjectCode": "MAT"
+          },
+          "metadata": {
+            "tags": ["Mathematics", "JAMB", "1983"],
+            "marks": 1,
+            "status": "DRAFT",
+            "examType": "JAMB",
+            "examYear": "1983",
+            "difficulty": "MEDIUM",
+            "examPeriod": "UTME"
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "JAMB",
+          "examYear": "1983",
+          "subjectCode": "MAT",
+          "subjectId": "f8145a30-be77-474f-b197-8aee6d802225",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": "c6015ac5-7fd4-49cf-a90f-77743f77b9fa",
+          "isBookmarked": false,
+          "isReported": false
+        }
+      },
+      {
+        "id": "964dd690-4494-45ec-aee1-620fe11bb3be",
+        "examId": "030d422d-b8b9-4851-b5b9-7a9a0c1efa78",
+        "questionId": "f6cc4487-cde1-48bb-a231-1bff11e1baa3",
+        "order": 9,
+        "question": {
+          "id": "f6cc4487-cde1-48bb-a231-1bff11e1baa3",
+          "questionNumber": 8,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "𝗚𝗶𝘃𝗲𝗻 𝘁𝗵𝗮𝘁 $\\cos z = L$, 𝘄𝗵𝗲𝗿𝗲 $z$ 𝗶𝘀 𝗮𝗻 𝗮𝗰𝘂𝘁𝗲 𝗮𝗻𝗴𝗹𝗲 𝗳𝗶𝗻𝗱 𝗮𝗻 𝗲x𝗽𝗿𝗲𝘀𝘀𝗶𝗼𝗻 𝗳𝗼𝗿 $\\frac{\\cot Z - \\csc z}{\\sec Z + \\tan z}$ \n\n𝗔𝘀𝘀𝘂𝗺𝗲𝗱 𝗤𝘂𝗲𝘀𝘁𝗶𝗼𝗻: 𝗚𝗶𝘃𝗲𝗻 $\\cos z = L$, 𝗳𝗶𝗻𝗱 𝗮𝗻 𝗲x𝗽𝗿𝗲𝘀𝘀𝗶𝗼𝗻 𝗳𝗼𝗿 $\\frac{\\sec Z - 1}{\\sec Z + 1}$"
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$\\frac{1-L}{1+L}$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$\\frac{L^2-\\sqrt{1-L^2}}{L^2+L-1}$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$\\frac{-L-\\sqrt{1-L}}{(C1+L) + \\sqrt{1-L^2}}$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$\\frac{\\sqrt{L}-1}{(L1+L^2) + \\sqrt{1-L^2}}$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "E",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$\\frac{L-(L^2-1)}{1+\\sqrt{1-L^2} + \\sqrt{1-L^2}}$"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "A",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "𝗘x𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\nThis problem requires expressing a trigonometric expression in terms of $L$, given that $\\cos z = L$.\n𝟭. 𝗨𝗻𝗱𝗲𝗿𝘀𝘁𝗮𝗻𝗱 𝘁𝗵𝗲 𝗖𝗼𝗿𝗲 𝗥𝗲𝗹𝗮𝘁𝗶𝗼𝗻𝘀𝗵𝗶𝗽:\nWe are given: $\\cos z = L$\nWe need to solve for: $\\frac{\\sec z - 1}{\\sec z + 1}$\nThe key is to find the definition of $\\sec z$ in relation to $\\cos z$.\n𝟮. 𝗗𝗲𝗳𝗶𝗻𝗲 $\\sec z$:\nThe secant function ($\\sec$) is the reciprocal of the cosine function ($\\cos$).\nThe formula is: $\\sec z = \\frac{1}{\\cos z}$\n𝟯. 𝗦𝘂𝗯𝘀𝘁𝗶𝘁𝘂𝘁𝗲 $L$ 𝗶𝗻𝘁𝗼 𝘁𝗵𝗲 𝗙𝗼𝗿𝗺𝘂𝗹𝗮:\nSince $\\cos z = L$, we can substitute $L$ directly:\n$\\sec z = \\frac{1}{L}$\n𝟰. 𝗦𝘂𝗯𝘀𝘁𝗶𝘁𝘂𝘁𝗲 $(\\frac{1}{L})$ 𝗶𝗻𝘁𝗼 𝘁𝗵𝗲 𝗠𝗮𝗶𝗻 𝗘x𝗽𝗿𝗲𝘀𝘀𝗶𝗼𝗻:\nWe replace every $\\sec z$ in the expression $\\frac{\\sec z - 1}{\\sec z + 1}$ with $(\\frac{1}{L})$.\nNumerator: $\\sec z - 1 = (\\frac{1}{L}) - 1$\nTo subtract, find a common denominator (which is $L$):\n$= (\\frac{1}{L}) - (\\frac{L}{L})$\n$= \\frac{1 - L}{L}$\nDenominator: $\\sec z + 1 = (\\frac{1}{L}) + 1$\nFind a common denominator:\n$= (\\frac{1}{L}) + (\\frac{L}{L})$\n$= \\frac{1 + L}{L}$\n𝟱. 𝗗𝗶𝘃𝗶𝗱𝗲 𝘁𝗵𝗲 𝗡𝗲𝘄 𝗡𝘂𝗺𝗲𝗿𝗮𝘁𝗼𝗿 𝗯𝘆 𝘁𝗵𝗲 𝗡𝗲𝘄 𝗗𝗲𝗻𝗼𝗺𝗶𝗻𝗮𝘁𝗼𝗿:\nExpression = $[ \\frac{1 - L}{L} ] / [ \\frac{1 + L}{L} ]$\nTo divide by a fraction, we multiply by its reciprocal (flip it):\nExpression = $[ \\frac{1 - L}{L} ] \\times [ \\frac{L}{1 + L} ]$\nThe $L$ terms in the numerator and denominator cancel each other out:\n$Expression = \\frac{1 - L}{1 + L}$\n𝗪𝗵𝘆 𝗼𝘁𝗵𝗲𝗿 𝗼𝗽𝘁𝗶𝗼𝗻𝘀 𝗮𝗿𝗲 𝗶𝗻𝗰𝗼𝗿𝗿𝗲𝗰𝘁\n𝗕, 𝗖, 𝗗, 𝗘: These options are either mathematically incorrect, based on a misinterpretation of the trigonometric identities, or are garbled versions of the correct answer. The question as written in the image ($\\frac{\\cot Z - \\csc z}{\\sec Z + \\tan z}$) leads to a much more complex answer, $\\frac{L(L - 1)}{(1 - L^2) + \\sqrt{1 - L^2}}$, which does not match any option. This confirms the question text in the image is flawed and Option A is the intended answer to the corrected, simpler question.\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\n𝗧𝗿𝗶𝗴𝗼𝗻𝗼𝗺𝗲𝘁𝗿𝗶𝗰 𝗜𝗱𝗲𝗻𝘁𝗶𝘁𝘆 – An equation that is true for all possible values of the variables involved.\n𝗖𝗼𝘀𝗶𝗻𝗲 ($\\cos$) – In a right-angled triangle, the ratio of the length of the adjacent side to the length of the hypotenuse.\n𝗦𝗲𝗰𝗮𝗻𝘁 ($\\sec$) – The reciprocal of the cosine function ($\\sec z = \\frac{1}{\\cos z}$).\n𝗥𝗲𝗰𝗶𝗽𝗿𝗼𝗰𝗮𝗹 – A number that, when multiplied by another number, equals $1$. The reciprocal of $L$ is $\\frac{1}{L}$.\n𝗔𝗰𝘂𝘁𝗲 𝗔𝗻𝗴𝗹𝗲 – An angle that is less than $90^\\circ$.\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘x𝗮𝗺𝗽𝗹𝗲\nThis is like having a secret code. You are told the code for \"cosine\" is the letter \"$L$\". The puzzle you must solve is $\\frac{\\secant - 1}{\\secant + 1}$. You know from your codebook that \"secant\" is just the \"flipped\" version of \"cosine\", or $\\frac{1}{L}$. By swapping \"secant\" with \"$\\frac{1}{L}$\", you can solve the puzzle using simple algebra, turning a confusing trigonometry problem into a simple fraction problem.\n𝗥𝗲𝗳𝗲𝗿𝗲𝗻𝗰𝗲𝘀\nhttps://www.mathsisfun.com/algebra/trig-identities.html\nhttps://www.purplemath.com/modules/basitrig.htm"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["Mathematics", "JAMB", "1983"],
+          "cognitiveLevel": null,
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 1983,
+          "createdAt": "2026-03-03T14:13:26.110Z",
+          "updatedAt": "2026-03-03T22:05:46.400Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "JAMB",
+            "subjectCode": "MAT"
+          },
+          "metadata": {
+            "tags": ["Mathematics", "JAMB", "1983"],
+            "marks": 1,
+            "status": "DRAFT",
+            "examType": "JAMB",
+            "examYear": "1983",
+            "difficulty": "MEDIUM",
+            "examPeriod": "UTME"
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "JAMB",
+          "examYear": "1983",
+          "subjectCode": "MAT",
+          "subjectId": "f8145a30-be77-474f-b197-8aee6d802225",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": "c6015ac5-7fd4-49cf-a90f-77743f77b9fa",
+          "isBookmarked": false,
+          "isReported": false
+        }
+      },
+      {
+        "id": "d003cd09-9bea-413f-bfc8-958db41f184e",
+        "examId": "030d422d-b8b9-4851-b5b9-7a9a0c1efa78",
+        "questionId": "ff7ba56e-aad3-4958-8937-8d811fcef478",
+        "order": 10,
+        "question": {
+          "id": "ff7ba56e-aad3-4958-8937-8d811fcef478",
+          "questionNumber": 2,
+          "questionType": "SINGLE_CHOICE",
+          "questionText": [
+            {
+              "type": "text",
+              "value": "𝗔 𝗰𝗼𝗻𝘀𝘁𝗿𝘂𝗰𝘁𝗶𝗼𝗻 𝗰𝗼𝗺𝗽𝗮𝗻𝘆 𝗶𝘀 𝗼𝘄𝗻𝗲𝗱 𝗯𝘆 𝘁𝘄𝗼 𝗽𝗮𝗿𝘁𝗻𝗲𝗿𝘀 𝗫 𝗮𝗻𝗱 𝗬 𝗮𝗻𝗱 𝗶𝘁 𝗶𝘀 𝗮𝗴𝗿𝗲𝗲𝗱 𝘁𝗵𝗮𝘁 𝘁𝗵𝗲𝗶𝗿 𝗽𝗿𝗼𝗳𝗶𝘁 𝘄𝗶𝗹𝗹 𝗯𝗲 𝗱𝗶𝘃𝗶𝗱𝗲𝗱 𝗶𝗻 𝘁𝗵𝗲 𝗿𝗮𝘁𝗶𝗼 $4:5$. 𝗔𝘁 𝘁𝗵𝗲 𝗲𝗻𝗱 𝗼𝗳 𝘁𝗵𝗲 𝘆𝗲𝗮𝗿, 𝗬 𝗿𝗲𝗰𝗲𝗶𝘃𝗲𝗱 $₦5,000$ 𝗺𝗼𝗿𝗲 𝘁𝗵𝗮𝗻 𝗫. 𝗪𝗵𝗮𝘁 𝗶𝘀 𝘁𝗵𝗲 𝘁𝗼𝘁𝗮𝗹 𝗽𝗿𝗼𝗳𝗶𝘁 𝗼𝗳 𝘁𝗵𝗲 𝗰𝗼𝗺𝗽𝗮𝗻𝘆 𝗳𝗼𝗿 𝘁𝗵𝗲 𝘆𝗲𝗮𝗿?"
+            }
+          ],
+          "instruction": "Choose the correct answer",
+          "context": null,
+          "options": [
+            {
+              "id": "A",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$₦20,000.00$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "B",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$₦25,000.00$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "C",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$₦30,000.00$"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "D",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$₦15,000.00$ (Note: Image has a typo $₦15,000.003$, assumed $₦15,000.00$)"
+                }
+              ],
+              "isCorrect": false
+            },
+            {
+              "id": "E",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "$₦45,000.00$"
+                }
+              ],
+              "isCorrect": false
+            }
+          ],
+          "correctAnswer": "E",
+          "correctAnswers": [],
+          "explanation": {
+            "solution": [
+              {
+                "type": "text",
+                "value": "𝗘𝘅𝗽𝗹𝗮𝗻𝗮𝘁𝗶𝗼𝗻\nThis is a problem involving ratios and profit sharing.\n𝟭. 𝗨𝗻𝗱𝗲𝗿𝘀𝘁𝗮𝗻𝗱 𝘁𝗵𝗲 𝗥𝗮𝘁𝗶𝗼:\nThe profit is shared between $X$ and $Y$ in the ratio $4:5$.\nThis means for every $₦4$ $X$ gets, $Y$ gets $₦5$.\nThe total number of \"parts\" in the profit is $4 + 5 = 9$ parts.\n𝟮. 𝗨𝗻𝗱𝗲𝗿𝘀𝘁𝗮ND 𝘁𝗵𝗲 𝗗𝗶𝗳𝗳𝗲𝗿𝗲𝗻𝗰𝗲:\nWe are told $Y$ received $₦5,000$ more than $X$.\nIn terms of ratio parts, the difference between $Y$'s share and $X$'s share is: $5$ parts - $4$ parts = $1$ part.\nThis means that this \"1 part\" difference is equal to the $₦5,000$ difference in money.\nTherefore: $1$ part = $₦5,000$\n𝟯. 𝗖𝗮𝗹𝗰𝘂𝗹𝗮𝘁𝗲 𝘁𝗵𝗲 𝗧𝗼𝘁𝗮𝗹 𝗣𝗿𝗼𝗳𝗶𝘁:\nThe total profit is the sum of all parts, which is $9$ parts.\nIf $1$ part = $₦5,000$,\nThen $9$ parts = $9 \\times ₦5,000$\nTotal Profit = $₦45,000$\n𝗖𝗵𝗲𝗰𝗸 𝘁𝗵𝗲 𝗔𝗻𝘀𝘄𝗲𝗿:\nIf the total profit is $₦45,000$:\n$X$'s share ($4$ parts) = $4 \\times ₦5,000 = ₦20,000$\n$Y$'s share ($5$ parts) = $5 \\times ₦5,000 = ₦25,000$\nThe difference is $₦25,000 - ₦20,000 = ₦5,000$.\nThis matches the information given in the question.\n𝗪𝗵𝘆 𝗼𝘁𝗵𝗲𝗿 𝗼𝗽𝘁𝗶𝗼𝗻𝘀 𝗮𝗿𝗲 𝗶𝗻𝗰𝗼𝗿𝗿𝗲𝗰𝘁\n𝗔) $₦20,000.00$: This is the value of $X$'s share ($4$ parts), not the total profit.\n𝗕) $₦25,000.00$: This is the value of $Y$'s share ($5$ parts), not the total profit.\n𝗖) $₦30,000.00$: This might be a miscalculation, perhaps multiplying $₦5,000$ by $6$ (for no clear reason) or $₦5,000$ by $(5+4-3)$? It does not logically follow from the ratio.\n𝗗) $₦15,000.00$: This might be a miscalculation, perhaps $3 \\times ₦5,000$, confusing the number of partners with the ratio parts.\n𝗞𝗲𝘆 𝗧𝗲𝗿𝗺𝘀\n𝗥𝗮𝘁𝗶𝗼 – A way of showing the relationship between two or more quantities. A ratio of $4:5$ means one quantity is $\\frac{4}{9}$ of the total and the other is $\\frac{5}{9}$ of the total.\n𝗣𝗿𝗼𝗳𝗶𝘁 𝗦𝗵𝗮𝗿𝗶𝗻𝗴 – The process of dividing profits among partners or stakeholders according to a pre-agreed formula or ratio.\n𝗣𝗮𝗿𝘁 (𝗶𝗻 𝗮 𝗿𝗮𝘁𝗶𝗼) – One of the equal units into which the total amount is divided. In $4:5$, there are $9$ parts in total.\n𝗥𝗲𝗹𝗮𝘁𝗮𝗯𝗹𝗲 𝗘𝘅𝗮𝗺𝗽𝗹𝗲\nImagine two friends, Xavier ($X$) and Yemi ($Y$), run a small business selling phone chargers at Computer Village in Ikeja. They agree to split the profit $4:5$ because Yemi does more of the sales. At the end of the month, Yemi ($Y$) has made $₦5,000$ more than Xavier ($X$).\nThe difference in their \"parts\" ($5 - 4$) is $1$ part.\nSo, $1$ part = $₦5,000$.\nThe total profit is all the parts combined ($4 + 5 = 9$ parts).\nTotal profit = $9 \\times ₦5,000 = ₦45,000$.\n𝗥𝗲𝗳𝗲𝗿𝗲𝗻𝗰𝗲𝘀\nhttps://www.bbc.co.uk/bitesize/topics/zsq7hyc/articles/z8b2k2p\nhttps://www.mathsgenie.co.uk/ratio.html"
+              }
+            ]
+          },
+          "textExplanation": null,
+          "marks": 1,
+          "marksPerCorrect": null,
+          "negativeMarking": null,
+          "partialCreditAllowed": null,
+          "randomizeOptions": false,
+          "passingMarks": null,
+          "estimatedTimeSeconds": null,
+          "difficulty": "MEDIUM",
+          "status": "PUBLISHED",
+          "tags": ["Mathematics", "JAMB", "1983"],
+          "cognitiveLevel": null,
+          "skillsAssessed": [],
+          "learningOutcomes": [],
+          "averageScore": null,
+          "attemptCount": 0,
+          "successRate": null,
+          "paper": null,
+          "year": 1983,
+          "createdAt": "2026-03-03T14:13:25.892Z",
+          "updatedAt": "2026-03-03T22:05:46.400Z",
+          "assignedExaminerId": null,
+          "editStatus": null,
+          "lastEditedById": null,
+          "lastEditedAt": null,
+          "originalVersion": null,
+          "editedVersion": null,
+          "reviewFeedback": null,
+          "deletionRequestedById": null,
+          "deletionRequestedAt": null,
+          "hierarchy": {
+            "topic": {
+              "name": "General"
+            },
+            "subject": "Mathematics",
+            "examType": "JAMB",
+            "subjectCode": "MAT"
+          },
+          "metadata": {
+            "tags": ["Mathematics", "JAMB", "1983"],
+            "marks": 1,
+            "status": "DRAFT",
+            "examType": "JAMB",
+            "examYear": "1983",
+            "difficulty": "MEDIUM",
+            "examPeriod": "UTME"
+          },
+          "crossExamRef": null,
+          "tutorialInfo": null,
+          "pastQuestionReference": null,
+          "accessibility": null,
+          "adaptiveSettings": null,
+          "examType": "JAMB",
+          "examYear": "1983",
+          "subjectCode": "MAT",
+          "subjectId": "f8145a30-be77-474f-b197-8aee6d802225",
+          "trueFalseData": null,
+          "fillInBlankData": null,
+          "essayData": null,
+          "essayWithSubData": null,
+          "shortAnswerData": null,
+          "matchingData": null,
+          "orderingData": null,
+          "calculationData": null,
+          "diagramLabelingData": null,
+          "theoryWithObjectivesData": null,
+          "questionVideoUrls": [],
+          "optionVideoUrls": [],
+          "explanationVideoUrls": [],
+          "topicId": null,
+          "subTopicId": null,
+          "sessionId": null,
+          "universityId": null,
+          "facultyId": null,
+          "departmentId": null,
+          "courseId": null,
+          "tutorialId": "c6015ac5-7fd4-49cf-a90f-77743f77b9fa",
           "isBookmarked": false,
           "isReported": false
         }
