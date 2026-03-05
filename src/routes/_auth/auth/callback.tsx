@@ -1,9 +1,12 @@
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import { Logo } from "@/components/global/logo";
 import { useAuthStore } from "@/stores/authStore";
+import { apiClient } from "@/api/client";
+import { PROFILE_ENDPOINTS } from "@/api/endpoints";
 import { useEffect, useState } from "react";
 import { CheckCircle, XCircle, Loader2 } from "lucide-react";
 import PrimaryButton from "@/components/buttons/primary-button";
+import type { User } from "@/api/types";
 
 type OAuthSearchParams = {
   accessToken?: string;
@@ -32,31 +35,45 @@ function OAuthCallbackPage() {
   useEffect(() => {
     if (status !== "processing") return;
 
-    try {
-      if (!search.accessToken || !search.refreshToken) {
-        setErrorMessage("Missing authentication tokens.");
-        setStatus("error");
-        return;
-      }
-
-      // Store tokens
-      setTokens(search.accessToken, search.refreshToken);
-
-      // Parse and store user data if provided
-      if (search.user) {
-        try {
-          const userData = JSON.parse(decodeURIComponent(search.user));
-          setUser(userData);
-        } catch {
-          // User data parsing failed, but tokens are stored - continue
+    const processAuth = async () => {
+      try {
+        if (!search.accessToken || !search.refreshToken) {
+          setErrorMessage("Missing authentication tokens.");
+          setStatus("error");
+          return;
         }
-      }
 
-      setStatus("success");
-    } catch {
-      setErrorMessage("Something went wrong during authentication.");
-      setStatus("error");
-    }
+        // Store tokens
+        setTokens(search.accessToken, search.refreshToken);
+
+        // Parse and store user data if provided in URL
+        if (search.user) {
+          try {
+            const userData = JSON.parse(decodeURIComponent(search.user));
+            setUser(userData);
+          } catch {
+            // Will fall through to profile fetch below
+          }
+        }
+
+        // Fetch user profile if not already set (backend may not send user in URL)
+        if (!useAuthStore.getState().user) {
+          try {
+            const { data } = await apiClient.get<User>(PROFILE_ENDPOINTS.GET);
+            setUser(data);
+          } catch {
+            // Profile fetch failed, but tokens are stored - continue
+          }
+        }
+
+        setStatus("success");
+      } catch {
+        setErrorMessage("Something went wrong during authentication.");
+        setStatus("error");
+      }
+    };
+
+    processAuth();
   }, [status, search, setTokens, setUser]);
 
   useEffect(() => {
