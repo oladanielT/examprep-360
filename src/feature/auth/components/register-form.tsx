@@ -292,6 +292,8 @@ export const RegisterForm = () => {
         className="w-full hover:bg-gray-200 mt-5 text-lg bg-transparent border text-gray-800 border-gray-300"
         title="Continue"
         onClick={() => {
+          // Save institutional flag before redirecting to Google OAuth
+          setIsInstitutional(isInstitutional);
           window.location.href = `${API_BASE_URL}${AUTH_ENDPOINTS.GOOGLE_OAUTH}?platform=web`;
         }}
       >
