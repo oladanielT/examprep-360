@@ -21,6 +21,8 @@ import * as z from "zod";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useRegistrationStore } from "@/stores/registrationStore";
 import { useRequestEmailOtp } from "@/feature/auth/hooks";
+import { API_BASE_URL } from "@/api/client";
+import { AUTH_ENDPOINTS } from "@/api/endpoints";
 
 const registerSchema = z
   .object({
@@ -289,6 +291,9 @@ export const RegisterForm = () => {
       <PrimaryButton
         className="w-full hover:bg-gray-200 mt-5 text-lg bg-transparent border text-gray-800 border-gray-300"
         title="Continue"
+        onClick={() => {
+          window.location.href = `${API_BASE_URL}${AUTH_ENDPOINTS.GOOGLE_OAUTH}?platform=web`;
+        }}
       >
         <div className="flex items-center gap-2">
           <svg
@@ -322,7 +327,7 @@ export const RegisterForm = () => {
               </clipPath>
             </defs>
           </svg>
-          <span>Sign In With Google</span>
+          <span>Sign Up With Google</span>
         </div>
       </PrimaryButton>
       <p className="text-center mt-7 font-medium">

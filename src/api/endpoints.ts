@@ -13,6 +13,7 @@ export const AUTH_ENDPOINTS = {
   PHONE_SEND_OTP: "/user/auth/phone/send-otp",
   PHONE_VERIFY_OTP: "/user/auth/phone/verify-otp",
   SESSIONS: "/user/auth/sessions",
+  GOOGLE_OAUTH: "/user/auth/oauth/google",
 } as const;
 
 // Profile endpoints

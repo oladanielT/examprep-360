@@ -20,6 +20,8 @@ import * as z from "zod";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useLogin } from "@/feature/auth/hooks";
+import { API_BASE_URL } from "@/api/client";
+import { AUTH_ENDPOINTS } from "@/api/endpoints";
 
 const signinSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
@@ -190,6 +192,9 @@ export const SigninForm = () => {
       <PrimaryButton
         className="w-full hover:bg-gray-200 mt-5 text-lg bg-transparent border text-gray-800 border-gray-300"
         title="Continue"
+        onClick={() => {
+          window.location.href = `${API_BASE_URL}${AUTH_ENDPOINTS.GOOGLE_OAUTH}?platform=web`;
+        }}
       >
         <div className="flex items-center gap-2">
           <svg
