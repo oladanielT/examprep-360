@@ -13,7 +13,7 @@ function AuthLayout() {
       </div>
       <div className="bg-muted relative hidden lg:block">
         <img
-          src="/auth/authlayout.svg"
+          src="/auth/faq-image.png"
           alt="Image"
           width={5000}
           height={5000}
