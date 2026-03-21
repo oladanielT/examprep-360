@@ -67,11 +67,20 @@ function normalizeUnicodeBold(text: string): string {
       }
     } else {
       if (inBold) {
-        result += "**" + boldRun.trim() + "**";
-        boldRun = "";
-        inBold = false;
+        // Peek ahead: if the next character is bold, this is likely a stray
+        // non-bold char (e.g., regular ASCII 'x' amid Unicode bold). Include it.
+        const nextCp = i + 1 < chars.length ? chars[i + 1].codePointAt(0)! : 0;
+        if (toBoldAscii(nextCp)) {
+          boldRun += chars[i];
+        } else {
+          result += "**" + boldRun.trim() + "**";
+          boldRun = "";
+          inBold = false;
+          result += chars[i];
+        }
+      } else {
+        result += chars[i];
       }
-      result += chars[i];
     }
   }
 
