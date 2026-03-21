@@ -39,6 +39,7 @@ import { Route as UserTestsExamsRouteImport } from './routes/_user/tests/exams'
 import { Route as UserTestsExamRouteImport } from './routes/_user/tests/exam'
 import { Route as UserSubscriptionAddRouteImport } from './routes/_user/subscription.add'
 import { Route as UserExamAttemptIdRouteImport } from './routes/_user/exam.$attemptId'
+import { Route as AuthAuthCallbackRouteImport } from './routes/_auth/auth/callback'
 import { Route as UserExamReviewAttemptIdRouteImport } from './routes/_user/exam.review.$attemptId'
 
 const UserRoute = UserRouteImport.update({
@@ -189,6 +190,11 @@ const UserExamAttemptIdRoute = UserExamAttemptIdRouteImport.update({
   path: '/exam/$attemptId',
   getParentRoute: () => UserRoute,
 } as any)
+const AuthAuthCallbackRoute = AuthAuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
+  getParentRoute: () => AuthRoute,
+} as any)
 const UserExamReviewAttemptIdRoute = UserExamReviewAttemptIdRouteImport.update({
   id: '/exam/review/$attemptId',
   path: '/exam/review/$attemptId',
@@ -214,6 +220,7 @@ export interface FileRoutesByFullPath {
   '/subscription': typeof UserSubscriptionRouteWithChildren
   '/wallet': typeof UserWalletRoute
   '/': typeof UserIndexRoute
+  '/auth/callback': typeof AuthAuthCallbackRoute
   '/exam/$attemptId': typeof UserExamAttemptIdRoute
   '/subscription/add': typeof UserSubscriptionAddRoute
   '/tests/exam': typeof UserTestsExamRoute
@@ -244,6 +251,7 @@ export interface FileRoutesByTo {
   '/settings': typeof UserSettingsRoute
   '/wallet': typeof UserWalletRoute
   '/': typeof UserIndexRoute
+  '/auth/callback': typeof AuthAuthCallbackRoute
   '/exam/$attemptId': typeof UserExamAttemptIdRoute
   '/subscription/add': typeof UserSubscriptionAddRoute
   '/tests/exam': typeof UserTestsExamRoute
@@ -278,6 +286,7 @@ export interface FileRoutesById {
   '/_user/subscription': typeof UserSubscriptionRouteWithChildren
   '/_user/wallet': typeof UserWalletRoute
   '/_user/': typeof UserIndexRoute
+  '/_auth/auth/callback': typeof AuthAuthCallbackRoute
   '/_user/exam/$attemptId': typeof UserExamAttemptIdRoute
   '/_user/subscription/add': typeof UserSubscriptionAddRoute
   '/_user/tests/exam': typeof UserTestsExamRoute
@@ -311,6 +320,7 @@ export interface FileRouteTypes {
     | '/subscription'
     | '/wallet'
     | '/'
+    | '/auth/callback'
     | '/exam/$attemptId'
     | '/subscription/add'
     | '/tests/exam'
@@ -341,6 +351,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/wallet'
     | '/'
+    | '/auth/callback'
     | '/exam/$attemptId'
     | '/subscription/add'
     | '/tests/exam'
@@ -374,6 +385,7 @@ export interface FileRouteTypes {
     | '/_user/subscription'
     | '/_user/wallet'
     | '/_user/'
+    | '/_auth/auth/callback'
     | '/_user/exam/$attemptId'
     | '/_user/subscription/add'
     | '/_user/tests/exam'
@@ -604,6 +616,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserExamAttemptIdRouteImport
       parentRoute: typeof UserRoute
     }
+    '/_auth/auth/callback': {
+      id: '/_auth/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthAuthCallbackRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_user/exam/review/$attemptId': {
       id: '/_user/exam/review/$attemptId'
       path: '/exam/review/$attemptId'
@@ -625,6 +644,7 @@ interface AuthRouteChildren {
   AuthSummaryRoute: typeof AuthSummaryRoute
   AuthVerifyEmailRoute: typeof AuthVerifyEmailRoute
   AuthWelcomeRoute: typeof AuthWelcomeRoute
+  AuthAuthCallbackRoute: typeof AuthAuthCallbackRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
@@ -638,6 +658,7 @@ const AuthRouteChildren: AuthRouteChildren = {
   AuthSummaryRoute: AuthSummaryRoute,
   AuthVerifyEmailRoute: AuthVerifyEmailRoute,
   AuthWelcomeRoute: AuthWelcomeRoute,
+  AuthAuthCallbackRoute: AuthAuthCallbackRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)

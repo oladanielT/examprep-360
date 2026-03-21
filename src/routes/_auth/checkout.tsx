@@ -3,6 +3,7 @@ import { Logo } from "@/components/global/logo";
 import PrimaryButton from "@/components/buttons/primary-button";
 import { Alert } from "@/components/ui/alert";
 import { useRegistrationStore } from "@/stores/registrationStore";
+import { useAuthStore } from "@/stores/authStore";
 import { usePaymentPlans, useInitializePayment, useRedeemLicense, useStartTrial } from "@/feature/payment/hooks";
 import { Check, Loader2, Upload, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
@@ -12,6 +13,8 @@ import { toast } from "sonner";
 function CheckoutPage() {
   const navigate = useNavigate();
   const { data: registrationData, reset: resetRegistration } = useRegistrationStore();
+  const authUser = useAuthStore((s) => s.user);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const [showLicenseInput, setShowLicenseInput] = useState(false);
   const [showPaymentOptions, setShowPaymentOptions] = useState(false);
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
@@ -27,6 +30,9 @@ function CheckoutPage() {
       if (navigationTimerRef.current) clearTimeout(navigationTimerRef.current);
     };
   }, []);
+
+  // Use auth store user ID for Google OAuth users, registration store for normal flow
+  const studentId = registrationData.studentId || authUser?.id;
 
   const examType = registrationData.examType;
   const examCategory = registrationData.category;
@@ -149,7 +155,7 @@ function CheckoutPage() {
   };
 
   const handlePayNow = async () => {
-    if (!selectedPlan || !registrationData.studentId) {
+    if (!selectedPlan || !studentId) {
       console.error("Missing required data for payment");
       return;
     }
@@ -163,7 +169,7 @@ function CheckoutPage() {
         : undefined;
 
       const response = await initializePaymentMutation.mutateAsync({
-        studentId: registrationData.studentId,
+        studentId: studentId!,
         subscriptionId: selectedPlan.id,
         amount: totalPrice,
         subscriptionType: registrationData.isInstitutional ? "BODY" : "INDIVIDUAL",
@@ -199,12 +205,12 @@ function CheckoutPage() {
   };
 
   const handleRedeemLicense = async () => {
-    if (!licenseCode || !registrationData.studentId) return;
+    if (!licenseCode || !studentId) return;
 
     try {
       const response = await redeemLicenseMutation.mutateAsync({
         code: licenseCode,
-        studentId: registrationData.studentId,
+        studentId: studentId!,
         subjects: registrationData.subjects,
         courses: [],
       });
@@ -218,7 +224,7 @@ function CheckoutPage() {
         // Small delay to ensure toast is visible
         navigationTimerRef.current = setTimeout(() => {
           resetRegistration();
-          navigate({ to: "/sign-in" });
+          navigate({ to: isAuthenticated ? "/" : "/sign-in" });
         }, 1000);
       }
     } catch (error: any) {
@@ -236,7 +242,7 @@ function CheckoutPage() {
   };
 
   const handleStartTrial = async () => {
-    if (!registrationData.studentId) {
+    if (!studentId) {
       console.error("Missing student ID for trial");
       return;
     }
@@ -250,7 +256,7 @@ function CheckoutPage() {
 
     try {
       const response = await startTrialMutation.mutateAsync({
-        studentId: registrationData.studentId,
+        studentId: studentId!,
         subscriptionId: trialPlan.id,
       });
 
@@ -258,12 +264,14 @@ function CheckoutPage() {
       if (response && ((response as any).success || (response as any).trialEndDate || (response as any).id)) {
         setTrialStarted(true);
         toast.success("Free trial started!", {
-          description: "You can now sign in to access all features.",
+          description: isAuthenticated
+            ? "You now have access to all features."
+            : "You can now sign in to access all features.",
         });
         // Wait a moment then navigate
         navigationTimerRef.current = setTimeout(() => {
           resetRegistration();
-          navigate({ to: "/sign-in" });
+          navigate({ to: isAuthenticated ? "/" : "/sign-in" });
         }, 1500);
       }
     } catch (error) {
@@ -275,7 +283,7 @@ function CheckoutPage() {
     navigate({ to: "/" });
   };
 
-  if (!registrationData.studentId) {
+  if (!studentId) {
     return (
       <section className="space-y-6">
         <Logo />

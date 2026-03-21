@@ -7,12 +7,30 @@ import { Alert } from "@/components/ui/alert";
 import { useRegistrationStore } from "@/stores/registrationStore";
 import { useRegister } from "@/feature/auth/hooks";
 import { useExamSubjects } from "@/feature/exams/hooks";
+import { useAuthStore } from "@/stores/authStore";
+import { useMutation } from "@tanstack/react-query";
+import { apiClient } from "@/api/client";
+import { EXAM_SELECTION_ENDPOINTS } from "@/api/endpoints";
 import { toast } from "sonner";
 
 function SummaryPage() {
   const navigate = useNavigate();
   const { data, setStudentId } = useRegistrationStore();
   const registerMutation = useRegister();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const user = useAuthStore((s) => s.user);
+
+  // Save exam selection for already-authenticated users (Google OAuth)
+  const saveExamSelection = useMutation({
+    mutationFn: async () => {
+      await apiClient.post(EXAM_SELECTION_ENDPOINTS.SAVE, {
+        examCategory: data.category,
+        examSubtype: data.examType,
+        examTypeId: data.examTypeId,
+        selectedSubjects: data.subjects,
+      });
+    },
+  });
 
   // Fetch subjects to get names
   const { data: subjects } = useExamSubjects(data.examType);
@@ -24,34 +42,49 @@ function SummaryPage() {
 
   const handleSubmit = async () => {
     try {
-      const response = await registerMutation.mutateAsync({
-        fullName: data.fullName,
-        email: data.email,
-        phone: data.phone,
-        password: data.password,
-        examType: data.examType,
-        examTypeId: data.examTypeId,
-        examCategory: data.category,
-        selectedSubjects: data.subjects,
-        ...(data.isInstitutional && { numberOfStudents: data.students }),
-        ...(data.referralCode && { referralCode: data.referralCode }),
-      });
+      if (isAuthenticated) {
+        // Google OAuth user — already registered, just save exam selection
+        await saveExamSelection.mutateAsync();
 
-      // Save student ID from response
-      if (response.student?.id) {
-        setStudentId(response.student.id);
+        toast.success("Exam selection saved!", {
+          description: "Choose how you'd like to get started.",
+          duration: 4000,
+        });
+
+        setTimeout(() => {
+          navigate({ to: "/checkout" });
+        }, 500);
+      } else {
+        // Normal registration flow
+        const response = await registerMutation.mutateAsync({
+          fullName: data.fullName,
+          email: data.email,
+          phone: data.phone,
+          password: data.password,
+          examType: data.examType,
+          examTypeId: data.examTypeId,
+          examCategory: data.category,
+          selectedSubjects: data.subjects,
+          ...(data.isInstitutional && { numberOfStudents: data.students }),
+          ...(data.referralCode && { referralCode: data.referralCode }),
+        });
+
+        // Save student ID from response
+        if (response.student?.id) {
+          setStudentId(response.student.id);
+        }
+
+        // Show success toast and navigate
+        toast.success("Account created successfully!", {
+          description: "Choose how you'd like to get started.",
+          duration: 4000,
+        });
+
+        // Small delay to ensure toast is visible before navigation
+        setTimeout(() => {
+          navigate({ to: "/checkout" });
+        }, 500);
       }
-
-      // Show success toast and navigate
-      toast.success("Account created successfully!", {
-        description: "Choose how you'd like to get started.",
-        duration: 4000,
-      });
-
-      // Small delay to ensure toast is visible before navigation
-      setTimeout(() => {
-        navigate({ to: "/checkout" });
-      }, 500);
     } catch {
       // Error is handled by the mutation
     }
@@ -83,16 +116,18 @@ function SummaryPage() {
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Full Name</span>
-              <span className="font-medium">{data.fullName}</span>
+              <span className="font-medium">{isAuthenticated ? user?.fullName : data.fullName}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Email</span>
-              <span className="font-medium">{data.email}</span>
+              <span className="font-medium">{isAuthenticated ? user?.email : data.email}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Phone</span>
-              <span className="font-medium">{data.phone}</span>
-            </div>
+            {!isAuthenticated && (
+              <div className="flex justify-between">
+                <span className="text-gray-500">Phone</span>
+                <span className="font-medium">{data.phone}</span>
+              </div>
+            )}
           </div>
 
           <h3 className="font-semibold text-lg border-b pb-2 pt-4">Exam Details</h3>
@@ -133,17 +168,29 @@ function SummaryPage() {
           </Alert>
         )}
 
+        {saveExamSelection.isError && (
+          <Alert variant="destructive">
+            Failed to save exam selection. Please try again.
+          </Alert>
+        )}
+
         {/* Action Buttons */}
         <div className="w-full space-y-4">
           <PrimaryButton
             onClick={handleSubmit}
-            disabled={registerMutation.isPending}
+            disabled={registerMutation.isPending || saveExamSelection.isPending}
             className="w-full bg-accent hover:bg-accent/80 text-white text-lg disabled:opacity-50"
-            title={registerMutation.isPending ? "Creating Account..." : "Create Account"}
+            title={
+              registerMutation.isPending || saveExamSelection.isPending
+                ? "Processing..."
+                : isAuthenticated
+                  ? "Continue"
+                  : "Create Account"
+            }
           />
           <button
             type="button"
-            onClick={() => navigate({ to: "/welcome" })}
+            onClick={() => navigate({ to: isAuthenticated ? "/select-exam" : "/welcome" })}
             className="w-full text-sm text-gray-500 hover:text-gray-700"
           >
             Edit Information

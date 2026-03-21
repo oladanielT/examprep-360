@@ -189,8 +189,27 @@ function MarkdownBlockRenderer({ block }: { block: MarkdownBlock }) {
       let brKey = 2000;
       for (const node of nodes) {
         if (typeof node === "object" && node !== null && "props" in node) {
-          // It's a React element (LaTeX span) - check if its children have newlines
-          result.push(node);
+          const el = node as React.ReactElement<{ dangerouslySetInnerHTML?: unknown; children?: React.ReactNode }>;
+          if (el.props.dangerouslySetInnerHTML) {
+            // LaTeX node — keep as-is
+            result.push(node);
+          } else {
+            // Plain text span — extract text and parse markdown + newlines
+            const text = String(el.props.children ?? "");
+            const parts = text.split("\n");
+            parts.forEach((part, i) => {
+              if (i > 0) result.push(<br key={brKey++} />);
+              if (part) {
+                if (hasMarkdown) {
+                  result.push(...parseInlineMarkdown(part).map((n, j) =>
+                    typeof n === "object" && n !== null ? { ...n, key: `md-${brKey++}-${j}` } : n
+                  ));
+                } else {
+                  result.push(part);
+                }
+              }
+            });
+          }
         } else if (typeof node === "string") {
           const parts = node.split("\n");
           parts.forEach((part, i) => {
