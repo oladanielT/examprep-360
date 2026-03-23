@@ -37,6 +37,7 @@ import { Route as UserTutorialsTutorialIdRouteImport } from './routes/_user/tuto
 import { Route as UserTextbooksTextbookIdRouteImport } from './routes/_user/textbooks/$textbookId'
 import { Route as UserTestsExamsRouteImport } from './routes/_user/tests/exams'
 import { Route as UserTestsExamRouteImport } from './routes/_user/tests/exam'
+import { Route as UserSubscriptionUpgradeRouteImport } from './routes/_user/subscription.upgrade'
 import { Route as UserSubscriptionAddRouteImport } from './routes/_user/subscription.add'
 import { Route as UserExamAttemptIdRouteImport } from './routes/_user/exam.$attemptId'
 import { Route as AuthAuthCallbackRouteImport } from './routes/_auth/auth/callback'
@@ -180,6 +181,11 @@ const UserTestsExamRoute = UserTestsExamRouteImport.update({
   path: '/tests/exam',
   getParentRoute: () => UserRoute,
 } as any)
+const UserSubscriptionUpgradeRoute = UserSubscriptionUpgradeRouteImport.update({
+  id: '/upgrade',
+  path: '/upgrade',
+  getParentRoute: () => UserSubscriptionRoute,
+} as any)
 const UserSubscriptionAddRoute = UserSubscriptionAddRouteImport.update({
   id: '/add',
   path: '/add',
@@ -223,6 +229,7 @@ export interface FileRoutesByFullPath {
   '/auth/callback': typeof AuthAuthCallbackRoute
   '/exam/$attemptId': typeof UserExamAttemptIdRoute
   '/subscription/add': typeof UserSubscriptionAddRoute
+  '/subscription/upgrade': typeof UserSubscriptionUpgradeRoute
   '/tests/exam': typeof UserTestsExamRoute
   '/tests/exams': typeof UserTestsExamsRoute
   '/textbooks/$textbookId': typeof UserTextbooksTextbookIdRoute
@@ -254,6 +261,7 @@ export interface FileRoutesByTo {
   '/auth/callback': typeof AuthAuthCallbackRoute
   '/exam/$attemptId': typeof UserExamAttemptIdRoute
   '/subscription/add': typeof UserSubscriptionAddRoute
+  '/subscription/upgrade': typeof UserSubscriptionUpgradeRoute
   '/tests/exam': typeof UserTestsExamRoute
   '/tests/exams': typeof UserTestsExamsRoute
   '/textbooks/$textbookId': typeof UserTextbooksTextbookIdRoute
@@ -289,6 +297,7 @@ export interface FileRoutesById {
   '/_auth/auth/callback': typeof AuthAuthCallbackRoute
   '/_user/exam/$attemptId': typeof UserExamAttemptIdRoute
   '/_user/subscription/add': typeof UserSubscriptionAddRoute
+  '/_user/subscription/upgrade': typeof UserSubscriptionUpgradeRoute
   '/_user/tests/exam': typeof UserTestsExamRoute
   '/_user/tests/exams': typeof UserTestsExamsRoute
   '/_user/textbooks/$textbookId': typeof UserTextbooksTextbookIdRoute
@@ -323,6 +332,7 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/exam/$attemptId'
     | '/subscription/add'
+    | '/subscription/upgrade'
     | '/tests/exam'
     | '/tests/exams'
     | '/textbooks/$textbookId'
@@ -354,6 +364,7 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/exam/$attemptId'
     | '/subscription/add'
+    | '/subscription/upgrade'
     | '/tests/exam'
     | '/tests/exams'
     | '/textbooks/$textbookId'
@@ -388,6 +399,7 @@ export interface FileRouteTypes {
     | '/_auth/auth/callback'
     | '/_user/exam/$attemptId'
     | '/_user/subscription/add'
+    | '/_user/subscription/upgrade'
     | '/_user/tests/exam'
     | '/_user/tests/exams'
     | '/_user/textbooks/$textbookId'
@@ -602,6 +614,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserTestsExamRouteImport
       parentRoute: typeof UserRoute
     }
+    '/_user/subscription/upgrade': {
+      id: '/_user/subscription/upgrade'
+      path: '/upgrade'
+      fullPath: '/subscription/upgrade'
+      preLoaderRoute: typeof UserSubscriptionUpgradeRouteImport
+      parentRoute: typeof UserSubscriptionRoute
+    }
     '/_user/subscription/add': {
       id: '/_user/subscription/add'
       path: '/add'
@@ -665,11 +684,13 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface UserSubscriptionRouteChildren {
   UserSubscriptionAddRoute: typeof UserSubscriptionAddRoute
+  UserSubscriptionUpgradeRoute: typeof UserSubscriptionUpgradeRoute
   UserSubscriptionIndexRoute: typeof UserSubscriptionIndexRoute
 }
 
 const UserSubscriptionRouteChildren: UserSubscriptionRouteChildren = {
   UserSubscriptionAddRoute: UserSubscriptionAddRoute,
+  UserSubscriptionUpgradeRoute: UserSubscriptionUpgradeRoute,
   UserSubscriptionIndexRoute: UserSubscriptionIndexRoute,
 }
 

@@ -1,10 +1,20 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Logo } from "@/components/global/logo";
 import { Progress } from "@/components/ui/progress";
 import { useRegistrationStore } from "@/stores/registrationStore";
 import { useExamCategories } from "@/feature/exams/hooks";
-import { Loader2, ChevronRight } from "lucide-react";
+import { Loader2, ChevronRight, Lock } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 const CATEGORY_EXAMPLES: Record<string, string> = {
   "primary": "e.g. Common Entrance",
@@ -23,10 +33,18 @@ function getCategoryExample(label: string): string | undefined {
   return undefined;
 }
 
+// Only O'Level / Secondary School is available for now
+function isCategoryUnlocked(label: string): boolean {
+  const lower = label.toLowerCase();
+  return lower.includes("o'level") || lower.includes("o' level") || lower.includes("secondary");
+}
+
 function Welcome() {
   const navigate = useNavigate();
   const { setUserType, setReferralCode } = useRegistrationStore();
   const { data: categories, isLoading, error } = useExamCategories();
+  const [showComingSoon, setShowComingSoon] = useState(false);
+  const [lockedCategory, setLockedCategory] = useState("");
 
   // Capture referral code from URL query param
   useEffect(() => {
@@ -38,6 +56,12 @@ function Welcome() {
   }, [setReferralCode]);
 
   const handleSelect = (category: { value: string; label: string }) => {
+    if (!isCategoryUnlocked(category.label)) {
+      setLockedCategory(category.label);
+      setShowComingSoon(true);
+      return;
+    }
+
     const isUndergraduate =
       category.value === "UNIVERSITY_COURSE" ||
       category.label.toLowerCase().includes("university");
@@ -78,28 +102,61 @@ function Welcome() {
           <div className="grid md:grid-cols-2 gap-3">
             {categories
               .filter((category) => category.value !== "TUTORIAL")
-              .map((category) => (
-              <button
-                key={category.value}
-                type="button"
-                onClick={() => handleSelect(category)}
-                className="group relative flex items-center justify-between p-4 rounded-xl border border-gray-200 bg-white hover:border-warning hover:bg-warning/5 transition-all duration-200 text-left"
-              >
-                <div className="pr-2">
-                  <span className="text-sm font-medium text-[#101828] group-hover:text-[#101828]">
-                    {category.label}
-                  </span>
-                  {getCategoryExample(category.label) && (
-                    <span className="block text-xs text-gray-400 mt-0.5">
-                      {getCategoryExample(category.label)}
-                    </span>
-                  )}
-                </div>
-                <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-warning shrink-0" />
-              </button>
-            ))}
+              .map((category) => {
+                const unlocked = isCategoryUnlocked(category.label);
+                return (
+                  <button
+                    key={category.value}
+                    type="button"
+                    onClick={() => handleSelect(category)}
+                    className={`group relative flex items-center justify-between p-4 rounded-xl border transition-all duration-200 text-left ${
+                      unlocked
+                        ? "border-gray-200 bg-white hover:border-warning hover:bg-warning/5"
+                        : "border-gray-200 bg-gray-50 cursor-pointer"
+                    }`}
+                  >
+                    <div className="pr-2">
+                      <span className={`text-sm font-medium ${unlocked ? "text-[#101828]" : "text-gray-400"}`}>
+                        {category.label}
+                      </span>
+                      {getCategoryExample(category.label) && (
+                        <span className="block text-xs text-gray-400 mt-0.5">
+                          {getCategoryExample(category.label)}
+                        </span>
+                      )}
+                    </div>
+                    {unlocked ? (
+                      <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-warning shrink-0" />
+                    ) : (
+                      <Lock className="h-4 w-4 text-gray-400 shrink-0" />
+                    )}
+                  </button>
+                );
+              })}
           </div>
         )}
+
+        {/* Coming Soon Modal */}
+        <Dialog open={showComingSoon} onOpenChange={setShowComingSoon}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="text-lg">Coming Soon!</DialogTitle>
+              <DialogDescription className="text-gray-600 mt-2">
+                <strong>{lockedCategory}</strong> exams are not yet available on Exampreps-360.
+                We're working hard to bring them to you soon. Stay tuned for updates!
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <DialogClose
+                render={
+                  <Button className="w-full bg-accent hover:bg-accent/80 text-white" />
+                }
+              >
+                Got it
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </section>
   );

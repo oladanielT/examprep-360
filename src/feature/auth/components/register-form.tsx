@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
-import { Eye, EyeClosed } from "lucide-react";
+import { Eye, EyeClosed, Check, X } from "lucide-react";
 import {
   Field,
   FieldError,
@@ -41,7 +41,8 @@ const registerSchema = z
       .max(50, "Password must be at most 50 characters.")
       .regex(/[A-Z]/, "Password must contain at least one uppercase letter.")
       .regex(/[a-z]/, "Password must contain at least one lowercase letter.")
-      .regex(/[0-9]/, "Password must contain at least one number."),
+      .regex(/[0-9]/, "Password must contain at least one number.")
+      .regex(/[^A-Za-z0-9]/, "Password must contain at least one symbol."),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -258,6 +259,32 @@ export const RegisterForm = () => {
             children={(field) => {
               const isInvalid =
                 field.state.meta.isTouched && !field.state.meta.isValid;
+              const pwd = field.state.value;
+              const rules = [
+                { label: "At least 8 characters", met: pwd.length >= 8 },
+                { label: "Uppercase letter (A-Z)", met: /[A-Z]/.test(pwd) },
+                { label: "Lowercase letter (a-z)", met: /[a-z]/.test(pwd) },
+                { label: "Number (0-9)", met: /[0-9]/.test(pwd) },
+                { label: "Symbol (!@#$...)", met: /[^A-Za-z0-9]/.test(pwd) },
+              ];
+              const metCount = rules.filter((r) => r.met).length;
+              const strengthPercent = (metCount / rules.length) * 100;
+              const strengthColor =
+                metCount <= 1
+                  ? "bg-red-500"
+                  : metCount <= 3
+                    ? "bg-yellow-500"
+                    : metCount <= 4
+                      ? "bg-blue-500"
+                      : "bg-green-500";
+              const strengthLabel =
+                metCount <= 1
+                  ? "Weak"
+                  : metCount <= 3
+                    ? "Fair"
+                    : metCount <= 4
+                      ? "Good"
+                      : "Strong";
               return (
                 <Field data-invalid={isInvalid}>
                   <FieldLabel htmlFor="form-password">Password</FieldLabel>
@@ -287,7 +314,37 @@ export const RegisterForm = () => {
                       </InputGroupButton>
                     </InputGroupAddon>
                   </InputGroup>
-                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+
+                  {/* Password Strength Indicator */}
+                  {pwd.length > 0 && (
+                    <div className="mt-2 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full rounded-full transition-all duration-300 ${strengthColor}`}
+                            style={{ width: `${strengthPercent}%` }}
+                          />
+                        </div>
+                        <span className={`text-xs font-medium ${strengthColor.replace("bg-", "text-")}`}>
+                          {strengthLabel}
+                        </span>
+                      </div>
+                      <ul className="grid grid-cols-2 gap-x-4 gap-y-1">
+                        {rules.map((rule) => (
+                          <li key={rule.label} className="flex items-center gap-1.5 text-xs">
+                            {rule.met ? (
+                              <Check className="h-3 w-3 text-green-500 shrink-0" />
+                            ) : (
+                              <X className="h-3 w-3 text-gray-300 shrink-0" />
+                            )}
+                            <span className={rule.met ? "text-green-600" : "text-gray-400"}>
+                              {rule.label}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </Field>
               );
             }}

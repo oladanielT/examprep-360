@@ -21,7 +21,7 @@ import {
 } from "@/components/kibo-ui/dialog-stack";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import ConfigurePracticeForm from "./step-two";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, X } from "lucide-react";
 import {
   useExamPreferences,
   useAvailableExams,
@@ -215,7 +215,14 @@ function SubjectCard({ subject }: { subject: SubjectType }) {
       <DialogStackOverlay />
       <DialogStackBody>
         {/* Step 1: Select Practice or Mock */}
-        <DialogStackContent>
+        <DialogStackContent className="relative">
+          <button
+            onClick={() => setIsOpen(false)}
+            className="absolute top-4 right-4 p-1 rounded-full hover:bg-gray-100 transition-colors"
+            aria-label="Close"
+          >
+            <X className="h-4 w-4 text-gray-500" />
+          </button>
           <DialogStackHeader className="font-semibold text-lg text-center!">
             Select Test Type
           </DialogStackHeader>

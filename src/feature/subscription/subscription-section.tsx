@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link } from "@tanstack/react-router";
-import { Loader2, Trash2, ArrowRightLeft, Plus, Pencil, Copy, Check, KeyRound, Mail } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { Loader2, Trash2, ArrowRightLeft, Plus, Pencil, Copy, Check, KeyRound, Mail, Crown } from "lucide-react";
 import { toast } from "sonner";
 import {
   useSubscriptions,
@@ -36,6 +36,7 @@ import { cn } from "@/lib/utils";
 import type { UserSubscription } from "@/api/types";
 
 export const SubscriptionSection = () => {
+  const navigate = useNavigate();
   const { data: subscriptions, isLoading } = useSubscriptions();
   const { data: preferences } = useExamPreferences();
   const deleteMutation = useDeleteSubscription();
@@ -152,6 +153,37 @@ export const SubscriptionSection = () => {
     setSelectedSubjects(sub.subjects);
   };
 
+  const handleUpgrade = (sub: UserSubscription) => {
+    const navigateToUpgrade = () => {
+      navigate({
+        to: "/subscription/upgrade",
+        search: {
+          examType: sub.examType,
+          examTypeId: sub.examTypeId,
+          subjects: sub.subjects.join(","),
+          subscriptionId: sub.id,
+        },
+      });
+    };
+
+    // If already focused, go straight to upgrade
+    if (isFocused(sub)) {
+      navigateToUpgrade();
+      return;
+    }
+
+    // Switch focus first, then navigate
+    switchMutation.mutate(sub.id, {
+      onSuccess: () => {
+        navigateToUpgrade();
+      },
+      onError: (error) =>
+        toast.error(
+          error.response?.data?.message || "Failed to switch subscription"
+        ),
+    });
+  };
+
   const handleSaveSubjects = () => {
     if (!editingSubscription) return;
     changeSubjects.mutate(
@@ -253,6 +285,17 @@ export const SubscriptionSection = () => {
                     Switch
                   </button>
                 ) : null}
+                {sub.status === "ACTIVE" &&
+                  sub.paymentMethod === "TRIAL" && (
+                    <button
+                      onClick={() => handleUpgrade(sub)}
+                      disabled={switchMutation.isPending}
+                      className="inline-flex items-center gap-1 h-8 px-3 text-xs font-medium rounded-4xl bg-accent text-white hover:bg-accent/80 transition-colors disabled:opacity-50"
+                    >
+                      <Crown className="h-3 w-3" />
+                      {switchMutation.isPending ? "Switching..." : "Upgrade"}
+                    </button>
+                  )}
                 {sub.status === "ACTIVE" && (
                   <button
                     onClick={() => handleEditSubjects(sub)}

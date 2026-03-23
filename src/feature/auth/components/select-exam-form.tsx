@@ -17,12 +17,20 @@ import { useRegistrationStore } from "@/stores/registrationStore";
 import { useExamTypes, useExamSubjects } from "@/feature/exams/hooks";
 import { Loader2 } from "lucide-react";
 
+// Max subjects allowed per exam type
+function getMaxSubjects(examType: string): number {
+  const normalized = examType.toLowerCase();
+  if (normalized.includes("jamb") || normalized.includes("utme") || normalized.includes("post")) {
+    return 4;
+  }
+  return 9; // WAEC, NECO, etc.
+}
+
 const selectExamSchema = z.object({
   examType: z.string().min(1, "Please select an exam type"),
   subjects: z
     .array(z.string())
-    .min(1, "Please select at least one subject")
-    .max(9, "You can select maximum 9 subjects"),
+    .min(1, "Please select at least one subject"),
   students: z.array(z.number()).optional(),
 });
 
@@ -57,7 +65,12 @@ export const SelectExamForm = () => {
     },
     onSubmit: async ({ value }) => {
       // Validate
-      const result = selectExamSchema.safeParse(value);
+      const max = getMaxSubjects(value.examType);
+      const schema = selectExamSchema.refine(
+        (data) => data.subjects.length <= max,
+        { message: `You can select maximum ${max} subjects`, path: ["subjects"] }
+      );
+      const result = schema.safeParse(value);
       if (!result.success) {
         return;
       }
@@ -73,6 +86,8 @@ export const SelectExamForm = () => {
       navigate({ to: "/summary" });
     },
   });
+
+  const maxSubjects = getMaxSubjects(selectedExamType);
 
   // Transform exam types for select (use name as both label and value)
   const examTypeOptions = examTypes?.map((type) => ({
@@ -162,41 +177,50 @@ export const SelectExamForm = () => {
                   ) : subjects && subjects.length > 0 ? (
                     <>
                       <p className="text-sm text-gray-600 mb-3">
-                        Please select your subjects (up to 9)
+                        Please select your subjects (up to {maxSubjects})
                       </p>
                       <ToggleGroup
                         multiple={true}
                         value={field.state.value}
-                        onValueChange={field.handleChange}
-                        className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4"
+                        onValueChange={(newValue) => {
+                          // Enforce max subject limit
+                          if (newValue.length <= maxSubjects) {
+                            field.handleChange(newValue);
+                          }
+                        }}
+                        className="flex flex-wrap gap-3"
                       >
-                        {subjects.map((subject) => (
-                          <ToggleGroupItem
-                            key={subject.id}
-                            value={subject.id}
-                            className={cn(
-                              "h-auto min-h-[56px] py-3 px-2 !rounded-sm border-2",
-                              "flex items-center justify-center",
-                              "text-xs font-medium text-center",
-                              "transition-all duration-200",
-                              "hover:border-accent hover:bg-accent/5",
-                              "data-[state=on]:border-accent/70 data-[state=on]:bg-transparent data-[state=on]:text-black",
-                              field.state.value.includes(subject.id)
-                                ? "border-accent"
-                                : "border-[#E5E5E5] text-black"
-                            )}
-                            aria-label={subject.name}
-                          >
-                            <span className="break-words text-center leading-tight">
+                        {subjects.map((subject) => {
+                          const isSelected = field.state.value.includes(subject.id);
+                          const isDisabled = !isSelected && field.state.value.length >= maxSubjects;
+                          return (
+                            <ToggleGroupItem
+                              key={subject.id}
+                              value={subject.id}
+                              disabled={isDisabled}
+                              className={cn(
+                                "h-auto min-h-[56px] py-3 px-4 !rounded-sm border-2",
+                                "flex items-center justify-center",
+                                "text-xs font-medium text-center whitespace-nowrap",
+                                "transition-all duration-200",
+                                "hover:border-accent hover:bg-accent/5",
+                                "data-[state=on]:border-accent/70 data-[state=on]:bg-transparent data-[state=on]:text-black",
+                                isSelected
+                                  ? "border-accent"
+                                  : "border-[#E5E5E5] text-black",
+                                isDisabled && "opacity-50 cursor-not-allowed"
+                              )}
+                              aria-label={subject.name}
+                            >
                               {subject.name}
-                            </span>
-                          </ToggleGroupItem>
-                        ))}
+                            </ToggleGroupItem>
+                          );
+                        })}
                       </ToggleGroup>
 
                       {field.state.value.length > 0 && (
                         <div className="mt-3 text-xs text-[#6B7280]">
-                          Selected: {field.state.value.length}/ {subjects.length}
+                          Selected: {field.state.value.length} / {maxSubjects}
                         </div>
                       )}
                     </>
