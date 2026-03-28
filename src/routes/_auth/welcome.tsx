@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Logo } from "@/components/global/logo";
 import { Progress } from "@/components/ui/progress";
 import { useRegistrationStore } from "@/stores/registrationStore";
+import { useAuthStore } from "@/stores/authStore";
 import { useExamCategories } from "@/feature/exams/hooks";
 import { Loader2, ChevronRight, Lock } from "lucide-react";
 import {
@@ -55,6 +56,8 @@ function Welcome() {
     }
   }, [setReferralCode]);
 
+  const { isAuthenticated } = useAuthStore();
+
   const handleSelect = (category: { value: string; label: string }) => {
     if (!isCategoryUnlocked(category.label)) {
       setLockedCategory(category.label);
@@ -68,7 +71,13 @@ function Welcome() {
 
     // Save both userType and the actual category value for API calls
     setUserType(isUndergraduate ? "undergraduate" : "secondary", category.value);
-    navigate({ to: "/register" });
+
+    // If user is already authenticated (e.g. Google OAuth), skip registration form
+    if (isAuthenticated) {
+      navigate({ to: "/select-exam" });
+    } else {
+      navigate({ to: "/register" });
+    }
   };
 
   return (

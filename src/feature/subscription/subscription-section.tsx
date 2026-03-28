@@ -35,6 +35,15 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { cn } from "@/lib/utils";
 import type { UserSubscription } from "@/api/types";
 
+// Max subjects allowed per exam type (matches registration flow)
+function getMaxSubjects(examType: string): number {
+  const normalized = examType.toLowerCase();
+  if (normalized.includes("jamb") || normalized.includes("utme") || normalized.includes("post")) {
+    return 4;
+  }
+  return 9; // WAEC, NECO, etc.
+}
+
 export const SubscriptionSection = () => {
   const navigate = useNavigate();
   const { data: subscriptions, isLoading } = useSubscriptions();
@@ -485,45 +494,55 @@ export const SubscriptionSection = () => {
               </div>
             ) : availableSubjects && availableSubjects.length > 0 ? (
               <>
-                <ToggleGroup
-                  multiple
-                  value={selectedSubjects}
-                  onValueChange={(value) => {
-                    if (value.length <= 9) setSelectedSubjects(value);
-                  }}
-                  className="flex flex-wrap gap-2 sm:gap-3"
-                >
-                  {availableSubjects.map((subject) => {
-                    const isSelected = selectedSubjects.includes(subject.id);
-                    const atLimit =
-                      selectedSubjects.length >= 9 && !isSelected;
-                    return (
-                      <ToggleGroupItem
-                        key={subject.id}
-                        value={subject.id}
-                        disabled={atLimit}
-                        className={cn(
-                          "h-auto py-3 sm:py-4 px-3 sm:px-4 rounded-sm! border-2",
-                          "inline-flex items-center justify-center shrink-0",
-                          "text-[11px] sm:text-xs font-medium text-center whitespace-nowrap",
-                          "transition-all duration-200",
-                          "hover:border-accent hover:bg-accent/5",
-                          "data-[state=on]:border-accent/70 data-[state=on]:bg-transparent data-[state=on]:text-black",
-                          isSelected
-                            ? "border-accent"
-                            : "border-[#E5E5E5] text-black",
-                          atLimit && "opacity-50 cursor-not-allowed"
-                        )}
-                        aria-label={subject.name}
+                {(() => {
+                  const maxSubjects = getMaxSubjects(editingSubscription?.examType ?? "");
+                  return (
+                    <>
+                      <p className="text-xs sm:text-sm text-gray-600 mb-3">
+                        Please select your subjects (up to {maxSubjects})
+                      </p>
+                      <ToggleGroup
+                        multiple
+                        value={selectedSubjects}
+                        onValueChange={(value) => {
+                          if (value.length <= maxSubjects) setSelectedSubjects(value);
+                        }}
+                        className="flex flex-wrap gap-2 sm:gap-3"
                       >
-                        {subject.name}
-                      </ToggleGroupItem>
-                    );
-                  })}
-                </ToggleGroup>
-                <div className="mt-3 text-xs text-[#6B7280]">
-                  Selected: {selectedSubjects.length}/9
-                </div>
+                        {availableSubjects.map((subject) => {
+                          const isSelected = selectedSubjects.includes(subject.id);
+                          const atLimit =
+                            selectedSubjects.length >= maxSubjects && !isSelected;
+                          return (
+                            <ToggleGroupItem
+                              key={subject.id}
+                              value={subject.id}
+                              disabled={atLimit}
+                              className={cn(
+                                "h-auto py-3 sm:py-4 px-3 sm:px-4 rounded-sm! border-2",
+                                "inline-flex items-center justify-center shrink-0",
+                                "text-[11px] sm:text-xs font-medium text-center whitespace-nowrap",
+                                "transition-all duration-200",
+                                "hover:border-accent hover:bg-accent/5",
+                                "data-[state=on]:border-accent/70 data-[state=on]:bg-transparent data-[state=on]:text-black",
+                                isSelected
+                                  ? "border-accent"
+                                  : "border-[#E5E5E5] text-black",
+                                atLimit && "opacity-50 cursor-not-allowed"
+                              )}
+                              aria-label={subject.name}
+                            >
+                              {subject.name}
+                            </ToggleGroupItem>
+                          );
+                        })}
+                      </ToggleGroup>
+                      <div className="mt-3 text-xs text-[#6B7280]">
+                        Selected: {selectedSubjects.length}/{maxSubjects}
+                      </div>
+                    </>
+                  );
+                })()}
               </>
             ) : (
               <p className="text-sm text-gray-500 py-4">

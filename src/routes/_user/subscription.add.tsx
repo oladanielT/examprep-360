@@ -23,19 +23,43 @@ import {
 import { useProfile } from "@/feature/profile/hooks/useProfile";
 import { apiClient } from "@/api/client";
 import { EXAM_SELECTION_ENDPOINTS } from "@/api/endpoints";
-import { Loader2, ChevronRight, Check, ArrowLeft } from "lucide-react";
+import { Loader2, ChevronRight, Check, ArrowLeft, Lock } from "lucide-react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import * as z from "zod";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 type Step = "category" | "exam-selection" | "checkout";
+
+// Max subjects allowed per exam type (matches registration flow)
+function getMaxSubjects(examType: string): number {
+  const normalized = examType.toLowerCase();
+  if (normalized.includes("jamb") || normalized.includes("utme") || normalized.includes("post")) {
+    return 4;
+  }
+  return 9; // WAEC, NECO, etc.
+}
+
+// Only O'Level / Secondary School is available for now (matches registration flow)
+function isCategoryUnlocked(label: string): boolean {
+  const lower = label.toLowerCase();
+  return lower.includes("o'level") || lower.includes("o' level") || lower.includes("secondary");
+}
 
 const examSelectionSchema = z.object({
   examType: z.string().min(1, "Please select an exam type"),
   subjects: z
     .array(z.string())
-    .min(1, "Please select at least one subject")
-    .max(9, "You can select maximum 9 subjects"),
+    .min(1, "Please select at least one subject"),
   planId: z.string().min(1, "Please select a subscription plan"),
   numberOfStudents: z.array(z.number()),
 });
@@ -69,6 +93,8 @@ function AddSubscriptionPage() {
   const [isInstitutional, setIsInstitutional] = useState(false);
   const [showLicenseInput, setShowLicenseInput] = useState(false);
   const [licenseCode, setLicenseCode] = useState("");
+  const [showComingSoon, setShowComingSoon] = useState(false);
+  const [lockedCategory, setLockedCategory] = useState("");
 
   // Track examType separately for hooks
   const [selectedExamType, setSelectedExamType] = useState("");
@@ -145,7 +171,12 @@ function AddSubscriptionPage() {
       value: type.name,
     })) || [];
 
-  const handleCategorySelect = (cat: { value: string }) => {
+  const handleCategorySelect = (cat: { value: string; label: string }) => {
+    if (!isCategoryUnlocked(cat.label)) {
+      setLockedCategory(cat.label);
+      setShowComingSoon(true);
+      return;
+    }
     setCategory(cat.value);
     setSelectedExamType("");
     setExamTypeId("");
@@ -277,28 +308,61 @@ function AddSubscriptionPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {categories
                   .filter((c) => c.value !== "TUTORIAL")
-                  .map((cat) => (
-                    <button
-                      key={cat.value}
-                      type="button"
-                      onClick={() => handleCategorySelect(cat)}
-                      className="group relative flex items-center justify-between p-4 rounded-xl border border-gray-200 bg-white hover:border-warning hover:bg-warning/5 transition-all duration-200 text-left"
-                    >
-                      <div className="pr-2">
-                        <span className="text-sm font-medium text-[#101828]">
-                          {cat.label}
-                        </span>
-                        {getCategoryExample(cat.label) && (
-                          <span className="block text-xs text-gray-400 mt-0.5">
-                            {getCategoryExample(cat.label)}
+                  .map((cat) => {
+                    const unlocked = isCategoryUnlocked(cat.label);
+                    return (
+                      <button
+                        key={cat.value}
+                        type="button"
+                        onClick={() => handleCategorySelect(cat)}
+                        className={`group relative flex items-center justify-between p-4 rounded-xl border transition-all duration-200 text-left ${
+                          unlocked
+                            ? "border-gray-200 bg-white hover:border-warning hover:bg-warning/5"
+                            : "border-gray-200 bg-gray-50 cursor-pointer"
+                        }`}
+                      >
+                        <div className="pr-2">
+                          <span className={`text-sm font-medium ${unlocked ? "text-[#101828]" : "text-gray-400"}`}>
+                            {cat.label}
                           </span>
+                          {getCategoryExample(cat.label) && (
+                            <span className="block text-xs text-gray-400 mt-0.5">
+                              {getCategoryExample(cat.label)}
+                            </span>
+                          )}
+                        </div>
+                        {unlocked ? (
+                          <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-warning shrink-0" />
+                        ) : (
+                          <Lock className="h-4 w-4 text-gray-400 shrink-0" />
                         )}
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-warning shrink-0" />
-                    </button>
-                  ))}
+                      </button>
+                    );
+                  })}
               </div>
             )}
+
+            {/* Coming Soon Modal */}
+            <Dialog open={showComingSoon} onOpenChange={setShowComingSoon}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle className="text-lg">Coming Soon!</DialogTitle>
+                  <DialogDescription className="text-gray-600 mt-2">
+                    <strong>{lockedCategory}</strong> exams are not yet available on Exampreps-360.
+                    We're working hard to bring them to you soon. Stay tuned for updates!
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <DialogClose
+                    render={
+                      <Button className="w-full bg-accent hover:bg-accent/80 text-white" />
+                    }
+                  >
+                    Got it
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         )}
 
@@ -382,6 +446,7 @@ function AddSubscriptionPage() {
               children={(field) => {
                 const isInvalid =
                   field.state.meta.isTouched && !field.state.meta.isValid;
+                const maxSubjects = getMaxSubjects(selectedExamType);
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel className="text-[#6D6D6D] uppercase text-[11px] sm:text-[12px] font-medium">
@@ -401,41 +466,50 @@ function AddSubscriptionPage() {
                     ) : availableSubjects && availableSubjects.length > 0 ? (
                       <>
                         <p className="text-xs sm:text-sm text-gray-600 mb-3">
-                          Please select your subjects (up to 9)
+                          Please select your subjects (up to {maxSubjects})
                         </p>
                         <ToggleGroup
                           multiple
                           value={field.state.value}
-                          onValueChange={field.handleChange}
+                          onValueChange={(newValue) => {
+                            if (newValue.length <= maxSubjects) {
+                              field.handleChange(newValue);
+                            }
+                          }}
                           className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3"
                         >
-                          {availableSubjects.map((subject) => (
-                            <ToggleGroupItem
-                              key={subject.id}
-                              value={subject.id}
-                              className={cn(
-                                "h-auto py-3 sm:py-4 px-2 sm:px-3 rounded-sm! border-2",
-                                "flex items-center justify-center",
-                                "text-[11px] sm:text-xs font-medium text-center",
-                                "transition-all duration-200",
-                                "hover:border-accent hover:bg-accent/5",
-                                "data-[state=on]:border-accent/70 data-[state=on]:bg-transparent data-[state=on]:text-black",
-                                field.state.value.includes(subject.id)
-                                  ? "border-accent"
-                                  : "border-[#E5E5E5] text-black",
-                              )}
-                              aria-label={subject.name}
-                            >
-                              <span className="wrap-break-words text-center leading-tight">
-                                {subject.name}
-                              </span>
-                            </ToggleGroupItem>
-                          ))}
+                          {availableSubjects.map((subject) => {
+                            const isSelected = field.state.value.includes(subject.id);
+                            const isDisabled = !isSelected && field.state.value.length >= maxSubjects;
+                            return (
+                              <ToggleGroupItem
+                                key={subject.id}
+                                value={subject.id}
+                                disabled={isDisabled}
+                                className={cn(
+                                  "h-auto py-3 sm:py-4 px-2 sm:px-3 rounded-sm! border-2",
+                                  "flex items-center justify-center",
+                                  "text-[11px] sm:text-xs font-medium text-center",
+                                  "transition-all duration-200",
+                                  "hover:border-accent hover:bg-accent/5",
+                                  "data-[state=on]:border-accent/70 data-[state=on]:bg-transparent data-[state=on]:text-black",
+                                  isSelected
+                                    ? "border-accent"
+                                    : "border-[#E5E5E5] text-black",
+                                  isDisabled && "opacity-50 cursor-not-allowed",
+                                )}
+                                aria-label={subject.name}
+                              >
+                                <span className="wrap-break-words text-center leading-tight">
+                                  {subject.name}
+                                </span>
+                              </ToggleGroupItem>
+                            );
+                          })}
                         </ToggleGroup>
                         {field.state.value.length > 0 && (
                           <div className="mt-3 text-xs text-[#6B7280]">
-                            Selected: {field.state.value.length}/
-                            {availableSubjects.length}
+                            Selected: {field.state.value.length}/{maxSubjects}
                           </div>
                         )}
                       </>

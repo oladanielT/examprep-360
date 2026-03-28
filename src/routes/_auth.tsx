@@ -29,7 +29,7 @@ export const Route = createFileRoute("/_auth")({
     const { isAuthenticated } = useAuthStore.getState();
     // Allow access to these paths even when authenticated
     // (user might need to complete registration or payment)
-    const allowedPaths = ["/verify-email", "/select-exam", "/summary", "/checkout", "/payment-verify", "/auth/callback"];
+    const allowedPaths = ["/verify-email", "/select-exam", "/summary", "/checkout", "/payment-verify", "/auth/callback", "/welcome"];
     if (isAuthenticated && !allowedPaths.includes(location.pathname)) {
       throw redirect({ to: "/" });
     }

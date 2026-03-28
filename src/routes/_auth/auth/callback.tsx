@@ -79,11 +79,15 @@ function OAuthCallbackPage() {
   useEffect(() => {
     if (status === "success") {
       const timer = setTimeout(() => {
-        // Check if user needs to complete onboarding (exam selection + payment)
+        // Check if user needs to complete onboarding
         const user = useAuthStore.getState().user;
+        const needsCategory = !user?.examCategory;
         const needsExamSelection = !user?.examType || !user?.selectedSubjects?.length;
 
-        if (needsExamSelection) {
+        if (needsCategory) {
+          // New Google user: needs to pick exam category first
+          navigate({ to: "/welcome" });
+        } else if (needsExamSelection) {
           navigate({ to: "/select-exam" });
         } else {
           navigate({ to: "/" });
