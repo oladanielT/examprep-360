@@ -53,13 +53,21 @@ function CheckoutPage() {
 
   // Find the selected plan
   const selectedPlan = plans?.find((p) => p.id === selectedPlanId);
+  const numberOfSubjects = registrationData.subjects?.length || 1;
 
-  // Calculate total price for institutional
-  const totalPrice = selectedPlan
-    ? numberOfStudents && selectedPlan.pricePerStudent
-      ? selectedPlan.basePrice + (numberOfStudents * selectedPlan.pricePerStudent)
-      : selectedPlan.basePrice
-    : 0;
+  // Calculate total price based on plan category
+  const calcPlanTotal = (plan: NonNullable<typeof plans>[number]) => {
+    const base = plan.category === "FLEXIBLE"
+      ? plan.basePrice * numberOfSubjects
+      : plan.basePrice;
+    // For institutional, add per-student cost on top
+    if (numberOfStudents && plan.pricePerStudent) {
+      return base + (numberOfStudents * plan.pricePerStudent);
+    }
+    return base;
+  };
+
+  const totalPrice = selectedPlan ? calcPlanTotal(selectedPlan) : 0;
 
   const validateStudentEmails = (): boolean => {
     if (!registrationData.isInstitutional) return true;
@@ -243,14 +251,14 @@ function CheckoutPage() {
 
   const handleStartTrial = async () => {
     if (!studentId) {
-      console.error("Missing student ID for trial");
+      toast.error("Missing student information. Please complete registration first.");
       return;
     }
 
     // For free trial, use the selected plan or first available
     const trialPlan = selectedPlanId ? plans?.find(p => p.id === selectedPlanId) : plans?.[0];
     if (!trialPlan) {
-      console.error("No plans available for trial");
+      toast.error("No plans available. Please try again shortly.");
       return;
     }
 
@@ -274,8 +282,12 @@ function CheckoutPage() {
           navigate({ to: isAuthenticated ? "/" : "/sign-in" });
         }, 1500);
       }
-    } catch (error) {
-      console.error("Trial start failed:", error);
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to start free trial. Please try again.";
+      toast.error(message);
     }
   };
 
@@ -376,7 +388,7 @@ function CheckoutPage() {
                     : "Start Free Trial"}
               </h3>
               <p className="text-sm text-gray-500">
-                Try all features free for 7 days. No payment required.
+                Try all features for free, no payment required.
               </p>
             </button>
 
@@ -439,9 +451,8 @@ function CheckoutPage() {
               <>
                 <div className="space-y-3">
                   {plans.map((plan) => {
-                    const planTotal = numberOfStudents && plan.pricePerStudent
-                      ? plan.basePrice + (numberOfStudents * plan.pricePerStudent)
-                      : plan.basePrice;
+                    const isFlexible = plan.category === "FLEXIBLE";
+                    const planTotal = calcPlanTotal(plan);
 
                     return (
                       <button
@@ -456,16 +467,33 @@ function CheckoutPage() {
                       >
                         <div className="flex items-start justify-between">
                           <div>
-                            <h4 className="font-semibold text-[#101828]">{plan.name}</h4>
+                            <div className="flex items-center gap-2">
+                              <h4 className="font-semibold text-[#101828]">{plan.name}</h4>
+                              <span
+                                className={cn(
+                                  "text-[10px] font-medium px-1.5 py-0.5 rounded",
+                                  isFlexible
+                                    ? "bg-amber-100 text-amber-700"
+                                    : "bg-blue-100 text-blue-700"
+                                )}
+                              >
+                                {isFlexible ? "Per Subject" : "Fixed"}
+                              </span>
+                            </div>
                             <p className="text-sm text-gray-500">{plan.duration} days</p>
                           </div>
                           <div className="text-right">
                             <div className="font-bold text-accent">
                               {plan.currency} {planTotal.toLocaleString()}
                             </div>
-                            {numberOfStudents && (
+                            {isFlexible && (
                               <div className="text-xs text-gray-500">
-                                ({numberOfStudents} students)
+                                {plan.currency} {plan.basePrice.toLocaleString()} &times; {numberOfSubjects} subject{numberOfSubjects !== 1 ? "s" : ""}
+                              </div>
+                            )}
+                            {numberOfStudents && plan.pricePerStudent && (
+                              <div className="text-xs text-gray-500">
+                                + {numberOfStudents} students
                               </div>
                             )}
                           </div>
@@ -570,6 +598,15 @@ function CheckoutPage() {
                           </span>
                         ))}
                       </div>
+                    )}
+                  </div>
+                )}
+
+                {selectedPlan && (
+                  <div className="text-center text-sm text-gray-500">
+                    {numberOfSubjects} subject{numberOfSubjects !== 1 ? "s" : ""} selected
+                    {selectedPlan.category === "FLEXIBLE" && (
+                      <> &middot; {selectedPlan.currency} {selectedPlan.basePrice.toLocaleString()}/subject</>
                     )}
                   </div>
                 )}
