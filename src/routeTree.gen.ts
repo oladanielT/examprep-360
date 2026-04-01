@@ -39,8 +39,11 @@ import { Route as UserTestsExamsRouteImport } from './routes/_user/tests/exams'
 import { Route as UserTestsExamRouteImport } from './routes/_user/tests/exam'
 import { Route as UserSubscriptionUpgradeRouteImport } from './routes/_user/subscription.upgrade'
 import { Route as UserSubscriptionAddRouteImport } from './routes/_user/subscription.add'
+import { Route as UserMockExamSetupRouteImport } from './routes/_user/mock-exam.setup'
+import { Route as UserMockExamSessionIdRouteImport } from './routes/_user/mock-exam.$sessionId'
 import { Route as UserExamAttemptIdRouteImport } from './routes/_user/exam.$attemptId'
 import { Route as AuthAuthCallbackRouteImport } from './routes/_auth/auth/callback'
+import { Route as UserMockExamReviewSessionIdRouteImport } from './routes/_user/mock-exam.review.$sessionId'
 import { Route as UserExamReviewAttemptIdRouteImport } from './routes/_user/exam.review.$attemptId'
 
 const UserRoute = UserRouteImport.update({
@@ -191,6 +194,16 @@ const UserSubscriptionAddRoute = UserSubscriptionAddRouteImport.update({
   path: '/add',
   getParentRoute: () => UserSubscriptionRoute,
 } as any)
+const UserMockExamSetupRoute = UserMockExamSetupRouteImport.update({
+  id: '/mock-exam/setup',
+  path: '/mock-exam/setup',
+  getParentRoute: () => UserRoute,
+} as any)
+const UserMockExamSessionIdRoute = UserMockExamSessionIdRouteImport.update({
+  id: '/mock-exam/$sessionId',
+  path: '/mock-exam/$sessionId',
+  getParentRoute: () => UserRoute,
+} as any)
 const UserExamAttemptIdRoute = UserExamAttemptIdRouteImport.update({
   id: '/exam/$attemptId',
   path: '/exam/$attemptId',
@@ -201,6 +214,12 @@ const AuthAuthCallbackRoute = AuthAuthCallbackRouteImport.update({
   path: '/auth/callback',
   getParentRoute: () => AuthRoute,
 } as any)
+const UserMockExamReviewSessionIdRoute =
+  UserMockExamReviewSessionIdRouteImport.update({
+    id: '/mock-exam/review/$sessionId',
+    path: '/mock-exam/review/$sessionId',
+    getParentRoute: () => UserRoute,
+  } as any)
 const UserExamReviewAttemptIdRoute = UserExamReviewAttemptIdRouteImport.update({
   id: '/exam/review/$attemptId',
   path: '/exam/review/$attemptId',
@@ -228,6 +247,8 @@ export interface FileRoutesByFullPath {
   '/': typeof UserIndexRoute
   '/auth/callback': typeof AuthAuthCallbackRoute
   '/exam/$attemptId': typeof UserExamAttemptIdRoute
+  '/mock-exam/$sessionId': typeof UserMockExamSessionIdRoute
+  '/mock-exam/setup': typeof UserMockExamSetupRoute
   '/subscription/add': typeof UserSubscriptionAddRoute
   '/subscription/upgrade': typeof UserSubscriptionUpgradeRoute
   '/tests/exam': typeof UserTestsExamRoute
@@ -239,6 +260,7 @@ export interface FileRoutesByFullPath {
   '/textbooks': typeof UserTextbooksIndexRoute
   '/tutorials': typeof UserTutorialsIndexRoute
   '/exam/review/$attemptId': typeof UserExamReviewAttemptIdRoute
+  '/mock-exam/review/$sessionId': typeof UserMockExamReviewSessionIdRoute
 }
 export interface FileRoutesByTo {
   '/checkout': typeof AuthCheckoutRoute
@@ -260,6 +282,8 @@ export interface FileRoutesByTo {
   '/': typeof UserIndexRoute
   '/auth/callback': typeof AuthAuthCallbackRoute
   '/exam/$attemptId': typeof UserExamAttemptIdRoute
+  '/mock-exam/$sessionId': typeof UserMockExamSessionIdRoute
+  '/mock-exam/setup': typeof UserMockExamSetupRoute
   '/subscription/add': typeof UserSubscriptionAddRoute
   '/subscription/upgrade': typeof UserSubscriptionUpgradeRoute
   '/tests/exam': typeof UserTestsExamRoute
@@ -271,6 +295,7 @@ export interface FileRoutesByTo {
   '/textbooks': typeof UserTextbooksIndexRoute
   '/tutorials': typeof UserTutorialsIndexRoute
   '/exam/review/$attemptId': typeof UserExamReviewAttemptIdRoute
+  '/mock-exam/review/$sessionId': typeof UserMockExamReviewSessionIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -296,6 +321,8 @@ export interface FileRoutesById {
   '/_user/': typeof UserIndexRoute
   '/_auth/auth/callback': typeof AuthAuthCallbackRoute
   '/_user/exam/$attemptId': typeof UserExamAttemptIdRoute
+  '/_user/mock-exam/$sessionId': typeof UserMockExamSessionIdRoute
+  '/_user/mock-exam/setup': typeof UserMockExamSetupRoute
   '/_user/subscription/add': typeof UserSubscriptionAddRoute
   '/_user/subscription/upgrade': typeof UserSubscriptionUpgradeRoute
   '/_user/tests/exam': typeof UserTestsExamRoute
@@ -307,6 +334,7 @@ export interface FileRoutesById {
   '/_user/textbooks/': typeof UserTextbooksIndexRoute
   '/_user/tutorials/': typeof UserTutorialsIndexRoute
   '/_user/exam/review/$attemptId': typeof UserExamReviewAttemptIdRoute
+  '/_user/mock-exam/review/$sessionId': typeof UserMockExamReviewSessionIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -331,6 +359,8 @@ export interface FileRouteTypes {
     | '/'
     | '/auth/callback'
     | '/exam/$attemptId'
+    | '/mock-exam/$sessionId'
+    | '/mock-exam/setup'
     | '/subscription/add'
     | '/subscription/upgrade'
     | '/tests/exam'
@@ -342,6 +372,7 @@ export interface FileRouteTypes {
     | '/textbooks'
     | '/tutorials'
     | '/exam/review/$attemptId'
+    | '/mock-exam/review/$sessionId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/checkout'
@@ -363,6 +394,8 @@ export interface FileRouteTypes {
     | '/'
     | '/auth/callback'
     | '/exam/$attemptId'
+    | '/mock-exam/$sessionId'
+    | '/mock-exam/setup'
     | '/subscription/add'
     | '/subscription/upgrade'
     | '/tests/exam'
@@ -374,6 +407,7 @@ export interface FileRouteTypes {
     | '/textbooks'
     | '/tutorials'
     | '/exam/review/$attemptId'
+    | '/mock-exam/review/$sessionId'
   id:
     | '__root__'
     | '/_auth'
@@ -398,6 +432,8 @@ export interface FileRouteTypes {
     | '/_user/'
     | '/_auth/auth/callback'
     | '/_user/exam/$attemptId'
+    | '/_user/mock-exam/$sessionId'
+    | '/_user/mock-exam/setup'
     | '/_user/subscription/add'
     | '/_user/subscription/upgrade'
     | '/_user/tests/exam'
@@ -409,6 +445,7 @@ export interface FileRouteTypes {
     | '/_user/textbooks/'
     | '/_user/tutorials/'
     | '/_user/exam/review/$attemptId'
+    | '/_user/mock-exam/review/$sessionId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -628,6 +665,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserSubscriptionAddRouteImport
       parentRoute: typeof UserSubscriptionRoute
     }
+    '/_user/mock-exam/setup': {
+      id: '/_user/mock-exam/setup'
+      path: '/mock-exam/setup'
+      fullPath: '/mock-exam/setup'
+      preLoaderRoute: typeof UserMockExamSetupRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/_user/mock-exam/$sessionId': {
+      id: '/_user/mock-exam/$sessionId'
+      path: '/mock-exam/$sessionId'
+      fullPath: '/mock-exam/$sessionId'
+      preLoaderRoute: typeof UserMockExamSessionIdRouteImport
+      parentRoute: typeof UserRoute
+    }
     '/_user/exam/$attemptId': {
       id: '/_user/exam/$attemptId'
       path: '/exam/$attemptId'
@@ -641,6 +692,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth/callback'
       preLoaderRoute: typeof AuthAuthCallbackRouteImport
       parentRoute: typeof AuthRoute
+    }
+    '/_user/mock-exam/review/$sessionId': {
+      id: '/_user/mock-exam/review/$sessionId'
+      path: '/mock-exam/review/$sessionId'
+      fullPath: '/mock-exam/review/$sessionId'
+      preLoaderRoute: typeof UserMockExamReviewSessionIdRouteImport
+      parentRoute: typeof UserRoute
     }
     '/_user/exam/review/$attemptId': {
       id: '/_user/exam/review/$attemptId'
@@ -707,6 +765,8 @@ interface UserRouteChildren {
   UserWalletRoute: typeof UserWalletRoute
   UserIndexRoute: typeof UserIndexRoute
   UserExamAttemptIdRoute: typeof UserExamAttemptIdRoute
+  UserMockExamSessionIdRoute: typeof UserMockExamSessionIdRoute
+  UserMockExamSetupRoute: typeof UserMockExamSetupRoute
   UserTestsExamRoute: typeof UserTestsExamRoute
   UserTestsExamsRoute: typeof UserTestsExamsRoute
   UserTextbooksTextbookIdRoute: typeof UserTextbooksTextbookIdRoute
@@ -715,6 +775,7 @@ interface UserRouteChildren {
   UserTextbooksIndexRoute: typeof UserTextbooksIndexRoute
   UserTutorialsIndexRoute: typeof UserTutorialsIndexRoute
   UserExamReviewAttemptIdRoute: typeof UserExamReviewAttemptIdRoute
+  UserMockExamReviewSessionIdRoute: typeof UserMockExamReviewSessionIdRoute
 }
 
 const UserRouteChildren: UserRouteChildren = {
@@ -727,6 +788,8 @@ const UserRouteChildren: UserRouteChildren = {
   UserWalletRoute: UserWalletRoute,
   UserIndexRoute: UserIndexRoute,
   UserExamAttemptIdRoute: UserExamAttemptIdRoute,
+  UserMockExamSessionIdRoute: UserMockExamSessionIdRoute,
+  UserMockExamSetupRoute: UserMockExamSetupRoute,
   UserTestsExamRoute: UserTestsExamRoute,
   UserTestsExamsRoute: UserTestsExamsRoute,
   UserTextbooksTextbookIdRoute: UserTextbooksTextbookIdRoute,
@@ -735,6 +798,7 @@ const UserRouteChildren: UserRouteChildren = {
   UserTextbooksIndexRoute: UserTextbooksIndexRoute,
   UserTutorialsIndexRoute: UserTutorialsIndexRoute,
   UserExamReviewAttemptIdRoute: UserExamReviewAttemptIdRoute,
+  UserMockExamReviewSessionIdRoute: UserMockExamReviewSessionIdRoute,
 }
 
 const UserRouteWithChildren = UserRoute._addFileChildren(UserRouteChildren)
