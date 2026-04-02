@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { z } from "zod";
 import { ArrowLeft } from "@phosphor-icons/react";
-import { Loader2, CheckCircle2 } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { useMockExamStore } from "@/stores/mockExamStore";
 import { useShallow } from "zustand/react/shallow";
 import {
@@ -28,7 +28,6 @@ import {
   OrderingQuestion,
   MatchingQuestion,
   RichContentRenderer,
-  Explanation,
 } from "@/components/questions";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -90,15 +89,13 @@ function MockExamPage() {
 
   // Validate session
   const isValidSession = storedSessionId === sessionId;
-  const [loadError, setLoadError] = useState(!isValidSession ? "Exam session not found." : "");
+  const [loadError] = useState(!isValidSession ? "Exam session not found." : "");
 
   // Current subject session
   const currentSession = subjects[currentSubjectIndex] || null;
   const currentQuestionIndex = currentQuestionIndexes[currentSubjectIndex] || 0;
   const currentQuestion = currentSession?.questions[currentQuestionIndex] || null;
   const currentAnswers = currentSession?.answers || {};
-  const currentResponses = currentSession?.responses || new Map();
-
   // API mutations
   const submitResponse = useMockSubmitResponse();
   const completeMockExam = useCompleteMockExam();
@@ -106,12 +103,6 @@ function MockExamPage() {
   const resumeMockExam = useResumeMockExam();
   const toggleBookmark = useToggleBookmark();
   const reportQuestion = useReportQuestion();
-
-  // Submitted questions for current subject
-  const submittedQuestionIds = useMemo(() => {
-    if (!currentSession) return new Set<string>();
-    return new Set(currentSession.responses.keys());
-  }, [currentSession?.responses]);
 
   // Answered questions (have draft answers) for current subject
   const answeredQuestions = useMemo(() => {
@@ -128,17 +119,6 @@ function MockExamPage() {
     });
     return answered;
   }, [currentSession?.questions, currentAnswers]);
-
-  // Correct questions for current subject
-  const correctQuestions = useMemo(() => {
-    if (!currentSession) return new Set<number>();
-    const correct = new Set<number>();
-    currentSession.questions.forEach((q, index) => {
-      const response = currentResponses.get(q.id);
-      if (response?.isCorrect) correct.add(index);
-    });
-    return correct;
-  }, [currentSession?.questions, currentResponses]);
 
   // Track time spent on question
   const questionStartTime = useRef<number>(Date.now());

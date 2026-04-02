@@ -89,7 +89,7 @@ export const useMockSubmitResponse = () => {
 // Complete all subject exams in a combined mock exam
 export const useCompleteMockExam = () => {
   const queryClient = useQueryClient();
-  const { clearMockExam, subjects } = useMockExamStore();
+  const { subjects } = useMockExamStore();
 
   return useMutation<
     void,
