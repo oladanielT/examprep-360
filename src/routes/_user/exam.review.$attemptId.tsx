@@ -94,8 +94,12 @@ function ExamReviewPage() {
   const answeredWrongCount = responses.filter((r: any) => !r.isCorrect && !essayTypes.has(r.question?.questionType) && r.answer !== null && r.answer !== undefined && r.answer !== "").length;
   const skippedCount = totalQuestions - correctCount - answeredWrongCount - essayResponseCount;
   const incorrectCount = answeredWrongCount;
-  const percentage = review.percentage ?? 0;
-  const passed = review.passed ?? false;
+  // Recalculate percentage against total questions (including skipped)
+  const percentage = totalQuestions > 0
+    ? Math.round((correctCount / totalQuestions) * 100)
+    : 0;
+  const passingScore = (review.exam as any)?.passingScore ?? 50;
+  const passed = percentage >= passingScore;
   const timeSpent = review.timeSpentSeconds ?? 0;
   const examName = review.exam?.name || "Exam";
   const subjectName = review.exam?.subject?.name || "";
@@ -186,7 +190,7 @@ function ExamReviewPage() {
             <div className="flex items-center gap-1.5 bg-white/80 rounded-full px-3 py-1.5 text-xs sm:text-sm border border-gray-200">
               <Target className="w-3.5 h-3.5 text-gray-500" />
               <span className="text-gray-700 font-medium">
-                {review.totalScore}/{totalQuestions}
+                {correctCount}/{totalQuestions}
               </span>
             </div>
             <div className="flex items-center gap-1.5 bg-white/80 rounded-full px-3 py-1.5 text-xs sm:text-sm border border-gray-200">

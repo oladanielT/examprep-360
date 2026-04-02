@@ -120,7 +120,12 @@ function MockExamReviewPage() {
       ).length;
       const skipped = numQ - correct - wrong - essayCount;
 
-      totalScore += review.totalScore || 0;
+      // Use correct count as score so skipped questions count against the total
+      const subjectPercentage = numQ > 0 ? Math.round((correct / numQ) * 100) : 0;
+      const passingScore = (review.exam as any)?.passingScore ?? 50;
+      const subjectPassed = subjectPercentage >= passingScore;
+
+      totalScore += correct;
       totalQuestions += numQ;
       totalCorrect += correct;
       totalWrong += wrong;
@@ -129,10 +134,10 @@ function MockExamReviewPage() {
 
       perSubject.push({
         name: session.subject.name,
-        score: review.totalScore || 0,
+        score: correct,
         total: numQ,
-        percentage: review.percentage ?? 0,
-        passed: review.passed ?? false,
+        percentage: subjectPercentage,
+        passed: subjectPassed,
         correct,
         wrong,
         skipped,
