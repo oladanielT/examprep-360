@@ -63,6 +63,7 @@ function CheckoutPage() {
   const examType = registrationData.examType;
   const examCategory = registrationData.category;
   const numberOfStudents = registrationData.isInstitutional ? registrationData.students : undefined;
+  const numberOfSubjects = registrationData.subjects?.length || 1;
 
   // Fetch available subjects for inline editing
   const { data: availableSubjects, isLoading: isLoadingSubjects } = useExamSubjects(examType);
@@ -133,22 +134,19 @@ function CheckoutPage() {
 
   // Find the selected plan
   const selectedPlan = plans?.find((p) => p.id === selectedPlanId);
-  const numberOfSelectedSubjects = registrationData.subjects.length;
 
-  // Calculate total price accounting for FLEXIBLE vs FIXED plans
-  const totalPrice = selectedPlan
-    ? (() => {
-        // Base: for FLEXIBLE plans, basePrice is per-subject
-        const base = selectedPlan.category === "FLEXIBLE"
-          ? selectedPlan.basePrice * Math.max(numberOfSelectedSubjects, 1)
-          : selectedPlan.basePrice;
-        // Institutional add-on
-        const studentCost = numberOfStudents && selectedPlan.pricePerStudent
-          ? numberOfStudents * selectedPlan.pricePerStudent
-          : 0;
-        return base + studentCost;
-      })()
-    : 0;
+  // Calculate total price based on plan category
+  const calcPlanTotal = (plan: NonNullable<typeof plans>[number]) => {
+    const base = plan.category === "FLEXIBLE"
+      ? plan.basePrice * numberOfSubjects
+      : plan.basePrice;
+    if (numberOfStudents && plan.pricePerStudent) {
+      return base + (numberOfStudents * plan.pricePerStudent);
+    }
+    return base;
+  };
+
+  const totalPrice = selectedPlan ? calcPlanTotal(selectedPlan) : 0;
 
   const validateStudentEmails = (): boolean => {
     if (!registrationData.isInstitutional) return true;
@@ -190,7 +188,7 @@ function CheckoutPage() {
     }
 
     if (invalid.length > 0) {
-      toast.warning(`${invalid.length} invalid email${invalid.length > 1 ? "s" : ""} skipped`);
+      toast.warning(`${invalid.length} invalid email${invalid.length > 1 ? `s` : ``} skipped`);
     }
 
     const existingSet = new Set(studentEmails);
@@ -205,7 +203,7 @@ function CheckoutPage() {
     }
 
     if (duplicates.length > 0) {
-      toast.warning(`${duplicates.length} duplicate email${duplicates.length > 1 ? "s" : ""} skipped`);
+      toast.warning(`${duplicates.length} duplicate email${duplicates.length > 1 ? `s` : ``} skipped`);
     }
 
     const maxTotal = registrationData.students;
@@ -213,12 +211,12 @@ function CheckoutPage() {
     const toAdd = newEmails.slice(0, available);
 
     if (newEmails.length > available) {
-      toast.warning(`Only ${available} more email${available !== 1 ? "s" : ""} can be added (max ${maxTotal})`);
+      toast.warning(`Only ${available} more email${available !== 1 ? `s` : ``} can be added (max ${maxTotal})`);
     }
 
     if (toAdd.length > 0) {
       setStudentEmails((prev) => [...prev, ...toAdd]);
-      toast.success(`${toAdd.length} email${toAdd.length > 1 ? "s" : ""} added`);
+      toast.success(`${toAdd.length} email${toAdd.length > 1 ? `s` : ``} added`);
     }
 
     setBulkEmailText("");
@@ -232,7 +230,6 @@ function CheckoutPage() {
     const reader = new FileReader();
     reader.onload = (ev) => {
       const text = ev.target?.result as string;
-      // For CSV: extract first column from each row
       const emails = text
         .split(/\r?\n/)
         .map((line) => line.split(",")[0]?.trim())
@@ -257,7 +254,7 @@ function CheckoutPage() {
         await saveExamSelection.mutateAsync(registrationData.subjects);
       }
 
-      const callbackUrl = `${window.location.origin}/payment-verify?returnUrl=${encodeURIComponent("/checkout")}`;
+      const callbackUrl = `${window.location.origin}/payment-verify?returnUrl=${encodeURIComponent(`/checkout`)}`;
       const trimmedEmails = registrationData.isInstitutional
         ? studentEmails.map((e) => e.trim().toLowerCase()).filter(Boolean)
         : undefined;
@@ -278,15 +275,12 @@ function CheckoutPage() {
         },
       });
 
-      // Get payment URL from response
       const paymentUrl = (response as any).paymentUrl;
       const accessCode = (response as any).accessCode;
 
       if (paymentUrl) {
-        // Redirect to Paystack checkout page
         window.location.href = paymentUrl;
       } else if (accessCode) {
-        // Fallback: use access code to build URL
         window.location.href = `https://checkout.paystack.com/${accessCode}`;
       } else {
         toast.error("Payment initialization failed", {
@@ -314,13 +308,11 @@ function CheckoutPage() {
         courses: [],
       });
 
-      // Response returns subscription object directly (has id if successful)
       if (response && ((response as any).id || (response as any).success)) {
         toast.success("License code redeemed!", {
           description: "Your subscription has been activated.",
           duration: 4000,
         });
-        // Small delay to ensure toast is visible
         navigationTimerRef.current = setTimeout(() => {
           resetRegistration();
           navigate({ to: isAuthenticated ? "/" : "/sign-in" });
@@ -346,7 +338,6 @@ function CheckoutPage() {
       return;
     }
 
-    // For free trial, use the selected plan or first available
     const trialPlan = selectedPlanId ? plans?.find(p => p.id === selectedPlanId) : plans?.[0];
     if (!trialPlan) {
       toast.error("No plans available. Please try again shortly.");
@@ -364,7 +355,6 @@ function CheckoutPage() {
         subscriptionId: trialPlan.id,
       });
 
-      // Response might have success:true or just return trial data
       if (response && ((response as any).success || (response as any).trialEndDate || (response as any).id)) {
         setTrialStarted(true);
         toast.success("Free trial started!", {
@@ -372,7 +362,6 @@ function CheckoutPage() {
             ? "You now have access to all features."
             : "You can now sign in to access all features.",
         });
-        // Wait a moment then navigate
         navigationTimerRef.current = setTimeout(() => {
           resetRegistration();
           navigate({ to: isAuthenticated ? "/" : "/sign-in" });
@@ -413,7 +402,6 @@ function CheckoutPage() {
   return (
     <section className="space-y-6">
       <Logo />
-
       <div className="space-y-4 max-w-md mx-auto">
         <div className="text-center space-y-2">
           <h2 className="text-xl md:text-3xl font-bold tracking-tight text-[#101828]">
@@ -469,7 +457,6 @@ function CheckoutPage() {
         )}
 
         {!showPaymentOptions ? (
-          // Main options: Pay Now, Free Trial, License Code
           <div className="space-y-4">
             {/* Pay Now - Primary/Recommended Option */}
             <div className="bg-gradient-to-br from-accent/5 to-accent/10 rounded-xl p-6 border-2 border-accent/30">
@@ -490,7 +477,6 @@ function CheckoutPage() {
                 title="Pay Now"
               />
             </div>
-
             {/* Free Trial Option */}
             <button
               onClick={handleStartTrial}
@@ -508,7 +494,6 @@ function CheckoutPage() {
                 Try all features for free, no payment required.
               </p>
             </button>
-
             {/* License Code */}
             <div className="relative">
               {!showLicenseInput ? (
@@ -548,7 +533,6 @@ function CheckoutPage() {
                 </div>
               )}
             </div>
-
             {/* Skip */}
             <button
               onClick={handleSkip}
@@ -558,7 +542,6 @@ function CheckoutPage() {
             </button>
           </div>
         ) : (
-          // Plan Selection
           <div className="space-y-4">
             {isLoadingPlans ? (
               <div className="flex items-center justify-center py-8">
@@ -568,14 +551,8 @@ function CheckoutPage() {
               <>
                 <div className="space-y-3">
                   {plans.map((plan) => {
-                    // FLEXIBLE: basePrice is per-subject, FIXED: basePrice is flat
-                    const base = plan.category === "FLEXIBLE"
-                      ? plan.basePrice * Math.max(numberOfSelectedSubjects, 1)
-                      : plan.basePrice;
-                    const studentCost = numberOfStudents && plan.pricePerStudent
-                      ? numberOfStudents * plan.pricePerStudent
-                      : 0;
-                    const planTotal = base + studentCost;
+                    const isFlexible = plan.category === "FLEXIBLE";
+                    const planTotal = calcPlanTotal(plan);
 
                     return (
                       <button
@@ -604,22 +581,12 @@ function CheckoutPage() {
                               </span>
                             </div>
                             <p className="text-sm text-gray-500">{plan.duration} days</p>
-                            {plan.category === "FLEXIBLE" && (
-                              <p className="text-xs text-gray-400 mt-0.5">
-                                {plan.currency} {plan.basePrice.toLocaleString()}/subject &times; {numberOfSelectedSubjects}
-                              </p>
-                            )}
                           </div>
                           <div className="text-right">
                             <div className="font-bold text-accent">
                               {plan.currency} {planTotal.toLocaleString()}
                             </div>
-                            {plan.category === "FLEXIBLE" && (
-                              <div className="text-[10px] text-gray-400">
-                                Flexible
-                              </div>
-                            )}
-                            {numberOfStudents && (
+                            {isFlexible && (
                               <div className="text-xs text-gray-500">
                                 {plan.currency} {plan.basePrice.toLocaleString()} &times; {numberOfSubjects} subject{numberOfSubjects !== 1 ? "s" : ""}
                               </div>
@@ -658,7 +625,6 @@ function CheckoutPage() {
                       </p>
                     </div>
 
-                    {/* Textarea for bulk paste */}
                     <div className="space-y-2">
                       <textarea
                         value={bulkEmailText}
@@ -694,7 +660,6 @@ function CheckoutPage() {
                       </div>
                     </div>
 
-                    {/* Counter and Clear All */}
                     <div className="flex items-center justify-between">
                       <p className="text-xs text-gray-500">
                         {studentEmails.length} of {registrationData.students} emails added
@@ -710,7 +675,6 @@ function CheckoutPage() {
                       )}
                     </div>
 
-                    {/* Email chips */}
                     {studentEmails.length > 0 && (
                       <div className="flex flex-wrap gap-1.5 max-h-48 overflow-y-auto">
                         {studentEmails.map((email, index) => (
