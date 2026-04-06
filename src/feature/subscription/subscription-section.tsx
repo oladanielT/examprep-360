@@ -55,7 +55,6 @@ export const SubscriptionSection = () => {
   const [editingSubscription, setEditingSubscription] =
     useState<UserSubscription | null>(null);
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
-  const [paidSubjectCount, setPaidSubjectCount] = useState<number>(0);
 
   // License codes
   const { data: institutionalCodes } = useInstitutionalCodes();
@@ -161,7 +160,6 @@ export const SubscriptionSection = () => {
   const handleEditSubjects = (sub: UserSubscription) => {
     setEditingSubscription(sub);
     setSelectedSubjects(sub.subjects);
-    setPaidSubjectCount(sub.subjects.length);
   };
 
   const handleUpgrade = (sub: UserSubscription) => {
