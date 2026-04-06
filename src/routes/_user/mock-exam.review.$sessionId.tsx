@@ -33,7 +33,7 @@ import {
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import type { ExamReviewResponse } from "@/api/types/exam.types";
+
 
 const reviewParamsSchema = z.object({
   sessionId: z.string(),
@@ -46,15 +46,10 @@ function formatTime(seconds: number) {
   return `${mins}m ${secs}s`;
 }
 
-// Individual subject review fetcher
-function useSubjectReview(attemptId: string) {
-  return useExamReview(attemptId);
-}
-
 function MockExamReviewPage() {
   const { sessionId } = Route.useParams();
   const navigate = useNavigate();
-  const { sessionId: storedSessionId, subjects, clearMockExam } = useMockExamStore();
+  const { sessionId: storedSessionId, subjects } = useMockExamStore();
 
   const isValidSession = storedSessionId === sessionId;
   const [activeSubjectIndex, setActiveSubjectIndex] = useState(0);
@@ -72,7 +67,6 @@ function MockExamReviewPage() {
   const allReviewHooks = [review0, review1, review2, review3, review4, review5];
   const reviews = subjects.map((_, i) => allReviewHooks[i]);
   const isLoading = reviews.some((r, i) => i < subjects.length && r.isLoading);
-  const hasError = reviews.some((r, i) => i < subjects.length && r.isError);
 
   // Aggregate stats
   const aggregateStats = useMemo(() => {
@@ -120,7 +114,12 @@ function MockExamReviewPage() {
       ).length;
       const skipped = numQ - correct - wrong - essayCount;
 
-      totalScore += review.totalScore || 0;
+      // Use correct count as score so skipped questions count against the total
+      const subjectPercentage = numQ > 0 ? Math.round((correct / numQ) * 100) : 0;
+      const passingScore = (review.exam as any)?.passingScore ?? 50;
+      const subjectPassed = subjectPercentage >= passingScore;
+
+      totalScore += correct;
       totalQuestions += numQ;
       totalCorrect += correct;
       totalWrong += wrong;
@@ -129,10 +128,10 @@ function MockExamReviewPage() {
 
       perSubject.push({
         name: session.subject.name,
-        score: review.totalScore || 0,
+        score: correct,
         total: numQ,
-        percentage: review.percentage ?? 0,
-        passed: review.passed ?? false,
+        percentage: subjectPercentage,
+        passed: subjectPassed,
         correct,
         wrong,
         skipped,

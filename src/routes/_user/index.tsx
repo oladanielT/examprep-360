@@ -3,6 +3,7 @@ import CustomPageHeader from "@/components/global/custom-page-header";
 import Competition from "@/feature/home/components/competition";
 import Continue from "@/feature/home/components/continue";
 import Stat from "@/feature/home/components/stat";
+import FreeTrialBanner from "@/feature/home/components/free-trial-banner";
 import { useProfile } from "@/feature/profile/hooks/useProfile";
 import { useAuthStore } from "@/stores/authStore";
 
@@ -19,6 +20,7 @@ function HomePage() {
         heading={`Welcome back, ${firstName}`}
         subHeading="Pick up quickly from where you left off"
       />
+      <FreeTrialBanner />
       <Stat />
       <Continue />
       <Competition />
