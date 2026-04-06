@@ -32,7 +32,7 @@ import {
 } from "@/components/questions";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { TrialLimitAlert } from "@/components/global/trial-limit-alert";
 import type { Question } from "@/api/types/exam.types";
 
 const examParamsSchema = z.object({
@@ -712,9 +712,7 @@ function ExamPage() {
 
       {/* Error Message */}
       {errorMessage && (
-        <Alert variant="destructive" className="mb-4 sm:mb-6">
-          <AlertDescription className="text-sm">{errorMessage}</AlertDescription>
-        </Alert>
+        <TrialLimitAlert message={errorMessage} className="mb-4 sm:mb-6" />
       )}
 
       {/* Main Layout — stacked on mobile, side-by-side on desktop */}

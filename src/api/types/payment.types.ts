@@ -60,10 +60,17 @@ export interface VerifyPaymentRequest {
 }
 
 export interface VerifyPaymentResponse {
-  success: boolean;
-  transactionId: string;
-  status: "success" | "failed" | "pending";
+  verified: boolean;
   message: string;
+  transaction: {
+    id: string;
+    reference: string;
+    status: "SUCCESS" | "FAILED" | "PENDING";
+    amount: number;
+    currency: string;
+    paidAt: string | null;
+    failureReason: string | null;
+  };
   subscription?: {
     id: string;
     planId: string;

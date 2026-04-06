@@ -37,9 +37,11 @@ function PaymentVerifyPage() {
       {
         onSuccess: (data: any) => {
           if (
+            data.verified ||
+            data.transaction?.status === "SUCCESS" ||
             data.success ||
             data.status === "success" ||
-            (data.message && data.message.toLowerCase().includes("success"))
+            (data.message && data.message.toLowerCase().includes("approved"))
           ) {
             setVerificationStatus("success");
           } else {

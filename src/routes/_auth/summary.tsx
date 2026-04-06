@@ -5,7 +5,7 @@ import { Logo } from "@/components/global/logo";
 import PrimaryButton from "@/components/buttons/primary-button";
 import { Alert } from "@/components/ui/alert";
 import { useRegistrationStore } from "@/stores/registrationStore";
-import { useRegister } from "@/feature/auth/hooks";
+import { useRegister, useLogin } from "@/feature/auth/hooks";
 import { useExamSubjects } from "@/feature/exams/hooks";
 import { useAuthStore } from "@/stores/authStore";
 import { useMutation } from "@tanstack/react-query";
@@ -17,6 +17,7 @@ function SummaryPage() {
   const navigate = useNavigate();
   const { data, setStudentId } = useRegistrationStore();
   const registerMutation = useRegister();
+  const loginMutation = useLogin();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const user = useAuthStore((s) => s.user);
 
@@ -72,6 +73,17 @@ function SummaryPage() {
         // Save student ID from response
         if (response.student?.id) {
           setStudentId(response.student.id);
+        }
+
+        // Auto-login so the user is authenticated on checkout
+        // (allows saving exam selection edits, etc.)
+        try {
+          await loginMutation.mutateAsync({
+            email: data.email,
+            password: data.password,
+          });
+        } catch {
+          // Login may fail (e.g. email not verified yet) — continue without auth
         }
 
         // Show success toast and navigate

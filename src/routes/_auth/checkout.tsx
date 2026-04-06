@@ -5,14 +5,36 @@ import { Alert } from "@/components/ui/alert";
 import { useRegistrationStore } from "@/stores/registrationStore";
 import { useAuthStore } from "@/stores/authStore";
 import { usePaymentPlans, useInitializePayment, useRedeemLicense, useStartTrial } from "@/feature/payment/hooks";
-import { Check, Loader2, Upload, X } from "lucide-react";
+import { useExamSubjects } from "@/feature/exams/hooks";
+import { useMutation } from "@tanstack/react-query";
+import { apiClient } from "@/api/client";
+import { EXAM_SELECTION_ENDPOINTS } from "@/api/endpoints";
+import { Check, Loader2, Upload, X, Pencil } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+
+// Max subjects allowed per exam type
+function getMaxSubjects(examType: string): number {
+  const normalized = examType.toLowerCase();
+  if (normalized.includes("jamb") || normalized.includes("utme") || normalized.includes("post")) {
+    return 4;
+  }
+  return 9;
+}
 
 function CheckoutPage() {
   const navigate = useNavigate();
-  const { data: registrationData, reset: resetRegistration } = useRegistrationStore();
+  const { data: registrationData, reset: resetRegistration, setExamSelection } = useRegistrationStore();
   const authUser = useAuthStore((s) => s.user);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const [showLicenseInput, setShowLicenseInput] = useState(false);
@@ -24,6 +46,10 @@ function CheckoutPage() {
   const [studentEmails, setStudentEmails] = useState<string[]>([]);
   const [bulkEmailText, setBulkEmailText] = useState("");
   const csvInputRef = useRef<HTMLInputElement>(null);
+
+  // Edit subjects state
+  const [showEditSubjects, setShowEditSubjects] = useState(false);
+  const [editingSubjects, setEditingSubjects] = useState<string[]>(registrationData.subjects);
 
   useEffect(() => {
     return () => {
@@ -38,6 +64,60 @@ function CheckoutPage() {
   const examCategory = registrationData.category;
   const numberOfStudents = registrationData.isInstitutional ? registrationData.students : undefined;
 
+  // Fetch available subjects for inline editing
+  const { data: availableSubjects, isLoading: isLoadingSubjects } = useExamSubjects(examType);
+  const maxSubjects = getMaxSubjects(examType);
+
+  // Get subject labels from IDs
+  const selectedSubjectLabels = registrationData.subjects
+    .map((id) => availableSubjects?.find((s) => s.id === id)?.name)
+    .filter(Boolean);
+
+  // Save exam selection to backend after editing subjects
+  const saveExamSelection = useMutation({
+    mutationFn: async (subjects: string[]) => {
+      await apiClient.post(EXAM_SELECTION_ENDPOINTS.SAVE, {
+        examCategory: registrationData.category,
+        examSubtype: registrationData.examType,
+        examTypeId: registrationData.examTypeId,
+        selectedSubjects: subjects,
+      });
+    },
+  });
+
+  const handleOpenEditSubjects = () => {
+    setEditingSubjects(registrationData.subjects);
+    setShowEditSubjects(true);
+  };
+
+  const handleSaveSubjects = () => {
+    if (editingSubjects.length === 0) {
+      toast.error("Please select at least one subject");
+      return;
+    }
+    // Update local store
+    setExamSelection({
+      examType: registrationData.examType,
+      examTypeId: registrationData.examTypeId,
+      duration: registrationData.duration,
+      subjects: editingSubjects,
+      students: registrationData.students,
+    });
+    // Persist to backend (user is authenticated after registration auto-login or Google OAuth)
+    if (isAuthenticated) {
+      saveExamSelection.mutate(editingSubjects, {
+        onSuccess: () => {
+          toast.success("Subjects updated");
+        },
+        onError: () => {
+          toast.error("Failed to save subjects. Your changes are saved locally.");
+        },
+      });
+    } else {
+      toast.success("Subjects updated locally");
+    }
+    setShowEditSubjects(false);
+  };
 
   // Fetch plans based on subscription type (BODY for institutional, INDIVIDUAL for regular)
   const subscriptionType = registrationData.isInstitutional ? "BODY" : "INDIVIDUAL";
@@ -53,12 +133,21 @@ function CheckoutPage() {
 
   // Find the selected plan
   const selectedPlan = plans?.find((p) => p.id === selectedPlanId);
+  const numberOfSelectedSubjects = registrationData.subjects.length;
 
-  // Calculate total price for institutional
+  // Calculate total price accounting for FLEXIBLE vs FIXED plans
   const totalPrice = selectedPlan
-    ? numberOfStudents && selectedPlan.pricePerStudent
-      ? selectedPlan.basePrice + (numberOfStudents * selectedPlan.pricePerStudent)
-      : selectedPlan.basePrice
+    ? (() => {
+        // Base: for FLEXIBLE plans, basePrice is per-subject
+        const base = selectedPlan.category === "FLEXIBLE"
+          ? selectedPlan.basePrice * Math.max(numberOfSelectedSubjects, 1)
+          : selectedPlan.basePrice;
+        // Institutional add-on
+        const studentCost = numberOfStudents && selectedPlan.pricePerStudent
+          ? numberOfStudents * selectedPlan.pricePerStudent
+          : 0;
+        return base + studentCost;
+      })()
     : 0;
 
   const validateStudentEmails = (): boolean => {
@@ -163,6 +252,11 @@ function CheckoutPage() {
     if (!validateStudentEmails()) return;
 
     try {
+      // Save updated subjects to backend before payment
+      if (isAuthenticated) {
+        await saveExamSelection.mutateAsync(registrationData.subjects);
+      }
+
       const callbackUrl = `${window.location.origin}/payment-verify?returnUrl=${encodeURIComponent("/checkout")}`;
       const trimmedEmails = registrationData.isInstitutional
         ? studentEmails.map((e) => e.trim().toLowerCase()).filter(Boolean)
@@ -208,6 +302,11 @@ function CheckoutPage() {
     if (!licenseCode || !studentId) return;
 
     try {
+      // Save updated subjects to backend before redeeming
+      if (isAuthenticated) {
+        await saveExamSelection.mutateAsync(registrationData.subjects);
+      }
+
       const response = await redeemLicenseMutation.mutateAsync({
         code: licenseCode,
         studentId: studentId!,
@@ -255,6 +354,11 @@ function CheckoutPage() {
     }
 
     try {
+      // Save updated subjects to backend before starting trial
+      if (isAuthenticated) {
+        await saveExamSelection.mutateAsync(registrationData.subjects);
+      }
+
       const response = await startTrialMutation.mutateAsync({
         studentId: studentId!,
         subscriptionId: trialPlan.id,
@@ -315,6 +419,27 @@ function CheckoutPage() {
             {showPaymentOptions
               ? "Select a subscription plan to continue with payment."
               : "Start your free trial or choose to pay now."}
+          </p>
+        </div>
+
+        {/* Current Selection Summary — with edit */}
+        <div className="bg-gray-50 rounded-xl p-4 space-y-1">
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-gray-500 uppercase font-medium">Your Selection</p>
+            <button
+              type="button"
+              onClick={handleOpenEditSubjects}
+              className="inline-flex items-center gap-1 text-xs font-medium text-accent hover:text-accent/80 transition-colors"
+            >
+              <Pencil className="h-3 w-3" />
+              Edit Subjects
+            </button>
+          </div>
+          <p className="text-sm font-semibold text-[#101828]">{examType}</p>
+          <p className="text-xs text-gray-600">
+            {selectedSubjectLabels.length > 0
+              ? selectedSubjectLabels.join(", ")
+              : `${registrationData.subjects.length} subject${registrationData.subjects.length !== 1 ? "s" : ""} selected`}
           </p>
         </div>
 
@@ -439,9 +564,14 @@ function CheckoutPage() {
               <>
                 <div className="space-y-3">
                   {plans.map((plan) => {
-                    const planTotal = numberOfStudents && plan.pricePerStudent
-                      ? plan.basePrice + (numberOfStudents * plan.pricePerStudent)
+                    // FLEXIBLE: basePrice is per-subject, FIXED: basePrice is flat
+                    const base = plan.category === "FLEXIBLE"
+                      ? plan.basePrice * Math.max(numberOfSelectedSubjects, 1)
                       : plan.basePrice;
+                    const studentCost = numberOfStudents && plan.pricePerStudent
+                      ? numberOfStudents * plan.pricePerStudent
+                      : 0;
+                    const planTotal = base + studentCost;
 
                     return (
                       <button
@@ -458,11 +588,21 @@ function CheckoutPage() {
                           <div>
                             <h4 className="font-semibold text-[#101828]">{plan.name}</h4>
                             <p className="text-sm text-gray-500">{plan.duration} days</p>
+                            {plan.category === "FLEXIBLE" && (
+                              <p className="text-xs text-gray-400 mt-0.5">
+                                {plan.currency} {plan.basePrice.toLocaleString()}/subject &times; {numberOfSelectedSubjects}
+                              </p>
+                            )}
                           </div>
                           <div className="text-right">
                             <div className="font-bold text-accent">
                               {plan.currency} {planTotal.toLocaleString()}
                             </div>
+                            {plan.category === "FLEXIBLE" && (
+                              <div className="text-[10px] text-gray-400">
+                                Flexible
+                              </div>
+                            )}
                             {numberOfStudents && (
                               <div className="text-xs text-gray-500">
                                 ({numberOfStudents} students)
@@ -611,6 +751,89 @@ function CheckoutPage() {
           </div>
         )}
       </div>
+
+      {/* Edit Subjects Dialog */}
+      <Dialog open={showEditSubjects} onOpenChange={setShowEditSubjects}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Edit Subjects</DialogTitle>
+            <DialogDescription>
+              Change your selected subjects for {examType}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="py-4">
+            {isLoadingSubjects ? (
+              <div className="flex items-center gap-2 py-4">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span className="text-gray-500 text-sm">Loading subjects...</span>
+              </div>
+            ) : availableSubjects && availableSubjects.length > 0 ? (
+              <>
+                <p className="text-xs sm:text-sm text-gray-600 mb-3">
+                  Select your subjects (up to {maxSubjects})
+                </p>
+                <ToggleGroup
+                  multiple
+                  value={editingSubjects}
+                  onValueChange={(value) => {
+                    if (value.length <= maxSubjects) setEditingSubjects(value);
+                  }}
+                  className="flex flex-wrap gap-2 sm:gap-3"
+                >
+                  {availableSubjects.map((subject) => {
+                    const isSelected = editingSubjects.includes(subject.id);
+                    const atLimit = editingSubjects.length >= maxSubjects && !isSelected;
+                    return (
+                      <ToggleGroupItem
+                        key={subject.id}
+                        value={subject.id}
+                        disabled={atLimit}
+                        className={cn(
+                          "h-auto py-3 sm:py-4 px-3 sm:px-4 rounded-sm! border-2",
+                          "inline-flex items-center justify-center shrink-0",
+                          "text-[11px] sm:text-xs font-medium text-center whitespace-nowrap",
+                          "transition-all duration-200",
+                          "hover:border-accent hover:bg-accent/5",
+                          "data-[state=on]:border-accent/70 data-[state=on]:bg-transparent data-[state=on]:text-black",
+                          isSelected ? "border-accent" : "border-[#E5E5E5] text-black",
+                          atLimit && "opacity-50 cursor-not-allowed"
+                        )}
+                        aria-label={subject.name}
+                      >
+                        {subject.name}
+                      </ToggleGroupItem>
+                    );
+                  })}
+                </ToggleGroup>
+                <div className="mt-3 text-xs text-[#6B7280]">
+                  Selected: {editingSubjects.length}/{maxSubjects}
+                </div>
+              </>
+            ) : (
+              <p className="text-sm text-gray-500 py-4">
+                No subjects available for this exam type
+              </p>
+            )}
+          </div>
+
+          <DialogFooter>
+            <button
+              onClick={() => setShowEditSubjects(false)}
+              className="px-4 py-2 text-sm font-medium rounded-4xl border border-border hover:bg-input/50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSaveSubjects}
+              disabled={editingSubjects.length === 0}
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-4xl bg-accent text-white hover:bg-accent/80 transition-colors disabled:opacity-50"
+            >
+              Save
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }

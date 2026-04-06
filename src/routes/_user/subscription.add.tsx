@@ -151,19 +151,35 @@ function AddSubscriptionPage() {
   const numberOfStudents = isInstitutional
     ? form.state.values.numberOfStudents[0]
     : 1;
+  const numberOfSubjects = form.state.values.subjects.length;
 
-  // Calculate total price for institutional
+  // Calculate total price accounting for FLEXIBLE vs FIXED plans
+  const calculatePlanPrice = (plan: NonNullable<typeof selectedPlan>, numSubjects: number, numStudents: number) => {
+    // Base: for FLEXIBLE plans, basePrice is per-subject
+    const base = plan.category === "FLEXIBLE"
+      ? plan.basePrice * Math.max(numSubjects, 1)
+      : plan.basePrice;
+    // Institutional add-on
+    const studentCost = isInstitutional && plan.pricePerStudent
+      ? numStudents * plan.pricePerStudent
+      : 0;
+    return base + studentCost;
+  };
+
   const totalPrice = selectedPlan
-    ? isInstitutional && selectedPlan.pricePerStudent
-      ? selectedPlan.basePrice + numberOfStudents * selectedPlan.pricePerStudent
-      : selectedPlan.basePrice
+    ? calculatePlanPrice(selectedPlan, numberOfSubjects, numberOfStudents)
     : 0;
 
   const durationOptions =
-    plans?.map((plan) => ({
-      label: `${plan.name} - ${plan.duration} Days (${plan.currency} ${plan.basePrice.toLocaleString()})`,
-      value: plan.id,
-    })) || [];
+    plans?.map((plan) => {
+      const displayPrice = plan.category === "FLEXIBLE"
+        ? `${plan.currency} ${plan.basePrice.toLocaleString()}/subject`
+        : `${plan.currency} ${plan.basePrice.toLocaleString()}`;
+      return {
+        label: `${plan.name} - ${plan.duration} Days (${displayPrice})`,
+        value: plan.id,
+      };
+    }) || [];
 
   const examTypeOptions =
     examTypes?.map((type) => ({
@@ -629,6 +645,14 @@ function AddSubscriptionPage() {
                     {form.state.values.subjects.length !== 1 ? "s" : ""}
                     {isInstitutional && ` · ${numberOfStudents} students`}
                   </p>
+                  {selectedPlan.category === "FLEXIBLE" && (
+                    <p className="text-xs text-gray-400 mt-1">
+                      {selectedPlan.currency} {selectedPlan.basePrice.toLocaleString()} &times; {numberOfSubjects} subject{numberOfSubjects !== 1 ? "s" : ""}
+                      {isInstitutional && selectedPlan.pricePerStudent
+                        ? ` + ${selectedPlan.currency} ${(numberOfStudents * selectedPlan.pricePerStudent).toLocaleString()} (students)`
+                        : ""}
+                    </p>
+                  )}
                   {isInstitutional && (
                     <span className="inline-block mt-2 text-xs font-medium bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
                       Institutional

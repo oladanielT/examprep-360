@@ -7,7 +7,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { TrialLimitAlert } from "@/components/global/trial-limit-alert";
 import { useForm } from "@tanstack/react-form";
 import { useConfigurePractice } from "@/feature/exams/hooks";
 import { useNavigate } from "@tanstack/react-router";
@@ -316,9 +316,7 @@ export default function ConfigurePracticeForm({
 
         {/* Error Message */}
         {errorMessage && (
-          <Alert variant="destructive" className="mt-4">
-            <AlertDescription>{errorMessage}</AlertDescription>
-          </Alert>
+          <TrialLimitAlert message={errorMessage} className="mt-4" />
         )}
 
         <PrimaryButton

@@ -19,7 +19,7 @@ import {
   DialogStackNext,
   DialogStackPrevious,
 } from "@/components/kibo-ui/dialog-stack";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { TrialLimitAlert } from "@/components/global/trial-limit-alert";
 import ConfigurePracticeForm from "./step-two";
 import { ArrowLeft, X } from "lucide-react";
 import {
@@ -288,9 +288,7 @@ function SubjectCard({ subject }: { subject: SubjectType }) {
 
               {/* Error Message */}
               {errorMessage && (
-                <Alert variant="destructive" className="mb-4">
-                  <AlertDescription>{errorMessage}</AlertDescription>
-                </Alert>
+                <TrialLimitAlert message={errorMessage} className="mb-4" />
               )}
 
               {selectedPracticeOption === "jump" ? (

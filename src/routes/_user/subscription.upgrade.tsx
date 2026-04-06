@@ -14,9 +14,27 @@ import {
 import { useProfile } from "@/feature/profile/hooks/useProfile";
 import { apiClient } from "@/api/client";
 import { EXAM_SELECTION_ENDPOINTS } from "@/api/endpoints";
-import { Loader2, Check, ArrowLeft, Crown } from "lucide-react";
+import { Loader2, Check, ArrowLeft, Crown, Pencil } from "lucide-react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { cn } from "@/lib/utils";
+
+function getMaxSubjects(examType: string): number {
+  const normalized = examType.toLowerCase();
+  if (normalized.includes("jamb") || normalized.includes("utme") || normalized.includes("post")) {
+    return 4;
+  }
+  return 9;
+}
 
 type UpgradeSearch = {
   examType: string;
@@ -33,14 +51,20 @@ function UpgradeSubscriptionPage() {
 
   const examType = search.examType || "";
   const examTypeId = search.examTypeId || "";
-  const subjects = search.subjects ? search.subjects.split(",") : [];
+  const initialSubjects = search.subjects ? search.subjects.split(",") : [];
+
+  // Editable subjects state
+  const [subjects, setSubjects] = useState<string[]>(initialSubjects);
+  const [showEditSubjects, setShowEditSubjects] = useState(false);
+  const [editingSubjects, setEditingSubjects] = useState<string[]>(initialSubjects);
+  const maxSubjects = getMaxSubjects(examType);
 
   // Category comes from exam preferences (subscription was switched to focus before navigating here)
   const { data: preferences, isLoading: isLoadingPrefs } = useExamPreferences();
   const category = preferences?.examCategory || "";
 
   // Fetch subjects for displaying names
-  const { data: availableSubjects } = useExamSubjects(examType);
+  const { data: availableSubjects, isLoading: isLoadingSubjects } = useExamSubjects(examType);
 
   // Plan selection state
   const [selectedPlanId, setSelectedPlanId] = useState("");
@@ -55,19 +79,46 @@ function UpgradeSubscriptionPage() {
   );
 
   const selectedPlan = plans?.find((p) => p.id === selectedPlanId);
-  const totalPrice = selectedPlan?.basePrice || 0;
+  const numberOfSubjects = subjects.length;
+
+  // Calculate total price accounting for FLEXIBLE vs FIXED plans
+  const totalPrice = selectedPlan
+    ? selectedPlan.category === "FLEXIBLE"
+      ? selectedPlan.basePrice * Math.max(numberOfSubjects, 1)
+      : selectedPlan.basePrice
+    : 0;
 
   const durationOptions =
-    plans?.map((plan) => ({
-      label: `${plan.name} - ${plan.duration} Days (${plan.currency} ${plan.basePrice.toLocaleString()})`,
-      value: plan.id,
-    })) || [];
+    plans?.map((plan) => {
+      const displayPrice = plan.category === "FLEXIBLE"
+        ? `${plan.currency} ${plan.basePrice.toLocaleString()}/subject`
+        : `${plan.currency} ${plan.basePrice.toLocaleString()}`;
+      return {
+        label: `${plan.name} - ${plan.duration} Days (${displayPrice})`,
+        value: plan.id,
+      };
+    }) || [];
 
   // Get subject names
   const subjectNames =
     availableSubjects
       ?.filter((s) => subjects.includes(s.id))
       .map((s) => s.name) || [];
+
+  const handleOpenEditSubjects = () => {
+    setEditingSubjects(subjects);
+    setShowEditSubjects(true);
+  };
+
+  const handleSaveSubjects = () => {
+    if (editingSubjects.length === 0) {
+      toast.error("Please select at least one subject");
+      return;
+    }
+    setSubjects(editingSubjects);
+    setShowEditSubjects(false);
+    toast.success("Subjects updated");
+  };
 
   // Save exam selection mutation
   const saveExamSelection = useMutation({
@@ -181,11 +232,21 @@ function UpgradeSubscriptionPage() {
 
         {/* Current Subscription Summary */}
         <div className="bg-amber-50 rounded-xl border border-amber-200 p-4 sm:p-5 mb-6">
-          <div className="flex items-center gap-2 mb-2">
-            <Crown className="h-5 w-5 text-amber-600" />
-            <h3 className="text-base font-semibold text-gray-900">
-              Upgrading: {examType}
-            </h3>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <Crown className="h-5 w-5 text-amber-600" />
+              <h3 className="text-base font-semibold text-gray-900">
+                Upgrading: {examType}
+              </h3>
+            </div>
+            <button
+              type="button"
+              onClick={handleOpenEditSubjects}
+              className="inline-flex items-center gap-1 text-xs font-medium text-accent hover:text-accent/80 transition-colors"
+            >
+              <Pencil className="h-3 w-3" />
+              Edit Subjects
+            </button>
           </div>
           <p className="text-sm text-gray-600">
             {subjectNames.length > 0
@@ -247,6 +308,11 @@ function UpgradeSubscriptionPage() {
                       {examType} &middot; {subjects.length} subject
                       {subjects.length !== 1 ? "s" : ""}
                     </p>
+                    {selectedPlan.category === "FLEXIBLE" && (
+                      <p className="text-xs text-gray-400 mt-1">
+                        {selectedPlan.currency} {selectedPlan.basePrice.toLocaleString()} &times; {numberOfSubjects} subject{numberOfSubjects !== 1 ? "s" : ""}
+                      </p>
+                    )}
                   </div>
                   <div className="sm:text-right shrink-0">
                     <div className="text-2xl sm:text-3xl font-bold text-accent">
@@ -358,6 +424,89 @@ function UpgradeSubscriptionPage() {
           </div>
         )}
       </div>
+
+      {/* Edit Subjects Dialog */}
+      <Dialog open={showEditSubjects} onOpenChange={setShowEditSubjects}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Edit Subjects</DialogTitle>
+            <DialogDescription>
+              Change your selected subjects for {examType}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="py-4">
+            {isLoadingSubjects ? (
+              <div className="flex items-center gap-2 py-4">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span className="text-gray-500 text-sm">Loading subjects...</span>
+              </div>
+            ) : availableSubjects && availableSubjects.length > 0 ? (
+              <>
+                <p className="text-xs sm:text-sm text-gray-600 mb-3">
+                  Select your subjects (up to {maxSubjects})
+                </p>
+                <ToggleGroup
+                  multiple
+                  value={editingSubjects}
+                  onValueChange={(value) => {
+                    if (value.length <= maxSubjects) setEditingSubjects(value);
+                  }}
+                  className="flex flex-wrap gap-2 sm:gap-3"
+                >
+                  {availableSubjects.map((subject) => {
+                    const isSelected = editingSubjects.includes(subject.id);
+                    const atLimit = editingSubjects.length >= maxSubjects && !isSelected;
+                    return (
+                      <ToggleGroupItem
+                        key={subject.id}
+                        value={subject.id}
+                        disabled={atLimit}
+                        className={cn(
+                          "h-auto py-3 sm:py-4 px-3 sm:px-4 rounded-sm! border-2",
+                          "inline-flex items-center justify-center shrink-0",
+                          "text-[11px] sm:text-xs font-medium text-center whitespace-nowrap",
+                          "transition-all duration-200",
+                          "hover:border-accent hover:bg-accent/5",
+                          "data-[state=on]:border-accent/70 data-[state=on]:bg-transparent data-[state=on]:text-black",
+                          isSelected ? "border-accent" : "border-[#E5E5E5] text-black",
+                          atLimit && "opacity-50 cursor-not-allowed"
+                        )}
+                        aria-label={subject.name}
+                      >
+                        {subject.name}
+                      </ToggleGroupItem>
+                    );
+                  })}
+                </ToggleGroup>
+                <div className="mt-3 text-xs text-[#6B7280]">
+                  Selected: {editingSubjects.length}/{maxSubjects}
+                </div>
+              </>
+            ) : (
+              <p className="text-sm text-gray-500 py-4">
+                No subjects available for this exam type
+              </p>
+            )}
+          </div>
+
+          <DialogFooter>
+            <button
+              onClick={() => setShowEditSubjects(false)}
+              className="px-4 py-2 text-sm font-medium rounded-4xl border border-border hover:bg-input/50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSaveSubjects}
+              disabled={editingSubjects.length === 0}
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-4xl bg-accent text-white hover:bg-accent/80 transition-colors disabled:opacity-50"
+            >
+              Save
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

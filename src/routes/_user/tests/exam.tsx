@@ -28,7 +28,7 @@ import {
 } from "@/components/questions";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { TrialLimitAlert } from "@/components/global/trial-limit-alert";
 import type { Question } from "@/api/types/exam.types";
 
 const examSearchSchema = z.object({
@@ -503,9 +503,7 @@ function ExamPage() {
 
       {/* Error Message */}
       {errorMessage && (
-        <Alert variant="destructive" className="mb-6">
-          <AlertDescription>{errorMessage}</AlertDescription>
-        </Alert>
+        <TrialLimitAlert message={errorMessage} className="mb-6" />
       )}
 
       {/* Main Layout */}

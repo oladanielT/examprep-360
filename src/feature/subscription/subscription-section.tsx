@@ -55,6 +55,7 @@ export const SubscriptionSection = () => {
   const [editingSubscription, setEditingSubscription] =
     useState<UserSubscription | null>(null);
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
+  const [paidSubjectCount, setPaidSubjectCount] = useState<number>(0);
 
   // License codes
   const { data: institutionalCodes } = useInstitutionalCodes();
@@ -160,6 +161,7 @@ export const SubscriptionSection = () => {
   const handleEditSubjects = (sub: UserSubscription) => {
     setEditingSubscription(sub);
     setSelectedSubjects(sub.subjects);
+    setPaidSubjectCount(sub.subjects.length);
   };
 
   const handleUpgrade = (sub: UserSubscription) => {
@@ -495,11 +497,17 @@ export const SubscriptionSection = () => {
             ) : availableSubjects && availableSubjects.length > 0 ? (
               <>
                 {(() => {
-                  const maxSubjects = getMaxSubjects(editingSubscription?.examType ?? "");
+                  // FLEXIBLE: cap at paid subject count, FIXED: full exam-type max
+                  const isFlexible = editingSubscription?.subscription.category === "FLEXIBLE";
+                  const maxSubjects = isFlexible
+                    ? editingSubscription!.subjects.length
+                    : getMaxSubjects(editingSubscription?.examType ?? "");
                   return (
                     <>
                       <p className="text-xs sm:text-sm text-gray-600 mb-3">
-                        Please select your subjects (up to {maxSubjects})
+                        {isFlexible
+                          ? `Swap your subjects (${maxSubjects} included in your plan)`
+                          : `Select your subjects (up to ${maxSubjects})`}
                       </p>
                       <ToggleGroup
                         multiple

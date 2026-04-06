@@ -23,5 +23,9 @@ export interface UserSubscription {
     id: string;
     name: string;
     description: string;
+    category: "FIXED" | "FLEXIBLE";
+    basePrice: number;
+    currency: string;
+    duration: number;
   };
 }
