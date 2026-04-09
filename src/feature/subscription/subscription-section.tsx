@@ -8,7 +8,7 @@ import {
   useSwitchSubscription,
   useChangeSubscriptionSubjects,
 } from "./hooks/useSubscription";
-import { useInstitutionalCodes, useRedeemLicense } from "@/feature/payment/hooks";
+import { useInstitutionalCodes, useRedeemLicense, useAssignCode } from "@/feature/payment/hooks";
 import { useExamPreferences, useExamSubjects } from "@/feature/exams/hooks";
 import { useRegistrationStore } from "@/stores/registrationStore";
 import type { InstitutionalCode } from "@/api/types";
@@ -62,6 +62,9 @@ export const SubscriptionSection = () => {
   const [showRedeemInput, setShowRedeemInput] = useState(false);
   const [redeemCode, setRedeemCode] = useState("");
   const redeemMutation = useRedeemLicense();
+  const assignCodeMutation = useAssignCode();
+  const [assigningCodeId, setAssigningCodeId] = useState<string | null>(null);
+  const [assignEmail, setAssignEmail] = useState("");
   const { data: registrationData } = useRegistrationStore();
 
   const getCodeStatus = (item: InstitutionalCode) => {
@@ -159,7 +162,7 @@ export const SubscriptionSection = () => {
 
   const handleEditSubjects = (sub: UserSubscription) => {
     setEditingSubscription(sub);
-    setSelectedSubjects(sub.subjects);
+    setSelectedSubjects(sub.subjects.map((s) => s.id));
   };
 
   const handleUpgrade = (sub: UserSubscription) => {
@@ -169,7 +172,7 @@ export const SubscriptionSection = () => {
         search: {
           examType: sub.examType,
           examTypeId: sub.examTypeId,
-          subjects: sub.subjects.join(","),
+          subjects: sub.subjects.map((s) => s.id).join(","),
           subscriptionId: sub.id,
         },
       });
@@ -412,6 +415,76 @@ export const SubscriptionSection = () => {
                   <div className="text-[10px] text-gray-400">
                     {item.subscription.name} &middot; {item.redemptionCount}/{item.maxRedemptions} used
                   </div>
+
+                  {/* Assign Student (only for pending codes) */}
+                  {isAvailable && (
+                    <div className="pt-1">
+                      {assigningCodeId === item.id ? (
+                        <div className="space-y-2">
+                          <input
+                            type="email"
+                            value={assignEmail}
+                            onChange={(e) => setAssignEmail(e.target.value)}
+                            placeholder="Student email address"
+                            className="w-full px-3 py-1.5 border border-gray-200 rounded-lg text-xs focus:border-accent focus:outline-none"
+                          />
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => {
+                                if (!assignEmail.trim()) {
+                                  toast.error("Please enter an email address");
+                                  return;
+                                }
+                                assignCodeMutation.mutate(
+                                  { codeId: item.id, email: assignEmail.trim() },
+                                  {
+                                    onSuccess: () => {
+                                      toast.success("Student assigned successfully!");
+                                      setAssigningCodeId(null);
+                                      setAssignEmail("");
+                                    },
+                                    onError: (error: any) => {
+                                      toast.error(
+                                        error.response?.data?.message ||
+                                          "Failed to assign student"
+                                      );
+                                    },
+                                  }
+                                );
+                              }}
+                              disabled={assignCodeMutation.isPending}
+                              className="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium rounded-lg bg-accent text-white hover:bg-accent/80 disabled:opacity-50 transition-colors"
+                            >
+                              {assignCodeMutation.isPending && (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                              )}
+                              Assign
+                            </button>
+                            <button
+                              onClick={() => {
+                                setAssigningCodeId(null);
+                                setAssignEmail("");
+                              }}
+                              className="px-3 py-1 text-xs text-gray-500 hover:text-gray-700"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setAssigningCodeId(item.id);
+                            setAssignEmail(item.authorizedEmail ?? "");
+                          }}
+                          className="inline-flex items-center gap-1 text-xs font-medium text-accent hover:text-accent/80 transition-colors"
+                        >
+                          <Mail className="h-3 w-3" />
+                          Assign Student
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
               );
             })}

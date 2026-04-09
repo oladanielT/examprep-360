@@ -43,6 +43,7 @@ export interface InitializePaymentRequest {
   numberOfDays: number;
   promoCode?: string;
   useReferralBenefit?: boolean;
+  useWallet?: boolean;
   metadata: {
     callbackUrl: string;
   };
@@ -142,4 +143,28 @@ export interface CodeRedemption {
     email: string;
     registrationDate: string;
   };
+}
+
+export interface ValidatePromoResponse {
+  promo: {
+    id: string;
+    code: string;
+    discountType: "PERCENTAGE" | "FIXED";
+    discountValue: number;
+    startDate: string;
+    endDate: string;
+    maxUsage: number | null;
+    usageCount: number;
+    perUserLimit: number;
+    eligibleProducts: string[];
+    isStackable: boolean;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+  } | null;
+  discountInfo: {
+    discountAmount: number;
+    finalPrice: number;
+  } | null;
+  message?: string;
 }

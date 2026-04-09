@@ -104,7 +104,9 @@ export const PAYMENT_ENDPOINTS = {
   START_TRIAL: "/payment/trial",
   INSTITUTIONAL_CODES: "/payment/institutional-codes",
   CODE_REDEMPTIONS: (id: string) => `/payment/institutional-codes/${id}/redemptions`,
+  ASSIGN_CODE: (id: string) => `/payment/institutional-codes/${id}/assign`,
   CHANGE_SUBJECTS: (id: string) => `/payment/subscriptions/${id}/subjects`,
+  VALIDATE_PROMO: "/payment/promo/validate",
 } as const;
 
 // Referral endpoints

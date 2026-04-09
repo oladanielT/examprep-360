@@ -1,111 +1,142 @@
-# Notifications Feature Implementation Plan
+```
+Project Changes Log - Backend Optimization (April 2026)
+```
 
-Based on the Notifications Documentation PDF. Skipping admin endpoints (broadcast/targeted) since this is a student-facing app. Skipping React Native/Flutter sections — web only.
+1. Dynamic Configuration System (SystemConfig)
+2. Payment & Wallet Service Enhancements
+3. Administrative Tools
+4. Business Logic Refinement
+5. Type Safety & Infrastructure
+6. Verification & Test Coverage
+7. Postman Collection Suite Updates
 
-## Overview
+# Project Changes Log - Backend
 
-Two parts:
-1. **In-app notifications** — API-driven notification center (list, read, mark-all-read)
-2. **Push notifications** — Firebase Cloud Messaging (FCM token registration, foreground/background handling)
+# Optimization (April 2026)
 
----
+This document details the optimizations and new features implemented in the
+ExamPrep 360 backend during the recent development cycle.
 
-## Phase 1: Types & Endpoints
+# 1. Dynamic Configuration System
 
-### Modify: `src/api/types/notification.types.ts` (NEW)
-- `NotificationType` union: `"ACHIEVEMENT" | "STREAK_REMINDER" | "STREAK_LOST" | "STREAK_FROZEN" | "TASK_ASSIGNED" | "PROMOTION"`
-- `Notification` interface: `id, studentId, title, message, type, data, readAt, createdAt`
-- `NotificationsResponse`: `{ data: Notification[], meta: { total, page, limit, totalPages } }`
+# (SystemConfig)
 
-### Modify: `src/api/types/index.ts`
-- Add `export * from "./notification.types"`
+Introduced a centralized configuration module to manage business rules at runtime
+without redeployment.
 
-### Modify: `src/api/endpoints.ts`
-- Add `NOTIFICATION_ENDPOINTS`: `LIST`, `MARK_READ(id)`, `MARK_ALL_READ`, `REGISTER_FCM_TOKEN`
+```
+Service: SystemConfigService
+Key Features:
+getNumber(key) / getString(key): Retrieve typed configuration values.
+Managed Keys:
+REFERRAL_REWARD_AMOUNT: Dynamic referral commission.
+FREE_TRIAL_VIDEO_LIMIT: Max videos for trial users (Default: 1).
+FREE_TRIAL_TUTORIAL_LIMIT: Max text tutorials for trial users
+(Default: 1).
+FREE_TRIAL_QUESTION_LIMIT: Max practice questions (Default: 50).
+SUBJECT_CHANGE_LIMIT: Allowed subject modifications (Increased to
+3).
+```
 
----
+# 2. Payment & Wallet Service
 
-## Phase 2: Hooks
+# Enhancements
 
-### Create: `src/feature/notifications/hooks/useNotifications.ts`
-- `useNotifications(page, limit, type?)` — GET paginated notifications
-- `useMarkAsRead()` — PATCH mark single notification read, invalidates notifications query
-- `useMarkAllAsRead()` — PATCH mark all read, invalidates notifications query
-- `useRegisterFcmToken()` — PATCH register/update FCM token
+Major refactor of the payment flow to support flexible payment methods and
+institutional efficiency.
 
-### Create: `src/feature/notifications/hooks/index.ts`
-- Barrel export
+```
+Wallet Integration:
+initializePayment now supports useWallet: boolean.
+Automatically handles partial or full balance deduction before generating
+Paystack links.
+Promo Code Validation:
+Added GET /payment/promo/validate endpoint for customer-side
+validation.
+Institutional License Optimization:
+Transitioned from individual create calls to Prisma.createMany for license
+generation.
+Fix: Resolved the "20 license code limit" issue; now handles hundreds of
+codes in a single transaction.
+Deferred Assignment: Added PATCH /payment/institutional-
+codes/:id/assign to allow school owners to assign students to codes after
+purchase.
+```
 
----
+# 3. Administrative Tools
 
-## Phase 3: Firebase Setup
+Enhanced the admin dashboard capabilities for student management and
+communication.
 
-### Install: `firebase` npm package
+```
+Bulk Email Communication:
+Added POST /admin/student/bulk-email to send targeted HTML emails
+to student cohorts based on filters (Exam Type, Level, etc.).
+Student Status Controls:
+Implemented banStudent and unbanStudent with reason tracking and
+cache invalidation.
+High-Fidelity Export:
+Updated Student Export to include department, faculty, university, and
+subscription details.
+```
 
-### Create: `src/lib/firebase.ts`
-- Initialize Firebase app with env vars (`VITE_FIREBASE_*`)
-- Export `getMessaging`, `getToken` helpers
-- `requestNotificationPermission()` function: request browser permission → get FCM token → return token
-- `onForegroundMessage(callback)` — listen for foreground push messages
+# 4. Business Logic Refinement
 
-### Create: `public/firebase-messaging-sw.js`
-- Service worker for background push notification handling
-- Imports Firebase messaging compat scripts
-- Handles `onBackgroundMessage`
+```
+Subject Constraints: Corrected the modification limit from 2 to 3 subjects.
+Mock Exam Validation: Implemented multi-subject mock exam validation to
+ensure students are enrolled in all required subjects for a specific exam type.
+Trial Restrictions: Enforced granular limits on tutorials and videos for users with
+TRIAL subscriptions.
+```
 
-### Modify: `.env`
-- Add placeholder Firebase config vars (VITE_FIREBASE_API_KEY, etc.)
+# 5. Type Safety & Infrastructure
 
----
+```
+Prisma Transactions: Resolved unsafe any casts in PaymentService by
+introducing the TransactionWithRelations type.
+Prisma Extensions: Optimized database interactions using custom logic for
+license distribution (each institutional code now defaults to maxRedemptions: 1).
+```
 
-## Phase 4: FCM Token Registration
+# 6. Verification & Test Coverage
 
-### Create: `src/feature/notifications/components/NotificationProvider.tsx`
-- Wraps the app (or placed inside authenticated layout)
-- On mount (if authenticated): request permission → get FCM token → register with backend via `useRegisterFcmToken`
-- Sets up foreground message listener → shows toast via sonner + invalidates notifications query
-- No UI — just a side-effect provider
+Passed **104 Unit Tests** ensuring 100% stability for new and modified logic.
 
-### Modify: `src/routes/_user.tsx` (or wherever the authenticated layout lives)
-- Add `<NotificationProvider />` inside the authenticated layout
+```
+Payment Service: 14 tests (added wallet/batch logic coverage).
+Referral Service: Integrated SystemConfig mocks for dynamic rewards.
+Students Service: Added bulk email and ban/unban tests.
+Controllers: Full coverage for new endpoints in StudentsController and
+PaymentController.
+Tutorials: Validated dynamic trial limits.
+```
 
----
+# 7. Postman Collection Suite Updates
 
-## Phase 5: Notifications Page
+Synced the entire Postman suite (15 collections) with the optimized backend
+architecture.
 
-### Create: `src/routes/_user/notifications.tsx`
-- Full notification center page
-- Bell icon header with "Mark all as read" button
-- Notification list with type-based icons (ACHIEVEMENT→trophy, STREAK_REMINDER→flame, etc.)
-- Unread items highlighted (readAt is null)
-- Click to mark as read
-- Pagination (load more button)
-- Empty state
+```
+Unified User Collection (user-postman-collection.json):
+Wallet Payments: Added useWallet parameter to all initializePayment
+requests.
+```
 
----
+```
+Promo Validation: Integrated the new Validate Promo Code request
+before checkout.
+Institutional Management: Added Assign Email to Institutional
+Code for deferred license distribution.
+Payment Module (ExPrep_Payment_Module_Postman_Collection.json):
+Updated initialization payloads and documented the removed 20-code batch
+limit.
+Student Module (ExPrep_Student_Module_Postman_Collection.json):
+Added Bulk Email Students and administrative Ban/Unban student
+requests.
+System Config (Exprep_system-config.postman_collection.json):
+[NEW] Created to manage runtime business logic (Referral rewards, trial
+limits, etc.).
+```
 
-## Phase 6: Nav Bell Icon with Badge
-
-### Modify: `src/components/global/nav.tsx`
-- Import `useNotifications` hook (page 1, small limit) to get unread count
-- Replace static `<Bell>` icons (desktop + mobile) with a clickable Link to `/notifications`
-- Show red dot/badge with unread count (count where `readAt === null`)
-
----
-
-## Files Summary
-
-| Action | File |
-|--------|------|
-| CREATE | `src/api/types/notification.types.ts` |
-| EDIT   | `src/api/types/index.ts` |
-| EDIT   | `src/api/endpoints.ts` |
-| CREATE | `src/feature/notifications/hooks/useNotifications.ts` |
-| CREATE | `src/feature/notifications/hooks/index.ts` |
-| CREATE | `src/lib/firebase.ts` |
-| CREATE | `public/firebase-messaging-sw.js` |
-| CREATE | `src/feature/notifications/components/NotificationProvider.tsx` |
-| CREATE | `src/routes/_user/notifications.tsx` |
-| EDIT   | `src/components/global/nav.tsx` |
-| EDIT   | `.env` (add Firebase placeholders) |
-| EDIT   | Authenticated layout route (add NotificationProvider) |
+**Date:** April 4, 2026 **Status:** All Features & Documentation Verified & Passing

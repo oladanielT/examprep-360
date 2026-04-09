@@ -4,12 +4,13 @@ import PrimaryButton from "@/components/buttons/primary-button";
 import { Alert } from "@/components/ui/alert";
 import { useRegistrationStore } from "@/stores/registrationStore";
 import { useAuthStore } from "@/stores/authStore";
-import { usePaymentPlans, useInitializePayment, useRedeemLicense, useStartTrial } from "@/feature/payment/hooks";
+import { usePaymentPlans, useInitializePayment, useRedeemLicense, useStartTrial, useValidatePromo } from "@/feature/payment/hooks";
+import { useWalletBalance } from "@/feature/wallet/hooks";
 import { useExamSubjects } from "@/feature/exams/hooks";
 import { useMutation } from "@tanstack/react-query";
 import { apiClient } from "@/api/client";
 import { EXAM_SELECTION_ENDPOINTS } from "@/api/endpoints";
-import { Check, Loader2, Upload, X, Pencil } from "lucide-react";
+import { Check, Loader2, Upload, X, Pencil, Wallet, Tag } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -47,6 +48,13 @@ function CheckoutPage() {
   const [bulkEmailText, setBulkEmailText] = useState("");
   const csvInputRef = useRef<HTMLInputElement>(null);
 
+  // Promo code state
+  const [promoCode, setPromoCode] = useState("");
+  const [appliedPromo, setAppliedPromo] = useState("");
+
+  // Wallet state
+  const [useWallet, setUseWallet] = useState(false);
+
   // Edit subjects state
   const [showEditSubjects, setShowEditSubjects] = useState(false);
   const [editingSubjects, setEditingSubjects] = useState<string[]>(registrationData.subjects);
@@ -68,6 +76,16 @@ function CheckoutPage() {
   // Fetch available subjects for inline editing
   const { data: availableSubjects, isLoading: isLoadingSubjects } = useExamSubjects(examType);
   const maxSubjects = getMaxSubjects(examType);
+
+  // Wallet balance
+  const { data: walletData } = useWalletBalance();
+  const walletBalance = walletData?.balance ?? 0;
+
+  // Promo code validation
+  const { data: promoResult, isFetching: isValidatingPromo } = useValidatePromo(
+    appliedPromo,
+    selectedPlanId ?? ""
+  );
 
   // Get subject labels from IDs
   const selectedSubjectLabels = registrationData.subjects
@@ -146,7 +164,22 @@ function CheckoutPage() {
     return base;
   };
 
-  const totalPrice = selectedPlan ? calcPlanTotal(selectedPlan) : 0;
+  const baseTotalPrice = selectedPlan ? calcPlanTotal(selectedPlan) : 0;
+
+  // Apply promo discount
+  const promoValid = !!promoResult?.promo?.isActive;
+  const promoDiscount = promoValid
+    ? promoResult!.discountInfo
+      ? promoResult!.discountInfo.discountAmount
+      : promoResult!.promo!.discountType === "PERCENTAGE"
+        ? Math.round((baseTotalPrice * promoResult!.promo!.discountValue) / 100)
+        : promoResult!.promo!.discountValue
+    : 0;
+  const priceAfterPromo = Math.max(0, baseTotalPrice - promoDiscount);
+
+  // Apply wallet deduction
+  const walletDeduction = useWallet ? Math.min(walletBalance, priceAfterPromo) : 0;
+  const totalPrice = priceAfterPromo - walletDeduction;
 
   const validateStudentEmails = (): boolean => {
     if (!registrationData.isInstitutional) return true;
@@ -270,6 +303,8 @@ function CheckoutPage() {
         schoolType: examCategory,
         examType: examType,
         numberOfDays: selectedPlan.duration,
+        ...(appliedPromo && promoValid && { promoCode: appliedPromo }),
+        ...(useWallet && { useWallet: true }),
         metadata: {
           callbackUrl,
         },
@@ -282,6 +317,15 @@ function CheckoutPage() {
         window.location.href = paymentUrl;
       } else if (accessCode) {
         window.location.href = `https://checkout.paystack.com/${accessCode}`;
+      } else if (totalPrice === 0 || (response as any).paid) {
+        // Wallet covered the full amount — no external payment needed
+        toast.success("Payment successful!", {
+          description: "Your subscription has been activated.",
+        });
+        navigationTimerRef.current = setTimeout(() => {
+          resetRegistration();
+          navigate({ to: "/" });
+        }, 1000);
       } else {
         toast.error("Payment initialization failed", {
           description: "Could not get payment URL. Please try again.",
@@ -699,7 +743,115 @@ function CheckoutPage() {
                   </div>
                 )}
 
-                {selectedPlan && (
+                {/* Promo Code Section */}
+                {selectedPlanId && (
+                  <div className="p-4 border-2 border-gray-200 rounded-xl space-y-2">
+                    <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                      <Tag className="h-4 w-4" />
+                      Promo Code
+                    </div>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={promoCode}
+                        onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                        placeholder="Enter promo code"
+                        className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-accent focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (appliedPromo === promoCode) return;
+                          setAppliedPromo(promoCode);
+                        }}
+                        disabled={!promoCode || promoCode.length < 3 || isValidatingPromo}
+                        className="px-4 py-2 bg-accent text-white text-sm rounded-lg disabled:opacity-50 hover:bg-accent/80 transition-colors"
+                      >
+                        {isValidatingPromo ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          "Apply"
+                        )}
+                      </button>
+                      {appliedPromo && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAppliedPromo("");
+                            setPromoCode("");
+                          }}
+                          className="px-2 text-gray-400 hover:text-gray-600"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
+                    {appliedPromo && promoResult && (
+                      <p className={cn(
+                        "text-xs",
+                        promoValid ? "text-green-600" : "text-red-500"
+                      )}>
+                        {promoValid
+                          ? `Discount applied: -${selectedPlan?.currency ?? "NGN"} ${promoDiscount.toLocaleString()}`
+                          : promoResult.message || "Invalid promo code"}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Wallet Payment Toggle */}
+                {selectedPlanId && walletBalance > 0 && (
+                  <label className="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-accent/50 transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={useWallet}
+                      onChange={(e) => setUseWallet(e.target.checked)}
+                      className="h-4 w-4 rounded border-gray-300 text-accent focus:ring-accent"
+                    />
+                    <Wallet className="h-4 w-4 text-gray-500" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-700">
+                        Use wallet balance
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Available: NGN {walletBalance.toLocaleString()}
+                      </p>
+                    </div>
+                    {useWallet && walletDeduction > 0 && (
+                      <span className="text-sm font-medium text-green-600">
+                        -NGN {walletDeduction.toLocaleString()}
+                      </span>
+                    )}
+                  </label>
+                )}
+
+                {/* Price Breakdown */}
+                {selectedPlan && (promoDiscount > 0 || walletDeduction > 0) && (
+                  <div className="p-3 bg-gray-50 rounded-xl space-y-1 text-sm">
+                    <div className="flex justify-between text-gray-500">
+                      <span>Subtotal</span>
+                      <span>{selectedPlan.currency} {baseTotalPrice.toLocaleString()}</span>
+                    </div>
+                    {promoDiscount > 0 && (
+                      <div className="flex justify-between text-green-600">
+                        <span>Promo discount</span>
+                        <span>-{selectedPlan.currency} {promoDiscount.toLocaleString()}</span>
+                      </div>
+                    )}
+                    {walletDeduction > 0 && (
+                      <div className="flex justify-between text-green-600">
+                        <span>Wallet</span>
+                        <span>-{selectedPlan.currency} {walletDeduction.toLocaleString()}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between font-semibold text-gray-900 pt-1 border-t border-gray-200">
+                      <span>Total</span>
+                      <span>{selectedPlan.currency} {totalPrice.toLocaleString()}</span>
+                    </div>
+                  </div>
+                )}
+
+                {selectedPlan && !(promoDiscount > 0 || walletDeduction > 0) && (
                   <div className="text-center text-sm text-gray-500">
                     {numberOfSubjects} subject{numberOfSubjects !== 1 ? "s" : ""} selected
                     {selectedPlan.category === "FLEXIBLE" && (
@@ -716,7 +868,9 @@ function CheckoutPage() {
                     initializePaymentMutation.isPending
                       ? "Processing..."
                       : selectedPlan
-                        ? `Pay ${selectedPlan.currency} ${totalPrice.toLocaleString()}`
+                        ? totalPrice > 0
+                          ? `Pay ${selectedPlan.currency} ${totalPrice.toLocaleString()}`
+                          : "Activate Now"
                         : "Select a Plan"
                   }
                 />

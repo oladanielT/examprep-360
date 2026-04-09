@@ -15,6 +15,7 @@ import type {
   StartTrialResponse,
   InstitutionalCode,
   CodeRedemption,
+  ValidatePromoResponse,
 } from "@/api/types";
 import type { AxiosError } from "axios";
 
@@ -184,6 +185,39 @@ export const useStartTrial = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profile"] });
+    },
+  });
+};
+
+// Validate promo code
+export const useValidatePromo = (code: string, planId: string) => {
+  return useQuery<ValidatePromoResponse>({
+    queryKey: ["validatePromo", code, planId],
+    queryFn: async () => {
+      const { data } = await apiClient.get<ValidatePromoResponse>(
+        PAYMENT_ENDPOINTS.VALIDATE_PROMO,
+        { params: { code, planId } }
+      );
+      return data;
+    },
+    enabled: !!code && code.length >= 3 && !!planId,
+  });
+};
+
+// Assign institutional code to a student email
+export const useAssignCode = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ codeId, email }: { codeId: string; email: string }) => {
+      const { data } = await apiClient.patch(
+        PAYMENT_ENDPOINTS.ASSIGN_CODE(codeId),
+        { email }
+      );
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["institutionalCodes"] });
     },
   });
 };

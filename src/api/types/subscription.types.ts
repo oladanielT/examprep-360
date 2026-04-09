@@ -10,7 +10,7 @@ export interface UserSubscription {
   status: "ACTIVE" | "EXPIRED" | "CANCELLED";
   startDate: string;
   endDate: string | null;
-  subjects: string[];
+  subjects: Array<{ id: string; name: string }>;
   courses: string[];
   examType: string;
   examTypeId: string;

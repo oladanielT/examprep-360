@@ -2,8 +2,10 @@ import { usePausedExams } from '@/feature/activities/hooks/useActivities'
 import { useResumeExam } from '@/feature/exams/hooks/useExams'
 import { useExamStore } from '@/stores/examStore'
 import { useNavigate } from '@tanstack/react-router'
+import { useQueryClient } from '@tanstack/react-query'
 import { Loader2, Clock, BookOpen } from 'lucide-react'
 import { Empty, EmptyHeader, EmptyTitle, EmptyDescription } from '@/components/ui/empty'
+import { toast } from 'sonner'
 import { useState } from 'react'
 
 function formatTimeSpent(seconds?: number) {
@@ -18,6 +20,7 @@ function formatTimeSpent(seconds?: number) {
 export default function Continue() {
     const { data: pausedExams, isLoading } = usePausedExams()
     const navigate = useNavigate()
+    const queryClient = useQueryClient()
     const resumeExam = useResumeExam()
     const startExam = useExamStore((state) => state.startExam)
     const storeSubmitResponse = useExamStore((state) => state.submitResponse)
@@ -49,8 +52,12 @@ export default function Continue() {
                 }
                 setResumingId(null)
             },
-            onError: () => {
+            onError: (error: any) => {
                 setResumingId(null)
+                const message = error?.response?.data?.message || 'This exam is no longer available.'
+                toast.error(message)
+                // Refresh the list to remove stale entries
+                queryClient.invalidateQueries({ queryKey: ['paused-exams'] })
             },
         })
     }
