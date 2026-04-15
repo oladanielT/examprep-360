@@ -96,7 +96,7 @@ function SingleExamCard({ exam }: { exam: ExamHistoryItem }) {
           />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="text-sm sm:text-base font-semibold text-gray-900 truncate">
+          <h3 className="text-sm sm:text-base font-semibold text-gray-900">
             {exam.exam?.subject?.name || exam.exam?.name || "Exam"}
           </h3>
           <p className="text-xs text-gray-500 mt-0.5">
@@ -104,7 +104,7 @@ function SingleExamCard({ exam }: { exam: ExamHistoryItem }) {
           </p>
 
           {/* Score */}
-          <div className="flex items-center gap-2 mt-2.5">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-2.5">
             {passed ? (
               <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
             ) : (
@@ -116,7 +116,7 @@ function SingleExamCard({ exam }: { exam: ExamHistoryItem }) {
               {isJamb ? `${percentage}/100` : `${percentage}%`}
             </span>
             {numQuestions > 0 && (
-              <span className="text-xs text-gray-400">
+              <span className="text-xs text-gray-400 whitespace-nowrap">
                 ({correctCount}/{numQuestions} correct)
               </span>
             )}
@@ -283,7 +283,7 @@ function CompletedExamsList({ examType }: { examType: ExamTypeEnum }) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
       {entries.map((entry, idx) =>
         entry.type === "simulation" ? (
           <SimulationCard key={`sim-${idx}`} items={entry.items} />
