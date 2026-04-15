@@ -73,7 +73,12 @@ export default function Continue() {
         )
     }
 
-    if (!pausedExams || pausedExams.length === 0) {
+    // Only show practice exams (mock/simulation exams can't be resumed individually)
+    const practiceExams = pausedExams?.filter(
+        (exam) => exam.exam?.examTypeEnum !== "MOCK"
+    ) || [];
+
+    if (practiceExams.length === 0) {
         return (
             <div className="py-10">
                 <h2 className='font-semibold text-2xl mb-5'>Jump back in</h2>
@@ -93,7 +98,7 @@ export default function Continue() {
         <div className="py-10">
             <h2 className='font-semibold text-2xl mb-5'>Jump back in</h2>
             <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5'>
-                {pausedExams.slice(0, 4).map((exam) => {
+                {practiceExams.slice(0, 4).map((exam) => {
                     const examTitle = exam.exam?.name || "Practice Exam"
                     const totalQuestions = exam.exam?.numQuestions || 0
                     const timeSpent = formatTimeSpent(exam.timeSpentSeconds)

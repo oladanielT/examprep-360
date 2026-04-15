@@ -68,6 +68,16 @@ function MockExamReviewPage() {
   const reviews = subjects.map((_, i) => allReviewHooks[i]);
   const isLoading = reviews.some((r, i) => i < subjects.length && r.isLoading);
 
+  // Detect JAMB/UTME exam type from review data
+  const isJamb = useMemo(() => {
+    for (let i = 0; i < subjects.length; i++) {
+      const review = reviews[i]?.data;
+      const examTypeName = (review?.exam as any)?.examType?.name || review?.exam?.name || "";
+      if (/jamb|utme/i.test(examTypeName)) return true;
+    }
+    return false;
+  }, [subjects, reviews]);
+
   // Aggregate stats
   const aggregateStats = useMemo(() => {
     let totalScore = 0;
@@ -76,6 +86,7 @@ function MockExamReviewPage() {
     let totalWrong = 0;
     let totalSkipped = 0;
     let totalTimeSpent = 0;
+    let totalJambScore = 0;
     const essayTypes = new Set(["ESSAY", "ESSAY_WITH_SUB", "SHORT_ANSWER"]);
 
     const perSubject: Array<{
@@ -83,6 +94,7 @@ function MockExamReviewPage() {
       score: number;
       total: number;
       percentage: number;
+      jambScore: number;
       passed: boolean;
       correct: number;
       wrong: number;
@@ -97,6 +109,7 @@ function MockExamReviewPage() {
           score: 0,
           total: session.questions.length,
           percentage: 0,
+          jambScore: 0,
           passed: false,
           correct: 0,
           wrong: 0,
@@ -116,6 +129,8 @@ function MockExamReviewPage() {
 
       // Use correct count as score so skipped questions count against the total
       const subjectPercentage = numQ > 0 ? Math.round((correct / numQ) * 100) : 0;
+      // JAMB score: each subject out of 100
+      const jambScore = subjectPercentage;
       const passingScore = (review.exam as any)?.passingScore ?? 50;
       const subjectPassed = subjectPercentage >= passingScore;
 
@@ -125,12 +140,14 @@ function MockExamReviewPage() {
       totalWrong += wrong;
       totalSkipped += skipped;
       totalTimeSpent += review.timeSpentSeconds || 0;
+      totalJambScore += jambScore;
 
       perSubject.push({
         name: session.subject.name,
         score: correct,
         total: numQ,
         percentage: subjectPercentage,
+        jambScore,
         passed: subjectPassed,
         correct,
         wrong,
@@ -140,6 +157,7 @@ function MockExamReviewPage() {
 
     const overallPercentage = totalQuestions > 0 ? Math.round((totalScore / totalQuestions) * 100) : 0;
     const overallPassed = perSubject.every((s) => s.passed);
+    const maxJambScore = subjects.length * 100; // e.g. 400 for 4 subjects
 
     return {
       totalScore,
@@ -148,6 +166,8 @@ function MockExamReviewPage() {
       totalWrong,
       totalSkipped,
       totalTimeSpent,
+      totalJambScore,
+      maxJambScore,
       overallPercentage,
       overallPassed,
       perSubject,
@@ -246,7 +266,9 @@ function MockExamReviewPage() {
                   aggregateStats.overallPassed ? "text-emerald-700" : "text-red-700"
                 )}
               >
-                {aggregateStats.overallPercentage}%
+                {isJamb
+                  ? aggregateStats.totalJambScore
+                  : `${aggregateStats.overallPercentage}%`}
               </span>
             </div>
             <div>
@@ -254,7 +276,9 @@ function MockExamReviewPage() {
                 Exam Simulation Results
               </h1>
               <p className="text-xs sm:text-sm text-gray-500">
-                {subjects.length} subjects combined
+                {isJamb
+                  ? `JAMB Score: ${aggregateStats.totalJambScore}/${aggregateStats.maxJambScore}`
+                  : `${subjects.length} subjects combined`}
               </p>
               <div className="flex items-center gap-1 mt-1">
                 {aggregateStats.overallPassed ? (
@@ -278,7 +302,9 @@ function MockExamReviewPage() {
             <div className="flex items-center gap-1.5 bg-white/80 rounded-full px-3 py-1.5 text-xs sm:text-sm border border-gray-200">
               <Target className="w-3.5 h-3.5 text-gray-500" />
               <span className="text-gray-700 font-medium">
-                {aggregateStats.totalScore}/{aggregateStats.totalQuestions}
+                {isJamb
+                  ? `${aggregateStats.totalJambScore}/${aggregateStats.maxJambScore}`
+                  : `${aggregateStats.totalScore}/${aggregateStats.totalQuestions}`}
               </span>
             </div>
             <div className="flex items-center gap-1.5 bg-white/80 rounded-full px-3 py-1.5 text-xs sm:text-sm border border-gray-200">
@@ -330,10 +356,12 @@ function MockExamReviewPage() {
                       subj.passed ? "text-emerald-600" : "text-red-500"
                     )}
                   >
-                    {Math.round(subj.percentage)}%
+                    {isJamb ? subj.jambScore : `${Math.round(subj.percentage)}%`}
                   </p>
                   <p className="text-[10px] text-gray-400 mt-0.5">
-                    {subj.score}/{subj.total}
+                    {isJamb
+                      ? `${subj.jambScore}/100`
+                      : `${subj.score}/${subj.total}`}
                   </p>
                 </div>
                 <div

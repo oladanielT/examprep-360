@@ -55,6 +55,12 @@ export interface MockExamState {
 
   clearMockExam: () => void;
 
+  // Load minimal data for reviewing a past simulation
+  loadForReview: (
+    sessionId: string,
+    sessions: Array<{ attemptId: string; subjectName: string }>
+  ) => void;
+
   // Getters
   getCurrentSubject: () => SubjectSession | null;
   getCurrentQuestion: () => Question | null;
@@ -193,6 +199,26 @@ export const useMockExamStore = create<MockExamState>()(
           subjects: [],
           currentQuestionIndexes: {},
         }),
+
+      loadForReview: (sessionId, sessions) => {
+        const subjects: SubjectSession[] = sessions.map((s) => ({
+          subject: { id: s.attemptId, name: s.subjectName },
+          attemptId: s.attemptId,
+          attempt: { id: s.attemptId } as ExamAttempt,
+          questions: [],
+          responses: new Map(),
+          answers: {},
+          durationMinutes: 0,
+        }));
+        set({
+          sessionId,
+          subjects,
+          currentSubjectIndex: 0,
+          currentQuestionIndexes: {},
+          timeRemaining: null,
+          timerRunning: false,
+        });
+      },
 
       getCurrentSubject: () => {
         const { subjects, currentSubjectIndex } = get();

@@ -36,9 +36,13 @@ function SubjectMockPicker({
     ? Object.values(groupedData).flat()
     : ungroupedData || [];
 
-  // Auto-select first mock when data loads
-  const firstMock = mocks[0];
-  const activeMock = mocks.find((m) => m.id === selectedMockId) || firstMock;
+  // Pick a random mock when no explicit selection exists (stable across re-renders)
+  const randomMock = useMemo(
+    () => mocks.length > 0 ? mocks[Math.floor(Math.random() * mocks.length)] : undefined,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [mocks.length]
+  );
+  const activeMock = mocks.find((m) => m.id === selectedMockId) || randomMock;
 
   return (
     <button

@@ -62,7 +62,12 @@ export default function Paused() {
     );
   }
 
-  if (!attempts || attempts.length === 0) {
+  // Only show practice exams (mock/simulation exams can't be resumed individually)
+  const practiceAttempts = attempts?.filter(
+    (a) => a.exam?.examTypeEnum !== "MOCK"
+  ) || [];
+
+  if (practiceAttempts.length === 0) {
     return (
       <div className="text-center py-12">
         <p className="text-gray-500">No paused exams found</p>
@@ -72,7 +77,7 @@ export default function Paused() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
-      {attempts.map((attempt) => {
+      {practiceAttempts.map((attempt) => {
         const examName = attempt.exam?.name || "Practice Exam";
         const totalQuestions = attempt.exam?.numQuestions || 0;
         const timeSpent = formatTimeSpent(attempt.timeSpentSeconds);

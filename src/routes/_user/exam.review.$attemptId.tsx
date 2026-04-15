@@ -104,6 +104,9 @@ function ExamReviewPage() {
   const examName = review.exam?.name || "Exam";
   const subjectName = review.exam?.subject?.name || "";
   const examTypeName = review.exam?.examType?.name || "";
+  // JAMB: show score out of 100
+  const isJamb = /jamb|utme/i.test(examTypeName) || /jamb|utme/i.test(examName);
+  const jambScore = percentage; // percentage IS the JAMB subject score (out of 100)
 
   const currentItem = allItems[currentIndex];
   const currentQuestion = currentItem?.question;
@@ -157,7 +160,7 @@ function ExamReviewPage() {
                   passed ? "text-emerald-700" : "text-red-700"
                 )}
               >
-                {Math.round(percentage)}%
+                {isJamb ? jambScore : `${Math.round(percentage)}%`}
               </span>
             </div>
             <div>
@@ -165,7 +168,9 @@ function ExamReviewPage() {
                 {examName}
               </h1>
               <p className="text-xs sm:text-sm text-gray-500">
-                {[examTypeName, subjectName].filter(Boolean).join(" · ")}
+                {isJamb
+                  ? `JAMB Score: ${jambScore}/100 · ${subjectName}`
+                  : [examTypeName, subjectName].filter(Boolean).join(" · ")}
               </p>
               <div className="flex items-center gap-1 mt-1">
                 {passed ? (
