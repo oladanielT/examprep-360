@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import Nav from "@/components/global/nav";
 import { useAuthStore } from "@/stores/authStore";
 import { usePushNotifications } from "@/feature/notifications/hooks/usePushNotifications";
+import { PhonePromptDialog } from "@/feature/auth/components/phone-prompt-dialog";
 
 function UserLayout() {
   usePushNotifications();
@@ -12,6 +13,7 @@ function UserLayout() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <Outlet />
       </div>
+      <PhonePromptDialog />
     </div>
   );
 }
