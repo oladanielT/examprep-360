@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { z } from "zod";
 import { ArrowLeft } from "@phosphor-icons/react";
 import { CheckCircle2 } from "lucide-react";
-import { useMockExamStore } from "@/stores/mockExamStore";
+import { useMockExamStore, cqKey } from "@/stores/mockExamStore";
 import { useShallow } from "zustand/react/shallow";
 import {
   useMockSubmitResponse,
@@ -46,15 +46,24 @@ type AnswerValue =
   | Record<string, string>
   | null;
 
+function isAnswered(answer: any): boolean {
+  if (answer === null || answer === undefined) return false;
+  if (Array.isArray(answer)) return answer.length > 0;
+  if (typeof answer === "string") return answer.length > 0;
+  if (typeof answer === "boolean") return true;
+  if (typeof answer === "object") return Object.keys(answer).length > 0;
+  return false;
+}
+
 function MockExamPage() {
   const { sessionId } = Route.useParams();
   const navigate = useNavigate();
 
-  // Store state
   const {
     sessionId: storedSessionId,
     subjects,
     currentSubjectIndex,
+    currentPaperIndex,
     currentQuestionIndexes,
     timeRemaining,
     timerRunning,
@@ -63,6 +72,7 @@ function MockExamPage() {
       sessionId: state.sessionId,
       subjects: state.subjects,
       currentSubjectIndex: state.currentSubjectIndex,
+      currentPaperIndex: state.currentPaperIndex,
       currentQuestionIndexes: state.currentQuestionIndexes,
       timeRemaining: state.timeRemaining,
       timerRunning: state.timerRunning,
@@ -71,6 +81,7 @@ function MockExamPage() {
 
   const {
     setCurrentSubject,
+    setCurrentPaper,
     setCurrentQuestion,
     nextQuestion,
     previousQuestion,
@@ -79,6 +90,7 @@ function MockExamPage() {
   } = useMockExamStore(
     useShallow((state) => ({
       setCurrentSubject: state.setCurrentSubject,
+      setCurrentPaper: state.setCurrentPaper,
       setCurrentQuestion: state.setCurrentQuestion,
       nextQuestion: state.nextQuestion,
       previousQuestion: state.previousQuestion,
@@ -87,16 +99,20 @@ function MockExamPage() {
     }))
   );
 
-  // Validate session
   const isValidSession = storedSessionId === sessionId;
   const [loadError] = useState(!isValidSession ? "Exam session not found." : "");
 
-  // Current subject session
-  const currentSession = subjects[currentSubjectIndex] || null;
-  const currentQuestionIndex = currentQuestionIndexes[currentSubjectIndex] || 0;
-  const currentQuestion = currentSession?.questions[currentQuestionIndex] || null;
-  const currentAnswers = currentSession?.answers || {};
-  // API mutations
+  // Resolve the currently active subject and paper. The paper-tab row is
+  // suppressed when there's only one paper (JAMB-style).
+  const currentSubject = subjects[currentSubjectIndex] || null;
+  const currentPaper = currentSubject?.papers[currentPaperIndex] || null;
+  const currentQuestionIndex =
+    currentQuestionIndexes[cqKey(currentSubjectIndex, currentPaperIndex)] ?? 0;
+  const currentQuestion = currentPaper?.questions[currentQuestionIndex] || null;
+  const currentAnswers = currentPaper?.answers || {};
+  const hasMultiplePapers = (currentSubject?.papers.length ?? 0) > 1;
+
+  // Hooks
   const submitResponse = useMockSubmitResponse();
   const completeMockExam = useCompleteMockExam();
   const pauseMockExam = usePauseMockExam();
@@ -104,45 +120,35 @@ function MockExamPage() {
   const toggleBookmark = useToggleBookmark();
   const reportQuestion = useReportQuestion();
 
-  // Answered questions (have draft answers) for current subject
+  // Answered questions for the current paper.
   const answeredQuestions = useMemo(() => {
-    if (!currentSession) return new Set<number>();
+    if (!currentPaper) return new Set<number>();
     const answered = new Set<number>();
-    currentSession.questions.forEach((q, index) => {
-      const answer = currentAnswers[q.id];
-      if (answer !== null && answer !== undefined) {
-        if (Array.isArray(answer) && answer.length > 0) answered.add(index);
-        else if (typeof answer === "string" && answer.length > 0) answered.add(index);
-        else if (typeof answer === "boolean") answered.add(index);
-        else if (typeof answer === "object" && Object.keys(answer).length > 0) answered.add(index);
-      }
+    currentPaper.questions.forEach((q, index) => {
+      if (isAnswered(currentPaper.answers[q.id])) answered.add(index);
     });
     return answered;
-  }, [currentSession?.questions, currentAnswers]);
+  }, [currentPaper]);
 
-  // Track time spent on question
+  // Per-question timing — reset whenever the visible question changes
+  // (subject, paper, or index).
   const questionStartTime = useRef<number>(Date.now());
-
   useEffect(() => {
     questionStartTime.current = Date.now();
-  }, [currentQuestionIndex, currentSubjectIndex]);
+  }, [currentQuestionIndex, currentSubjectIndex, currentPaperIndex]);
 
-  // Timer
   useEffect(() => {
     if (!timerRunning || timeRemaining === null || timeRemaining <= 0) return;
-
     const interval = setInterval(() => {
       updateTimeRemaining((prev: number | null) => {
         if (prev === null || prev <= 0) return prev;
         return prev - 1;
       });
     }, 1000);
-
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timerRunning, updateTimeRemaining]);
 
-  // Prevent page close
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       e.preventDefault();
@@ -152,7 +158,6 @@ function MockExamPage() {
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, []);
 
-  // State
   const [bookmarkedQuestions, setBookmarkedQuestions] = useState<Set<string>>(new Set());
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportReason, setReportReason] = useState("");
@@ -160,18 +165,15 @@ function MockExamPage() {
   const [showCompleteConfirm, setShowCompleteConfirm] = useState(false);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
 
-  // Handle answer change
   const handleAnswerChange = useCallback(
     (questionId: string, value: AnswerValue) => {
-      setAnswer(currentSubjectIndex, questionId, value);
+      setAnswer(currentSubjectIndex, currentPaperIndex, questionId, value);
     },
-    [currentSubjectIndex, setAnswer]
+    [currentSubjectIndex, currentPaperIndex, setAnswer]
   );
 
-  // Submit current question's answer
   const handleSubmitAnswer = useCallback(() => {
-    if (!currentSession || !currentQuestion) return;
-
+    if (!currentPaper || !currentQuestion) return;
     const questionId = currentQuestion.id;
     const value = currentAnswers[questionId];
     if (value === null || value === undefined) return;
@@ -187,7 +189,8 @@ function MockExamPage() {
     submitResponse.mutate(
       {
         subjectIndex: currentSubjectIndex,
-        attemptId: currentSession.attemptId,
+        paperIndex: currentPaperIndex,
+        attemptId: currentPaper.attemptId,
         request: {
           questionId,
           answer: formattedAnswer,
@@ -198,39 +201,38 @@ function MockExamPage() {
         onSuccess: () => setErrorMessage(""),
         onError: (error: any) => {
           setErrorMessage(
-            error?.response?.data?.message || error?.message || "Failed to submit answer."
+            error?.response?.data?.message ||
+              error?.message ||
+              "Failed to submit answer."
           );
         },
       }
     );
-  }, [currentSession, currentQuestion, currentAnswers, currentSubjectIndex, submitResponse]);
+  }, [
+    currentPaper,
+    currentQuestion,
+    currentAnswers,
+    currentSubjectIndex,
+    currentPaperIndex,
+    submitResponse,
+  ]);
 
-  // Check if current question has an answer
   const hasCurrentAnswer = useCallback(() => {
     if (!currentQuestion) return false;
-    const answer = currentAnswers[currentQuestion.id];
-    if (answer === null || answer === undefined) return false;
-    if (Array.isArray(answer)) return answer.length > 0;
-    if (typeof answer === "string") return answer.length > 0;
-    if (typeof answer === "boolean") return true;
-    if (typeof answer === "object") return Object.keys(answer).length > 0;
-    return false;
+    return isAnswered(currentAnswers[currentQuestion.id]);
   }, [currentQuestion, currentAnswers]);
 
-  // Overall unanswered check
+  // "Unanswered" check sums every question of every paper across every
+  // subject — completing the simulation closes every paper at once.
   const hasUnansweredQuestions = useMemo(() => {
     let totalAnswered = 0;
     let totalQuestions = 0;
     subjects.forEach((s) => {
-      totalQuestions += s.questions.length;
-      s.questions.forEach((q) => {
-        const answer = s.answers[q.id];
-        if (answer !== null && answer !== undefined) {
-          if (Array.isArray(answer) && answer.length > 0) totalAnswered++;
-          else if (typeof answer === "string" && answer.length > 0) totalAnswered++;
-          else if (typeof answer === "boolean") totalAnswered++;
-          else if (typeof answer === "object" && Object.keys(answer).length > 0) totalAnswered++;
-        }
+      s.papers.forEach((p) => {
+        totalQuestions += p.questions.length;
+        p.questions.forEach((q) => {
+          if (isAnswered(p.answers[q.id])) totalAnswered++;
+        });
       });
     });
     return totalAnswered < totalQuestions;
@@ -239,17 +241,15 @@ function MockExamPage() {
   const totalUnanswered = useMemo(() => {
     let count = 0;
     subjects.forEach((s) => {
-      s.questions.forEach((q) => {
-        const answer = s.answers[q.id];
-        if (answer === null || answer === undefined) count++;
-        else if (Array.isArray(answer) && answer.length === 0) count++;
-        else if (typeof answer === "string" && answer.length === 0) count++;
+      s.papers.forEach((p) => {
+        p.questions.forEach((q) => {
+          if (!isAnswered(p.answers[q.id])) count++;
+        });
       });
     });
     return count;
   }, [subjects]);
 
-  // Complete exam
   const confirmCompleteExam = useCallback(() => {
     setShowCompleteConfirm(false);
     setErrorMessage("");
@@ -260,7 +260,9 @@ function MockExamPage() {
       },
       onError: (error: any) => {
         setErrorMessage(
-          error?.response?.data?.message || error?.message || "Failed to complete exam."
+          error?.response?.data?.message ||
+            error?.message ||
+            "Failed to complete exam."
         );
       },
     });
@@ -274,7 +276,6 @@ function MockExamPage() {
     }
   }, [hasUnansweredQuestions, confirmCompleteExam]);
 
-  // Auto-complete on timer zero
   useEffect(() => {
     if (timeRemaining === 0 && timerRunning) {
       confirmCompleteExam();
@@ -282,7 +283,6 @@ function MockExamPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeRemaining]);
 
-  // Pause/Resume
   const handlePauseToggle = useCallback(() => {
     if (timerRunning) {
       pauseMockExam.mutate(undefined, {
@@ -299,7 +299,6 @@ function MockExamPage() {
     }
   }, [timerRunning, pauseMockExam, resumeMockExam]);
 
-  // Exit exam
   const handleExitExam = useCallback(() => setShowExitConfirm(true), []);
   const confirmExitExam = useCallback(() => {
     pauseMockExam.mutate(undefined, {
@@ -308,14 +307,14 @@ function MockExamPage() {
     });
   }, [pauseMockExam, navigate]);
 
-  // Bookmark
   const handleBookmarkToggle = useCallback(() => {
     if (!currentQuestion) return;
     const qId = currentQuestion.id;
     const was = bookmarkedQuestions.has(qId);
     setBookmarkedQuestions((prev) => {
       const next = new Set(prev);
-      next.has(qId) ? next.delete(qId) : next.add(qId);
+      if (next.has(qId)) next.delete(qId);
+      else next.add(qId);
       return next;
     });
     toggleBookmark.mutate(
@@ -324,7 +323,8 @@ function MockExamPage() {
         onError: () => {
           setBookmarkedQuestions((prev) => {
             const next = new Set(prev);
-            was ? next.add(qId) : next.delete(qId);
+            if (was) next.add(qId);
+            else next.delete(qId);
             return next;
           });
         },
@@ -332,7 +332,6 @@ function MockExamPage() {
     );
   }, [currentQuestion, bookmarkedQuestions, toggleBookmark]);
 
-  // Report
   const handleReportSubmit = useCallback(() => {
     if (!currentQuestion || !reportReason.trim()) return;
     reportQuestion.mutate(
@@ -349,11 +348,9 @@ function MockExamPage() {
     );
   }, [currentQuestion, reportReason, reportQuestion]);
 
-  // Render question by type (same as exam.$attemptId.tsx)
   const renderQuestion = (question: Question) => {
     const questionId = question.id;
     const answer = currentAnswers[questionId];
-    // Mock exams: never lock questions, allow re-submission
     const isLocked = false;
     const showCorrectAnswer = false;
 
@@ -469,7 +466,9 @@ function MockExamPage() {
       default:
         return (
           <div className="space-y-4">
-            <p className="text-sm font-medium text-gray-600">Question {currentQuestionIndex + 1}</p>
+            <p className="text-sm font-medium text-gray-600">
+              Question {currentQuestionIndex + 1}
+            </p>
             <div className="text-lg font-semibold">
               <RichContentRenderer content={question.questionText} />
             </div>
@@ -481,20 +480,25 @@ function MockExamPage() {
     }
   };
 
-  // Error / invalid session
   if (loadError || !isValidSession || subjects.length === 0) {
     return (
       <div className="py-10">
-        <Link to="/tests" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4">
+        <Link
+          to="/tests"
+          className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
+        >
           <ArrowLeft className="w-5 h-5" />
           <span>Back</span>
         </Link>
         <h1 className="text-2xl font-semibold mb-4">Session Not Found</h1>
         <p className="text-gray-500 mb-4">
-          {loadError || "This exam simulation session has expired or is no longer available."}
+          {loadError ||
+            "This exam simulation session has expired or is no longer available."}
         </p>
         <Link to="/tests/exams">
-          <Button className="mt-4 bg-[#F04F54] hover:bg-[#F04F54]/90">Go to Tests</Button>
+          <Button className="mt-4 bg-[#F04F54] hover:bg-[#F04F54]/90">
+            Go to Tests
+          </Button>
         </Link>
       </div>
     );
@@ -517,25 +521,23 @@ function MockExamPage() {
         </div>
       </div>
 
-      {/* Subject Tabs */}
-      <div className="flex gap-2 overflow-x-auto pb-3 mb-4 scrollbar-none">
+      {/* Subject tabs (row 1) */}
+      <div className="flex gap-2 overflow-x-auto pb-3 mb-2 scrollbar-none">
         {subjects.map((session, index) => {
           const isActive = index === currentSubjectIndex;
-          const subjectAnswered = session.questions.filter((q) => {
-            const a = session.answers[q.id];
-            if (a === null || a === undefined) return false;
-            if (Array.isArray(a)) return a.length > 0;
-            if (typeof a === "string") return a.length > 0;
-            if (typeof a === "boolean") return true;
-            if (typeof a === "object") return Object.keys(a).length > 0;
-            return false;
-          }).length;
-          const totalQ = session.questions.length;
-          const allDone = subjectAnswered === totalQ;
+          let subjectAnswered = 0;
+          let totalQ = 0;
+          session.papers.forEach((p) => {
+            totalQ += p.questions.length;
+            p.questions.forEach((q) => {
+              if (isAnswered(p.answers[q.id])) subjectAnswered++;
+            });
+          });
+          const allDone = totalQ > 0 && subjectAnswered === totalQ;
 
           return (
             <button
-              key={session.attemptId}
+              key={session.subject.id + ":" + index}
               onClick={() => setCurrentSubject(index)}
               className={cn(
                 "shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all border",
@@ -551,9 +553,7 @@ function MockExamPage() {
               <span
                 className={cn(
                   "text-xs px-1.5 py-0.5 rounded-full",
-                  isActive
-                    ? "bg-white/20 text-white"
-                    : "bg-gray-100 text-gray-500"
+                  isActive ? "bg-white/20 text-white" : "bg-gray-100 text-gray-500"
                 )}
               >
                 {subjectAnswered}/{totalQ}
@@ -563,27 +563,63 @@ function MockExamPage() {
         })}
       </div>
 
-      {/* Error Message */}
+      {/* Paper tabs (row 2) — only when active subject has multiple papers */}
+      {hasMultiplePapers && currentSubject && (
+        <div className="flex gap-1.5 overflow-x-auto pb-3 mb-4 scrollbar-none">
+          {currentSubject.papers.map((paper, pIdx) => {
+            const isActive = pIdx === currentPaperIndex;
+            let answered = 0;
+            paper.questions.forEach((q) => {
+              if (isAnswered(paper.answers[q.id])) answered++;
+            });
+            const total = paper.questions.length;
+            return (
+              <button
+                key={paper.attemptId}
+                onClick={() => setCurrentPaper(pIdx)}
+                className={cn(
+                  "shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors",
+                  isActive
+                    ? "bg-[#F04F54]/10 text-[#F04F54] border-[#F04F54]"
+                    : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+                )}
+              >
+                <span>{paper.paperName}</span>
+                <span
+                  className={cn(
+                    "px-1.5 py-0.5 rounded-full",
+                    isActive ? "bg-[#F04F54]/15" : "bg-gray-100 text-gray-500"
+                  )}
+                >
+                  {answered}/{total}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+
       {errorMessage && (
         <Alert variant="destructive" className="mb-4 sm:mb-6">
           <AlertDescription className="text-sm">{errorMessage}</AlertDescription>
         </Alert>
       )}
 
-      {/* Main Layout */}
+      {/* Main layout */}
       <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
-        {/* Navigator */}
         <div className="w-full lg:w-72 lg:order-2 shrink-0">
-          {currentSession && (
+          {currentPaper && (
             <QuestionNavigator
-              totalQuestions={currentSession.questions.length}
+              totalQuestions={currentPaper.questions.length}
               currentQuestion={currentQuestionIndex}
               answeredQuestions={answeredQuestions}
               submittedQuestions={new Set<number>()}
               correctQuestions={new Set<number>()}
               timeRemaining={timeRemaining ?? 0}
               isPaused={!timerRunning}
-              isBookmarked={currentQuestion ? bookmarkedQuestions.has(currentQuestion.id) : false}
+              isBookmarked={
+                currentQuestion ? bookmarkedQuestions.has(currentQuestion.id) : false
+              }
               isSubmitting={submitResponse.isPending}
               canSubmit={hasCurrentAnswer()}
               isCurrentSubmitted={false}
@@ -601,7 +637,6 @@ function MockExamPage() {
           )}
         </div>
 
-        {/* Question Area */}
         <div className="flex-1 min-w-0 lg:order-1">
           {currentQuestion && (
             <QuestionCard instruction={currentQuestion.instruction}>
@@ -616,7 +651,9 @@ function MockExamPage() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Report Question</DialogTitle>
-            <DialogDescription>Please describe the issue with this question.</DialogDescription>
+            <DialogDescription>
+              Please describe the issue with this question.
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
@@ -636,7 +673,11 @@ function MockExamPage() {
               </select>
             </div>
             <div className="flex gap-3">
-              <Button variant="outline" onClick={() => setShowReportModal(false)} className="flex-1">
+              <Button
+                variant="outline"
+                onClick={() => setShowReportModal(false)}
+                className="flex-1"
+              >
                 Cancel
               </Button>
               <Button
@@ -657,11 +698,16 @@ function MockExamPage() {
           <DialogHeader>
             <DialogTitle>Complete Simulation?</DialogTitle>
             <DialogDescription>
-              You have {totalUnanswered} unanswered question(s) across all subjects. Once you complete the simulation, you won't be able to return.
+              You have {totalUnanswered} unanswered question(s) across all subjects. Once you
+              complete the simulation, you won't be able to return.
             </DialogDescription>
           </DialogHeader>
           <div className="flex gap-3 mt-4">
-            <Button variant="outline" onClick={() => setShowCompleteConfirm(false)} className="flex-1">
+            <Button
+              variant="outline"
+              onClick={() => setShowCompleteConfirm(false)}
+              className="flex-1"
+            >
               Go Back
             </Button>
             <Button
@@ -685,7 +731,11 @@ function MockExamPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="flex gap-3 mt-4">
-            <Button variant="outline" onClick={() => setShowExitConfirm(false)} className="flex-1">
+            <Button
+              variant="outline"
+              onClick={() => setShowExitConfirm(false)}
+              className="flex-1"
+            >
               Cancel
             </Button>
             <Button

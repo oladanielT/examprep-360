@@ -312,7 +312,10 @@ function ImageBlockRenderer({ block }: { block: ImageBlock }) {
     <img
       src={src}
       alt={alt}
-      className="max-w-full h-auto rounded-lg my-2"
+      // Block drag-to-new-tab as a way of extracting the image URL.
+      draggable={false}
+      onDragStart={(e) => e.preventDefault()}
+      className="max-w-full h-auto rounded-lg my-2 select-none"
     />
   );
 }

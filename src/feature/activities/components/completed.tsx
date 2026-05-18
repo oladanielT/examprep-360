@@ -189,12 +189,22 @@ function SimulationCard({ items }: { items: ExamHistoryItem[] }) {
     // Generate a stable session ID from the attempt IDs
     const sessionId = items.map((i) => i.id).sort().join("-");
 
-    // Load minimal data into the mock exam store for the review page
+    // Load minimal data into the mock exam store for the review page.
+    // Activities exposes each completed attempt as one "subject" with a
+    // single paper; the review page flattens to one card per paper, so
+    // legacy JAMB-style sessions still render with one card per attempt.
     loadForReview(
       sessionId,
-      items.map((exam) => ({
-        attemptId: exam.id,
-        subjectName: exam.exam?.subject?.name || exam.exam?.name || "Subject",
+      items.map((exam, i) => ({
+        subject: { id: exam.id, name: exam.exam?.subject?.name || exam.exam?.name || "Subject" } as any,
+        papers: [
+          {
+            paperNumber: 1,
+            paperName: "Paper 1",
+            attemptId: exam.id,
+            _legacyIndex: i,
+          } as any,
+        ],
       }))
     );
 

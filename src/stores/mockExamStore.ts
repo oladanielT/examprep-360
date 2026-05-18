@@ -2,52 +2,74 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { ExamAttempt, Question, AttemptResponse, Subject } from "@/api/types";
 
-// A single subject's exam session within the combined mock
-export interface SubjectSession {
-  subject: Subject;
+// A single paper inside a subject. WAEC/NECO subjects have 2-3 of these;
+// JAMB-style subjects have exactly 1.
+export interface PaperSession {
+  paperNumber: number;
+  paperName: string;
   attemptId: string;
   attempt: ExamAttempt;
   questions: Question[];
   responses: Map<string, AttemptResponse>;
   answers: Record<string, any>;
   durationMinutes: number;
+  numQuestions: number;
 }
 
+export interface SubjectSession {
+  subject: Subject;
+  papers: PaperSession[];
+}
+
+// Compact key for current-question tracking across (subject, paper) pairs.
+export const cqKey = (subjectIdx: number, paperIdx: number) =>
+  `${subjectIdx}:${paperIdx}`;
+
 export interface MockExamState {
-  // Session identity
   sessionId: string | null;
-
-  // All subject sessions in this combined exam
   subjects: SubjectSession[];
-
-  // Currently active subject index
   currentSubjectIndex: number;
+  currentPaperIndex: number;
+  currentQuestionIndexes: Record<string, number>; // key: cqKey(s, p)
 
-  // Per-subject question navigation (subject index -> question index)
-  currentQuestionIndexes: Record<number, number>;
-
-  // Combined timer (sum of all subject durations)
+  // Single shared timer = sum of every paper.durationMinutes * 60
   timeRemaining: number | null;
   timerRunning: boolean;
 
   // Actions
   startMockExam: (
     sessionId: string,
-    sessions: Array<{
+    subjects: Array<{
       subject: Subject;
-      attempt: ExamAttempt;
-      questions: Question[];
-      durationMinutes: number;
+      papers: Array<{
+        paperNumber: number;
+        paperName: string;
+        attempt: ExamAttempt;
+        questions: Question[];
+        durationMinutes: number;
+        numQuestions: number;
+      }>;
     }>
   ) => void;
 
   setCurrentSubject: (index: number) => void;
+  setCurrentPaper: (index: number) => void;
   setCurrentQuestion: (questionIndex: number) => void;
   nextQuestion: () => void;
   previousQuestion: () => void;
 
-  submitResponse: (subjectIndex: number, questionId: string, response: AttemptResponse) => void;
-  setAnswer: (subjectIndex: number, questionId: string, answer: any) => void;
+  submitResponse: (
+    subjectIndex: number,
+    paperIndex: number,
+    questionId: string,
+    response: AttemptResponse
+  ) => void;
+  setAnswer: (
+    subjectIndex: number,
+    paperIndex: number,
+    questionId: string,
+    answer: any
+  ) => void;
 
   updateTimeRemaining: (seconds: number | ((prev: number | null) => number | null)) => void;
   pauseTimer: () => void;
@@ -55,15 +77,22 @@ export interface MockExamState {
 
   clearMockExam: () => void;
 
-  // Load minimal data for reviewing a past simulation
   loadForReview: (
     sessionId: string,
-    sessions: Array<{ attemptId: string; subjectName: string }>
+    subjects: Array<{
+      subject: Subject;
+      papers: Array<{ paperNumber: number; paperName: string; attemptId: string }>;
+    }>
   ) => void;
 
   // Getters
   getCurrentSubject: () => SubjectSession | null;
+  getCurrentPaper: () => PaperSession | null;
   getCurrentQuestion: () => Question | null;
+  getPaperProgress: (
+    subjectIndex: number,
+    paperIndex: number
+  ) => { answered: number; total: number };
   getSubjectProgress: (subjectIndex: number) => { answered: number; total: number };
   getOverallProgress: () => { answered: number; total: number; percentage: number };
 }
@@ -72,41 +101,56 @@ const initialState = {
   sessionId: null as string | null,
   subjects: [] as SubjectSession[],
   currentSubjectIndex: 0,
-  currentQuestionIndexes: {} as Record<number, number>,
+  currentPaperIndex: 0,
+  currentQuestionIndexes: {} as Record<string, number>,
   timeRemaining: null as number | null,
   timerRunning: false,
 };
+
+function isAnswered(answer: any): boolean {
+  if (answer === null || answer === undefined) return false;
+  if (Array.isArray(answer)) return answer.length > 0;
+  if (typeof answer === "string") return answer.length > 0;
+  if (typeof answer === "boolean") return true;
+  if (typeof answer === "object") return Object.keys(answer).length > 0;
+  return false;
+}
 
 export const useMockExamStore = create<MockExamState>()(
   persist(
     (set, get) => ({
       ...initialState,
 
-      startMockExam: (sessionId, sessions) => {
-        const totalDurationSeconds = sessions.reduce(
-          (sum, s) => sum + (s.durationMinutes || 0) * 60,
-          0
-        );
-
-        const subjects: SubjectSession[] = sessions.map((s) => ({
+      startMockExam: (sessionId, sessionsInput) => {
+        const subjects: SubjectSession[] = sessionsInput.map((s) => ({
           subject: s.subject,
-          attemptId: s.attempt.id!,
-          attempt: s.attempt,
-          questions: s.questions,
-          responses: new Map(),
-          answers: {},
-          durationMinutes: s.durationMinutes,
+          papers: s.papers.map((p) => ({
+            paperNumber: p.paperNumber,
+            paperName: p.paperName,
+            attemptId: p.attempt.id!,
+            attempt: p.attempt,
+            questions: p.questions,
+            responses: new Map(),
+            answers: {},
+            durationMinutes: p.durationMinutes,
+            numQuestions: p.numQuestions,
+          })),
         }));
 
-        const questionIndexes: Record<number, number> = {};
-        sessions.forEach((_, i) => {
-          questionIndexes[i] = 0;
+        let totalDurationSeconds = 0;
+        const questionIndexes: Record<string, number> = {};
+        subjects.forEach((s, sIdx) => {
+          s.papers.forEach((p, pIdx) => {
+            totalDurationSeconds += (p.durationMinutes || 0) * 60;
+            questionIndexes[cqKey(sIdx, pIdx)] = 0;
+          });
         });
 
         set({
           sessionId,
           subjects,
           currentSubjectIndex: 0,
+          currentPaperIndex: 0,
           currentQuestionIndexes: questionIndexes,
           timeRemaining: totalDurationSeconds > 0 ? totalDurationSeconds : null,
           timerRunning: true,
@@ -116,78 +160,97 @@ export const useMockExamStore = create<MockExamState>()(
       setCurrentSubject: (index) => {
         const { subjects } = get();
         if (index >= 0 && index < subjects.length) {
-          set({ currentSubjectIndex: index });
+          // Reset to first paper of the newly active subject — keeping a stale
+          // paper index across subjects would put us on a paper that may not
+          // exist for the new subject.
+          set({ currentSubjectIndex: index, currentPaperIndex: 0 });
+        }
+      },
+
+      setCurrentPaper: (index) => {
+        const { subjects, currentSubjectIndex } = get();
+        const subject = subjects[currentSubjectIndex];
+        if (subject && index >= 0 && index < subject.papers.length) {
+          set({ currentPaperIndex: index });
         }
       },
 
       setCurrentQuestion: (questionIndex) => {
-        const { currentSubjectIndex, subjects } = get();
-        const session = subjects[currentSubjectIndex];
-        if (session && questionIndex >= 0 && questionIndex < session.questions.length) {
+        const { subjects, currentSubjectIndex, currentPaperIndex } = get();
+        const paper = subjects[currentSubjectIndex]?.papers[currentPaperIndex];
+        if (paper && questionIndex >= 0 && questionIndex < paper.questions.length) {
           set((state) => ({
             currentQuestionIndexes: {
               ...state.currentQuestionIndexes,
-              [currentSubjectIndex]: questionIndex,
+              [cqKey(currentSubjectIndex, currentPaperIndex)]: questionIndex,
             },
           }));
         }
       },
 
       nextQuestion: () => {
-        const { currentSubjectIndex, currentQuestionIndexes, subjects } = get();
-        const session = subjects[currentSubjectIndex];
-        const currentIdx = currentQuestionIndexes[currentSubjectIndex] || 0;
-        if (session && currentIdx < session.questions.length - 1) {
+        const { subjects, currentSubjectIndex, currentPaperIndex, currentQuestionIndexes } =
+          get();
+        const paper = subjects[currentSubjectIndex]?.papers[currentPaperIndex];
+        const key = cqKey(currentSubjectIndex, currentPaperIndex);
+        const currentIdx = currentQuestionIndexes[key] ?? 0;
+        if (paper && currentIdx < paper.questions.length - 1) {
           set({
-            currentQuestionIndexes: {
-              ...currentQuestionIndexes,
-              [currentSubjectIndex]: currentIdx + 1,
-            },
+            currentQuestionIndexes: { ...currentQuestionIndexes, [key]: currentIdx + 1 },
           });
         }
       },
 
       previousQuestion: () => {
-        const { currentSubjectIndex, currentQuestionIndexes } = get();
-        const currentIdx = currentQuestionIndexes[currentSubjectIndex] || 0;
+        const { currentSubjectIndex, currentPaperIndex, currentQuestionIndexes } = get();
+        const key = cqKey(currentSubjectIndex, currentPaperIndex);
+        const currentIdx = currentQuestionIndexes[key] ?? 0;
         if (currentIdx > 0) {
           set({
-            currentQuestionIndexes: {
-              ...currentQuestionIndexes,
-              [currentSubjectIndex]: currentIdx - 1,
-            },
+            currentQuestionIndexes: { ...currentQuestionIndexes, [key]: currentIdx - 1 },
           });
         }
       },
 
-      submitResponse: (subjectIndex, questionId, response) =>
+      submitResponse: (subjectIndex, paperIndex, questionId, response) =>
         set((state) => {
-          const newSubjects = [...state.subjects];
-          const session = newSubjects[subjectIndex];
-          if (session) {
-            const newResponses = new Map(session.responses);
-            newResponses.set(questionId, response);
-            newSubjects[subjectIndex] = { ...session, responses: newResponses };
-          }
+          const newSubjects = state.subjects.map((s, sIdx) => {
+            if (sIdx !== subjectIndex) return s;
+            return {
+              ...s,
+              papers: s.papers.map((p, pIdx) => {
+                if (pIdx !== paperIndex) return p;
+                const newResponses = new Map(p.responses);
+                newResponses.set(questionId, response);
+                return { ...p, responses: newResponses };
+              }),
+            };
+          });
           return { subjects: newSubjects };
         }),
 
-      setAnswer: (subjectIndex, questionId, answer) =>
+      setAnswer: (subjectIndex, paperIndex, questionId, answer) =>
         set((state) => {
-          const newSubjects = [...state.subjects];
-          const session = newSubjects[subjectIndex];
-          if (session) {
-            newSubjects[subjectIndex] = {
-              ...session,
-              answers: { ...session.answers, [questionId]: answer },
+          const newSubjects = state.subjects.map((s, sIdx) => {
+            if (sIdx !== subjectIndex) return s;
+            return {
+              ...s,
+              papers: s.papers.map((p, pIdx) => {
+                if (pIdx !== paperIndex) return p;
+                return {
+                  ...p,
+                  answers: { ...p.answers, [questionId]: answer },
+                };
+              }),
             };
-          }
+          });
           return { subjects: newSubjects };
         }),
 
       updateTimeRemaining: (seconds) =>
         set((state) => ({
-          timeRemaining: typeof seconds === "function" ? seconds(state.timeRemaining) : seconds,
+          timeRemaining:
+            typeof seconds === "function" ? seconds(state.timeRemaining) : seconds,
         })),
 
       pauseTimer: () => set({ timerRunning: false }),
@@ -200,20 +263,26 @@ export const useMockExamStore = create<MockExamState>()(
           currentQuestionIndexes: {},
         }),
 
-      loadForReview: (sessionId, sessions) => {
-        const subjects: SubjectSession[] = sessions.map((s) => ({
-          subject: { id: s.attemptId, name: s.subjectName },
-          attemptId: s.attemptId,
-          attempt: { id: s.attemptId } as ExamAttempt,
-          questions: [],
-          responses: new Map(),
-          answers: {},
-          durationMinutes: 0,
+      loadForReview: (sessionId, sessionsInput) => {
+        const subjects: SubjectSession[] = sessionsInput.map((s) => ({
+          subject: s.subject,
+          papers: s.papers.map((p) => ({
+            paperNumber: p.paperNumber,
+            paperName: p.paperName,
+            attemptId: p.attemptId,
+            attempt: { id: p.attemptId } as ExamAttempt,
+            questions: [],
+            responses: new Map(),
+            answers: {},
+            durationMinutes: 0,
+            numQuestions: 0,
+          })),
         }));
         set({
           sessionId,
           subjects,
           currentSubjectIndex: 0,
+          currentPaperIndex: 0,
           currentQuestionIndexes: {},
           timeRemaining: null,
           timerRunning: false,
@@ -225,22 +294,44 @@ export const useMockExamStore = create<MockExamState>()(
         return subjects[currentSubjectIndex] || null;
       },
 
+      getCurrentPaper: () => {
+        const { subjects, currentSubjectIndex, currentPaperIndex } = get();
+        return subjects[currentSubjectIndex]?.papers[currentPaperIndex] || null;
+      },
+
       getCurrentQuestion: () => {
-        const { subjects, currentSubjectIndex, currentQuestionIndexes } = get();
-        const session = subjects[currentSubjectIndex];
-        if (!session) return null;
-        const qIndex = currentQuestionIndexes[currentSubjectIndex] || 0;
-        return session.questions[qIndex] || null;
+        const { subjects, currentSubjectIndex, currentPaperIndex, currentQuestionIndexes } =
+          get();
+        const paper = subjects[currentSubjectIndex]?.papers[currentPaperIndex];
+        if (!paper) return null;
+        const qIndex = currentQuestionIndexes[cqKey(currentSubjectIndex, currentPaperIndex)] ?? 0;
+        return paper.questions[qIndex] || null;
+      },
+
+      getPaperProgress: (subjectIndex, paperIndex) => {
+        const { subjects } = get();
+        const paper = subjects[subjectIndex]?.papers[paperIndex];
+        if (!paper) return { answered: 0, total: 0 };
+        let answered = 0;
+        paper.questions.forEach((q) => {
+          if (isAnswered(paper.answers[q.id])) answered++;
+        });
+        return { answered, total: paper.questions.length };
       },
 
       getSubjectProgress: (subjectIndex) => {
         const { subjects } = get();
-        const session = subjects[subjectIndex];
-        if (!session) return { answered: 0, total: 0 };
-        return {
-          answered: session.responses.size,
-          total: session.questions.length,
-        };
+        const subject = subjects[subjectIndex];
+        if (!subject) return { answered: 0, total: 0 };
+        let answered = 0;
+        let total = 0;
+        subject.papers.forEach((p) => {
+          total += p.questions.length;
+          p.questions.forEach((q) => {
+            if (isAnswered(p.answers[q.id])) answered++;
+          });
+        });
+        return { answered, total };
       },
 
       getOverallProgress: () => {
@@ -248,8 +339,12 @@ export const useMockExamStore = create<MockExamState>()(
         let answered = 0;
         let total = 0;
         subjects.forEach((s) => {
-          answered += s.responses.size;
-          total += s.questions.length;
+          s.papers.forEach((p) => {
+            total += p.questions.length;
+            p.questions.forEach((q) => {
+              if (isAnswered(p.answers[q.id])) answered++;
+            });
+          });
         });
         const percentage = total > 0 ? Math.round((answered / total) * 100) : 0;
         return { answered, total, percentage };
@@ -257,10 +352,67 @@ export const useMockExamStore = create<MockExamState>()(
     }),
     {
       name: "mock-exam-store",
+      version: 2,
+      // v1 used a flat subjects[] with a single attempt per subject. Wrap it
+      // into the new nested shape so a JAMB session in flight survives the
+      // deploy.
+      migrate: (persistedState: any, version) => {
+        if (!persistedState) return persistedState;
+        if (version >= 2) return persistedState;
+
+        const oldSubjects: any[] = Array.isArray(persistedState.subjects)
+          ? persistedState.subjects
+          : [];
+
+        const newSubjects = oldSubjects.map((s, sIdx) => {
+          const responses =
+            s.responses instanceof Map
+              ? s.responses
+              : new Map(s.responses ? Object.entries(s.responses) : []);
+          return {
+            subject: s.subject,
+            papers: [
+              {
+                paperNumber: 1,
+                paperName: "Paper 1",
+                attemptId: s.attemptId,
+                attempt: s.attempt,
+                questions: s.questions || [],
+                responses,
+                answers: s.answers || {},
+                durationMinutes: s.durationMinutes || 0,
+                numQuestions: (s.questions || []).length,
+              },
+            ],
+            _legacySubjectIdx: sIdx,
+          };
+        });
+
+        // Rebuild currentQuestionIndexes from the old shape: oldKey was the
+        // subject index. In the new shape every subject has paperIdx 0, so
+        // map subject -> "{subject}:0".
+        const oldCqIdx: Record<number, number> =
+          persistedState.currentQuestionIndexes || {};
+        const newCqIdx: Record<string, number> = {};
+        Object.entries(oldCqIdx).forEach(([sKey, qIdx]) => {
+          const sNum = Number(sKey);
+          if (!Number.isNaN(sNum)) {
+            newCqIdx[cqKey(sNum, 0)] = qIdx as number;
+          }
+        });
+
+        return {
+          ...persistedState,
+          subjects: newSubjects.map(({ _legacySubjectIdx: _i, ...rest }) => rest),
+          currentPaperIndex: 0,
+          currentQuestionIndexes: newCqIdx,
+        };
+      },
       partialize: (state) => ({
         sessionId: state.sessionId,
         subjects: state.subjects,
         currentSubjectIndex: state.currentSubjectIndex,
+        currentPaperIndex: state.currentPaperIndex,
         currentQuestionIndexes: state.currentQuestionIndexes,
         timeRemaining: state.timeRemaining,
         timerRunning: state.timerRunning,
@@ -270,15 +422,19 @@ export const useMockExamStore = create<MockExamState>()(
           try {
             const str = localStorage.getItem(name);
             if (!str) return null;
-            const { state } = JSON.parse(str);
+            const parsed = JSON.parse(str);
+            const state = parsed.state;
+            // Convert each paper's responses object back into a Map.
+            const subjects = (state.subjects || []).map((s: any) => ({
+              ...s,
+              papers: (s.papers || []).map((p: any) => ({
+                ...p,
+                responses: new Map(p.responses ? Object.entries(p.responses) : []),
+              })),
+            }));
             return {
-              state: {
-                ...state,
-                subjects: (state.subjects || []).map((s: any) => ({
-                  ...s,
-                  responses: new Map(s.responses ? Object.entries(s.responses) : []),
-                })),
-              },
+              ...parsed,
+              state: { ...state, subjects },
             };
           } catch {
             localStorage.removeItem(name);
@@ -287,16 +443,18 @@ export const useMockExamStore = create<MockExamState>()(
         },
         setItem: (name, newValue) => {
           try {
+            // Convert each paper's responses Map into a plain object for JSON.
+            const state = newValue.state as any;
+            const subjects = (state.subjects || []).map((s: any) => ({
+              ...s,
+              papers: (s.papers || []).map((p: any) => ({
+                ...p,
+                responses: p.responses ? Object.fromEntries(p.responses) : {},
+              })),
+            }));
             const str = JSON.stringify({
-              state: {
-                ...newValue.state,
-                subjects: (newValue.state.subjects || []).map((s: any) => ({
-                  ...s,
-                  responses: s.responses
-                    ? Object.fromEntries(s.responses)
-                    : {},
-                })),
-              },
+              ...newValue,
+              state: { ...state, subjects },
             });
             localStorage.setItem(name, str);
           } catch {

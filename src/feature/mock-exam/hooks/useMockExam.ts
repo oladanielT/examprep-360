@@ -18,14 +18,21 @@ interface ApiError {
   statusCode?: number;
 }
 
-// Starts multiple mock exams in parallel, one per subject
+// Input for starting a multi-paper simulation. Each subject contributes one
+// or more papers; each paper starts its own attempt on the server.
 export interface StartMockExamInput {
   subjects: Array<{
     subject: Subject;
-    examId: string; // the mock exam ID to start for this subject
+    papers: Array<{
+      paperNumber: number;
+      paperName: string;
+      examId: string;
+    }>;
   }>;
 }
 
+// Fires POST /exams/{examId}/start for every paper across every subject in
+// parallel, then writes the nested session into the mock exam store.
 export const useStartMockExams = () => {
   const { startMockExam } = useMockExamStore();
 
@@ -35,43 +42,85 @@ export const useStartMockExams = () => {
     StartMockExamInput
   >({
     mutationFn: async ({ subjects }) => {
-      // Start all exams in parallel
+      // Build a flat list of (subjectIdx, paper) pairs to start in parallel.
+      // Keeping the subject index around lets us reassemble the nested shape
+      // after all the starts resolve, regardless of resolution order.
+      type StartTask = {
+        subjectIdx: number;
+        paperNumber: number;
+        paperName: string;
+        examId: string;
+      };
+      const tasks: StartTask[] = subjects.flatMap((s, sIdx) =>
+        s.papers.map((p) => ({
+          subjectIdx: sIdx,
+          paperNumber: p.paperNumber,
+          paperName: p.paperName,
+          examId: p.examId,
+        }))
+      );
+
       const results = await Promise.all(
-        subjects.map(async ({ subject, examId }) => {
+        tasks.map(async (task) => {
           const { data } = await apiClient.post<StartExamResponse>(
-            EXAM_ENDPOINTS.START(examId)
+            EXAM_ENDPOINTS.START(task.examId)
           );
-          return { subject, data };
+          return { task, data };
         })
       );
 
-      // Generate a session ID
+      // Reassemble: bucket per-subject paper sessions, sorted by paperNumber.
+      const perSubject: Array<{
+        subject: Subject;
+        papers: Array<{
+          paperNumber: number;
+          paperName: string;
+          attempt: ExamAttempt;
+          questions: StartExamResponse["exam"]["questions"][number]["question"][];
+          durationMinutes: number;
+          numQuestions: number;
+        }>;
+      }> = subjects.map((s) => ({ subject: s.subject, papers: [] }));
+
+      for (const { task, data } of results) {
+        const questions = data.exam.questions.map((eq) => eq.question);
+        perSubject[task.subjectIdx].papers.push({
+          paperNumber: task.paperNumber,
+          paperName: task.paperName,
+          attempt: data as unknown as ExamAttempt,
+          questions,
+          durationMinutes: data.exam.durationMinutes,
+          numQuestions: questions.length,
+        });
+      }
+
+      // Stable paper order regardless of API response ordering.
+      perSubject.forEach((s) =>
+        s.papers.sort((a, b) => a.paperNumber - b.paperNumber)
+      );
+
       const sessionId = crypto.randomUUID();
-
-      // Build sessions from results
-      const sessions = results.map(({ subject, data }) => ({
-        subject,
-        attempt: data as unknown as ExamAttempt,
-        questions: data.exam.questions.map((eq) => eq.question),
-        durationMinutes: data.exam.durationMinutes,
-      }));
-
-      // Store in mock exam store
-      startMockExam(sessionId, sessions);
+      startMockExam(sessionId, perSubject);
 
       return { sessionId };
     },
   });
 };
 
-// Submit a single response for a question in a mock exam subject
+// Submit a single response. Caller passes the paper coordinates so the
+// response lands in the correct paper's bucket in the store.
 export const useMockSubmitResponse = () => {
   const { submitResponse } = useMockExamStore();
 
   return useMutation<
     AttemptResponse,
     AxiosError<ApiError>,
-    { subjectIndex: number; attemptId: string; request: SubmitResponseRequest }
+    {
+      subjectIndex: number;
+      paperIndex: number;
+      attemptId: string;
+      request: SubmitResponseRequest;
+    }
   >({
     mutationFn: async ({ attemptId, request }) => {
       const { data } = await apiClient.post<AttemptResponse>(
@@ -81,67 +130,69 @@ export const useMockSubmitResponse = () => {
       return data;
     },
     onSuccess: (data, variables) => {
-      submitResponse(variables.subjectIndex, data.questionId, data);
+      submitResponse(
+        variables.subjectIndex,
+        variables.paperIndex,
+        data.questionId,
+        data
+      );
     },
   });
 };
 
-// Complete all subject exams in a combined mock exam
+// Helper: encode an answer the same way the single-subject exam runner does.
+function formatAnswer(answer: any): string | string[] | boolean {
+  if (typeof answer === "boolean") return answer;
+  if (Array.isArray(answer)) return answer;
+  if (typeof answer === "object") return JSON.stringify(answer);
+  return answer;
+}
+
+function isAnswered(answer: any): boolean {
+  if (answer === null || answer === undefined) return false;
+  if (Array.isArray(answer)) return answer.length > 0;
+  if (typeof answer === "string") return answer.length > 0;
+  if (typeof answer === "boolean") return true;
+  if (typeof answer === "object") return Object.keys(answer).length > 0;
+  return false;
+}
+
+// Complete every paper attempt across every subject in parallel. For each
+// paper: bulk-submit anything not yet submitted with complete:true, or hit
+// the plain complete endpoint when there's nothing left to submit.
 export const useCompleteMockExam = () => {
   const queryClient = useQueryClient();
   const { subjects } = useMockExamStore();
 
-  return useMutation<
-    void,
-    AxiosError<ApiError>,
-    void
-  >({
+  return useMutation<void, AxiosError<ApiError>, void>({
     mutationFn: async () => {
-      // For each subject, collect unsubmitted answers and bulk-submit with complete: true
+      const papers = subjects.flatMap((s) => s.papers);
+
       await Promise.all(
-        subjects.map(async (session) => {
-          const unsubmittedResponses = session.questions
+        papers.map(async (paper) => {
+          const unsubmittedResponses = paper.questions
             .filter((q) => {
-              const answer = session.answers[q.id];
-              const isSubmitted = session.responses.has(q.id);
-              if (isSubmitted) return false;
-              if (answer === null || answer === undefined) return false;
-              if (Array.isArray(answer)) return answer.length > 0;
-              if (typeof answer === "string") return answer.length > 0;
-              if (typeof answer === "boolean") return true;
-              if (typeof answer === "object") return Object.keys(answer).length > 0;
-              return false;
+              const answer = paper.answers[q.id];
+              const alreadySubmitted = paper.responses.has(q.id);
+              if (alreadySubmitted) return false;
+              return isAnswered(answer);
             })
-            .map((q) => {
-              const answer = session.answers[q.id];
-              let formattedAnswer: string | string[] | boolean = "";
-              if (typeof answer === "boolean") {
-                formattedAnswer = answer;
-              } else if (Array.isArray(answer)) {
-                formattedAnswer = answer;
-              } else if (typeof answer === "object") {
-                formattedAnswer = JSON.stringify(answer);
-              } else {
-                formattedAnswer = answer;
-              }
-              return {
-                questionId: q.id,
-                answer: formattedAnswer,
-                timeSpentSeconds: 0,
-              };
-            });
+            .map((q) => ({
+              questionId: q.id,
+              answer: formatAnswer(paper.answers[q.id]),
+              timeSpentSeconds: 0,
+            }));
 
           if (unsubmittedResponses.length > 0) {
             await apiClient.post<SubmitResponsesBulkResponse>(
-              EXAM_ENDPOINTS.SUBMIT_RESPONSES_BULK(session.attemptId),
+              EXAM_ENDPOINTS.SUBMIT_RESPONSES_BULK(paper.attemptId),
               {
                 responses: unsubmittedResponses,
                 complete: true,
               } as SubmitResponsesBulkRequest
             );
           } else {
-            // Just complete the exam
-            await apiClient.post(EXAM_ENDPOINTS.COMPLETE(session.attemptId));
+            await apiClient.post(EXAM_ENDPOINTS.COMPLETE(paper.attemptId));
           }
         })
       );
@@ -153,15 +204,16 @@ export const useCompleteMockExam = () => {
   });
 };
 
-// Pause all subject exams
+// Pause every paper attempt in parallel.
 export const usePauseMockExam = () => {
   const { pauseTimer, subjects } = useMockExamStore();
 
   return useMutation<void, AxiosError<ApiError>, void>({
     mutationFn: async () => {
+      const papers = subjects.flatMap((s) => s.papers);
       await Promise.all(
-        subjects.map((session) =>
-          apiClient.patch<ExamAttempt>(EXAM_ENDPOINTS.PAUSE(session.attemptId))
+        papers.map((p) =>
+          apiClient.patch<ExamAttempt>(EXAM_ENDPOINTS.PAUSE(p.attemptId))
         )
       );
     },
@@ -171,15 +223,16 @@ export const usePauseMockExam = () => {
   });
 };
 
-// Resume all subject exams
+// Resume every paper attempt in parallel.
 export const useResumeMockExam = () => {
   const { resumeTimer, subjects } = useMockExamStore();
 
   return useMutation<void, AxiosError<ApiError>, void>({
     mutationFn: async () => {
+      const papers = subjects.flatMap((s) => s.papers);
       await Promise.all(
-        subjects.map((session) =>
-          apiClient.patch<ExamAttempt>(EXAM_ENDPOINTS.RESUME(session.attemptId))
+        papers.map((p) =>
+          apiClient.patch<ExamAttempt>(EXAM_ENDPOINTS.RESUME(p.attemptId))
         )
       );
     },

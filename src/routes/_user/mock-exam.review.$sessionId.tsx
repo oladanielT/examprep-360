@@ -34,7 +34,6 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-
 const reviewParamsSchema = z.object({
   sessionId: z.string(),
 });
@@ -46,39 +45,76 @@ function formatTime(seconds: number) {
   return `${mins}m ${secs}s`;
 }
 
+// Cap on simultaneous review fetches. Max realistic shape: 4 subjects × 3
+// papers = 12 attempts. Bump this if the simulator ever allows more.
+const MAX_PAPER_REVIEWS = 12;
+
 function MockExamReviewPage() {
   const { sessionId } = Route.useParams();
   const navigate = useNavigate();
   const { sessionId: storedSessionId, subjects } = useMockExamStore();
 
   const isValidSession = storedSessionId === sessionId;
-  const [activeSubjectIndex, setActiveSubjectIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
-  // Fetch reviews for all subjects
-  const attemptIds = subjects.map((s) => s.attemptId);
-  const review0 = useExamReview(attemptIds[0] || "");
-  const review1 = useExamReview(attemptIds[1] || "");
-  const review2 = useExamReview(attemptIds[2] || "");
-  const review3 = useExamReview(attemptIds[3] || "");
-  const review4 = useExamReview(attemptIds[4] || "");
-  const review5 = useExamReview(attemptIds[5] || "");
+  // Flatten every paper across every subject into a single ordered list.
+  // The review UI treats each paper as its own reviewable unit, so a
+  // 2-subject WAEC sitting with Paper 1 + Paper 2 each is 4 items.
+  const paperItems = useMemo(
+    () =>
+      subjects.flatMap((s, sIdx) =>
+        s.papers.map((p, pIdx) => {
+          const showPaperSuffix = s.papers.length > 1;
+          return {
+            subjectIndex: sIdx,
+            paperIndex: pIdx,
+            subjectName: s.subject.name,
+            paperName: p.paperName,
+            label: showPaperSuffix
+              ? `${s.subject.name} · ${p.paperName}`
+              : s.subject.name,
+            attemptId: p.attemptId,
+            storedQuestionsLength: p.questions.length,
+          };
+        })
+      ),
+    [subjects]
+  );
 
-  const allReviewHooks = [review0, review1, review2, review3, review4, review5];
-  const reviews = subjects.map((_, i) => allReviewHooks[i]);
-  const isLoading = reviews.some((r, i) => i < subjects.length && r.isLoading);
+  // Hook calls must be unconditional, so we fan out a fixed array of review
+  // queries and slice to the length of paperItems below.
+  const review0 = useExamReview(paperItems[0]?.attemptId || "");
+  const review1 = useExamReview(paperItems[1]?.attemptId || "");
+  const review2 = useExamReview(paperItems[2]?.attemptId || "");
+  const review3 = useExamReview(paperItems[3]?.attemptId || "");
+  const review4 = useExamReview(paperItems[4]?.attemptId || "");
+  const review5 = useExamReview(paperItems[5]?.attemptId || "");
+  const review6 = useExamReview(paperItems[6]?.attemptId || "");
+  const review7 = useExamReview(paperItems[7]?.attemptId || "");
+  const review8 = useExamReview(paperItems[8]?.attemptId || "");
+  const review9 = useExamReview(paperItems[9]?.attemptId || "");
+  const review10 = useExamReview(paperItems[10]?.attemptId || "");
+  const review11 = useExamReview(paperItems[11]?.attemptId || "");
 
-  // Detect JAMB/UTME exam type from review data
+  const allReviewHooks = [
+    review0, review1, review2, review3, review4, review5,
+    review6, review7, review8, review9, review10, review11,
+  ];
+  const reviews = paperItems.slice(0, MAX_PAPER_REVIEWS).map((_, i) => allReviewHooks[i]);
+  const isLoading = reviews.some((r) => r.isLoading);
+
   const isJamb = useMemo(() => {
-    for (let i = 0; i < subjects.length; i++) {
+    for (let i = 0; i < paperItems.length; i++) {
       const review = reviews[i]?.data;
-      const examTypeName = (review?.exam as any)?.examType?.name || review?.exam?.name || "";
+      const examTypeName =
+        (review?.exam as any)?.examType?.name || review?.exam?.name || "";
       if (/jamb|utme/i.test(examTypeName)) return true;
     }
     return false;
-  }, [subjects, reviews]);
+  }, [paperItems, reviews]);
 
-  // Aggregate stats
+  // Aggregate stats — sum every paper across every subject.
   const aggregateStats = useMemo(() => {
     let totalScore = 0;
     let totalQuestions = 0;
@@ -89,7 +125,7 @@ function MockExamReviewPage() {
     let totalJambScore = 0;
     const essayTypes = new Set(["ESSAY", "ESSAY_WITH_SUB", "SHORT_ANSWER"]);
 
-    const perSubject: Array<{
+    const perPaper: Array<{
       name: string;
       score: number;
       total: number;
@@ -101,38 +137,43 @@ function MockExamReviewPage() {
       skipped: number;
     }> = [];
 
-    subjects.forEach((session, i) => {
+    paperItems.forEach((item, i) => {
       const review = reviews[i]?.data;
       if (!review) {
-        perSubject.push({
-          name: session.subject.name,
+        perPaper.push({
+          name: item.label,
           score: 0,
-          total: session.questions.length,
+          total: item.storedQuestionsLength,
           percentage: 0,
           jambScore: 0,
           passed: false,
           correct: 0,
           wrong: 0,
-          skipped: session.questions.length,
+          skipped: item.storedQuestionsLength,
         });
         return;
       }
 
       const responses = review.responses || [];
-      const numQ = review.exam?.numQuestions || session.questions.length;
+      const numQ = review.exam?.numQuestions || item.storedQuestionsLength;
       const correct = responses.filter((r: any) => r.isCorrect).length;
-      const essayCount = responses.filter((r: any) => essayTypes.has(r.question?.questionType)).length;
+      const essayCount = responses.filter((r: any) =>
+        essayTypes.has(r.question?.questionType)
+      ).length;
       const wrong = responses.filter(
-        (r: any) => !r.isCorrect && !essayTypes.has(r.question?.questionType) && r.answer !== null && r.answer !== undefined && r.answer !== ""
+        (r: any) =>
+          !r.isCorrect &&
+          !essayTypes.has(r.question?.questionType) &&
+          r.answer !== null &&
+          r.answer !== undefined &&
+          r.answer !== ""
       ).length;
       const skipped = numQ - correct - wrong - essayCount;
 
-      // Use correct count as score so skipped questions count against the total
-      const subjectPercentage = numQ > 0 ? Math.round((correct / numQ) * 100) : 0;
-      // JAMB score: each subject out of 100
-      const jambScore = subjectPercentage;
+      const paperPercentage = numQ > 0 ? Math.round((correct / numQ) * 100) : 0;
+      const jambScore = paperPercentage;
       const passingScore = (review.exam as any)?.passingScore ?? 50;
-      const subjectPassed = subjectPercentage >= passingScore;
+      const paperPassed = paperPercentage >= passingScore;
 
       totalScore += correct;
       totalQuestions += numQ;
@@ -142,22 +183,23 @@ function MockExamReviewPage() {
       totalTimeSpent += review.timeSpentSeconds || 0;
       totalJambScore += jambScore;
 
-      perSubject.push({
-        name: session.subject.name,
+      perPaper.push({
+        name: item.label,
         score: correct,
         total: numQ,
-        percentage: subjectPercentage,
+        percentage: paperPercentage,
         jambScore,
-        passed: subjectPassed,
+        passed: paperPassed,
         correct,
         wrong,
         skipped,
       });
     });
 
-    const overallPercentage = totalQuestions > 0 ? Math.round((totalScore / totalQuestions) * 100) : 0;
-    const overallPassed = perSubject.every((s) => s.passed);
-    const maxJambScore = subjects.length * 100; // e.g. 400 for 4 subjects
+    const overallPercentage =
+      totalQuestions > 0 ? Math.round((totalScore / totalQuestions) * 100) : 0;
+    const overallPassed = perPaper.length > 0 && perPaper.every((s) => s.passed);
+    const maxJambScore = paperItems.length * 100;
 
     return {
       totalScore,
@@ -170,13 +212,12 @@ function MockExamReviewPage() {
       maxJambScore,
       overallPercentage,
       overallPassed,
-      perSubject,
+      perPaper,
     };
-  }, [subjects, reviews]);
+  }, [paperItems, reviews]);
 
-  // Current subject review data
-  const activeReview = reviews[activeSubjectIndex]?.data;
-  const activeSession = subjects[activeSubjectIndex];
+  const activeItem = paperItems[activeIndex];
+  const activeReview = reviews[activeIndex]?.data;
 
   const allItems = useMemo(() => {
     if (!activeReview) return [];
@@ -198,10 +239,10 @@ function MockExamReviewPage() {
     }));
   }, [activeReview]);
 
-  // Reset question index when switching subjects
+  // Reset question index when switching papers
   useEffect(() => {
     setCurrentQuestionIndex(0);
-  }, [activeSubjectIndex]);
+  }, [activeIndex]);
 
   const currentItem = allItems[currentQuestionIndex];
   const currentQuestion = currentItem?.question;
@@ -210,7 +251,10 @@ function MockExamReviewPage() {
   if (!isValidSession || subjects.length === 0) {
     return (
       <div className="py-10">
-        <Link to="/activities" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 mb-6">
+        <Link
+          to="/activities"
+          className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 mb-6"
+        >
           <ArrowLeft className="h-4 w-4" />
           Back
         </Link>
@@ -232,7 +276,6 @@ function MockExamReviewPage() {
 
   return (
     <div className="py-4 sm:py-6">
-      {/* Header */}
       <Link
         to="/activities"
         className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-4 sm:mb-6"
@@ -278,7 +321,7 @@ function MockExamReviewPage() {
               <p className="text-xs sm:text-sm text-gray-500">
                 {isJamb
                   ? `JAMB Score: ${aggregateStats.totalJambScore}/${aggregateStats.maxJambScore}`
-                  : `${subjects.length} subjects combined`}
+                  : `${subjects.length} subject${subjects.length !== 1 ? "s" : ""} · ${paperItems.length} paper${paperItems.length !== 1 ? "s" : ""}`}
               </p>
               <div className="flex items-center gap-1 mt-1">
                 {aggregateStats.overallPassed ? (
@@ -329,48 +372,42 @@ function MockExamReviewPage() {
         </div>
       </div>
 
-      {/* Per-Subject Score Cards */}
+      {/* Per-Paper Score Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-        {aggregateStats.perSubject.map((subj, i) => (
-          <button
-            key={i}
-            onClick={() => setActiveSubjectIndex(i)}
-            className="text-left"
-          >
+        {aggregateStats.perPaper.map((paper, i) => (
+          <button key={i} onClick={() => setActiveIndex(i)} className="text-left">
             <Card
               className={cn(
                 "rounded-2xl p-4 sm:p-5 transition-all border-2 cursor-pointer hover:shadow-md",
-                i === activeSubjectIndex
+                i === activeIndex
                   ? "border-[#F04F54] shadow-md"
                   : "border-gray-100 hover:border-gray-200"
               )}
             >
               <p className="text-xs sm:text-sm font-semibold text-gray-800 mb-2 truncate">
-                {subj.name}
+                {paper.name}
               </p>
               <div className="flex items-end justify-between gap-2">
                 <div>
                   <p
                     className={cn(
                       "text-2xl sm:text-3xl font-bold",
-                      subj.passed ? "text-emerald-600" : "text-red-500"
+                      paper.passed ? "text-emerald-600" : "text-red-500"
                     )}
                   >
-                    {isJamb ? subj.jambScore : `${Math.round(subj.percentage)}%`}
+                    {isJamb ? paper.jambScore : `${Math.round(paper.percentage)}%`}
                   </p>
                   <p className="text-[10px] text-gray-400 mt-0.5">
-                    {isJamb
-                      ? `${subj.jambScore}/100`
-                      : `${subj.score}/${subj.total}`}
+                    {isJamb ? `${paper.jambScore}/100` : `${paper.score}/${paper.total}`}
                   </p>
                 </div>
                 <div
                   className={cn(
                     "w-8 h-8 rounded-full flex items-center justify-center shrink-0",
-                    subj.passed ? "bg-emerald-100" : "bg-red-100"
+                    paper.passed ? "bg-emerald-100" : "bg-red-100"
                   )}
                 >
-                  {subj.passed ? (
+                  {paper.passed ? (
                     <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                   ) : (
                     <XCircle className="w-4 h-4 text-red-500" />
@@ -378,21 +415,21 @@ function MockExamReviewPage() {
                 </div>
               </div>
               <div className="flex gap-2 mt-2 text-[10px] text-gray-400">
-                <span className="text-emerald-500">{subj.correct} correct</span>
-                <span className="text-red-400">{subj.wrong} wrong</span>
+                <span className="text-emerald-500">{paper.correct} correct</span>
+                <span className="text-red-400">{paper.wrong} wrong</span>
               </div>
             </Card>
           </button>
         ))}
       </div>
 
-      {/* Subject Detail Review */}
-      {activeSession && (
+      {/* Paper Detail Review */}
+      {activeItem && (
         <>
           <div className="flex items-center gap-3 mb-4">
             <BookOpen className="w-5 h-5 text-[#F04F54]" />
             <h2 className="text-lg font-semibold text-gray-900">
-              {activeSession.subject.name} — Question Review
+              {activeItem.label} — Question Review
             </h2>
           </div>
 
@@ -408,7 +445,11 @@ function MockExamReviewPage() {
                   const hasResponse = !!item.response;
                   const isCorrect = item.response?.isCorrect;
                   const isSkipped = !hasResponse;
-                  const isEssayType = item.question && ["ESSAY", "ESSAY_WITH_SUB", "SHORT_ANSWER"].includes(item.question.questionType);
+                  const isEssayType =
+                    item.question &&
+                    ["ESSAY", "ESSAY_WITH_SUB", "SHORT_ANSWER"].includes(
+                      item.question.questionType
+                    );
 
                   const getIndicatorClass = () => {
                     if (isActive) return "bg-white/20 text-white";
@@ -420,11 +461,17 @@ function MockExamReviewPage() {
                   };
 
                   const getIcon = () => {
-                    if (isSkipped) return <MinusCircle className="inline w-3.5 h-3.5 ml-1 text-gray-300" />;
-                    if (isEssayType) return <Clock className="inline w-3.5 h-3.5 ml-1 text-amber-400" />;
-                    return isCorrect
-                      ? <CheckCircle2 className="inline w-3.5 h-3.5 ml-1 text-emerald-400" />
-                      : <XCircle className="inline w-3.5 h-3.5 ml-1 text-red-400" />;
+                    if (isSkipped)
+                      return (
+                        <MinusCircle className="inline w-3.5 h-3.5 ml-1 text-gray-300" />
+                      );
+                    if (isEssayType)
+                      return <Clock className="inline w-3.5 h-3.5 ml-1 text-amber-400" />;
+                    return isCorrect ? (
+                      <CheckCircle2 className="inline w-3.5 h-3.5 ml-1 text-emerald-400" />
+                    ) : (
+                      <XCircle className="inline w-3.5 h-3.5 ml-1 text-red-400" />
+                    );
                   };
 
                   return (
@@ -463,7 +510,11 @@ function MockExamReviewPage() {
                   {/* Result badge */}
                   <div className="flex items-center justify-between">
                     {(() => {
-                      const isEssayType = ["ESSAY", "ESSAY_WITH_SUB", "SHORT_ANSWER"].includes(currentQuestion.questionType);
+                      const isEssayType = [
+                        "ESSAY",
+                        "ESSAY_WITH_SUB",
+                        "SHORT_ANSWER",
+                      ].includes(currentQuestion.questionType);
 
                       if (!currentResponse) {
                         return (
@@ -511,12 +562,15 @@ function MockExamReviewPage() {
                   </div>
 
                   <QuestionCard instruction={currentQuestion.instruction}>
-                    {/* Render question by type (read-only) */}
                     {currentQuestion.questionType === "SINGLE_CHOICE" && (
                       <SingleChoiceQuestion
                         question={currentQuestion}
                         questionNumber={currentQuestion.questionNumber}
-                        selectedAnswer={typeof currentResponse?.answer === "string" ? currentResponse.answer : null}
+                        selectedAnswer={
+                          typeof currentResponse?.answer === "string"
+                            ? currentResponse.answer
+                            : null
+                        }
                         onAnswerChange={() => {}}
                         isSubmitted
                         disabled
@@ -527,7 +581,11 @@ function MockExamReviewPage() {
                       <MultipleChoiceQuestion
                         question={currentQuestion}
                         questionNumber={currentQuestion.questionNumber}
-                        selectedAnswers={Array.isArray(currentResponse?.answer) ? currentResponse.answer : []}
+                        selectedAnswers={
+                          Array.isArray(currentResponse?.answer)
+                            ? currentResponse.answer
+                            : []
+                        }
                         onAnswerChange={() => {}}
                         isSubmitted
                         disabled
@@ -538,7 +596,11 @@ function MockExamReviewPage() {
                       <TrueFalseQuestion
                         question={currentQuestion}
                         questionNumber={currentQuestion.questionNumber}
-                        selectedAnswer={typeof currentResponse?.answer === "boolean" ? currentResponse.answer : null}
+                        selectedAnswer={
+                          typeof currentResponse?.answer === "boolean"
+                            ? currentResponse.answer
+                            : null
+                        }
                         onAnswerChange={() => {}}
                         isSubmitted
                         disabled
@@ -550,7 +612,9 @@ function MockExamReviewPage() {
                         question={currentQuestion}
                         questionNumber={currentQuestion.questionNumber}
                         answers={
-                          currentResponse?.answer && typeof currentResponse.answer === "object" && !Array.isArray(currentResponse.answer)
+                          currentResponse?.answer &&
+                          typeof currentResponse.answer === "object" &&
+                          !Array.isArray(currentResponse.answer)
                             ? (currentResponse.answer as Record<string, string>)
                             : {}
                         }
@@ -564,7 +628,11 @@ function MockExamReviewPage() {
                       <EssayQuestion
                         question={currentQuestion}
                         questionNumber={currentQuestion.questionNumber}
-                        answer={typeof currentResponse?.answer === "string" ? currentResponse.answer : ""}
+                        answer={
+                          typeof currentResponse?.answer === "string"
+                            ? currentResponse.answer
+                            : ""
+                        }
                         onAnswerChange={() => {}}
                         isSubmitted
                         disabled
@@ -575,7 +643,9 @@ function MockExamReviewPage() {
                         question={currentQuestion}
                         questionNumber={currentQuestion.questionNumber}
                         answer={
-                          currentResponse?.answer && typeof currentResponse.answer === "object" && !Array.isArray(currentResponse.answer)
+                          currentResponse?.answer &&
+                          typeof currentResponse.answer === "object" &&
+                          !Array.isArray(currentResponse.answer)
                             ? (currentResponse.answer as Record<string, string>)
                             : {}
                         }
@@ -588,7 +658,11 @@ function MockExamReviewPage() {
                       <ShortAnswerQuestion
                         question={currentQuestion}
                         questionNumber={currentQuestion.questionNumber}
-                        answer={typeof currentResponse?.answer === "string" ? currentResponse.answer : ""}
+                        answer={
+                          typeof currentResponse?.answer === "string"
+                            ? currentResponse.answer
+                            : ""
+                        }
                         onAnswerChange={() => {}}
                         isSubmitted
                         disabled
@@ -600,7 +674,9 @@ function MockExamReviewPage() {
                         question={currentQuestion}
                         questionNumber={currentQuestion.questionNumber}
                         answer={
-                          currentResponse?.answer && typeof currentResponse.answer === "object" && !Array.isArray(currentResponse.answer)
+                          currentResponse?.answer &&
+                          typeof currentResponse.answer === "object" &&
+                          !Array.isArray(currentResponse.answer)
                             ? (currentResponse.answer as Record<string, string>)
                             : {}
                         }
@@ -614,7 +690,11 @@ function MockExamReviewPage() {
                       <OrderingQuestion
                         question={currentQuestion}
                         questionNumber={currentQuestion.questionNumber}
-                        answer={Array.isArray(currentResponse?.answer) ? (currentResponse.answer as string[]) : []}
+                        answer={
+                          Array.isArray(currentResponse?.answer)
+                            ? (currentResponse.answer as string[])
+                            : []
+                        }
                         onAnswerChange={() => {}}
                         isSubmitted
                         disabled
@@ -626,7 +706,9 @@ function MockExamReviewPage() {
                         question={currentQuestion}
                         questionNumber={currentQuestion.questionNumber}
                         answers={
-                          currentResponse?.answer && typeof currentResponse.answer === "object" && !Array.isArray(currentResponse.answer)
+                          currentResponse?.answer &&
+                          typeof currentResponse.answer === "object" &&
+                          !Array.isArray(currentResponse.answer)
                             ? (currentResponse.answer as Record<string, string>)
                             : {}
                         }
@@ -637,13 +719,22 @@ function MockExamReviewPage() {
                       />
                     )}
 
-                    {/* Fallback */}
                     {![
-                      "SINGLE_CHOICE", "MULTIPLE_CHOICE", "TRUE_FALSE", "FILL_IN_BLANK",
-                      "ESSAY", "ESSAY_WITH_SUB", "SHORT_ANSWER", "CALCULATION", "ORDERING", "MATCHING",
+                      "SINGLE_CHOICE",
+                      "MULTIPLE_CHOICE",
+                      "TRUE_FALSE",
+                      "FILL_IN_BLANK",
+                      "ESSAY",
+                      "ESSAY_WITH_SUB",
+                      "SHORT_ANSWER",
+                      "CALCULATION",
+                      "ORDERING",
+                      "MATCHING",
                     ].includes(currentQuestion.questionType) && (
                       <div className="space-y-4">
-                        <p className="text-sm font-medium text-gray-600">Question {currentQuestion.questionNumber}</p>
+                        <p className="text-sm font-medium text-gray-600">
+                          Question {currentQuestion.questionNumber}
+                        </p>
                         <div className="text-lg font-semibold text-gray-900">
                           <RichContentRenderer content={currentQuestion.questionText} />
                         </div>
@@ -661,10 +752,11 @@ function MockExamReviewPage() {
                     )}
                   </QuestionCard>
 
-                  {/* Prev/Next */}
                   <div className="flex items-center justify-between pt-2">
                     <button
-                      onClick={() => setCurrentQuestionIndex(Math.max(0, currentQuestionIndex - 1))}
+                      onClick={() =>
+                        setCurrentQuestionIndex(Math.max(0, currentQuestionIndex - 1))
+                      }
                       disabled={currentQuestionIndex === 0}
                       className="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                     >
@@ -675,7 +767,11 @@ function MockExamReviewPage() {
                       {currentQuestionIndex + 1} / {allItems.length}
                     </span>
                     <button
-                      onClick={() => setCurrentQuestionIndex(Math.min(allItems.length - 1, currentQuestionIndex + 1))}
+                      onClick={() =>
+                        setCurrentQuestionIndex(
+                          Math.min(allItems.length - 1, currentQuestionIndex + 1)
+                        )
+                      }
                       disabled={currentQuestionIndex === allItems.length - 1}
                       className="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                     >
@@ -690,7 +786,6 @@ function MockExamReviewPage() {
         </>
       )}
 
-      {/* Action buttons */}
       <div className="flex justify-center gap-4 mt-8 pt-6 border-t">
         <Button
           variant="outline"
@@ -703,7 +798,7 @@ function MockExamReviewPage() {
           onClick={() => navigate({ to: "/mock-exam/setup" })}
           className="rounded-full px-6 bg-[#F04F54] hover:bg-[#F04F54]/90 text-white"
         >
-          Try Again
+          Take Another Simulation
         </Button>
       </div>
     </div>

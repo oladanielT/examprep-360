@@ -7,22 +7,40 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import CustomPageHeader from "@/components/global/custom-page-header";
 import { useExamPreferences, useAvailableExams } from "@/feature/exams/hooks";
 import { useStartMockExams } from "@/feature/mock-exam/hooks";
+import {
+  groupMocksByPaper,
+  pickRandomMockPerBucket,
+  hasMultiplePapers,
+} from "@/feature/mock-exam/paper-utils";
 import { cn } from "@/lib/utils";
-import type { Subject, AvailableExam, AvailableExamsGrouped } from "@/api/types/exam.types";
+import type {
+  Subject,
+  AvailableExam,
+  AvailableExamsGrouped,
+} from "@/api/types/exam.types";
 
-// Per-subject mock selector — picks the first available mock automatically
+// Per-paper pick for a subject. The chosen mock is frozen when the user
+// selects the subject; switching subjects on/off re-rolls.
+interface SubjectPick {
+  subject: Subject;
+  papers: Array<{
+    paperNumber: number;
+    paperName: string;
+    examId: string;
+    exam: AvailableExam;
+  }>;
+}
+
 function SubjectMockPicker({
   subject,
   selected,
+  pick,
   onToggle,
-  onMockSelect,
-  selectedMockId,
 }: {
   subject: Subject;
   selected: boolean;
-  onToggle: () => void;
-  onMockSelect: (examId: string, exam: AvailableExam) => void;
-  selectedMockId?: string;
+  pick?: SubjectPick;
+  onToggle: (next: SubjectPick | null) => void;
 }) {
   const { data, isLoading } = useAvailableExams({
     subjectId: subject.id,
@@ -36,27 +54,54 @@ function SubjectMockPicker({
     ? Object.values(groupedData).flat()
     : ungroupedData || [];
 
-  // Pick a random mock when no explicit selection exists (stable across re-renders)
-  const randomMock = useMemo(
-    () => mocks.length > 0 ? mocks[Math.floor(Math.random() * mocks.length)] : undefined,
+  // Group mocks by paper number. Memoize on the underlying mocks array
+  // identity so the buckets are stable for the lifetime of this data.
+  const buckets = useMemo(() => groupMocksByPaper(mocks), [mocks]);
+  const isMultiPaper = hasMultiplePapers(buckets);
+
+  // The "preview" pick is what we'd select if the user taps this card now.
+  // It's randomized once per mocks-array, but a frozen `pick` from the
+  // parent overrides it so selection is stable while selected.
+  const previewPick = useMemo(
+    () => pickRandomMockPerBucket(buckets),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [mocks.length]
+    [buckets.length, mocks.length]
   );
-  const activeMock = mocks.find((m) => m.id === selectedMockId) || randomMock;
+
+  // Normalize either the frozen pick or the random preview to a flat
+  // { exam } shape so the totals math doesn't have to branch on which one
+  // produced the entry.
+  const activeExams: AvailableExam[] = pick
+    ? pick.papers.map((p) => p.exam)
+    : previewPick.map((p) => p.mock);
+
+  const totalQuestions = activeExams.reduce((sum, exam) => sum + exam.numQuestions, 0);
+  const totalMinutes = activeExams.reduce((sum, exam) => sum + exam.durationMinutes, 0);
+
+  const handleClick = () => {
+    if (isLoading || buckets.length === 0) return;
+    if (selected) {
+      onToggle(null);
+      return;
+    }
+    // Freeze the current preview pick into the selection.
+    const papers = previewPick.map((p) => ({
+      paperNumber: p.paperNumber,
+      paperName: p.paperName,
+      examId: p.mock.id,
+      exam: p.mock,
+    }));
+    onToggle({ subject, papers });
+  };
 
   return (
     <button
       type="button"
-      onClick={() => {
-        onToggle();
-        if (!selected && activeMock) {
-          onMockSelect(activeMock.id, activeMock);
-        }
-      }}
-      disabled={isLoading || mocks.length === 0}
+      onClick={handleClick}
+      disabled={isLoading || buckets.length === 0}
       className={cn(
         "text-left w-full cursor-pointer group transition-all duration-200",
-        (isLoading || mocks.length === 0) && "opacity-50 cursor-not-allowed"
+        (isLoading || buckets.length === 0) && "opacity-50 cursor-not-allowed"
       )}
     >
       <Card
@@ -67,7 +112,6 @@ function SubjectMockPicker({
             : "border-gray-100 bg-gradient-to-b from-white to-gray-50/80 shadow-sm hover:shadow-lg hover:border-gray-200 group-hover:-translate-y-0.5"
         )}
       >
-        {/* Selection indicator */}
         {selected && (
           <div className="absolute top-2.5 right-2.5">
             <CheckCircle2 className="w-5 h-5 text-[#F04F54]" />
@@ -93,23 +137,47 @@ function SubjectMockPicker({
             {subject.name}
           </h6>
 
-          {/* Mock info */}
+          {/* Paper pills — only when the subject has multiple papers */}
+          {isMultiPaper && (
+            <div className="flex flex-wrap items-center justify-center gap-1 mt-2">
+              {buckets.map((b) => (
+                <span
+                  key={b.paperNumber}
+                  className={cn(
+                    "px-1.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-medium border",
+                    selected
+                      ? "border-[#F04F54] text-[#F04F54]"
+                      : "border-gray-300 text-gray-500"
+                  )}
+                >
+                  P{b.paperNumber}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Question & duration totals */}
           {isLoading ? (
             <p className="text-[10px] text-gray-400 mt-1.5">Loading...</p>
-          ) : mocks.length === 0 ? (
+          ) : buckets.length === 0 ? (
             <p className="text-[10px] text-gray-400 mt-1.5">No mocks available</p>
-          ) : activeMock ? (
+          ) : (
             <div className="flex items-center gap-2 mt-2 text-[10px] sm:text-xs text-gray-500">
               <span className="flex items-center gap-0.5">
                 <BookOpen className="w-3 h-3" />
-                {activeMock.numQuestions}
+                {totalQuestions}
               </span>
               <span className="flex items-center gap-0.5">
                 <Clock className="w-3 h-3" />
-                {activeMock.durationMinutes}m
+                {totalMinutes}m
               </span>
+              {isMultiPaper && (
+                <span className="text-gray-400">
+                  · {buckets.length} papers
+                </span>
+              )}
             </div>
-          ) : null}
+          )}
         </div>
       </Card>
     </button>
@@ -121,9 +189,7 @@ function MockExamSetupPage() {
   const { data: preferences, isLoading: loadingPrefs } = useExamPreferences();
   const startMockExams = useStartMockExams();
 
-  const [selectedSubjects, setSelectedSubjects] = useState<
-    Map<string, { subject: Subject; examId: string; exam: AvailableExam }>
-  >(new Map());
+  const [picks, setPicks] = useState<Map<string, SubjectPick>>(new Map());
   const [errorMessage, setErrorMessage] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -134,56 +200,71 @@ function MockExamSetupPage() {
       )
     : allSubjects;
 
-  // Calculate totals from selected subjects
+  // Detect WAEC/NECO/SSCE so we can swap the info banner copy. The runner
+  // doesn't need this — it just renders the paper-tab row whenever a
+  // subject has >1 paper.
+  const examTypeName =
+    preferences?.examTypeRecord?.name || preferences?.examSubtype || "";
+  const isMultiPaperExam = /waec|neco|wassce|ssce/i.test(examTypeName);
+
   const totals = useMemo(() => {
+    let papers = 0;
     let questions = 0;
     let minutes = 0;
-    selectedSubjects.forEach(({ exam }) => {
-      questions += exam.numQuestions;
-      minutes += exam.durationMinutes;
+    let anySubjectHasMultiplePapers = false;
+    picks.forEach((pick) => {
+      if (pick.papers.length > 1) anySubjectHasMultiplePapers = true;
+      papers += pick.papers.length;
+      pick.papers.forEach((p) => {
+        questions += p.exam.numQuestions;
+        minutes += p.exam.durationMinutes;
+      });
     });
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
-    const timeLabel = hours > 0 ? `${hours}hr ${mins > 0 ? `${mins}m` : ""}` : `${mins}m`;
-    return { questions, minutes, timeLabel, count: selectedSubjects.size };
-  }, [selectedSubjects]);
+    const timeLabel =
+      hours > 0 ? `${hours}hr ${mins > 0 ? `${mins}m` : ""}` : `${mins}m`;
+    return {
+      count: picks.size,
+      papers,
+      questions,
+      timeLabel,
+      showPapersColumn: anySubjectHasMultiplePapers,
+    };
+  }, [picks]);
 
-  const handleToggleSubject = (subject: Subject) => {
-    setSelectedSubjects((prev) => {
-      const next = new Map(prev);
-      if (next.has(subject.id)) {
-        next.delete(subject.id);
+  const handleSubjectToggle = (subject: Subject, next: SubjectPick | null) => {
+    setPicks((prev) => {
+      const map = new Map(prev);
+      if (next === null) {
+        map.delete(subject.id);
       } else {
-        // Will be fully populated when mock data arrives via onMockSelect
-        // placeholder until mock info is set
+        map.set(subject.id, next);
       }
-      return next;
-    });
-  };
-
-  const handleMockSelect = (subject: Subject, examId: string, exam: AvailableExam) => {
-    setSelectedSubjects((prev) => {
-      const next = new Map(prev);
-      next.set(subject.id, { subject, examId, exam });
-      return next;
+      return map;
     });
   };
 
   const handleStartSimulation = () => {
-    if (selectedSubjects.size < 2) {
-      setErrorMessage("Please select at least 2 subjects for a combined exam simulation.");
+    if (picks.size < 2) {
+      setErrorMessage(
+        "Please select at least 2 subjects for a combined exam simulation."
+      );
       return;
     }
-
     setErrorMessage("");
 
-    const subjectsArray = Array.from(selectedSubjects.values()).map(({ subject, examId }) => ({
-      subject,
-      examId,
+    const subjectsInput = Array.from(picks.values()).map((pick) => ({
+      subject: pick.subject,
+      papers: pick.papers.map((p) => ({
+        paperNumber: p.paperNumber,
+        paperName: p.paperName,
+        examId: p.examId,
+      })),
     }));
 
     startMockExams.mutate(
-      { subjects: subjectsArray },
+      { subjects: subjectsInput },
       {
         onSuccess: ({ sessionId }) => {
           navigate({ to: "/mock-exam/$sessionId", params: { sessionId } });
@@ -219,25 +300,50 @@ function MockExamSetupPage() {
       />
 
       <div className="py-6 sm:py-8">
-        {/* Summary bar — sticky on scroll */}
+        {/* Sticky summary bar */}
         {totals.count > 0 && (
           <div className="sticky top-0 z-10 mb-6">
             <Card className="rounded-2xl border border-[#F04F54]/20 bg-gradient-to-r from-red-50 to-orange-50 p-4 sm:p-5 shadow-sm">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div className="flex items-center gap-4 sm:gap-6">
                   <div className="text-center">
-                    <p className="text-2xl sm:text-3xl font-bold text-[#F04F54]">{totals.count}</p>
-                    <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide">Subjects</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-[#F04F54]">
+                      {totals.count}
+                    </p>
+                    <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide">
+                      Subjects
+                    </p>
+                  </div>
+                  {totals.showPapersColumn && (
+                    <>
+                      <div className="w-px h-8 bg-gray-200" />
+                      <div className="text-center">
+                        <p className="text-2xl sm:text-3xl font-bold text-gray-800">
+                          {totals.papers}
+                        </p>
+                        <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide">
+                          Papers
+                        </p>
+                      </div>
+                    </>
+                  )}
+                  <div className="w-px h-8 bg-gray-200" />
+                  <div className="text-center">
+                    <p className="text-2xl sm:text-3xl font-bold text-gray-800">
+                      {totals.questions}
+                    </p>
+                    <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide">
+                      Questions
+                    </p>
                   </div>
                   <div className="w-px h-8 bg-gray-200" />
                   <div className="text-center">
-                    <p className="text-2xl sm:text-3xl font-bold text-gray-800">{totals.questions}</p>
-                    <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide">Questions</p>
-                  </div>
-                  <div className="w-px h-8 bg-gray-200" />
-                  <div className="text-center">
-                    <p className="text-2xl sm:text-3xl font-bold text-gray-800">{totals.timeLabel}</p>
-                    <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide">Total Time</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-gray-800">
+                      {totals.timeLabel}
+                    </p>
+                    <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide">
+                      Total Time
+                    </p>
                   </div>
                 </div>
 
@@ -260,7 +366,6 @@ function MockExamSetupPage() {
           </div>
         )}
 
-        {/* Error */}
         {errorMessage && (
           <Alert variant="destructive" className="mb-6">
             <AlertCircle className="h-4 w-4" />
@@ -268,15 +373,15 @@ function MockExamSetupPage() {
           </Alert>
         )}
 
-        {/* Info banner */}
         <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl p-3 sm:p-4 mb-6">
           <AlertCircle className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
           <p className="text-xs sm:text-sm text-blue-700">
-            Select 2 or more subjects to simulate real exam conditions. Questions from all subjects will be combined into a single timed session — just like the actual exam.
+            {isMultiPaperExam
+              ? "Select 2 or more subjects to simulate real exam conditions. All papers (1, 2, and 3 where applicable) will be included — just like the actual WAEC/NECO sitting."
+              : "Select 2 or more subjects to simulate real exam conditions. Questions from all subjects will be combined into a single timed session — just like the actual exam."}
           </p>
         </div>
 
-        {/* Subject grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-3 sm:gap-x-5 gap-y-6 sm:gap-y-8">
           {filteredSubjects.length === 0 && (
             <div className="col-span-full text-center py-10 text-gray-500">
@@ -289,15 +394,13 @@ function MockExamSetupPage() {
             <SubjectMockPicker
               key={subject.id}
               subject={subject}
-              selected={selectedSubjects.has(subject.id)}
-              selectedMockId={selectedSubjects.get(subject.id)?.examId}
-              onToggle={() => handleToggleSubject(subject)}
-              onMockSelect={(examId, exam) => handleMockSelect(subject, examId, exam)}
+              selected={picks.has(subject.id)}
+              pick={picks.get(subject.id)}
+              onToggle={(next) => handleSubjectToggle(subject, next)}
             />
           ))}
         </div>
 
-        {/* Bottom CTA for mobile */}
         {totals.count >= 2 && (
           <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-sm border-t sm:hidden z-20">
             <Button
@@ -305,7 +408,9 @@ function MockExamSetupPage() {
               disabled={startMockExams.isPending}
               className="w-full bg-[#F04F54] hover:bg-[#F04F54]/90 text-white rounded-full h-12 font-semibold shadow-lg"
             >
-              {startMockExams.isPending ? "Starting..." : `Start Simulation (${totals.count} subjects)`}
+              {startMockExams.isPending
+                ? "Starting..."
+                : `Start Simulation (${totals.count} subjects)`}
             </Button>
           </div>
         )}
