@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Loader2, Clock, BookOpen, CheckCircle2, AlertCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -73,7 +73,7 @@ function JambSubjectCard({
   const previewPick = useMemo(
     () => pickRandomMockPerBucket(buckets),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [buckets.length, mocks.length]
+    [subject.id, buckets.length, mocks.length]
   );
 
   const activeExams: AvailableExam[] = pick
@@ -464,19 +464,16 @@ function WaecSubjectCard({
   );
 }
 
-// Sticky picker that shows once a subject is selected. Owns the paper
-// chips, the live totals, and the Start CTA.
+// Sticky bar that shows once a subject is selected. All papers for the
+// subject are auto-included (one mock per paper kind, randomly chosen).
+// The bar is read-only — no user-side paper selection.
 function WaecPickedSubjectBar({
   subject,
-  selectedPapers,
-  onTogglePaper,
   onClear,
   isStarting,
   onStart,
 }: {
   subject: Subject;
-  selectedPapers: Set<number>;
-  onTogglePaper: (paperNumber: number) => void;
   onClear: () => void;
   isStarting: boolean;
   onStart: (
@@ -487,38 +484,36 @@ function WaecPickedSubjectBar({
   const buckets = useMemo(() => groupMocksByPaper(mocks), [mocks]);
 
   // Roll a random pick per bucket. Stable for the lifetime of this mocks
-  // array, so toggling a paper chip doesn't re-roll the others.
+  // array so the displayed totals don't churn between renders. Includes
+  // subject.id so swapping subjects always re-rolls — without it, two
+  // subjects with the same bucket+mock counts would share a stale memo.
   const rolledPicks = useMemo(
     () => pickRandomMockPerBucket(buckets),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [buckets.length, mocks.length]
+    [subject.id, buckets.length, mocks.length]
   );
 
-  // Live totals only for the papers the user has kept selected.
+  // Totals across every paper kind — they're all included automatically.
   const totals = useMemo(() => {
     let questions = 0;
     let minutes = 0;
     rolledPicks.forEach((p) => {
-      if (selectedPapers.has(p.paperNumber)) {
-        questions += p.mock.numQuestions;
-        minutes += p.mock.durationMinutes;
-      }
+      questions += p.mock.numQuestions;
+      minutes += p.mock.durationMinutes;
     });
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     const timeLabel =
       hours > 0 ? `${hours}hr ${mins > 0 ? `${mins}m` : ""}` : `${mins}m`;
-    return { questions, timeLabel, paperCount: selectedPapers.size };
-  }, [rolledPicks, selectedPapers]);
+    return { questions, timeLabel, paperCount: rolledPicks.length };
+  }, [rolledPicks]);
 
   const handleStart = () => {
-    const papers = rolledPicks
-      .filter((p) => selectedPapers.has(p.paperNumber))
-      .map((p) => ({
-        paperNumber: p.paperNumber,
-        paperName: p.paperName,
-        examId: p.mock.id,
-      }));
+    const papers = rolledPicks.map((p) => ({
+      paperNumber: p.paperNumber,
+      paperName: p.paperName,
+      examId: p.mock.id,
+    }));
     onStart(papers);
   };
 
@@ -543,7 +538,8 @@ function WaecPickedSubjectBar({
             </button>
           </div>
 
-          {/* Paper chips */}
+          {/* Auto-included papers (read-only). One mock per paper kind,
+              picked at random from each bucket. */}
           {isLoading ? (
             <p className="text-xs text-gray-500">Loading papers...</p>
           ) : buckets.length === 0 ? (
@@ -551,36 +547,21 @@ function WaecPickedSubjectBar({
           ) : (
             <div>
               <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide mb-1.5">
-                Papers
+                Papers (auto-included)
               </p>
               <div className="flex flex-wrap gap-2">
-                {rolledPicks.map((p) => {
-                  const active = selectedPapers.has(p.paperNumber);
-                  return (
-                    <button
-                      key={p.paperNumber}
-                      type="button"
-                      onClick={() => onTogglePaper(p.paperNumber)}
-                      className={cn(
-                        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors",
-                        active
-                          ? "bg-[#F04F54] text-white border-[#F04F54]"
-                          : "bg-white text-gray-700 border-gray-200 hover:border-gray-300"
-                      )}
-                    >
-                      {active && <CheckCircle2 className="w-3.5 h-3.5" />}
-                      <span>{p.paperName}</span>
-                      <span
-                        className={cn(
-                          "text-[10px] px-1 rounded",
-                          active ? "bg-white/20" : "bg-gray-100 text-gray-500"
-                        )}
-                      >
-                        {p.mock.numQuestions}q · {p.mock.durationMinutes}m
-                      </span>
-                    </button>
-                  );
-                })}
+                {rolledPicks.map((p) => (
+                  <div
+                    key={p.paperNumber}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border bg-[#F04F54] text-white border-[#F04F54]"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>{p.paperName}</span>
+                    <span className="text-[10px] px-1 rounded bg-white/20">
+                      {p.mock.numQuestions}q · {p.mock.durationMinutes}m
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
           )}
@@ -617,7 +598,7 @@ function WaecPickedSubjectBar({
             </div>
             <Button
               onClick={handleStart}
-              disabled={isStarting || totals.paperCount < 1 || isLoading}
+              disabled={isStarting || isLoading || totals.paperCount < 1}
               className="bg-[#F04F54] hover:bg-[#F04F54]/90 text-white rounded-full h-12 px-8 font-semibold text-sm shadow-md"
             >
               {isStarting ? (
@@ -636,27 +617,6 @@ function WaecPickedSubjectBar({
   );
 }
 
-// Hidden helper: when a subject is picked, we need to know its paper
-// buckets so we can default-select every paper number. This component
-// runs the query and reports the bucket numbers up to the parent on mount
-// or when the picked subject changes.
-function PaperDefaulter({
-  subjectId,
-  onPapers,
-}: {
-  subjectId: string;
-  onPapers: (paperNumbers: number[]) => void;
-}) {
-  const { mocks, isLoading } = useSubjectMocks(subjectId);
-  const buckets = useMemo(() => groupMocksByPaper(mocks), [mocks]);
-  useEffect(() => {
-    if (isLoading) return;
-    onPapers(buckets.map((b) => b.paperNumber));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [subjectId, isLoading, buckets.length]);
-  return null;
-}
-
 function WaecMockSetup({
   subjects,
   searchQuery,
@@ -667,7 +627,6 @@ function WaecMockSetup({
   const navigate = useNavigate();
   const startMockExams = useStartMockExams();
   const [pickedSubject, setPickedSubject] = useState<Subject | null>(null);
-  const [selectedPapers, setSelectedPapers] = useState<Set<number>>(new Set());
   const [errorMessage, setErrorMessage] = useState("");
 
   const filteredSubjects = searchQuery
@@ -679,30 +638,13 @@ function WaecMockSetup({
     if (pickedSubject?.id === subject.id) {
       // Tapping the active subject clears the selection.
       setPickedSubject(null);
-      setSelectedPapers(new Set());
       return;
     }
     setPickedSubject(subject);
-    // Papers default-on populate via <PaperDefaulter />.
-    setSelectedPapers(new Set());
-  };
-
-  const handleTogglePaper = (paperNumber: number) => {
-    setSelectedPapers((prev) => {
-      const next = new Set(prev);
-      if (next.has(paperNumber)) {
-        if (next.size <= 1) return prev; // must keep ≥1
-        next.delete(paperNumber);
-      } else {
-        next.add(paperNumber);
-      }
-      return next;
-    });
   };
 
   const handleClearSubject = () => {
     setPickedSubject(null);
-    setSelectedPapers(new Set());
   };
 
   const handleStart = (
@@ -710,7 +652,7 @@ function WaecMockSetup({
   ) => {
     if (!pickedSubject) return;
     if (papers.length < 1) {
-      setErrorMessage("Please select at least one paper.");
+      setErrorMessage("No papers available for this subject.");
       return;
     }
     setErrorMessage("");
@@ -733,20 +675,9 @@ function WaecMockSetup({
 
   return (
     <>
-      {/* Hidden defaulter — populates selectedPapers with every paper number
-          for the picked subject once its mocks load. */}
-      {pickedSubject && selectedPapers.size === 0 && (
-        <PaperDefaulter
-          subjectId={pickedSubject.id}
-          onPapers={(nums) => setSelectedPapers(new Set(nums))}
-        />
-      )}
-
       {pickedSubject && (
         <WaecPickedSubjectBar
           subject={pickedSubject}
-          selectedPapers={selectedPapers}
-          onTogglePaper={handleTogglePaper}
           onClear={handleClearSubject}
           isStarting={startMockExams.isPending}
           onStart={handleStart}
@@ -763,9 +694,10 @@ function WaecMockSetup({
       <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl p-3 sm:p-4 mb-6">
         <AlertCircle className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
         <p className="text-xs sm:text-sm text-blue-700">
-          Pick one subject, then choose which papers to sit (Paper 1, 2, 3 where
-          applicable). All selected papers run on one shared timer — just like the
-          actual WAEC/NECO sitting.
+          Pick a subject. Every paper for that subject (Paper 1, 2, 3 where
+          applicable) is auto-included — one mock per paper kind, chosen at random
+          each sitting. All papers run on one shared timer, just like the actual
+          WAEC/NECO sitting.
         </p>
       </div>
 
@@ -819,7 +751,7 @@ function MockExamSetupPage() {
         heading="Exam Simulation"
         subHeading={
           isMultiPaperExam
-            ? "Pick a subject and choose papers to sit"
+            ? "Pick a subject — all papers are auto-included"
             : "Select subjects for a combined mock exam"
         }
         searchValue={searchQuery}
