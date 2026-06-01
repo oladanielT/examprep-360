@@ -29,6 +29,7 @@
     "input-otp": "^1.4.2",
     "katex": "^0.16.28",
     "lucide-react": "^0.562.0",
+    "lz-string": "^1.5.0",
     "mathlive": "^0.108.3",
     "next-themes": "^0.4.6",
     "radix-ui": "^1.4.3",

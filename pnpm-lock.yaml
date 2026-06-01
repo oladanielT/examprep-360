@@ -68,6 +68,9 @@ importers:
       lucide-react:
         specifier: ^0.562.0
         version: 0.562.0(react@19.2.3)
+      lz-string:
+        specifier: ^1.5.0
+        version: 1.5.0
       mathlive:
         specifier: ^0.108.3
         version: 0.108.3
