@@ -1,6 +1,13 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import LZString from "lz-string";
 import type { ExamAttempt, Question, AttemptResponse, Subject } from "@/api/types";
+
+// Module-level hook the persist storage adapter can flip when a write
+// fails (typically QuotaExceededError on long WAEC sittings with image
+// heavy questions). The runner reads `persistDegraded` and surfaces a
+// banner so the user knows refreshing the tab will lose progress.
+let markPersistDegraded: (() => void) | null = null;
 
 // A single paper inside a subject. WAEC/NECO subjects have 2-3 of these;
 // JAMB-style subjects have exactly 1.
@@ -35,6 +42,12 @@ export interface MockExamState {
   // Single shared timer = sum of every paper.durationMinutes * 60
   timeRemaining: number | null;
   timerRunning: boolean;
+
+  // True when the persist storage couldn't write to localStorage (usually
+  // QuotaExceededError). Not persisted itself; resets to false on a fresh
+  // load. Runner displays a warning banner while this is true.
+  persistDegraded: boolean;
+  setPersistDegraded: (degraded: boolean) => void;
 
   // Actions
   startMockExam: (
@@ -105,6 +118,7 @@ const initialState = {
   currentQuestionIndexes: {} as Record<string, number>,
   timeRemaining: null as number | null,
   timerRunning: false,
+  persistDegraded: false,
 };
 
 function isAnswered(answer: any): boolean {
@@ -118,8 +132,18 @@ function isAnswered(answer: any): boolean {
 
 export const useMockExamStore = create<MockExamState>()(
   persist(
-    (set, get) => ({
+    (set, get) => {
+      // Capture `set` so the storage adapter (defined below, outside this
+      // closure) can flip persistDegraded when a localStorage write fails.
+      // Guards against redundant updates so we don't churn renders.
+      markPersistDegraded = () => {
+        if (!get().persistDegraded) set({ persistDegraded: true });
+      };
+
+      return {
       ...initialState,
+
+      setPersistDegraded: (degraded) => set({ persistDegraded: degraded }),
 
       startMockExam: (sessionId, sessionsInput) => {
         const subjects: SubjectSession[] = sessionsInput.map((s) => ({
@@ -349,7 +373,8 @@ export const useMockExamStore = create<MockExamState>()(
         const percentage = total > 0 ? Math.round((answered / total) * 100) : 0;
         return { answered, total, percentage };
       },
-    }),
+      };
+    },
     {
       name: "mock-exam-store",
       version: 2,
@@ -420,8 +445,21 @@ export const useMockExamStore = create<MockExamState>()(
       storage: {
         getItem: (name) => {
           try {
-            const str = localStorage.getItem(name);
-            if (!str) return null;
+            const raw = localStorage.getItem(name);
+            if (!raw) return null;
+
+            // New format is LZ-compressed UTF16. Old format (pre-deploy)
+            // is plain JSON. decompressFromUTF16 returns null/empty for
+            // non-compressed input — fall back to treating raw as JSON
+            // so in-flight sessions survive the deploy.
+            let str: string | null = null;
+            try {
+              str = LZString.decompressFromUTF16(raw);
+            } catch {
+              str = null;
+            }
+            if (!str) str = raw;
+
             const parsed = JSON.parse(str);
             const state = parsed.state;
             // Convert each paper's responses object back into a Map.
@@ -452,13 +490,18 @@ export const useMockExamStore = create<MockExamState>()(
                 responses: p.responses ? Object.fromEntries(p.responses) : {},
               })),
             }));
-            const str = JSON.stringify({
+            const json = JSON.stringify({
               ...newValue,
               state: { ...state, subjects },
             });
-            localStorage.setItem(name, str);
+            // Compress before writing. compressToUTF16 is purpose-built
+            // for localStorage and typically gives 2-4× headroom on the
+            // text-heavy question payloads we persist.
+            const compressed = LZString.compressToUTF16(json);
+            localStorage.setItem(name, compressed);
           } catch {
-            // QuotaExceededError or serialization failure
+            // QuotaExceededError or serialization failure — surface to UI.
+            markPersistDegraded?.();
           }
         },
         removeItem: (name) => localStorage.removeItem(name),

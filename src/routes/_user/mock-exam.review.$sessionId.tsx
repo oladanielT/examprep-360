@@ -321,7 +321,9 @@ function MockExamReviewPage() {
               <p className="text-xs sm:text-sm text-gray-500">
                 {isJamb
                   ? `JAMB Score: ${aggregateStats.totalJambScore}/${aggregateStats.maxJambScore}`
-                  : `${subjects.length} subject${subjects.length !== 1 ? "s" : ""} · ${paperItems.length} paper${paperItems.length !== 1 ? "s" : ""}`}
+                  : subjects.length === 1
+                    ? `${subjects[0].subject.name} · ${paperItems.length} paper${paperItems.length !== 1 ? "s" : ""}`
+                    : `${subjects.length} subject${subjects.length !== 1 ? "s" : ""} · ${paperItems.length} paper${paperItems.length !== 1 ? "s" : ""}`}
               </p>
               <div className="flex items-center gap-1 mt-1">
                 {aggregateStats.overallPassed ? (

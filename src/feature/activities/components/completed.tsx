@@ -165,6 +165,12 @@ function SimulationCard({ items }: { items: ExamHistoryItem[] }) {
       totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
     const maxJambScore = items.length * 100;
 
+    // A WAEC sitting is a single subject across N papers, so every item
+    // shares the same subject name. Detect that so we can swap the badge
+    // and the comma-joined subject list to a single-subject summary.
+    const uniqueSubjectNames = Array.from(new Set(subjects.map((s) => s.name)));
+    const isSingleSubject = uniqueSubjectNames.length === 1;
+
     return {
       subjects,
       totalCorrect,
@@ -174,6 +180,8 @@ function SimulationCard({ items }: { items: ExamHistoryItem[] }) {
       overallPercentage,
       allPassed,
       isJamb,
+      isSingleSubject,
+      singleSubjectName: isSingleSubject ? uniqueSubjectNames[0] : null,
     };
   }, [items]);
 
@@ -230,11 +238,15 @@ function SimulationCard({ items }: { items: ExamHistoryItem[] }) {
               Exam Simulation
             </h3>
             <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-blue-100 text-blue-700">
-              {items.length} subjects
+              {stats.isSingleSubject
+                ? `${items.length} paper${items.length !== 1 ? "s" : ""}`
+                : `${items.length} subjects`}
             </span>
           </div>
           <p className="text-xs text-gray-500 mt-0.5">
-            {stats.subjects.map((s) => s.name).join(" · ")}
+            {stats.isSingleSubject
+              ? stats.singleSubjectName
+              : stats.subjects.map((s) => s.name).join(" · ")}
           </p>
 
           {/* Combined Score */}

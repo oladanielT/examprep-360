@@ -67,6 +67,7 @@ function MockExamPage() {
     currentQuestionIndexes,
     timeRemaining,
     timerRunning,
+    persistDegraded,
   } = useMockExamStore(
     useShallow((state) => ({
       sessionId: state.sessionId,
@@ -76,6 +77,7 @@ function MockExamPage() {
       currentQuestionIndexes: state.currentQuestionIndexes,
       timeRemaining: state.timeRemaining,
       timerRunning: state.timerRunning,
+      persistDegraded: state.persistDegraded,
     }))
   );
 
@@ -518,10 +520,19 @@ function MockExamPage() {
             <span className="sm:hidden">Exit</span>
           </button>
           <h1 className="text-lg sm:text-2xl font-bold mt-1">Exam Simulation</h1>
+          {/* WAEC mode hides the subject-tab row, so surface the subject
+              name here instead. JAMB keeps the row and doesn't need this. */}
+          {subjects.length === 1 && subjects[0]?.subject?.name && (
+            <p className="text-sm text-gray-500 mt-0.5">
+              {subjects[0].subject.name}
+            </p>
+          )}
         </div>
       </div>
 
-      {/* Subject tabs (row 1) */}
+      {/* Subject tabs (row 1) — hidden for single-subject WAEC/NECO sittings,
+          where the paper tabs alone are the meaningful navigation. */}
+      {subjects.length > 1 && (
       <div className="flex gap-2 overflow-x-auto pb-3 mb-2 scrollbar-none">
         {subjects.map((session, index) => {
           const isActive = index === currentSubjectIndex;
@@ -562,6 +573,7 @@ function MockExamPage() {
           );
         })}
       </div>
+      )}
 
       {/* Paper tabs (row 2) — only when active subject has multiple papers */}
       {hasMultiplePapers && currentSubject && (
@@ -597,6 +609,16 @@ function MockExamPage() {
             );
           })}
         </div>
+      )}
+
+      {persistDegraded && (
+        <Alert variant="destructive" className="mb-4 sm:mb-6">
+          <AlertDescription className="text-sm">
+            Auto-save paused — your browser storage is full. Your answers are still
+            held in this tab, but a refresh will lose them. Finish the simulation in
+            this tab without reloading.
+          </AlertDescription>
+        </Alert>
       )}
 
       {errorMessage && (
