@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/api/client";
 import { REFERRAL_ENDPOINTS } from "@/api/endpoints";
-import type { ReferralData } from "@/api/types";
+import type { ReferralData, ReferralStats } from "@/api/types";
 import type { AxiosError } from "axios";
 
 interface ApiError {
@@ -23,13 +23,27 @@ export const useReferralData = () => {
   });
 };
 
+// Stats live on a separate endpoint. Permissive type for now — we'll
+// tighten ReferralStats once we see the real response shape.
+export const useReferralStats = () => {
+  return useQuery<ReferralStats>({
+    queryKey: ["referralStats"],
+    queryFn: async () => {
+      const { data } = await apiClient.get<ReferralStats>(
+        REFERRAL_ENDPOINTS.STATS
+      );
+      return data;
+    },
+  });
+};
+
 // ==================== MUTATIONS ====================
 
 export const useValidateReferral = () => {
   return useMutation<
     { valid: boolean; message: string },
     AxiosError<ApiError>,
-    { code: string }
+    { referralCode: string }
   >({
     mutationFn: async (request) => {
       const { data } = await apiClient.post(

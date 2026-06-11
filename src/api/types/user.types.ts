@@ -56,26 +56,43 @@ export interface SaveExamSelectionRequest {
 }
 
 // Referral Types
+export type ReferralStatus = "PENDING" | "COMPLETED" | "EXPIRED" | string;
+export type RewardType = "WALLET_CREDIT" | "SUBSCRIPTION" | "OTHER" | string;
+
 export interface ReferralReferral {
   id: string;
-  [key: string]: unknown;
+  referredStudent: string;
+  referredEmail: string;
+  status: ReferralStatus;
+  rewardGranted: boolean;
+  createdAt: string;
+  completedAt?: string | null;
 }
 
 export interface ReferralReward {
   id: string;
-  type: string;
-  value: number;
+  rewardType: RewardType;
+  rewardValue: { amount: number } | Record<string, unknown>;
   claimed: boolean;
-  claimedAt?: string;
+  claimedAt?: string | null;
+  expiresAt?: string | null;
 }
 
+// GET /user/referral/my-code — returns just the share code + link.
 export interface ReferralData {
+  code: string;
+  shareUrl: string;
+}
+
+// GET /user/referral/stats — counters + referrals/rewards lists.
+export interface ReferralStats {
   code: string;
   totalReferrals: number;
   completedReferrals: number;
   pendingReferrals: number;
   totalRewards: number;
   unclaimedRewards: number;
+  rewardAmount: number;
   referrals: ReferralReferral[];
   rewards: ReferralReward[];
 }

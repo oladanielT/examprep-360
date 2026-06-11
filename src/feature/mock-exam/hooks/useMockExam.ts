@@ -18,6 +18,20 @@ interface ApiError {
   statusCode?: number;
 }
 
+// True when an error's backend message matches a pattern. Used to treat
+// "already completed" / "already paused" style conflicts as success so a
+// retry after a partial failure converges instead of erroring forever on
+// the papers that DID go through.
+function errorMessageMatches(err: unknown, pattern: RegExp): boolean {
+  const msg = (err as AxiosError<ApiError>)?.response?.data?.message;
+  const text = Array.isArray(msg) ? msg.join(" ") : msg;
+  return typeof text === "string" && pattern.test(text);
+}
+
+function rejectedOf(results: PromiseSettledResult<unknown>[]): PromiseRejectedResult[] {
+  return results.filter((r): r is PromiseRejectedResult => r.status === "rejected");
+}
+
 // Input for starting a multi-paper simulation. Each subject contributes one
 // or more papers; each paper starts its own attempt on the server.
 export interface StartMockExamInput {
@@ -60,13 +74,37 @@ export const useStartMockExams = () => {
         }))
       );
 
-      const results = await Promise.all(
+      const settled = await Promise.allSettled(
         tasks.map(async (task) => {
           const { data } = await apiClient.post<StartExamResponse>(
             EXAM_ENDPOINTS.START(task.examId)
           );
           return { task, data };
         })
+      );
+
+      const failures = rejectedOf(settled);
+      if (failures.length > 0) {
+        // Partial failure: some attempts are now in-progress on the server.
+        // There's no abandon endpoint, so pause them (best effort) — they
+        // land in "Paused exams" where the user can see/resume them instead
+        // of silently blocking future starts as orphaned attempts.
+        const started = settled.filter(
+          (r): r is PromiseFulfilledResult<{ task: (typeof tasks)[number]; data: StartExamResponse }> =>
+            r.status === "fulfilled"
+        );
+        await Promise.allSettled(
+          started.map((r) =>
+            apiClient.patch(EXAM_ENDPOINTS.PAUSE(r.value.data.id))
+          )
+        );
+        // Surface the backend's reason (e.g. "active exam already exists").
+        throw failures[0].reason;
+      }
+
+      const results = settled.map(
+        (r) =>
+          (r as PromiseFulfilledResult<{ task: (typeof tasks)[number]; data: StartExamResponse }>).value
       );
 
       // Reassemble: bucket per-subject paper sessions, sorted by paperNumber.
@@ -168,34 +206,53 @@ export const useCompleteMockExam = () => {
     mutationFn: async () => {
       const papers = subjects.flatMap((s) => s.papers);
 
-      await Promise.all(
+      const settled = await Promise.allSettled(
         papers.map(async (paper) => {
-          const unsubmittedResponses = paper.questions
-            .filter((q) => {
-              const answer = paper.answers[q.id];
-              const alreadySubmitted = paper.responses.has(q.id);
-              if (alreadySubmitted) return false;
-              return isAnswered(answer);
-            })
-            .map((q) => ({
-              questionId: q.id,
-              answer: formatAnswer(paper.answers[q.id]),
-              timeSpentSeconds: 0,
-            }));
+          try {
+            const unsubmittedResponses = paper.questions
+              .filter((q) => {
+                const answer = paper.answers[q.id];
+                const alreadySubmitted = paper.responses.has(q.id);
+                if (alreadySubmitted) return false;
+                return isAnswered(answer);
+              })
+              .map((q) => ({
+                questionId: q.id,
+                answer: formatAnswer(paper.answers[q.id]),
+                timeSpentSeconds: 0,
+              }));
 
-          if (unsubmittedResponses.length > 0) {
-            await apiClient.post<SubmitResponsesBulkResponse>(
-              EXAM_ENDPOINTS.SUBMIT_RESPONSES_BULK(paper.attemptId),
-              {
-                responses: unsubmittedResponses,
-                complete: true,
-              } as SubmitResponsesBulkRequest
-            );
-          } else {
-            await apiClient.post(EXAM_ENDPOINTS.COMPLETE(paper.attemptId));
+            if (unsubmittedResponses.length > 0) {
+              await apiClient.post<SubmitResponsesBulkResponse>(
+                EXAM_ENDPOINTS.SUBMIT_RESPONSES_BULK(paper.attemptId),
+                {
+                  responses: unsubmittedResponses,
+                  complete: true,
+                } as SubmitResponsesBulkRequest
+              );
+            } else {
+              await apiClient.post(EXAM_ENDPOINTS.COMPLETE(paper.attemptId));
+            }
+          } catch (err) {
+            // A previous partial completion may have already closed this
+            // paper — converge instead of failing the retry forever.
+            if (errorMessageMatches(err, /already.*(complet|submit)/i)) return;
+            throw err;
           }
         })
       );
+
+      const failures = rejectedOf(settled);
+      if (failures.length > 0) {
+        const backendMsg = (failures[0].reason as AxiosError<ApiError>)
+          ?.response?.data?.message;
+        const detail =
+          typeof backendMsg === "string" ? ` (${backendMsg})` : "";
+        throw new Error(
+          `${failures.length} of ${papers.length} paper(s) failed to submit${detail}. ` +
+            `Tap Complete again — papers that already went through won't be re-submitted.`
+        );
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["examHistory"] });
@@ -204,18 +261,27 @@ export const useCompleteMockExam = () => {
   });
 };
 
-// Pause every paper attempt in parallel.
+// Pause every paper attempt in parallel. "Already paused" conflicts are
+// treated as success so a retry after partial failure converges.
 export const usePauseMockExam = () => {
   const { pauseTimer, subjects } = useMockExamStore();
 
   return useMutation<void, AxiosError<ApiError>, void>({
     mutationFn: async () => {
       const papers = subjects.flatMap((s) => s.papers);
-      await Promise.all(
-        papers.map((p) =>
-          apiClient.patch<ExamAttempt>(EXAM_ENDPOINTS.PAUSE(p.attemptId))
-        )
+      const settled = await Promise.allSettled(
+        papers.map(async (p) => {
+          try {
+            await apiClient.patch<ExamAttempt>(EXAM_ENDPOINTS.PAUSE(p.attemptId));
+          } catch (err) {
+            if (errorMessageMatches(err, /already.*paus|not.*in.*progress/i))
+              return;
+            throw err;
+          }
+        })
       );
+      const failures = rejectedOf(settled);
+      if (failures.length > 0) throw failures[0].reason;
     },
     onSuccess: () => {
       pauseTimer();
@@ -223,18 +289,27 @@ export const usePauseMockExam = () => {
   });
 };
 
-// Resume every paper attempt in parallel.
+// Resume every paper attempt in parallel. "Already in progress" conflicts
+// are treated as success so a retry after partial failure converges.
 export const useResumeMockExam = () => {
   const { resumeTimer, subjects } = useMockExamStore();
 
   return useMutation<void, AxiosError<ApiError>, void>({
     mutationFn: async () => {
       const papers = subjects.flatMap((s) => s.papers);
-      await Promise.all(
-        papers.map((p) =>
-          apiClient.patch<ExamAttempt>(EXAM_ENDPOINTS.RESUME(p.attemptId))
-        )
+      const settled = await Promise.allSettled(
+        papers.map(async (p) => {
+          try {
+            await apiClient.patch<ExamAttempt>(EXAM_ENDPOINTS.RESUME(p.attemptId));
+          } catch (err) {
+            if (errorMessageMatches(err, /already.*(progress|resum|activ)/i))
+              return;
+            throw err;
+          }
+        })
       );
+      const failures = rejectedOf(settled);
+      if (failures.length > 0) throw failures[0].reason;
     },
     onSuccess: () => {
       resumeTimer();

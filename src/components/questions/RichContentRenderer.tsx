@@ -20,13 +20,15 @@ interface RichContentRendererProps {
   className?: string;
 }
 
-// Render LaTeX string to HTML using KaTeX
+// Render LaTeX string to HTML using KaTeX.
+// trust must stay false (the default): question content comes from the API
+// and trust:true would let authored content inject \href{javascript:...}
+// and similar through dangerouslySetInnerHTML — an XSS vector.
 function renderLatex(latex: string, displayMode = false): string {
   try {
     return katex.renderToString(latex, {
       displayMode,
       throwOnError: false,
-      trust: true,
       strict: false,
     });
   } catch {
