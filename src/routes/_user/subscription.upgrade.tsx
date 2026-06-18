@@ -30,7 +30,12 @@ import { cn } from "@/lib/utils";
 
 function getMaxSubjects(examType: string): number {
   const normalized = examType.toLowerCase();
-  if (normalized.includes("jamb") || normalized.includes("utme") || normalized.includes("post")) {
+  // Post-UTME: students pick a single subject. Checked before JAMB/UTME
+  // since "Post-UTME" also matches "utme".
+  if (normalized.includes("post")) {
+    return 1;
+  }
+  if (normalized.includes("jamb") || normalized.includes("utme")) {
     return 4;
   }
   return 9;
@@ -450,13 +455,22 @@ function UpgradeSubscriptionPage() {
                   multiple
                   value={editingSubjects}
                   onValueChange={(value) => {
-                    if (value.length <= maxSubjects) setEditingSubjects(value);
+                    // Single-subject exams (e.g. Post-UTME): replace the
+                    // selection instead of blocking the new pick.
+                    if (maxSubjects === 1) {
+                      setEditingSubjects(value.slice(-1));
+                    } else if (value.length <= maxSubjects) {
+                      setEditingSubjects(value);
+                    }
                   }}
                   className="flex flex-wrap gap-2 sm:gap-3"
                 >
                   {availableSubjects.map((subject) => {
                     const isSelected = editingSubjects.includes(subject.id);
-                    const atLimit = editingSubjects.length >= maxSubjects && !isSelected;
+                    // When only one subject is allowed, keep all options
+                    // clickable so the pick can be swapped.
+                    const atLimit =
+                      maxSubjects > 1 && editingSubjects.length >= maxSubjects && !isSelected;
                     return (
                       <ToggleGroupItem
                         key={subject.id}

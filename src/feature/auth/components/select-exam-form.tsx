@@ -20,7 +20,12 @@ import { Loader2 } from "lucide-react";
 // Max subjects allowed per exam type
 function getMaxSubjects(examType: string): number {
   const normalized = examType.toLowerCase();
-  if (normalized.includes("jamb") || normalized.includes("utme") || normalized.includes("post")) {
+  // Post-UTME: students pick a single subject. Checked before JAMB/UTME
+  // since "Post-UTME" also matches "utme".
+  if (normalized.includes("post")) {
+    return 1;
+  }
+  if (normalized.includes("jamb") || normalized.includes("utme")) {
     return 4;
   }
   return 9; // WAEC, NECO, etc.
@@ -183,8 +188,11 @@ export const SelectExamForm = () => {
                         multiple={true}
                         value={field.state.value}
                         onValueChange={(newValue) => {
-                          // Enforce max subject limit
-                          if (newValue.length <= maxSubjects) {
+                          // Single-subject exams (e.g. Post-UTME): replace
+                          // the selection instead of blocking the new pick.
+                          if (maxSubjects === 1) {
+                            field.handleChange(newValue.slice(-1));
+                          } else if (newValue.length <= maxSubjects) {
                             field.handleChange(newValue);
                           }
                         }}
@@ -192,7 +200,10 @@ export const SelectExamForm = () => {
                       >
                         {subjects.map((subject) => {
                           const isSelected = field.state.value.includes(subject.id);
-                          const isDisabled = !isSelected && field.state.value.length >= maxSubjects;
+                          // When only one subject is allowed, keep all options
+                          // clickable so the pick can be swapped.
+                          const isDisabled =
+                            maxSubjects > 1 && !isSelected && field.state.value.length >= maxSubjects;
                           return (
                             <ToggleGroupItem
                               key={subject.id}
