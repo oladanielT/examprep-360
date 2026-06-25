@@ -72,11 +72,12 @@ function ReferralPage() {
     }
   };
 
-  // Prefer the API's shareUrl. Fall back to a constructed URL only if the
-  // backend hasn't filled it in.
-  const shareUrl =
-    data?.shareUrl ||
-    (data?.code ? `${window.location.origin}/welcome?ref=${data.code}` : "");
+  // Build the share link from the current site origin so it always matches
+  // the URL the user is actually on (the backend's shareUrl points at a
+  // placeholder domain). Fall back to the API's shareUrl only if no code.
+  const shareUrl = data?.code
+    ? `${window.location.origin}/welcome?ref=${data.code}`
+    : data?.shareUrl || "";
 
   if (isLoading) {
     return (
