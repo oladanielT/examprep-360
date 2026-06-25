@@ -34,10 +34,18 @@ function getCategoryExample(label: string): string | undefined {
   return undefined;
 }
 
-// Only O'Level / Secondary School is available for now
+// O'Level / Secondary School and Post-JAMB are available for now
 function isCategoryUnlocked(label: string): boolean {
   const lower = label.toLowerCase();
-  return lower.includes("o'level") || lower.includes("o' level") || lower.includes("secondary");
+  return (
+    lower.includes("o'level") ||
+    lower.includes("o' level") ||
+    lower.includes("secondary") ||
+    lower.includes("post-jamb") ||
+    lower.includes("post jamb") ||
+    lower.includes("post-utme") ||
+    lower.includes("post utme")
+  );
 }
 
 function Welcome() {
