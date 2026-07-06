@@ -54,10 +54,18 @@ function getMaxSubjects(examType: string): number {
   return 9; // WAEC, NECO, etc.
 }
 
-// Only O'Level / Secondary School is available for now (matches registration flow)
+// O'Level / Secondary School and Post-JAMB are available for now (matches registration flow)
 function isCategoryUnlocked(label: string): boolean {
   const lower = label.toLowerCase();
-  return lower.includes("o'level") || lower.includes("o' level") || lower.includes("secondary");
+  return (
+    lower.includes("o'level") ||
+    lower.includes("o' level") ||
+    lower.includes("secondary") ||
+    lower.includes("post-jamb") ||
+    lower.includes("post jamb") ||
+    lower.includes("post-utme") ||
+    lower.includes("post utme")
+  );
 }
 
 const examSelectionSchema = z.object({
