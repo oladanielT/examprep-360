@@ -27,7 +27,12 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 // Max subjects allowed per exam type
 function getMaxSubjects(examType: string): number {
   const normalized = examType.toLowerCase();
-  if (normalized.includes("jamb") || normalized.includes("utme") || normalized.includes("post")) {
+  // Post-UTME: students pick a single subject. Checked before JAMB/UTME
+  // since "Post-UTME" also matches "utme".
+  if (normalized.includes("post")) {
+    return 1;
+  }
+  if (normalized.includes("jamb") || normalized.includes("utme")) {
     return 4;
   }
   return 9;
@@ -855,13 +860,18 @@ function CheckoutPage() {
                   multiple
                   value={editingSubjects}
                   onValueChange={(value) => {
-                    if (value.length <= maxSubjects) setEditingSubjects(value);
+                    // Single-subject exams (Post-UTME): tapping another swaps it.
+                    if (maxSubjects === 1) {
+                      setEditingSubjects(value.slice(-1));
+                    } else if (value.length <= maxSubjects) {
+                      setEditingSubjects(value);
+                    }
                   }}
                   className="flex flex-wrap gap-2 sm:gap-3"
                 >
                   {availableSubjects.map((subject) => {
                     const isSelected = editingSubjects.includes(subject.id);
-                    const atLimit = editingSubjects.length >= maxSubjects && !isSelected;
+                    const atLimit = maxSubjects > 1 && editingSubjects.length >= maxSubjects && !isSelected;
                     return (
                       <ToggleGroupItem
                         key={subject.id}
