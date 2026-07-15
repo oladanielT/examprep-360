@@ -723,6 +723,267 @@ function WaecMockSetup({
 }
 
 // ============================================================================
+// NCEE / Common Entrance flow — Paper 1 and Paper 2 are stored as separate
+// per-year subjects ("NCEE 2024 paper 1", "NCEE 2024 paper 2", ...). A mock
+// auto-combines ONE random Paper 1 with ONE random Paper 2 (any year each) into
+// a single combined sitting. A "Shuffle" button re-rolls the pick.
+// ============================================================================
+
+// Detect the paper number from a subject name like "NCEE 2024 paper 1".
+// Checks "2" before "1" so "paper 1" never matches as 2 and vice-versa.
+function parsePaperKindFromSubject(name: string): 1 | 2 | null {
+  if (/paper\s*2\b/i.test(name)) return 2;
+  if (/paper\s*1\b/i.test(name)) return 1;
+  return null;
+}
+
+function pickRandom<T>(arr: T[]): T | null {
+  if (arr.length === 0) return null;
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function formatMinutes(minutes: number): string {
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return hours > 0 ? `${hours}hr ${mins > 0 ? `${mins}m` : ""}` : `${mins}m`;
+}
+
+function NceeMockSetup({ subjects }: { subjects: Subject[] }) {
+  const navigate = useNavigate();
+  const startMockExams = useStartMockExams();
+  const [errorMessage, setErrorMessage] = useState("");
+  // Bumping this re-rolls both the chosen year-subjects and the mock per paper.
+  const [shuffleKey, setShuffleKey] = useState(0);
+
+  const { paper1Subjects, paper2Subjects } = useMemo(() => {
+    const p1: Subject[] = [];
+    const p2: Subject[] = [];
+    subjects.forEach((s) => {
+      const kind = parsePaperKindFromSubject(s.name);
+      if (kind === 1) p1.push(s);
+      else if (kind === 2) p2.push(s);
+    });
+    return { paper1Subjects: p1, paper2Subjects: p2 };
+  }, [subjects]);
+
+  // Roll a random Paper 1 subject and a random Paper 2 subject (independent
+  // years). Re-rolls whenever the pools change or the user taps Shuffle.
+  const chosenP1 = useMemo(
+    () => pickRandom(paper1Subjects),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [paper1Subjects, shuffleKey]
+  );
+  const chosenP2 = useMemo(
+    () => pickRandom(paper2Subjects),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [paper2Subjects, shuffleKey]
+  );
+
+  // Load the mocks for just the two rolled subjects and pick one mock each.
+  const p1Mocks = useSubjectMocks(chosenP1?.id ?? null);
+  const p2Mocks = useSubjectMocks(chosenP2?.id ?? null);
+
+  const p1Pick = useMemo(
+    () => pickRandom(p1Mocks.mocks),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [p1Mocks.mocks, shuffleKey]
+  );
+  const p2Pick = useMemo(
+    () => pickRandom(p2Mocks.mocks),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [p2Mocks.mocks, shuffleKey]
+  );
+
+  const loading = p1Mocks.isLoading || p2Mocks.isLoading;
+
+  const rows = [
+    { kind: 1 as const, subject: chosenP1, pick: p1Pick },
+    { kind: 2 as const, subject: chosenP2, pick: p2Pick },
+  ];
+  const startablePapers = rows.filter((r) => r.subject && r.pick);
+
+  const totals = useMemo(() => {
+    let questions = 0;
+    let minutes = 0;
+    startablePapers.forEach((r) => {
+      questions += r.pick!.numQuestions;
+      minutes += r.pick!.durationMinutes;
+    });
+    return {
+      questions,
+      timeLabel: formatMinutes(minutes),
+      paperCount: startablePapers.length,
+    };
+  }, [startablePapers]);
+
+  const handleShuffle = () => {
+    setErrorMessage("");
+    setShuffleKey((k) => k + 1);
+  };
+
+  const handleStart = () => {
+    if (startablePapers.length === 0) {
+      setErrorMessage("No NCEE mock papers are available right now.");
+      return;
+    }
+    setErrorMessage("");
+    const subjectsInput = startablePapers.map((r) => ({
+      subject: r.subject!,
+      papers: [
+        {
+          paperNumber: r.kind,
+          paperName: `Paper ${r.kind}`,
+          examId: r.pick!.id,
+        },
+      ],
+    }));
+    startMockExams.mutate(
+      { subjects: subjectsInput },
+      {
+        onSuccess: ({ sessionId }) => {
+          navigate({ to: "/mock-exam/$sessionId", params: { sessionId } });
+        },
+        onError: (error: any) => {
+          setErrorMessage(
+            error?.response?.data?.message ||
+              error?.message ||
+              "Failed to start NCEE mock. Please try again."
+          );
+        },
+      }
+    );
+  };
+
+  const noPapersConfigured =
+    paper1Subjects.length === 0 && paper2Subjects.length === 0;
+
+  return (
+    <>
+      {errorMessage && (
+        <Alert variant="destructive" className="mb-6">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{errorMessage}</AlertDescription>
+        </Alert>
+      )}
+
+      <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl p-3 sm:p-4 mb-6">
+        <AlertCircle className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
+        <p className="text-xs sm:text-sm text-blue-700">
+          Your NCEE mock combines a Paper 1 and a Paper 2, picked at random (they
+          may be from different years). Both run together on one shared timer —
+          tap Shuffle to draw a different pair.
+        </p>
+      </div>
+
+      {noPapersConfigured ? (
+        <Card className="p-6 text-center text-sm text-gray-500">
+          No NCEE papers are available for your account yet.
+        </Card>
+      ) : (
+        <Card className="rounded-2xl border border-[#F04F54]/20 bg-gradient-to-r from-red-50 to-orange-50 p-4 sm:p-5 shadow-sm">
+          <div className="flex flex-col gap-4">
+            <div className="flex items-start justify-between gap-3">
+              <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide">
+                Papers (auto-combined)
+              </p>
+              <button
+                onClick={handleShuffle}
+                disabled={loading || startMockExams.isPending}
+                className="text-xs text-[#F04F54] hover:text-[#F04F54]/80 underline shrink-0 disabled:opacity-50"
+              >
+                Shuffle
+              </button>
+            </div>
+
+            {loading ? (
+              <div className="flex items-center gap-2 py-2">
+                <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
+                <span className="text-xs text-gray-500">Drawing papers...</span>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2">
+                {rows.map((r) => (
+                  <div
+                    key={r.kind}
+                    className={cn(
+                      "inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium border",
+                      r.subject && r.pick
+                        ? "bg-[#F04F54] text-white border-[#F04F54]"
+                        : "bg-white text-gray-400 border-dashed border-gray-300"
+                    )}
+                  >
+                    {r.subject && r.pick ? (
+                      <>
+                        <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                        <span className="truncate">{r.subject.name}</span>
+                        <span className="text-[10px] px-1 rounded bg-white/20 shrink-0 ml-auto">
+                          {r.pick.numQuestions}q · {r.pick.durationMinutes}m
+                        </span>
+                      </>
+                    ) : (
+                      <span>
+                        No Paper {r.kind} mock available — tap Shuffle to retry.
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-1">
+              <div className="flex items-center gap-4 sm:gap-6">
+                <div className="text-center">
+                  <p className="text-xl sm:text-2xl font-bold text-[#F04F54]">
+                    {totals.paperCount}
+                  </p>
+                  <p className="text-[10px] text-gray-500 uppercase tracking-wide">
+                    Papers
+                  </p>
+                </div>
+                <div className="w-px h-8 bg-gray-200" />
+                <div className="text-center">
+                  <p className="text-xl sm:text-2xl font-bold text-gray-800">
+                    {totals.questions}
+                  </p>
+                  <p className="text-[10px] text-gray-500 uppercase tracking-wide">
+                    Questions
+                  </p>
+                </div>
+                <div className="w-px h-8 bg-gray-200" />
+                <div className="text-center">
+                  <p className="text-xl sm:text-2xl font-bold text-gray-800">
+                    {totals.timeLabel}
+                  </p>
+                  <p className="text-[10px] text-gray-500 uppercase tracking-wide">
+                    Total Time
+                  </p>
+                </div>
+              </div>
+              <Button
+                onClick={handleStart}
+                disabled={
+                  loading || startMockExams.isPending || totals.paperCount < 1
+                }
+                className="bg-[#F04F54] hover:bg-[#F04F54]/90 text-white rounded-full h-12 px-8 font-semibold text-sm shadow-md"
+              >
+                {startMockExams.isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    Starting...
+                  </>
+                ) : (
+                  "Start NCEE Mock"
+                )}
+              </Button>
+            </div>
+          </div>
+        </Card>
+      )}
+    </>
+  );
+}
+
+// ============================================================================
 // Setup page — branches on exam type
 // ============================================================================
 
@@ -734,6 +995,9 @@ function MockExamSetupPage() {
 
   const examTypeName =
     preferences?.examTypeRecord?.name || preferences?.examSubtype || "";
+  // NCEE / Common Entrance: papers are separate per-year subjects that get
+  // auto-combined. Checked first since it has its own dedicated flow.
+  const isNcee = /ncee|common\s*entrance/i.test(examTypeName);
   const isMultiPaperExam = /waec|neco|wassce|ssce/i.test(examTypeName);
 
   if (loadingPrefs) {
@@ -750,9 +1014,11 @@ function MockExamSetupPage() {
         backLink="/tests/exams"
         heading="Exam Simulation"
         subHeading={
-          isMultiPaperExam
-            ? "Pick a subject — all papers are auto-included"
-            : "Select subjects for a combined mock exam"
+          isNcee
+            ? "Paper 1 & Paper 2 are combined automatically"
+            : isMultiPaperExam
+              ? "Pick a subject — all papers are auto-included"
+              : "Select subjects for a combined mock exam"
         }
         searchValue={searchQuery}
         onSearchChange={(e) => setSearchQuery(e.target.value)}
@@ -760,7 +1026,9 @@ function MockExamSetupPage() {
       />
 
       <div className="py-6 sm:py-8">
-        {isMultiPaperExam ? (
+        {isNcee ? (
+          <NceeMockSetup subjects={allSubjects} />
+        ) : isMultiPaperExam ? (
           <WaecMockSetup subjects={allSubjects} searchQuery={searchQuery} />
         ) : (
           <JambMockSetup subjects={allSubjects} searchQuery={searchQuery} />
