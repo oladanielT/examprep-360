@@ -109,6 +109,10 @@ function MockExamReviewPage() {
       const review = reviews[i]?.data;
       const examTypeName =
         (review?.exam as any)?.examType?.name || review?.exam?.name || "";
+      // "Post UTME" also matches /utme/, so it has to be excluded first —
+      // Post-UTME is a separate per-institution exam and is not scored on
+      // JAMB's 100-point-per-subject scale.
+      if (/post[\s-]*(utme|jamb)/i.test(examTypeName)) continue;
       if (/jamb|utme/i.test(examTypeName)) return true;
     }
     return false;
@@ -567,7 +571,7 @@ function MockExamReviewPage() {
                     {currentQuestion.questionType === "SINGLE_CHOICE" && (
                       <SingleChoiceQuestion
                         question={currentQuestion}
-                        questionNumber={currentQuestion.questionNumber}
+                        questionNumber={currentQuestionIndex + 1}
                         selectedAnswer={
                           typeof currentResponse?.answer === "string"
                             ? currentResponse.answer
@@ -582,7 +586,7 @@ function MockExamReviewPage() {
                     {currentQuestion.questionType === "MULTIPLE_CHOICE" && (
                       <MultipleChoiceQuestion
                         question={currentQuestion}
-                        questionNumber={currentQuestion.questionNumber}
+                        questionNumber={currentQuestionIndex + 1}
                         selectedAnswers={
                           Array.isArray(currentResponse?.answer)
                             ? currentResponse.answer
@@ -597,7 +601,7 @@ function MockExamReviewPage() {
                     {currentQuestion.questionType === "TRUE_FALSE" && (
                       <TrueFalseQuestion
                         question={currentQuestion}
-                        questionNumber={currentQuestion.questionNumber}
+                        questionNumber={currentQuestionIndex + 1}
                         selectedAnswer={
                           typeof currentResponse?.answer === "boolean"
                             ? currentResponse.answer
@@ -612,7 +616,7 @@ function MockExamReviewPage() {
                     {currentQuestion.questionType === "FILL_IN_BLANK" && (
                       <FillInBlankQuestion
                         question={currentQuestion}
-                        questionNumber={currentQuestion.questionNumber}
+                        questionNumber={currentQuestionIndex + 1}
                         answers={
                           currentResponse?.answer &&
                           typeof currentResponse.answer === "object" &&
@@ -629,7 +633,7 @@ function MockExamReviewPage() {
                     {currentQuestion.questionType === "ESSAY" && (
                       <EssayQuestion
                         question={currentQuestion}
-                        questionNumber={currentQuestion.questionNumber}
+                        questionNumber={currentQuestionIndex + 1}
                         answer={
                           typeof currentResponse?.answer === "string"
                             ? currentResponse.answer
@@ -643,7 +647,7 @@ function MockExamReviewPage() {
                     {currentQuestion.questionType === "ESSAY_WITH_SUB" && (
                       <EssayQuestion
                         question={currentQuestion}
-                        questionNumber={currentQuestion.questionNumber}
+                        questionNumber={currentQuestionIndex + 1}
                         answer={
                           currentResponse?.answer &&
                           typeof currentResponse.answer === "object" &&
@@ -659,7 +663,7 @@ function MockExamReviewPage() {
                     {currentQuestion.questionType === "SHORT_ANSWER" && (
                       <ShortAnswerQuestion
                         question={currentQuestion}
-                        questionNumber={currentQuestion.questionNumber}
+                        questionNumber={currentQuestionIndex + 1}
                         answer={
                           typeof currentResponse?.answer === "string"
                             ? currentResponse.answer
@@ -674,7 +678,7 @@ function MockExamReviewPage() {
                     {currentQuestion.questionType === "CALCULATION" && (
                       <CalculationQuestion
                         question={currentQuestion}
-                        questionNumber={currentQuestion.questionNumber}
+                        questionNumber={currentQuestionIndex + 1}
                         answer={
                           currentResponse?.answer &&
                           typeof currentResponse.answer === "object" &&
@@ -691,7 +695,7 @@ function MockExamReviewPage() {
                     {currentQuestion.questionType === "ORDERING" && (
                       <OrderingQuestion
                         question={currentQuestion}
-                        questionNumber={currentQuestion.questionNumber}
+                        questionNumber={currentQuestionIndex + 1}
                         answer={
                           Array.isArray(currentResponse?.answer)
                             ? (currentResponse.answer as string[])
@@ -706,7 +710,7 @@ function MockExamReviewPage() {
                     {currentQuestion.questionType === "MATCHING" && (
                       <MatchingQuestion
                         question={currentQuestion}
-                        questionNumber={currentQuestion.questionNumber}
+                        questionNumber={currentQuestionIndex + 1}
                         answers={
                           currentResponse?.answer &&
                           typeof currentResponse.answer === "object" &&
@@ -735,7 +739,7 @@ function MockExamReviewPage() {
                     ].includes(currentQuestion.questionType) && (
                       <div className="space-y-4">
                         <p className="text-sm font-medium text-gray-600">
-                          Question {currentQuestion.questionNumber}
+                          Question {currentQuestionIndex + 1}
                         </p>
                         <div className="text-lg font-semibold text-gray-900">
                           <RichContentRenderer content={currentQuestion.questionText} />

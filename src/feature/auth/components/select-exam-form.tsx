@@ -211,8 +211,10 @@ export const SelectExamForm = () => {
                               disabled={isDisabled}
                               className={cn(
                                 "h-auto min-h-[56px] py-3 px-4 !rounded-sm border-2",
-                                "flex items-center justify-center",
-                                "text-xs font-medium text-center whitespace-nowrap",
+                                "flex items-center justify-center max-w-full",
+                                // whitespace-normal overrides the nowrap baked
+                                // into toggleVariants, which the label inherits.
+                                "text-xs font-medium text-center whitespace-normal break-words",
                                 "transition-all duration-200",
                                 "hover:border-accent hover:bg-accent/5",
                                 "data-[state=on]:border-accent/70 data-[state=on]:bg-transparent data-[state=on]:text-black",

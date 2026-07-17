@@ -104,8 +104,15 @@ function ExamReviewPage() {
   const examName = review.exam?.name || "Exam";
   const subjectName = review.exam?.subject?.name || "";
   const examTypeName = review.exam?.examType?.name || "";
-  // JAMB: show score out of 100
-  const isJamb = /jamb|utme/i.test(examTypeName) || /jamb|utme/i.test(examName);
+  // JAMB: show score out of 100. "Post UTME" also matches /utme/, so it has to
+  // be excluded first — Post-UTME is a separate per-institution exam and is not
+  // scored on JAMB's 100-point-per-subject scale.
+  const isPostUtme =
+    /post[\s-]*(utme|jamb)/i.test(examTypeName) ||
+    /post[\s-]*(utme|jamb)/i.test(examName);
+  const isJamb =
+    !isPostUtme &&
+    (/jamb|utme/i.test(examTypeName) || /jamb|utme/i.test(examName));
   const jambScore = percentage; // percentage IS the JAMB subject score (out of 100)
 
   const currentItem = allItems[currentIndex];
@@ -360,7 +367,7 @@ function ExamReviewPage() {
                 {currentQuestion.questionType === "SINGLE_CHOICE" && (
                   <SingleChoiceQuestion
                     question={currentQuestion}
-                    questionNumber={currentQuestion.questionNumber}
+                    questionNumber={currentIndex + 1}
                     selectedAnswer={
                       currentResponse && typeof currentResponse.answer === "string"
                         ? currentResponse.answer
@@ -376,7 +383,7 @@ function ExamReviewPage() {
                 {currentQuestion.questionType === "MULTIPLE_CHOICE" && (
                   <MultipleChoiceQuestion
                     question={currentQuestion}
-                    questionNumber={currentQuestion.questionNumber}
+                    questionNumber={currentIndex + 1}
                     selectedAnswers={
                       currentResponse && Array.isArray(currentResponse.answer)
                         ? currentResponse.answer
@@ -392,7 +399,7 @@ function ExamReviewPage() {
                 {currentQuestion.questionType === "TRUE_FALSE" && (
                   <TrueFalseQuestion
                     question={currentQuestion}
-                    questionNumber={currentQuestion.questionNumber}
+                    questionNumber={currentIndex + 1}
                     selectedAnswer={
                       currentResponse && typeof currentResponse.answer === "boolean"
                         ? currentResponse.answer
@@ -408,7 +415,7 @@ function ExamReviewPage() {
                 {currentQuestion.questionType === "FILL_IN_BLANK" && (
                   <FillInBlankQuestion
                     question={currentQuestion}
-                    questionNumber={currentQuestion.questionNumber}
+                    questionNumber={currentIndex + 1}
                     answers={
                       currentResponse &&
                       typeof currentResponse.answer === "object" &&
@@ -426,7 +433,7 @@ function ExamReviewPage() {
                 {currentQuestion.questionType === "ESSAY" && (
                   <EssayQuestion
                     question={currentQuestion}
-                    questionNumber={currentQuestion.questionNumber}
+                    questionNumber={currentIndex + 1}
                     answer={
                       currentResponse && typeof currentResponse.answer === "string"
                         ? currentResponse.answer
@@ -441,7 +448,7 @@ function ExamReviewPage() {
                 {currentQuestion.questionType === "ESSAY_WITH_SUB" && (
                   <EssayQuestion
                     question={currentQuestion}
-                    questionNumber={currentQuestion.questionNumber}
+                    questionNumber={currentIndex + 1}
                     answer={
                       currentResponse && typeof currentResponse.answer === "object" && !Array.isArray(currentResponse.answer)
                         ? (currentResponse.answer as Record<string, string>)
@@ -456,7 +463,7 @@ function ExamReviewPage() {
                 {currentQuestion.questionType === "SHORT_ANSWER" && (
                   <ShortAnswerQuestion
                     question={currentQuestion}
-                    questionNumber={currentQuestion.questionNumber}
+                    questionNumber={currentIndex + 1}
                     answer={
                       currentResponse && typeof currentResponse.answer === "string"
                         ? currentResponse.answer
@@ -472,7 +479,7 @@ function ExamReviewPage() {
                 {currentQuestion.questionType === "CALCULATION" && (
                   <CalculationQuestion
                     question={currentQuestion}
-                    questionNumber={currentQuestion.questionNumber}
+                    questionNumber={currentIndex + 1}
                     answer={
                       currentResponse && typeof currentResponse.answer === "object" && !Array.isArray(currentResponse.answer)
                         ? (currentResponse.answer as Record<string, string>)
@@ -488,7 +495,7 @@ function ExamReviewPage() {
                 {currentQuestion.questionType === "ORDERING" && (
                   <OrderingQuestion
                     question={currentQuestion}
-                    questionNumber={currentQuestion.questionNumber}
+                    questionNumber={currentIndex + 1}
                     answer={
                       currentResponse && Array.isArray(currentResponse.answer)
                         ? (currentResponse.answer as string[])
@@ -504,7 +511,7 @@ function ExamReviewPage() {
                 {currentQuestion.questionType === "MATCHING" && (
                   <MatchingQuestion
                     question={currentQuestion}
-                    questionNumber={currentQuestion.questionNumber}
+                    questionNumber={currentIndex + 1}
                     answers={
                       currentResponse && typeof currentResponse.answer === "object" && !Array.isArray(currentResponse.answer)
                         ? (currentResponse.answer as Record<string, string>)
@@ -532,7 +539,7 @@ function ExamReviewPage() {
                 ].includes(currentQuestion.questionType) && (
                   <div className="space-y-4">
                     <p className="text-sm font-medium text-gray-600">
-                      Question {currentQuestion.questionNumber}
+                      Question {currentIndex + 1}
                     </p>
                     <div className="text-lg font-semibold text-gray-900">
                       <RichContentRenderer

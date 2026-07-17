@@ -509,7 +509,7 @@ function AddSubscriptionPage() {
                               field.handleChange(newValue);
                             }
                           }}
-                          className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3"
+                          className="flex flex-wrap gap-2 sm:gap-3"
                         >
                           {availableSubjects.map((subject) => {
                             const isSelected = field.state.value.includes(subject.id);
@@ -524,8 +524,10 @@ function AddSubscriptionPage() {
                                 disabled={isDisabled}
                                 className={cn(
                                   "h-auto py-3 sm:py-4 px-2 sm:px-3 rounded-sm! border-2",
-                                  "flex items-center justify-center",
-                                  "text-[11px] sm:text-xs font-medium text-center",
+                                  "inline-flex items-center justify-center max-w-full",
+                                  // whitespace-normal overrides the nowrap baked
+                                  // into toggleVariants, which the label inherits.
+                                  "text-[11px] sm:text-xs font-medium text-center whitespace-normal break-words",
                                   "transition-all duration-200",
                                   "hover:border-accent hover:bg-accent/5",
                                   "data-[state=on]:border-accent/70 data-[state=on]:bg-transparent data-[state=on]:text-black",
@@ -536,7 +538,7 @@ function AddSubscriptionPage() {
                                 )}
                                 aria-label={subject.name}
                               >
-                                <span className="wrap-break-words text-center leading-tight">
+                                <span className="break-words text-center leading-tight">
                                   {subject.name}
                                 </span>
                               </ToggleGroupItem>

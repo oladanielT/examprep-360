@@ -77,45 +77,86 @@ function parseTextWithLatex(text: string): React.ReactNode[] {
   return nodes.length > 0 ? nodes : [<span key={0}>{text}</span>];
 }
 
+/**
+ * Split text into plain and **bold** runs.
+ *
+ * Only **double**-asterisk bold is supported. Single-asterisk italic is
+ * deliberately NOT handled here: question text uses a bare "*" as a
+ * multiplication operator (e.g. "If p * q = 2p + pq + q"), and an italic rule
+ * would match between two of them, swallow the asterisks and corrupt the
+ * question. Authors write **bold**, so nothing is lost by omitting italic.
+ */
+function splitBold(text: string): { bold: boolean; text: string }[] {
+  const parts: { bold: boolean; text: string }[] = [];
+  const regex = /\*\*([^*]+)\*\*/g;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push({ bold: false, text: text.slice(lastIndex, match.index) });
+    }
+    parts.push({ bold: true, text: match[1] });
+    lastIndex = regex.lastIndex;
+  }
+
+  if (lastIndex < text.length) {
+    parts.push({ bold: false, text: text.slice(lastIndex) });
+  }
+
+  return parts;
+}
+
+// Expand a plain-text run: newlines become <br />, **bold** becomes <strong>.
+function renderTextRun(text: string, keyPrefix: string): React.ReactNode[] {
+  const out: React.ReactNode[] = [];
+  text.split("\n").forEach((line, i) => {
+    if (i > 0) out.push(<br key={`${keyPrefix}-br-${i}`} />);
+    splitBold(line).forEach((part, j) => {
+      if (!part.text) return;
+      const key = `${keyPrefix}-${i}-${j}`;
+      out.push(
+        part.bold ? (
+          <strong key={key}>{part.text}</strong>
+        ) : (
+          <span key={key}>{part.text}</span>
+        )
+      );
+    });
+  });
+  return out;
+}
+
 function TextBlockRenderer({ block }: { block: TextBlock }) {
   const style = block.style;
 
   // Check if text contains LaTeX patterns
   const value = block.value ?? "";
   const hasLatex = value.includes("$");
-  const hasNewlines = value.includes("\n");
 
   const content = useMemo(() => {
-    if (hasLatex) {
-      const nodes = parseTextWithLatex(value);
-      if (!hasNewlines) return nodes;
-      // Insert <br /> for newlines within LaTeX-parsed nodes
-      const result: React.ReactNode[] = [];
-      let brKey = 1000;
-      for (const node of nodes) {
-        if (typeof node === "string") {
-          const parts = node.split("\n");
-          parts.forEach((part, i) => {
-            if (i > 0) result.push(<br key={brKey++} />);
-            if (part) result.push(part);
-          });
-        } else {
+    if (!hasLatex) return renderTextRun(value, "t");
+
+    // Pass LaTeX nodes through untouched so their payload is never treated as
+    // markdown ($$a * b$$ must keep its asterisk); expand only the text around.
+    const result: React.ReactNode[] = [];
+    parseTextWithLatex(value).forEach((node, i) => {
+      if (typeof node === "object" && node !== null && "props" in node) {
+        const el = node as React.ReactElement<{
+          dangerouslySetInnerHTML?: unknown;
+          children?: React.ReactNode;
+        }>;
+        if (el.props.dangerouslySetInnerHTML) {
           result.push(node);
+          return;
         }
+        result.push(...renderTextRun(String(el.props.children ?? ""), `t-${i}`));
+        return;
       }
-      return result;
-    }
-    if (hasNewlines) {
-      const parts = value.split("\n");
-      const result: React.ReactNode[] = [];
-      parts.forEach((part, i) => {
-        if (i > 0) result.push(<br key={`br-${i}`} />);
-        if (part) result.push(<span key={`t-${i}`}>{part}</span>);
-      });
-      return result;
-    }
-    return value;
-  }, [value, hasLatex, hasNewlines]);
+      result.push(...renderTextRun(String(node ?? ""), `t-${i}`));
+    });
+    return result;
+  }, [value, hasLatex]);
 
   // Use <p> for block-level text (adds margin between consecutive text blocks)
   return (

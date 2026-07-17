@@ -478,8 +478,10 @@ function UpgradeSubscriptionPage() {
                         disabled={atLimit}
                         className={cn(
                           "h-auto py-3 sm:py-4 px-3 sm:px-4 rounded-sm! border-2",
-                          "inline-flex items-center justify-center shrink-0",
-                          "text-[11px] sm:text-xs font-medium text-center whitespace-nowrap",
+                          "inline-flex items-center justify-center max-w-full",
+                          // whitespace-normal overrides the nowrap baked into
+                          // toggleVariants, which the label inherits.
+                          "text-[11px] sm:text-xs font-medium text-center whitespace-normal break-words",
                           "transition-all duration-200",
                           "hover:border-accent hover:bg-accent/5",
                           "data-[state=on]:border-accent/70 data-[state=on]:bg-transparent data-[state=on]:text-black",
