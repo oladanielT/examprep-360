@@ -281,16 +281,42 @@ export const SelectExamForm = () => {
                                       />
                                     </button>
                                     {isOpen && (
-                                      <ToggleGroup
-                                        multiple={true}
-                                        value={field.state.value}
-                                        onValueChange={handleChange}
-                                        className="flex flex-wrap gap-3 px-4 pb-4"
-                                      >
-                                        {group.items.map(({ subject, label }) =>
-                                          renderTile(subject, label)
-                                        )}
-                                      </ToggleGroup>
+                                      <div className="flex flex-wrap gap-3 px-4 pb-4">
+                                        {group.items.map(({ subject, label }) => {
+                                          const isSelected =
+                                            field.state.value.includes(subject.id);
+                                          // Post-UTME is single-select. Set the
+                                          // value directly on tap instead of going
+                                          // through the group's toggle semantics —
+                                          // tapping any tile always makes it the
+                                          // sole pick (or clears it if re-tapped).
+                                          return (
+                                            <button
+                                              key={subject.id}
+                                              type="button"
+                                              aria-pressed={isSelected}
+                                              aria-label={subject.name}
+                                              onClick={() =>
+                                                field.handleChange(
+                                                  isSelected ? [] : [subject.id]
+                                                )
+                                              }
+                                              className={cn(
+                                                "h-auto min-h-[56px] py-3 px-4 rounded-sm border-2",
+                                                "inline-flex items-center justify-center max-w-full",
+                                                "text-xs font-medium text-center whitespace-normal break-words",
+                                                "transition-all duration-200",
+                                                "hover:border-accent hover:bg-accent/5",
+                                                isSelected
+                                                  ? "border-accent text-black"
+                                                  : "border-[#E5E5E5] text-black"
+                                              )}
+                                            >
+                                              {label}
+                                            </button>
+                                          );
+                                        })}
+                                      </div>
                                     )}
                                   </div>
                                 );
