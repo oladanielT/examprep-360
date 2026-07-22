@@ -473,7 +473,6 @@ function AddSubscriptionPage() {
             {/* Subjects */}
             <form.Field
               name="subjects"
-              mode="array"
               children={(field) => {
                 const isInvalid =
                   field.state.meta.isTouched && !field.state.meta.isValid;
