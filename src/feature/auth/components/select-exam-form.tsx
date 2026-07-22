@@ -15,6 +15,11 @@ import { Slider } from "@/components/ui/slider";
 import { useNavigate } from "@tanstack/react-router";
 import { useRegistrationStore } from "@/stores/registrationStore";
 import { useExamTypes, useExamSubjects } from "@/feature/exams/hooks";
+import {
+  groupSubjectsBySchool,
+  shouldGroupBySchool,
+} from "@/lib/post-utme";
+import type { Subject } from "@/api/types";
 import { Loader2 } from "lucide-react";
 
 // Max subjects allowed per exam type
@@ -198,37 +203,64 @@ export const SelectExamForm = () => {
                         }}
                         className="flex flex-wrap gap-3"
                       >
-                        {subjects.map((subject) => {
-                          const isSelected = field.state.value.includes(subject.id);
-                          // When only one subject is allowed, keep all options
-                          // clickable so the pick can be swapped.
-                          const isDisabled =
-                            maxSubjects > 1 && !isSelected && field.state.value.length >= maxSubjects;
-                          return (
-                            <ToggleGroupItem
-                              key={subject.id}
-                              value={subject.id}
-                              disabled={isDisabled}
-                              className={cn(
-                                "h-auto min-h-[56px] py-3 px-4 !rounded-sm border-2",
-                                "flex items-center justify-center max-w-full",
-                                // whitespace-normal overrides the nowrap baked
-                                // into toggleVariants, which the label inherits.
-                                "text-xs font-medium text-center whitespace-normal break-words",
-                                "transition-all duration-200",
-                                "hover:border-accent hover:bg-accent/5",
-                                "data-[state=on]:border-accent/70 data-[state=on]:bg-transparent data-[state=on]:text-black",
-                                isSelected
-                                  ? "border-accent"
-                                  : "border-[#E5E5E5] text-black",
-                                isDisabled && "opacity-50 cursor-not-allowed"
-                              )}
-                              aria-label={subject.name}
-                            >
-                              {subject.name}
-                            </ToggleGroupItem>
+                        {(() => {
+                          // Render one tile. `label` is the short display text
+                          // (a Post-UTME stream like "Art"); the full subject
+                          // name stays on aria-label for screen readers.
+                          const renderTile = (subject: Subject, label: string) => {
+                            const isSelected = field.state.value.includes(subject.id);
+                            // When only one subject is allowed, keep all options
+                            // clickable so the pick can be swapped.
+                            const isDisabled =
+                              maxSubjects > 1 && !isSelected && field.state.value.length >= maxSubjects;
+                            return (
+                              <ToggleGroupItem
+                                key={subject.id}
+                                value={subject.id}
+                                disabled={isDisabled}
+                                className={cn(
+                                  "h-auto min-h-[56px] py-3 px-4 !rounded-sm border-2",
+                                  "flex items-center justify-center max-w-full",
+                                  // whitespace-normal overrides the nowrap baked
+                                  // into toggleVariants, which the label inherits.
+                                  "text-xs font-medium text-center whitespace-normal break-words",
+                                  "transition-all duration-200",
+                                  "hover:border-accent hover:bg-accent/5",
+                                  "data-[state=on]:border-accent/70 data-[state=on]:bg-transparent data-[state=on]:text-black",
+                                  isSelected
+                                    ? "border-accent"
+                                    : "border-[#E5E5E5] text-black",
+                                  isDisabled && "opacity-50 cursor-not-allowed"
+                                )}
+                                aria-label={subject.name}
+                              >
+                                {label}
+                              </ToggleGroupItem>
+                            );
+                          };
+
+                          // Post-UTME: break the flat list into per-school
+                          // sections. A full-width header forces a line break in
+                          // the flex-wrap row; the single ToggleGroup still owns
+                          // every tile, so single-select/swap works across schools.
+                          if (shouldGroupBySchool(subjects)) {
+                            return groupSubjectsBySchool(subjects).flatMap((group) => [
+                              <div
+                                key={`school-${group.school}`}
+                                className="w-full text-xs font-semibold uppercase tracking-wide text-[#6B7280] mt-4 first:mt-0"
+                              >
+                                {group.school}
+                              </div>,
+                              ...group.items.map(({ subject, label }) =>
+                                renderTile(subject, label)
+                              ),
+                            ]);
+                          }
+
+                          return subjects.map((subject) =>
+                            renderTile(subject, subject.name)
                           );
-                        })}
+                        })()}
                       </ToggleGroup>
 
                       {field.state.value.length > 0 && (

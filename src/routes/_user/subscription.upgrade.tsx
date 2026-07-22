@@ -99,7 +99,9 @@ function UpgradeSubscriptionPage() {
         ? `${plan.currency} ${plan.basePrice.toLocaleString()}/subject`
         : `${plan.currency} ${plan.basePrice.toLocaleString()}`;
       return {
-        label: `${plan.name} - ${plan.duration} Days (${displayPrice})`,
+        // Price first so the amount stays visible when the select trigger
+        // truncates a long plan name.
+        label: `${displayPrice} · ${plan.duration} days · ${plan.name}`,
         value: plan.id,
       };
     }) || [];
