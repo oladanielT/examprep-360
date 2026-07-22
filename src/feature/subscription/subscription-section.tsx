@@ -31,8 +31,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { cn } from "@/lib/utils";
+import { SubjectPicker } from "@/components/subject-picker";
 import type { UserSubscription } from "@/api/types";
 
 // Max subjects allowed per exam type (matches registration flow)
@@ -585,55 +584,13 @@ export const SubscriptionSection = () => {
                           ? `Swap your subjects (${maxSubjects} included in your plan)`
                           : `Select your subjects (up to ${maxSubjects})`}
                       </p>
-                      <ToggleGroup
-                        multiple
+                      <SubjectPicker
+                        subjects={availableSubjects}
                         value={selectedSubjects}
-                        onValueChange={(value) => {
-                          // Single-subject exams (Post-UTME): tapping another
-                          // swaps it. Base UI returns values in DOM order, so
-                          // take the id that wasn't selected before (the
-                          // just-tapped one) rather than the last in the list.
-                          if (maxSubjects === 1) {
-                            const added = value.find(
-                              (v) => !selectedSubjects.includes(v)
-                            );
-                            setSelectedSubjects(added ? [added] : []);
-                          } else if (value.length <= maxSubjects) {
-                            setSelectedSubjects(value);
-                          }
-                        }}
-                        className="flex flex-wrap gap-2 sm:gap-3"
-                      >
-                        {availableSubjects.map((subject) => {
-                          const isSelected = selectedSubjects.includes(subject.id);
-                          const atLimit =
-                            maxSubjects > 1 && selectedSubjects.length >= maxSubjects && !isSelected;
-                          return (
-                            <ToggleGroupItem
-                              key={subject.id}
-                              value={subject.id}
-                              disabled={atLimit}
-                              className={cn(
-                                "h-auto py-3 sm:py-4 px-3 sm:px-4 rounded-sm! border-2",
-                                "inline-flex items-center justify-center max-w-full",
-                                // whitespace-normal overrides the nowrap baked
-                                // into toggleVariants, which the label inherits.
-                                "text-[11px] sm:text-xs font-medium text-center whitespace-normal break-words",
-                                "transition-all duration-200",
-                                "hover:border-accent hover:bg-accent/5",
-                                "data-[state=on]:border-accent/70 data-[state=on]:bg-transparent data-[state=on]:text-black",
-                                isSelected
-                                  ? "border-accent"
-                                  : "border-[#E5E5E5] text-black",
-                                atLimit && "opacity-50 cursor-not-allowed"
-                              )}
-                              aria-label={subject.name}
-                            >
-                              {subject.name}
-                            </ToggleGroupItem>
-                          );
-                        })}
-                      </ToggleGroup>
+                        onChange={setSelectedSubjects}
+                        maxSubjects={maxSubjects}
+                        className="gap-2 sm:gap-3"
+                      />
                       <div className="mt-3 text-xs text-[#6B7280]">
                         Selected: {selectedSubjects.length}/{maxSubjects}
                       </div>

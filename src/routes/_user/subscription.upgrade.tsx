@@ -25,8 +25,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { cn } from "@/lib/utils";
+import { SubjectPicker } from "@/components/subject-picker";
 
 function getMaxSubjects(examType: string): number {
   const normalized = examType.toLowerCase();
@@ -453,53 +452,13 @@ function UpgradeSubscriptionPage() {
                 <p className="text-xs sm:text-sm text-gray-600 mb-3">
                   Select your subjects (up to {maxSubjects})
                 </p>
-                <ToggleGroup
-                  multiple
+                <SubjectPicker
+                  subjects={availableSubjects}
                   value={editingSubjects}
-                  onValueChange={(value) => {
-                    // Single-subject exams (e.g. Post-UTME): swap to the new
-                    // pick. Base UI returns values in DOM order, so take the id
-                    // that wasn't selected before (the just-tapped one) rather
-                    // than the last in the list.
-                    if (maxSubjects === 1) {
-                      const added = value.find((v) => !editingSubjects.includes(v));
-                      setEditingSubjects(added ? [added] : []);
-                    } else if (value.length <= maxSubjects) {
-                      setEditingSubjects(value);
-                    }
-                  }}
-                  className="flex flex-wrap gap-2 sm:gap-3"
-                >
-                  {availableSubjects.map((subject) => {
-                    const isSelected = editingSubjects.includes(subject.id);
-                    // When only one subject is allowed, keep all options
-                    // clickable so the pick can be swapped.
-                    const atLimit =
-                      maxSubjects > 1 && editingSubjects.length >= maxSubjects && !isSelected;
-                    return (
-                      <ToggleGroupItem
-                        key={subject.id}
-                        value={subject.id}
-                        disabled={atLimit}
-                        className={cn(
-                          "h-auto py-3 sm:py-4 px-3 sm:px-4 rounded-sm! border-2",
-                          "inline-flex items-center justify-center max-w-full",
-                          // whitespace-normal overrides the nowrap baked into
-                          // toggleVariants, which the label inherits.
-                          "text-[11px] sm:text-xs font-medium text-center whitespace-normal break-words",
-                          "transition-all duration-200",
-                          "hover:border-accent hover:bg-accent/5",
-                          "data-[state=on]:border-accent/70 data-[state=on]:bg-transparent data-[state=on]:text-black",
-                          isSelected ? "border-accent" : "border-[#E5E5E5] text-black",
-                          atLimit && "opacity-50 cursor-not-allowed"
-                        )}
-                        aria-label={subject.name}
-                      >
-                        {subject.name}
-                      </ToggleGroupItem>
-                    );
-                  })}
-                </ToggleGroup>
+                  onChange={setEditingSubjects}
+                  maxSubjects={maxSubjects}
+                  className="gap-2 sm:gap-3"
+                />
                 <div className="mt-3 text-xs text-[#6B7280]">
                   Selected: {editingSubjects.length}/{maxSubjects}
                 </div>

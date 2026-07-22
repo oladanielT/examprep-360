@@ -4,12 +4,11 @@ import { useForm } from "@tanstack/react-form";
 import CustomPageHeader from "@/components/global/custom-page-header";
 import PrimaryButton from "@/components/buttons/primary-button";
 import { CustomSelect } from "@/components/custom/custom-select";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { SubjectPicker } from "@/components/subject-picker";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Alert } from "@/components/ui/alert";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
-import { cn } from "@/lib/utils";
 import {
   useExamCategories,
   useExamTypes,
@@ -498,59 +497,13 @@ function AddSubscriptionPage() {
                         <p className="text-xs sm:text-sm text-gray-600 mb-3">
                           Please select your subjects (up to {maxSubjects})
                         </p>
-                        <ToggleGroup
-                          multiple
+                        <SubjectPicker
+                          subjects={availableSubjects}
                           value={field.state.value}
-                          onValueChange={(newValue) => {
-                            // Single-subject exams (e.g. Post-UTME): swap to the
-                            // new pick. Base UI returns values in DOM order, so
-                            // take the id that wasn't selected before (the
-                            // just-tapped one) rather than the last in the list.
-                            if (maxSubjects === 1) {
-                              const added = newValue.find(
-                                (v) => !field.state.value.includes(v)
-                              );
-                              field.handleChange(added ? [added] : []);
-                            } else if (newValue.length <= maxSubjects) {
-                              field.handleChange(newValue);
-                            }
-                          }}
-                          className="flex flex-wrap gap-2 sm:gap-3"
-                        >
-                          {availableSubjects.map((subject) => {
-                            const isSelected = field.state.value.includes(subject.id);
-                            // When only one subject is allowed, keep all options
-                            // clickable so the pick can be swapped.
-                            const isDisabled =
-                              maxSubjects > 1 && !isSelected && field.state.value.length >= maxSubjects;
-                            return (
-                              <ToggleGroupItem
-                                key={subject.id}
-                                value={subject.id}
-                                disabled={isDisabled}
-                                className={cn(
-                                  "h-auto py-3 sm:py-4 px-2 sm:px-3 rounded-sm! border-2",
-                                  "inline-flex items-center justify-center max-w-full",
-                                  // whitespace-normal overrides the nowrap baked
-                                  // into toggleVariants, which the label inherits.
-                                  "text-[11px] sm:text-xs font-medium text-center whitespace-normal break-words",
-                                  "transition-all duration-200",
-                                  "hover:border-accent hover:bg-accent/5",
-                                  "data-[state=on]:border-accent/70 data-[state=on]:bg-transparent data-[state=on]:text-black",
-                                  isSelected
-                                    ? "border-accent"
-                                    : "border-[#E5E5E5] text-black",
-                                  isDisabled && "opacity-50 cursor-not-allowed",
-                                )}
-                                aria-label={subject.name}
-                              >
-                                <span className="break-words text-center leading-tight">
-                                  {subject.name}
-                                </span>
-                              </ToggleGroupItem>
-                            );
-                          })}
-                        </ToggleGroup>
+                          onChange={field.handleChange}
+                          maxSubjects={maxSubjects}
+                          className="gap-2 sm:gap-3"
+                        />
                         {field.state.value.length > 0 && (
                           <div className="mt-3 text-xs text-[#6B7280]">
                             Selected: {field.state.value.length}/{maxSubjects}

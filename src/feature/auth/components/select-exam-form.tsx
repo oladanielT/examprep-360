@@ -9,18 +9,12 @@ import {
 import PrimaryButton from "@/components/buttons/primary-button";
 import * as z from "zod";
 import { CustomSelect } from "@/components/custom/custom-select";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { cn } from "@/lib/utils";
+import { SubjectPicker } from "@/components/subject-picker";
 import { Slider } from "@/components/ui/slider";
 import { useNavigate } from "@tanstack/react-router";
 import { useRegistrationStore } from "@/stores/registrationStore";
 import { useExamTypes, useExamSubjects } from "@/feature/exams/hooks";
-import {
-  groupSubjectsBySchool,
-  shouldGroupBySchool,
-} from "@/lib/post-utme";
-import type { Subject } from "@/api/types";
-import { Loader2, ChevronDown, Check } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 // Max subjects allowed per exam type
 function getMaxSubjects(examType: string): number {
@@ -54,8 +48,6 @@ export const SelectExamForm = () => {
   // Track selected exam type in state for fetching subjects
   const [selectedExamType, setSelectedExamType] = useState(data.examType || "");
   const [selectedExamTypeId, setSelectedExamTypeId] = useState(data.examTypeId || "");
-  // Which school section is expanded in the Post-UTME accordion (one at a time).
-  const [openSchool, setOpenSchool] = useState<string | null>(null);
 
   // Fetch exam types based on selected category
   const {
@@ -190,154 +182,12 @@ export const SelectExamForm = () => {
                       <p className="text-sm text-gray-600 mb-3">
                         Please select your subjects (up to {maxSubjects})
                       </p>
-                      {(() => {
-                        // Apply a pick. For single-subject exams (Post-UTME) the
-                        // newly tapped subject replaces the old one — we take the
-                        // id that wasn't already selected, so swapping works even
-                        // across collapsed accordion sections.
-                        const handleChange = (newValue: string[]) => {
-                          if (maxSubjects === 1) {
-                            const added = newValue.find(
-                              (v) => !field.state.value.includes(v)
-                            );
-                            field.handleChange(added ? [added] : []);
-                          } else if (newValue.length <= maxSubjects) {
-                            field.handleChange(newValue);
-                          }
-                        };
-
-                        // Render one tile. `label` is the short display text (a
-                        // Post-UTME stream like "Art"); the full subject name
-                        // stays on aria-label for screen readers.
-                        const renderTile = (subject: Subject, label: string) => {
-                          const isSelected = field.state.value.includes(subject.id);
-                          const isDisabled =
-                            maxSubjects > 1 && !isSelected && field.state.value.length >= maxSubjects;
-                          return (
-                            <ToggleGroupItem
-                              key={subject.id}
-                              value={subject.id}
-                              disabled={isDisabled}
-                              className={cn(
-                                "h-auto min-h-[56px] py-3 px-4 !rounded-sm border-2",
-                                "flex items-center justify-center max-w-full",
-                                // whitespace-normal overrides the nowrap baked
-                                // into toggleVariants, which the label inherits.
-                                "text-xs font-medium text-center whitespace-normal break-words",
-                                "transition-all duration-200",
-                                "hover:border-accent hover:bg-accent/5",
-                                "data-[state=on]:border-accent/70 data-[state=on]:bg-transparent data-[state=on]:text-black",
-                                isSelected
-                                  ? "border-accent"
-                                  : "border-[#E5E5E5] text-black",
-                                isDisabled && "opacity-50 cursor-not-allowed"
-                              )}
-                              aria-label={subject.name}
-                            >
-                              {label}
-                            </ToggleGroupItem>
-                          );
-                        };
-
-                        // Post-UTME: collapsed accordion. Tap a school to reveal
-                        // its streams; only one section is open at a time. The
-                        // header shows the current pick so it's visible while
-                        // collapsed.
-                        if (shouldGroupBySchool(subjects)) {
-                          return (
-                            <div className="flex flex-col gap-2">
-                              {groupSubjectsBySchool(subjects).map((group) => {
-                                const isOpen = openSchool === group.school;
-                                const picked = group.items.find(({ subject }) =>
-                                  field.state.value.includes(subject.id)
-                                );
-                                return (
-                                  <div
-                                    key={group.school}
-                                    className="border-2 border-[#E5E5E5] rounded-sm overflow-hidden"
-                                  >
-                                    <button
-                                      type="button"
-                                      onClick={() =>
-                                        setOpenSchool(isOpen ? null : group.school)
-                                      }
-                                      className="w-full flex items-center justify-between gap-2 px-4 py-3 text-left"
-                                    >
-                                      <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-medium text-black">
-                                        {group.school}
-                                        {picked && (
-                                          <span className="inline-flex items-center gap-1 text-xs font-normal text-accent">
-                                            <Check className="h-3.5 w-3.5" />
-                                            {picked.label}
-                                          </span>
-                                        )}
-                                      </span>
-                                      <ChevronDown
-                                        className={cn(
-                                          "h-4 w-4 shrink-0 text-gray-400 transition-transform",
-                                          isOpen && "rotate-180"
-                                        )}
-                                      />
-                                    </button>
-                                    {isOpen && (
-                                      <div className="flex flex-wrap gap-3 px-4 pb-4">
-                                        {group.items.map(({ subject, label }) => {
-                                          const isSelected =
-                                            field.state.value.includes(subject.id);
-                                          // Post-UTME is single-select. Set the
-                                          // value directly on tap instead of going
-                                          // through the group's toggle semantics —
-                                          // tapping any tile always makes it the
-                                          // sole pick (or clears it if re-tapped).
-                                          return (
-                                            <button
-                                              key={subject.id}
-                                              type="button"
-                                              aria-pressed={isSelected}
-                                              aria-label={subject.name}
-                                              onClick={() =>
-                                                field.handleChange(
-                                                  isSelected ? [] : [subject.id]
-                                                )
-                                              }
-                                              className={cn(
-                                                "h-auto min-h-[56px] py-3 px-4 rounded-sm border-2",
-                                                "inline-flex items-center justify-center max-w-full",
-                                                "text-xs font-medium text-center whitespace-normal break-words",
-                                                "transition-all duration-200",
-                                                "hover:border-accent hover:bg-accent/5",
-                                                isSelected
-                                                  ? "border-accent text-black"
-                                                  : "border-[#E5E5E5] text-black"
-                                              )}
-                                            >
-                                              {label}
-                                            </button>
-                                          );
-                                        })}
-                                      </div>
-                                    )}
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          );
-                        }
-
-                        // Non-Post-UTME: flat picker.
-                        return (
-                          <ToggleGroup
-                            multiple={true}
-                            value={field.state.value}
-                            onValueChange={handleChange}
-                            className="flex flex-wrap gap-3"
-                          >
-                            {subjects.map((subject) =>
-                              renderTile(subject, subject.name)
-                            )}
-                          </ToggleGroup>
-                        );
-                      })()}
+                      <SubjectPicker
+                        subjects={subjects}
+                        value={field.state.value}
+                        onChange={field.handleChange}
+                        maxSubjects={maxSubjects}
+                      />
 
                       {field.state.value.length > 0 && (
                         <div className="mt-3 text-xs text-[#6B7280]">
