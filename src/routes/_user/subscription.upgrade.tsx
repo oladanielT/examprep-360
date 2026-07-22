@@ -457,10 +457,13 @@ function UpgradeSubscriptionPage() {
                   multiple
                   value={editingSubjects}
                   onValueChange={(value) => {
-                    // Single-subject exams (e.g. Post-UTME): replace the
-                    // selection instead of blocking the new pick.
+                    // Single-subject exams (e.g. Post-UTME): swap to the new
+                    // pick. Base UI returns values in DOM order, so take the id
+                    // that wasn't selected before (the just-tapped one) rather
+                    // than the last in the list.
                     if (maxSubjects === 1) {
-                      setEditingSubjects(value.slice(-1));
+                      const added = value.find((v) => !editingSubjects.includes(v));
+                      setEditingSubjects(added ? [added] : []);
                     } else if (value.length <= maxSubjects) {
                       setEditingSubjects(value);
                     }

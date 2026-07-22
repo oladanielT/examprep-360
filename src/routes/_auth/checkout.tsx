@@ -860,9 +860,13 @@ function CheckoutPage() {
                   multiple
                   value={editingSubjects}
                   onValueChange={(value) => {
-                    // Single-subject exams (Post-UTME): tapping another swaps it.
+                    // Single-subject exams (Post-UTME): tapping another swaps
+                    // it. Base UI returns values in DOM order, so take the id
+                    // that wasn't selected before (the just-tapped one) rather
+                    // than the last in the list.
                     if (maxSubjects === 1) {
-                      setEditingSubjects(value.slice(-1));
+                      const added = value.find((v) => !editingSubjects.includes(v));
+                      setEditingSubjects(added ? [added] : []);
                     } else if (value.length <= maxSubjects) {
                       setEditingSubjects(value);
                     }

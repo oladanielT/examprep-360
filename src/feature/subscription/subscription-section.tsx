@@ -589,9 +589,15 @@ export const SubscriptionSection = () => {
                         multiple
                         value={selectedSubjects}
                         onValueChange={(value) => {
-                          // Single-subject exams (Post-UTME): tapping another swaps it.
+                          // Single-subject exams (Post-UTME): tapping another
+                          // swaps it. Base UI returns values in DOM order, so
+                          // take the id that wasn't selected before (the
+                          // just-tapped one) rather than the last in the list.
                           if (maxSubjects === 1) {
-                            setSelectedSubjects(value.slice(-1));
+                            const added = value.find(
+                              (v) => !selectedSubjects.includes(v)
+                            );
+                            setSelectedSubjects(added ? [added] : []);
                           } else if (value.length <= maxSubjects) {
                             setSelectedSubjects(value);
                           }
