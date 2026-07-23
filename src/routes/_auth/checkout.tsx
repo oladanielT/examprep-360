@@ -4,7 +4,7 @@ import PrimaryButton from "@/components/buttons/primary-button";
 import { Alert } from "@/components/ui/alert";
 import { useRegistrationStore } from "@/stores/registrationStore";
 import { useAuthStore } from "@/stores/authStore";
-import { usePaymentPlans, useInitializePayment, useRedeemLicense, useValidatePromo } from "@/feature/payment/hooks";
+import { usePaymentPlans, useInitializePayment, useRedeemLicense, useStartTrial, useValidatePromo } from "@/feature/payment/hooks";
 import { useWalletBalance } from "@/feature/wallet/hooks";
 import { useExamSubjects } from "@/feature/exams/hooks";
 import { useMutation } from "@tanstack/react-query";
@@ -47,6 +47,7 @@ function CheckoutPage() {
   const [showPaymentOptions, setShowPaymentOptions] = useState(false);
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [licenseCode, setLicenseCode] = useState("");
+  const [trialStarted, setTrialStarted] = useState(false);
   const navigationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [studentEmails, setStudentEmails] = useState<string[]>([]);
   const [bulkEmailText, setBulkEmailText] = useState("");
@@ -152,6 +153,7 @@ function CheckoutPage() {
 
   const initializePaymentMutation = useInitializePayment();
   const redeemLicenseMutation = useRedeemLicense();
+  const startTrialMutation = useStartTrial();
 
   // Find the selected plan
   const selectedPlan = plans?.find((p) => p.id === selectedPlanId);
@@ -379,6 +381,50 @@ function CheckoutPage() {
     }
   };
 
+  const handleStartTrial = async () => {
+    if (!studentId) {
+      toast.error("Missing student information. Please complete registration first.");
+      return;
+    }
+
+    const trialPlan = selectedPlanId ? plans?.find((p) => p.id === selectedPlanId) : plans?.[0];
+    if (!trialPlan) {
+      toast.error("No plans available. Please try again shortly.");
+      return;
+    }
+
+    try {
+      // Save updated subjects to backend before starting trial
+      if (isAuthenticated) {
+        await saveExamSelection.mutateAsync(registrationData.subjects);
+      }
+
+      const response = await startTrialMutation.mutateAsync({
+        studentId: studentId!,
+        subscriptionId: trialPlan.id,
+      });
+
+      if (response && ((response as any).success || (response as any).trialEndDate || (response as any).id)) {
+        setTrialStarted(true);
+        toast.success("Free trial started!", {
+          description: isAuthenticated
+            ? "You now have access to all features."
+            : "You can now sign in to access all features.",
+        });
+        navigationTimerRef.current = setTimeout(() => {
+          resetRegistration();
+          navigate({ to: isAuthenticated ? "/" : "/sign-in" });
+        }, 1500);
+      }
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to start free trial. Please try again.";
+      toast.error(message);
+    }
+  };
+
   const handleSkip = () => {
     navigate({ to: "/" });
   };
@@ -438,6 +484,13 @@ function CheckoutPage() {
           </p>
         </div>
 
+        {startTrialMutation.isError && (
+          <Alert variant="destructive">
+            {startTrialMutation.error?.response?.data?.message ||
+              "Failed to start trial. Please try again."}
+          </Alert>
+        )}
+
         {redeemLicenseMutation.isError && (
           <Alert variant="destructive">
             {redeemLicenseMutation.error?.response?.data?.message ||
@@ -473,6 +526,23 @@ function CheckoutPage() {
                 title="Pay Now"
               />
             </div>
+            {/* Free Trial Option */}
+            <button
+              onClick={handleStartTrial}
+              disabled={startTrialMutation.isPending || isLoadingPlans || trialStarted}
+              className="w-full py-4 px-6 border-2 border-gray-200 rounded-xl text-left hover:border-accent/50 transition-colors disabled:opacity-50"
+            >
+              <h3 className="font-semibold text-[#101828]">
+                {trialStarted
+                  ? "Trial Started!"
+                  : startTrialMutation.isPending
+                    ? "Starting Trial..."
+                    : "Start Free Trial"}
+              </h3>
+              <p className="text-sm text-gray-500">
+                Try all features for free, no payment required.
+              </p>
+            </button>
             {/* License Code */}
             <div className="relative">
               {!showLicenseInput ? (
