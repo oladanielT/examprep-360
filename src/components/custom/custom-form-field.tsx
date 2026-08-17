@@ -33,7 +33,7 @@ export function FormField({
         <Label
           className={cn(
             "  tracking-[3px] text-xs! uppercase text-gray-400 font-medium ",
-            labelClassName
+            labelClassName,
           )}
         >
           {label}
@@ -81,8 +81,8 @@ export function InputField({
       <Input
         className={cn(
           error && "border-rose-500 focus-visible:ring-rose-500",
-          "rounded-4xl  placeholder:text-gray-400 h-14",
-          className
+          "rounded-2xl  placeholder:text-gray-400 h-10",
+          className,
         )}
         {...props}
       />
@@ -92,8 +92,7 @@ export function InputField({
 }
 
 // Pre-configured Textarea Field
-interface TextareaFieldProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface TextareaFieldProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
   error?: string;
   hint?: string;
@@ -121,7 +120,7 @@ export function TextareaField({
       <Textarea
         className={cn(
           error && "border-rose-500 focus-visible:ring-rose-500",
-          className
+          className,
         )}
         {...props}
       />

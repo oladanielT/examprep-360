@@ -17,15 +17,18 @@ export const Logo = () => {
 
   if (isOnboarding) {
     return (
-      <a href="https://exampreps360.online" className="flex items-center gap-2 font-medium">
-        <img src="/alt-logo.png" alt="Logo" width={204} height={60} />
+      <a
+        href="https://exampreps360.online"
+        className="flex items-center gap-2 font-medium"
+      >
+        <img src="/alt-logo.png" alt="Logo" width={150} height={40} />
       </a>
     );
   }
 
   return (
     <Link to="/" className="flex items-center gap-2 font-medium">
-      <img src="/alt-logo.png" alt="Logo" width={204} height={60} />
+      <img src="/alt-logo.png" alt="Logo" width={204} height={10} />
     </Link>
   );
 };

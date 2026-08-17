@@ -16,7 +16,7 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { Switch } from "@/components/ui/switch";
-import { toast } from "sonner"
+import { toast } from "sonner";
 import * as z from "zod";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useRegistrationStore } from "@/stores/registrationStore";
@@ -87,8 +87,10 @@ export const RegisterForm = () => {
         navigate({ to: "/verify-email" });
       } catch {
         // Error is handled by the mutation
-        toast.error(requestOtpMutation.error?.response?.data?.message ||
-              "Failed to send verification code. Please try again.")
+        toast.error(
+          requestOtpMutation.error?.response?.data?.message ||
+            "Failed to send verification code. Please try again.",
+        );
       }
     },
   });
@@ -96,9 +98,12 @@ export const RegisterForm = () => {
   return (
     <div className="w-full">
       {/* Institutional License Toggle */}
-      <div className="flex items-center justify-between py-4 mb-4 border-b border-gray-100">
+      <div className="flex items-center justify-between py-2 mb-2 border-b border-gray-100">
         <div className="space-y-0.5">
-          <label htmlFor="institutional-switch" className="text-sm font-medium text-gray-900">
+          <label
+            htmlFor="institutional-switch"
+            className="text-sm font-medium text-gray-900"
+          >
             Institutional License
           </label>
           <p className="text-xs text-gray-500">
@@ -159,12 +164,14 @@ export const RegisterForm = () => {
       </PrimaryButton>
 
       {/* Divider */}
-      <div className="relative my-6">
+      <div className="relative my-3">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-gray-200" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="bg-white px-4 text-gray-500">or sign up with email</span>
+          <span className="bg-white px-4 text-gray-500">
+            or sign up with email
+          </span>
         </div>
       </div>
 
@@ -175,16 +182,18 @@ export const RegisterForm = () => {
           form.handleSubmit();
         }}
       >
-        <FieldGroup className="w-full">
-          {/* Name Field */}
+        <FieldGroup className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3">
+          {/* Name Field — full width */}
           <form.Field
             name="name"
             children={(field) => {
               const isInvalid =
                 field.state.meta.isTouched && !field.state.meta.isValid;
+
               return (
-                <Field data-invalid={isInvalid}>
+                <Field data-invalid={isInvalid} className="sm:col-span-2">
                   <FieldLabel htmlFor="form-name">Full Name</FieldLabel>
+
                   <InputField
                     id="form-name"
                     name={field.name}
@@ -195,6 +204,7 @@ export const RegisterForm = () => {
                     placeholder="e.g. Sayo Makinwa"
                     autoComplete="off"
                   />
+
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
               );
@@ -207,9 +217,11 @@ export const RegisterForm = () => {
             children={(field) => {
               const isInvalid =
                 field.state.meta.isTouched && !field.state.meta.isValid;
+
               return (
                 <Field data-invalid={isInvalid}>
                   <FieldLabel htmlFor="form-email">Email Address</FieldLabel>
+
                   <InputField
                     id="form-email"
                     name={field.name}
@@ -221,6 +233,7 @@ export const RegisterForm = () => {
                     type="email"
                     autoComplete="off"
                   />
+
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
               );
@@ -233,9 +246,11 @@ export const RegisterForm = () => {
             children={(field) => {
               const isInvalid =
                 field.state.meta.isTouched && !field.state.meta.isValid;
+
               return (
                 <Field data-invalid={isInvalid}>
                   <FieldLabel htmlFor="form-phone">Phone Number</FieldLabel>
+
                   <InputField
                     id="form-phone"
                     name={field.name}
@@ -247,161 +262,236 @@ export const RegisterForm = () => {
                     type="tel"
                     autoComplete="off"
                   />
+
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
               );
             }}
           />
 
-          {/* Password Field */}
-          <form.Field
-            name="password"
-            children={(field) => {
-              const isInvalid =
-                field.state.meta.isTouched && !field.state.meta.isValid;
-              const pwd = field.state.value;
-              const rules = [
-                { label: "At least 8 characters", met: pwd.length >= 8 },
-                { label: "Uppercase letter (A-Z)", met: /[A-Z]/.test(pwd) },
-                { label: "Lowercase letter (a-z)", met: /[a-z]/.test(pwd) },
-                { label: "Number (0-9)", met: /[0-9]/.test(pwd) },
-                { label: "Symbol (!@#$...)", met: /[^A-Za-z0-9]/.test(pwd) },
-              ];
-              const metCount = rules.filter((r) => r.met).length;
-              const strengthPercent = (metCount / rules.length) * 100;
-              const strengthColor =
-                metCount <= 1
-                  ? "bg-red-500"
-                  : metCount <= 3
-                    ? "bg-yellow-500"
-                    : metCount <= 4
-                      ? "bg-blue-500"
-                      : "bg-green-500";
-              const strengthLabel =
-                metCount <= 1
-                  ? "Weak"
-                  : metCount <= 3
-                    ? "Fair"
-                    : metCount <= 4
-                      ? "Good"
-                      : "Strong";
-              return (
-                <Field data-invalid={isInvalid}>
-                  <FieldLabel htmlFor="form-password">Password</FieldLabel>
-                  <InputGroup className="rounded-4xl h-14">
-                    <InputGroupInput
-                      id="form-password"
-                      name={field.name}
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      type={seePassword ? "text" : "password"}
-                      placeholder="••••••••"
-                      aria-invalid={isInvalid}
-                    />
-                    <InputGroupAddon align="inline-end">
-                      <InputGroupButton
-                        aria-label="Toggle password visibility"
-                        title="Toggle password visibility"
-                        size="icon-xs"
-                        onClick={() => setSeePassword(!seePassword)}
-                      >
-                        {seePassword ? (
-                          <Eye className="h-4 w-4" />
-                        ) : (
-                          <EyeClosed className="h-4 w-4" />
-                        )}
-                      </InputGroupButton>
-                    </InputGroupAddon>
-                  </InputGroup>
+          {/* Password + Confirm Password */}
+          <div className="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">
+            {/* Password Field */}
+            <form.Field
+              name="password"
+              children={(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid;
 
-                  {/* Password Strength Indicator */}
-                  {pwd.length > 0 && (
-                    <div className="mt-2 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                          <div
-                            className={`h-full rounded-full transition-all duration-300 ${strengthColor}`}
-                            style={{ width: `${strengthPercent}%` }}
-                          />
-                        </div>
-                        <span className={`text-xs font-medium ${strengthColor.replace("bg-", "text-")}`}>
-                          {strengthLabel}
-                        </span>
-                      </div>
-                      <ul className="grid grid-cols-2 gap-x-4 gap-y-1">
-                        {rules.map((rule) => (
-                          <li key={rule.label} className="flex items-center gap-1.5 text-xs">
-                            {rule.met ? (
-                              <Check className="h-3 w-3 text-green-500 shrink-0" />
+                const pwd = field.state.value;
+
+                const rules = [
+                  {
+                    label: "At least 8 characters",
+                    met: pwd.length >= 8,
+                  },
+                  {
+                    label: "Uppercase letter (A-Z)",
+                    met: /[A-Z]/.test(pwd),
+                  },
+                  {
+                    label: "Lowercase letter (a-z)",
+                    met: /[a-z]/.test(pwd),
+                  },
+                  {
+                    label: "Number (0-9)",
+                    met: /[0-9]/.test(pwd),
+                  },
+                  {
+                    label: "Symbol (!@#$...)",
+                    met: /[^A-Za-z0-9]/.test(pwd),
+                  },
+                ];
+
+                const metCount = rules.filter((r) => r.met).length;
+                const strengthPercent = (metCount / rules.length) * 100;
+
+                const strengthColor =
+                  metCount <= 1
+                    ? "bg-red-500"
+                    : metCount <= 3
+                      ? "bg-yellow-500"
+                      : metCount <= 4
+                        ? "bg-blue-500"
+                        : "bg-green-500";
+
+                const strengthLabel =
+                  metCount <= 1
+                    ? "Weak"
+                    : metCount <= 3
+                      ? "Fair"
+                      : metCount <= 4
+                        ? "Good"
+                        : "Strong";
+
+                return (
+                  <>
+                    {/* Password */}
+                    <Field
+                      data-invalid={isInvalid}
+                      className="sm:col-start-1 sm:row-start-1"
+                    >
+                      <FieldLabel htmlFor="form-password">Password</FieldLabel>
+
+                      <InputGroup className="h-10 rounded-4xl">
+                        <InputGroupInput
+                          id="form-password"
+                          name={field.name}
+                          value={field.state.value}
+                          onBlur={field.handleBlur}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          type={seePassword ? "text" : "password"}
+                          placeholder="••••••••"
+                          aria-invalid={isInvalid}
+                        />
+
+                        <InputGroupAddon align="inline-end">
+                          <InputGroupButton
+                            type="button"
+                            aria-label="Toggle password visibility"
+                            title="Toggle password visibility"
+                            size="icon-xs"
+                            onClick={() => setSeePassword(!seePassword)}
+                          >
+                            {seePassword ? (
+                              <Eye className="h-4 w-4" />
                             ) : (
-                              <X className="h-3 w-3 text-gray-300 shrink-0" />
+                              <EyeClosed className="h-4 w-4" />
                             )}
-                            <span className={rule.met ? "text-green-600" : "text-gray-400"}>
-                              {rule.label}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </Field>
-              );
-            }}
-          />
+                          </InputGroupButton>
+                        </InputGroupAddon>
+                      </InputGroup>
 
-          {/* Confirm Password Field */}
-          <form.Field
-            name="confirmPassword"
-            children={(field) => {
-              const isInvalid =
-                field.state.meta.isTouched && !field.state.meta.isValid;
-              return (
-                <Field data-invalid={isInvalid}>
-                  <FieldLabel htmlFor="form-confirm-password">
-                    Confirm Password
-                  </FieldLabel>
-                  <InputGroup className="rounded-4xl h-14">
-                    <InputGroupInput
-                      id="form-confirm-password"
-                      name={field.name}
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      type={seeConfirmPassword ? "text" : "password"}
-                      placeholder="••••••••"
-                      aria-invalid={isInvalid}
+                      {isInvalid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
+                    </Field>
+
+                    {/* Password Strength + Rules */}
+                    {pwd.length > 0 && (
+                      <div className="sm:col-span-2 sm:col-start-1 sm:row-start-2 space-y-2">
+                        {/* Strength Bar */}
+                        <div className="flex items-center gap-2">
+                          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-gray-200">
+                            <div
+                              className={`h-full rounded-full transition-all duration-300 ${strengthColor}`}
+                              style={{
+                                width: `${strengthPercent}%`,
+                              }}
+                            />
+                          </div>
+
+                          <span
+                            className={`shrink-0 text-xs font-medium ${strengthColor.replace(
+                              "bg-",
+                              "text-",
+                            )}`}
+                          >
+                            {strengthLabel}
+                          </span>
+                        </div>
+
+                        {/* Password Rules */}
+                        <ul className="grid gap-x-2 gap-y-1 grid-cols-2 sm:grid-cols-3">
+                          {rules.map((rule) => (
+                            <li
+                              key={rule.label}
+                              className="flex items-center gap-1.5 text-xs"
+                            >
+                              {rule.met ? (
+                                <Check className="h-3 w-3 shrink-0 text-green-500" />
+                              ) : (
+                                <X className="h-3 w-3 shrink-0 text-gray-300" />
+                              )}
+
+                              <span
+                                className={
+                                  rule.met ? "text-green-600" : "text-gray-400"
+                                }
+                              >
+                                {rule.label}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Confirm Password */}
+                    <form.Field
+                      name="confirmPassword"
+                      children={(confirmField) => {
+                        const isConfirmInvalid =
+                          confirmField.state.meta.isTouched &&
+                          !confirmField.state.meta.isValid;
+
+                        return (
+                          <Field
+                            data-invalid={isConfirmInvalid}
+                            className="sm:col-start-2 sm:row-start-1"
+                          >
+                            <FieldLabel htmlFor="form-confirm-password">
+                              Confirm Password
+                            </FieldLabel>
+
+                            <InputGroup className="h-10 rounded-4xl">
+                              <InputGroupInput
+                                id="form-confirm-password"
+                                name={confirmField.name}
+                                value={confirmField.state.value}
+                                onBlur={confirmField.handleBlur}
+                                onChange={(e) =>
+                                  confirmField.handleChange(e.target.value)
+                                }
+                                type={seeConfirmPassword ? "text" : "password"}
+                                placeholder="••••••••"
+                                aria-invalid={isConfirmInvalid}
+                              />
+
+                              <InputGroupAddon align="inline-end">
+                                <InputGroupButton
+                                  type="button"
+                                  aria-label="Toggle password visibility"
+                                  title="Toggle password visibility"
+                                  size="icon-xs"
+                                  onClick={() =>
+                                    setSeeConfirmPassword(!seeConfirmPassword)
+                                  }
+                                >
+                                  {seeConfirmPassword ? (
+                                    <Eye className="h-4 w-4" />
+                                  ) : (
+                                    <EyeClosed className="h-4 w-4" />
+                                  )}
+                                </InputGroupButton>
+                              </InputGroupAddon>
+                            </InputGroup>
+
+                            {isConfirmInvalid && (
+                              <FieldError
+                                errors={confirmField.state.meta.errors}
+                              />
+                            )}
+                          </Field>
+                        );
+                      }}
                     />
-                    <InputGroupAddon align="inline-end">
-                      <InputGroupButton
-                        aria-label="Toggle password visibility"
-                        title="Toggle password visibility"
-                        size="icon-xs"
-                        onClick={() => setSeeConfirmPassword(!seeConfirmPassword)}
-                      >
-                        {seeConfirmPassword ? (
-                          <Eye className="h-4 w-4" />
-                        ) : (
-                          <EyeClosed className="h-4 w-4" />
-                        )}
-                      </InputGroupButton>
-                    </InputGroupAddon>
-                  </InputGroup>
-                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                </Field>
-              );
-            }}
-          />
+                  </>
+                );
+              }}
+            />
+          </div>
         </FieldGroup>
 
+        {/* Submit Button */}
         <PrimaryButton
           type="submit"
           disabled={form.state.isSubmitting || requestOtpMutation.isPending}
-          className="w-full bg-accent hover:bg-accent/80 mt-6 text-white text-lg disabled:opacity-50"
+          className="w-full bg-accent hover:bg-accent/80 mt-4 text-white text-lg disabled:opacity-50"
           title={requestOtpMutation.isPending ? "Sending code..." : "Continue"}
         />
       </form>
-      <p className="text-center mt-7 font-medium">
+      <p className="text-center mt-3 font-medium">
         Have an account?{" "}
         <Link to="/sign-in" className="text-accent">
           Sign In
