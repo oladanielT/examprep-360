@@ -189,14 +189,19 @@ function JambSubjectCard({
 function JambMockSetup({
   subjects,
   searchQuery,
+  minSubjects = 2,
 }: {
   subjects: Subject[];
   searchQuery: string;
+  // Smallest number of subjects needed to start. JAMB combines 2+; Post-UTME
+  // is a single-subject exam, so it passes 1.
+  minSubjects?: number;
 }) {
   const navigate = useNavigate();
   const startMockExams = useStartMockExams();
   const [picks, setPicks] = useState<Map<string, SubjectPick>>(new Map());
   const [errorMessage, setErrorMessage] = useState("");
+  const isSingleSubject = minSubjects <= 1;
 
   const filteredSubjects = searchQuery
     ? subjects.filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -238,9 +243,11 @@ function JambMockSetup({
   };
 
   const handleStartSimulation = () => {
-    if (picks.size < 2) {
+    if (picks.size < minSubjects) {
       setErrorMessage(
-        "Please select at least 2 subjects for a combined exam simulation."
+        isSingleSubject
+          ? "Please select a subject to start."
+          : `Please select at least ${minSubjects} subjects for a combined exam simulation.`
       );
       return;
     }
@@ -319,7 +326,7 @@ function JambMockSetup({
               </div>
               <Button
                 onClick={handleStartSimulation}
-                disabled={startMockExams.isPending || totals.count < 2}
+                disabled={startMockExams.isPending || totals.count < minSubjects}
                 className="bg-[#F04F54] hover:bg-[#F04F54]/90 text-white rounded-full h-12 px-8 font-semibold text-sm shadow-md"
               >
                 {startMockExams.isPending ? (
@@ -346,9 +353,9 @@ function JambMockSetup({
       <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl p-3 sm:p-4 mb-6">
         <AlertCircle className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
         <p className="text-xs sm:text-sm text-blue-700">
-          Select 2 or more subjects to simulate real exam conditions. Questions from
-          all subjects will be combined into a single timed session — just like the
-          actual exam.
+          {isSingleSubject
+            ? "Select your subject to start a timed mock exam under real exam conditions."
+            : "Select 2 or more subjects to simulate real exam conditions. Questions from all subjects will be combined into a single timed session — just like the actual exam."}
         </p>
       </div>
 
@@ -371,7 +378,7 @@ function JambMockSetup({
         ))}
       </div>
 
-      {totals.count >= 2 && (
+      {totals.count >= minSubjects && (
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-sm border-t sm:hidden z-20">
           <Button
             onClick={handleStartSimulation}
@@ -380,7 +387,9 @@ function JambMockSetup({
           >
             {startMockExams.isPending
               ? "Starting..."
-              : `Start Simulation (${totals.count} subjects)`}
+              : isSingleSubject
+                ? "Start Simulation"
+                : `Start Simulation (${totals.count} subjects)`}
           </Button>
         </div>
       )}
@@ -999,6 +1008,10 @@ function MockExamSetupPage() {
   // auto-combined. Checked first since it has its own dedicated flow.
   const isNcee = /ncee|common\s*entrance/i.test(examTypeName);
   const isMultiPaperExam = /waec|neco|wassce|ssce/i.test(examTypeName);
+  // Post-UTME is a single-subject exam (one per-institution subject), so it
+  // uses the JAMB flow but only needs 1 subject to start. Matches how the rest
+  // of the app detects Post-UTME ("post" also matches /utme/, so check it here).
+  const isPostUtme = /post/i.test(examTypeName);
 
   if (loadingPrefs) {
     return (
@@ -1018,7 +1031,9 @@ function MockExamSetupPage() {
             ? "Paper 1 & Paper 2 are combined automatically"
             : isMultiPaperExam
               ? "Pick a subject — all papers are auto-included"
-              : "Select subjects for a combined mock exam"
+              : isPostUtme
+                ? "Select your subject to start a mock exam"
+                : "Select subjects for a combined mock exam"
         }
         searchValue={searchQuery}
         onSearchChange={(e) => setSearchQuery(e.target.value)}
@@ -1031,7 +1046,11 @@ function MockExamSetupPage() {
         ) : isMultiPaperExam ? (
           <WaecMockSetup subjects={allSubjects} searchQuery={searchQuery} />
         ) : (
-          <JambMockSetup subjects={allSubjects} searchQuery={searchQuery} />
+          <JambMockSetup
+            subjects={allSubjects}
+            searchQuery={searchQuery}
+            minSubjects={isPostUtme ? 1 : 2}
+          />
         )}
       </div>
     </div>
