@@ -6,18 +6,12 @@ import { RegisterForm } from "@/feature/auth/components/register-form";
 
 function RegisterPage() {
   return (
-    <section className="">
+    <section className="space-y-5">
       <Progress value={50} />
-      <div className="relative my-2 flex items-center justify-between">
-        <GoBack backTo="/welcome" />
-
-        <div className="absolute left-1/2 -translate-x-1/2">
-          <Logo />
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-5 items-center max-w-md mx-auto">
-        <div className="text-center space-y-1">
+      <GoBack backTo="/welcome" />
+      <div className="flex flex-col gap-10 items-center mt-5 max-w-md mx-auto">
+        <Logo />
+        <div className="text-center space-y-3">
           <h2 className="text-xl md:text-3xl font-bold tracking-tighter text-[#101828]">
             Create an account
           </h2>
