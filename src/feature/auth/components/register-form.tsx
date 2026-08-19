@@ -16,7 +16,7 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { Switch } from "@/components/ui/switch";
-import { toast } from "sonner"
+import { toast } from "sonner";
 import * as z from "zod";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useRegistrationStore } from "@/stores/registrationStore";
@@ -87,8 +87,10 @@ export const RegisterForm = () => {
         navigate({ to: "/verify-email" });
       } catch {
         // Error is handled by the mutation
-        toast.error(requestOtpMutation.error?.response?.data?.message ||
-              "Failed to send verification code. Please try again.")
+        toast.error(
+          requestOtpMutation.error?.response?.data?.message ||
+            "Failed to send verification code. Please try again.",
+        );
       }
     },
   });
@@ -96,9 +98,12 @@ export const RegisterForm = () => {
   return (
     <div className="w-full">
       {/* Institutional License Toggle */}
-      <div className="flex items-center justify-between py-4 mb-4 border-b border-gray-100">
+      <div className="flex items-center justify-between py-2 mb-2 border-b border-gray-100">
         <div className="space-y-0.5">
-          <label htmlFor="institutional-switch" className="text-sm font-medium text-gray-900">
+          <label
+            htmlFor="institutional-switch"
+            className="text-sm font-medium text-gray-900"
+          >
             Institutional License
           </label>
           <p className="text-xs text-gray-500">
@@ -159,12 +164,14 @@ export const RegisterForm = () => {
       </PrimaryButton>
 
       {/* Divider */}
-      <div className="relative my-6">
+      <div className="relative my-3">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-gray-200" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="bg-white px-4 text-gray-500">or sign up with email</span>
+          <span className="bg-white px-4 text-gray-500">
+            or sign up with email
+          </span>
         </div>
       </div>
 
@@ -288,7 +295,7 @@ export const RegisterForm = () => {
               return (
                 <Field data-invalid={isInvalid}>
                   <FieldLabel htmlFor="form-password">Password</FieldLabel>
-                  <InputGroup className="rounded-4xl h-14">
+                  <InputGroup className="rounded-4xl h-10">
                     <InputGroupInput
                       id="form-password"
                       name={field.name}
@@ -317,7 +324,7 @@ export const RegisterForm = () => {
 
                   {/* Password Strength Indicator */}
                   {pwd.length > 0 && (
-                    <div className="mt-2 space-y-2">
+                    <div className="mt-2 space-y-1">
                       <div className="flex items-center gap-2">
                         <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
                           <div
@@ -325,19 +332,28 @@ export const RegisterForm = () => {
                             style={{ width: `${strengthPercent}%` }}
                           />
                         </div>
-                        <span className={`text-xs font-medium ${strengthColor.replace("bg-", "text-")}`}>
+                        <span
+                          className={`text-xs font-medium ${strengthColor.replace("bg-", "text-")}`}
+                        >
                           {strengthLabel}
                         </span>
                       </div>
                       <ul className="grid grid-cols-2 gap-x-4 gap-y-1">
                         {rules.map((rule) => (
-                          <li key={rule.label} className="flex items-center gap-1.5 text-xs">
+                          <li
+                            key={rule.label}
+                            className="flex items-center gap-1.5 text-xs"
+                          >
                             {rule.met ? (
                               <Check className="h-3 w-3 text-green-500 shrink-0" />
                             ) : (
                               <X className="h-3 w-3 text-gray-300 shrink-0" />
                             )}
-                            <span className={rule.met ? "text-green-600" : "text-gray-400"}>
+                            <span
+                              className={
+                                rule.met ? "text-green-600" : "text-gray-400"
+                              }
+                            >
                               {rule.label}
                             </span>
                           </li>
@@ -361,7 +377,7 @@ export const RegisterForm = () => {
                   <FieldLabel htmlFor="form-confirm-password">
                     Confirm Password
                   </FieldLabel>
-                  <InputGroup className="rounded-4xl h-14">
+                  <InputGroup className="rounded-4xl h-10">
                     <InputGroupInput
                       id="form-confirm-password"
                       name={field.name}
@@ -377,7 +393,9 @@ export const RegisterForm = () => {
                         aria-label="Toggle password visibility"
                         title="Toggle password visibility"
                         size="icon-xs"
-                        onClick={() => setSeeConfirmPassword(!seeConfirmPassword)}
+                        onClick={() =>
+                          setSeeConfirmPassword(!seeConfirmPassword)
+                        }
                       >
                         {seeConfirmPassword ? (
                           <Eye className="h-4 w-4" />
@@ -397,11 +415,11 @@ export const RegisterForm = () => {
         <PrimaryButton
           type="submit"
           disabled={form.state.isSubmitting || requestOtpMutation.isPending}
-          className="w-full bg-accent hover:bg-accent/80 mt-6 text-white text-lg disabled:opacity-50"
+          className="w-full bg-accent hover:bg-accent/80 mt-4 text-white text-lg disabled:opacity-50"
           title={requestOtpMutation.isPending ? "Sending code..." : "Continue"}
         />
       </form>
-      <p className="text-center mt-7 font-medium">
+      <p className="text-center mt-4 font-medium">
         Have an account?{" "}
         <Link to="/sign-in" className="text-accent">
           Sign In

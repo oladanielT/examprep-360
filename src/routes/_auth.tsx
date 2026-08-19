@@ -4,19 +4,19 @@ import { useAuthStore } from "@/stores/authStore";
 function AuthLayout() {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
-      <div className="flex flex-col gap-4 p-6 md:p-10">
+      <div className="flex flex-col gap-4 p-4">
         <div className="flex flex-1 items-start justify-center">
           <div className="w-full max-w-2xl font-sans">
             <Outlet />
           </div>
         </div>
       </div>
-      <div className="bg-muted relative hidden lg:block">
+      <div className="bg-muted hidden lg:block sticky top-0 h-svh">
         <img
           src="/auth/faq-image.png"
           alt="Image"
           width={5000}
-          height={5000}
+          height={6000}
           className="absolute inset-0 w-full h-full object-cover"
         />
       </div>
@@ -29,7 +29,15 @@ export const Route = createFileRoute("/_auth")({
     const { isAuthenticated } = useAuthStore.getState();
     // Allow access to these paths even when authenticated
     // (user might need to complete registration or payment)
-    const allowedPaths = ["/verify-email", "/select-exam", "/summary", "/checkout", "/payment-verify", "/auth/callback", "/welcome"];
+    const allowedPaths = [
+      "/verify-email",
+      "/select-exam",
+      "/summary",
+      "/checkout",
+      "/payment-verify",
+      "/auth/callback",
+      "/welcome",
+    ];
     if (isAuthenticated && !allowedPaths.includes(location.pathname)) {
       throw redirect({ to: "/" });
     }

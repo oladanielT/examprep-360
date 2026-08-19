@@ -32,8 +32,7 @@ function SummaryPage() {
   // there's already a value; collapsed behind a link otherwise.
   const [codeInput, setCodeInput] = useState<string>(data.referralCode || "");
   const [refExpanded, setRefExpanded] = useState<boolean>(!!data.referralCode);
-  const [refStatus, setRefStatus] =
-    useState<ReferralValidationStatus>("idle");
+  const [refStatus, setRefStatus] = useState<ReferralValidationStatus>("idle");
   const [refMessage, setRefMessage] = useState<string>("");
 
   // Validate a code against the backend. Empty input resets to idle.
@@ -63,7 +62,9 @@ function SummaryPage() {
       // messages) and show a single friendly line. Real cause shows up
       // in the network tab if we need to debug.
       setRefStatus("invalid");
-      setRefMessage("That code doesn't look right. Double-check and try again.");
+      setRefMessage(
+        "That code doesn't look right. Double-check and try again.",
+      );
       return false;
     }
   };
@@ -176,10 +177,14 @@ function SummaryPage() {
   return (
     <section className="space-y-5">
       <Progress value={100} />
-      <GoBack backTo="/select-exam" />
-      <div className="flex flex-col gap-6 mt-5 max-w-md mx-auto">
-        <Logo />
+      <div className="relative flex h-16 w-full items-center px-4">
+        <GoBack backTo="/welcome" />
 
+        <div className="absolute left-1/2 -translate-x-1/2">
+          <Logo />
+        </div>
+      </div>
+      <div className="flex flex-col gap-6 mt-5 max-w-md mx-auto">
         <div className="text-center space-y-2">
           <h2 className="text-xl md:text-3xl font-bold tracking-tight text-[#101828]">
             Review Your Information
@@ -190,20 +195,26 @@ function SummaryPage() {
         </div>
 
         {/* Summary Card */}
-        <div className="bg-gray-50 rounded-xl p-6 space-y-4">
+        <div className="bg-gray-50 rounded-xl px-6 py-4 space-y-4">
           <h3 className="font-semibold text-lg border-b pb-2">Personal Info</h3>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-gray-500">Account Type</span>
-              <span className="font-medium capitalize">{data.userType || "N/A"}</span>
+              <span className="font-medium capitalize">
+                {data.userType || "N/A"}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Full Name</span>
-              <span className="font-medium">{isAuthenticated ? user?.fullName : data.fullName}</span>
+              <span className="font-medium">
+                {isAuthenticated ? user?.fullName : data.fullName}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Email</span>
-              <span className="font-medium">{isAuthenticated ? user?.email : data.email}</span>
+              <span className="font-medium">
+                {isAuthenticated ? user?.email : data.email}
+              </span>
             </div>
             {!isAuthenticated && (
               <div className="flex justify-between">
@@ -213,7 +224,9 @@ function SummaryPage() {
             )}
           </div>
 
-          <h3 className="font-semibold text-lg border-b pb-2 pt-4">Exam Details</h3>
+          <h3 className="font-semibold text-lg border-b pb-2 pt-4">
+            Exam Details
+          </h3>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-gray-500">Exam Type</span>
@@ -229,7 +242,9 @@ function SummaryPage() {
 
           {data.isInstitutional && (
             <>
-              <h3 className="font-semibold text-lg border-b pb-2 pt-4">Institutional License</h3>
+              <h3 className="font-semibold text-lg border-b pb-2 pt-4">
+                Institutional License
+              </h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-500">License Type</span>
@@ -359,7 +374,9 @@ function SummaryPage() {
           />
           <button
             type="button"
-            onClick={() => navigate({ to: isAuthenticated ? "/select-exam" : "/welcome" })}
+            onClick={() =>
+              navigate({ to: isAuthenticated ? "/select-exam" : "/welcome" })
+            }
             className="w-full text-sm text-gray-500 hover:text-gray-700"
           >
             Edit Information

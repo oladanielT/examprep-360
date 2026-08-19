@@ -108,7 +108,7 @@ export const SigninForm = () => {
               return (
                 <Field data-invalid={isInvalid}>
                   <FieldLabel htmlFor="form-password">Password</FieldLabel>
-                  <InputGroup className="rounded-4xl h-14">
+                  <InputGroup className="rounded-2xl h-10">
                     <InputGroupInput
                       id="form-password"
                       name={field.name}
@@ -161,7 +161,9 @@ export const SigninForm = () => {
                     >
                       Remember for 30 days
                     </FieldLabel>
-                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
                   </Field>
                 );
               }}
@@ -185,7 +187,7 @@ export const SigninForm = () => {
         <PrimaryButton
           type="submit"
           disabled={loginMutation.isPending}
-          className="w-full bg-accent hover:bg-accent/80 mt-10 text-white text-lg disabled:opacity-50"
+          className="w-full bg-accent hover:bg-accent/80 mt-5 text-white text-lg disabled:opacity-50"
           title={loginMutation.isPending ? "Signing in..." : "Continue"}
         />
       </form>
@@ -231,7 +233,7 @@ export const SigninForm = () => {
           <span>Sign In With Google</span>
         </div>
       </PrimaryButton>
-      <p className="text-center mt-7 font-medium">
+      <p className="text-center mt-5 font-medium">
         Dont have an account?{" "}
         <Link to="/welcome" className="text-accent">
           Sign Up
