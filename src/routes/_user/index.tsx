@@ -8,10 +8,17 @@ import PhonePromptModal from "@/feature/home/components/phone-prompt-modal";
 import { useProfile } from "@/feature/profile/hooks/useProfile";
 import { useAuthStore } from "@/stores/authStore";
 
+import { useSubscriptions } from "@/feature/subscription/hooks/useSubscription";
+
 function HomePage() {
   const { user: authUser } = useAuthStore();
   const { data: profileUser } = useProfile();
   const user = profileUser || authUser;
+
+  const { data: subscriptions } = useSubscriptions();
+  const activeTrial = subscriptions?.some(
+    (s) => s.status === "ACTIVE" && s.paymentMethod === "TRIAL"
+  );
 
   const firstName = user?.fullName?.split(" ")[0] || "there";
 
@@ -21,8 +28,17 @@ function HomePage() {
         heading={`Welcome back, ${firstName}`}
         subHeading="Pick up quickly from where you left off"
       />
-      <FreeTrialBanner />
-      <Stat />
+      {activeTrial ? (
+        <>
+          <Stat />
+          <FreeTrialBanner />
+        </>
+      ) : (
+        <>
+          <FreeTrialBanner />
+          <Stat />
+        </>
+      )}
       <Continue />
       <Competition />
       <PhonePromptModal />
