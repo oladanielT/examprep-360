@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/dialog";
 import { SubjectPicker } from "@/components/subject-picker";
 import type { UserSubscription } from "@/api/types";
+import { SubscriptionTimer } from "./components/subscription-timer";
 
 // Max subjects allowed per exam type (matches registration flow)
 function getMaxSubjects(examType: string): number {
@@ -249,8 +250,11 @@ export const SubscriptionSection = () => {
           {subscriptions.map((sub) => (
             <div
               key={sub.id}
-              className="bg-[#FFFBEB] rounded-xl border border-amber-100 p-4 sm:p-5 space-y-3"
+              className="relative bg-[#FFFBEB] rounded-xl border border-amber-100 p-4 sm:p-5 space-y-3"
             >
+              {sub.status === "ACTIVE" && sub.endDate && (
+                <SubscriptionTimer endDate={sub.endDate} />
+              )}
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate">
