@@ -4,6 +4,8 @@ export interface RegisterRequest {
   password: string;
   fullName: string;
   phone?: string;
+  oauthProvider?: string | null;
+  trialUsedAt?: string | null;
   gender?: "MALE" | "FEMALE" | "OTHER";
   country?: string;
   dateOfBirth?: string;
@@ -68,6 +70,8 @@ export interface User {
   email: string;
   fullName: string;
   phone?: string;
+  oauthProvider?: string | null;
+  trialUsedAt?: string | null;
   gender?: "MALE" | "FEMALE" | "OTHER";
   country?: string;
   dateOfBirth?: string;
@@ -96,6 +100,8 @@ export interface RegisterResponse {
     email: string;
     fullName: string;
     phone?: string;
+  oauthProvider?: string | null;
+  trialUsedAt?: string | null;
     examType?: string;
     examCategory?: string;
     selectedSubjects?: string[];

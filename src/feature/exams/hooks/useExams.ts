@@ -215,11 +215,30 @@ export const useStartPractice = () => {
     StartPracticeRequest
   >({
     mutationFn: async (request) => {
-      const { data } = await apiClient.post<StartExamResponse>(
-        EXAM_ENDPOINTS.PRACTICE_START,
-        request
-      );
-      return data;
+      try {
+        const { data } = await apiClient.post<StartExamResponse>(
+          EXAM_ENDPOINTS.PRACTICE_START,
+          request
+        );
+        return data;
+      } catch (error: any) {
+        const status = error?.response?.status;
+        const msg = error?.response?.data?.message;
+        if (status === 403) {
+          if (msg?.includes("active subscription")) {
+            throw new Error("Your free trial has expired. Please upgrade to continue practicing.");
+          }
+          if (msg?.includes("limited to exam year")) {
+            const yearMatch = msg.match(/year (\d{4})/);
+            const year = yearMatch ? yearMatch[1] : "the configured";
+            throw new Error(`Free trial practice is only available for ${year} questions.`);
+          }
+          if (msg?.includes("has not been configured")) {
+            throw new Error("Trial practice is not available yet. Please try again later.");
+          }
+        }
+        throw error;
+      }
     },
     onSuccess: (data) => {
       // Extract questions from ExamQuestion[] wrapper
@@ -243,11 +262,30 @@ export const useConfigurePractice = () => {
     ConfigurePracticeRequest
   >({
     mutationFn: async (config) => {
-      const { data } = await apiClient.post<StartExamResponse>(
-        EXAM_ENDPOINTS.PRACTICE_CONFIGURE,
-        config
-      );
-      return data;
+      try {
+        const { data } = await apiClient.post<StartExamResponse>(
+          EXAM_ENDPOINTS.PRACTICE_CONFIGURE,
+          config
+        );
+        return data;
+      } catch (error: any) {
+        const status = error?.response?.status;
+        const msg = error?.response?.data?.message;
+        if (status === 403) {
+          if (msg?.includes("active subscription")) {
+            throw new Error("Your free trial has expired. Please upgrade to continue practicing.");
+          }
+          if (msg?.includes("limited to exam year")) {
+            const yearMatch = msg.match(/year (\d{4})/);
+            const year = yearMatch ? yearMatch[1] : "the configured";
+            throw new Error(`Free trial practice is only available for ${year} questions.`);
+          }
+          if (msg?.includes("has not been configured")) {
+            throw new Error("Trial practice is not available yet. Please try again later.");
+          }
+        }
+        throw error;
+      }
     },
     onSuccess: (data) => {
       // Extract questions from ExamQuestion[] wrapper

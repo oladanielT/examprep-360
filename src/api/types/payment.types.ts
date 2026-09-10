@@ -99,7 +99,6 @@ export interface RedeemLicenseResponse {
 }
 
 export interface StartTrialRequest {
-  studentId: string;
   subscriptionId: string;
 }
 

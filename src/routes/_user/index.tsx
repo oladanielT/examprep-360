@@ -4,6 +4,7 @@ import Competition from "@/feature/home/components/competition";
 import Continue from "@/feature/home/components/continue";
 import Stat from "@/feature/home/components/stat";
 import FreeTrialBanner from "@/feature/home/components/free-trial-banner";
+import PhonePromptModal from "@/feature/home/components/phone-prompt-modal";
 import { useProfile } from "@/feature/profile/hooks/useProfile";
 import { useAuthStore } from "@/stores/authStore";
 
@@ -24,6 +25,7 @@ function HomePage() {
       <Stat />
       <Continue />
       <Competition />
+      <PhonePromptModal />
     </div>
   );
 }

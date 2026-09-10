@@ -447,7 +447,6 @@ function CheckoutPage() {
       }
 
       const response = await startTrialMutation.mutateAsync({
-        studentId: studentId!,
         subscriptionId: trialPlan.id,
       });
 

@@ -996,8 +996,13 @@ function NceeMockSetup({ subjects }: { subjects: Subject[] }) {
 // Setup page — branches on exam type
 // ============================================================================
 
+import { useSubscriptions } from "@/feature/subscription/hooks/useSubscription";
+import { Lock, Star } from "lucide-react";
+
 function MockExamSetupPage() {
   const { data: preferences, isLoading: loadingPrefs } = useExamPreferences();
+  const { data: subscriptions, isLoading: loadingSubs } = useSubscriptions();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
 
   const allSubjects = preferences?.subjects || [];
@@ -1013,10 +1018,46 @@ function MockExamSetupPage() {
   // of the app detects Post-UTME ("post" also matches /utme/, so check it here).
   const isPostUtme = /post/i.test(examTypeName);
 
-  if (loadingPrefs) {
+  if (loadingPrefs || loadingSubs) {
     return (
       <div className="flex items-center justify-center py-20">
         <Loader2 className="w-8 h-8 animate-spin text-[#F04F54]" />
+      </div>
+    );
+  }
+
+  const activePremium = subscriptions?.find(
+    (s) => s.status === "ACTIVE" && s.paymentMethod !== "TRIAL"
+  );
+
+  if (!activePremium) {
+    return (
+      <div>
+        <CustomPageHeader
+          backLink="/tests/exams"
+          heading="Exam Simulation"
+          subHeading="Unlock premium features to access full mock exams"
+        />
+        <div className="py-8 sm:py-12 px-4 max-w-lg mx-auto">
+          <div className="overflow-hidden rounded-3xl border border-purple-200 bg-gradient-to-br from-purple-50 to-indigo-50 p-6 sm:p-8 text-center shadow-sm">
+            <div className="w-16 h-16 rounded-2xl bg-purple-100 flex items-center justify-center mx-auto mb-6">
+              <Lock className="w-8 h-8 text-purple-600" />
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bold text-[#101828] mb-3">
+              Mock Exams are a Premium Feature
+            </h2>
+            <p className="text-gray-600 mb-8">
+              Subscribe to access up to 10 full mock exams. Test your readiness under real exam conditions, get detailed feedback, and unlock 4,000+ practice questions.
+            </p>
+            <button
+              onClick={() => navigate({ to: "/subscription" })}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-purple-600 text-white font-semibold rounded-xl hover:bg-purple-700 transition-colors shadow-sm"
+            >
+              <Star className="w-4 h-4" />
+              Subscribe Now
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
