@@ -11,9 +11,10 @@ import { Alert } from "@/components/ui/alert";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import {
   useExamCategories,
-  useExamTypes,
   useExamSubjects,
-} from "@/feature/exams/hooks";
+  useExamTypes,
+  useProfessionalHierarchy,
+} from "@/feature/exams/hooks/useExams";
 import {
   usePaymentPlans,
   useInitializePayment,
@@ -53,7 +54,7 @@ function getMaxSubjects(examType: string): number {
   return 9; // WAEC, NECO, etc.
 }
 
-// O'Level / Secondary School and Post-JAMB are available for now (matches registration flow)
+// O'Level / Secondary School, Post-JAMB, and Professional are available for now (matches registration flow)
 function isCategoryUnlocked(label: string): boolean {
   const lower = label.toLowerCase();
   return (
@@ -63,18 +64,12 @@ function isCategoryUnlocked(label: string): boolean {
     lower.includes("post-jamb") ||
     lower.includes("post jamb") ||
     lower.includes("post-utme") ||
-    lower.includes("post utme")
+    lower.includes("post utme") ||
+    lower.includes("professional")
   );
 }
 
-const examSelectionSchema = z.object({
-  examType: z.string().min(1, "Please select an exam type"),
-  subjects: z
-    .array(z.string())
-    .min(1, "Please select at least one subject"),
-  planId: z.string().min(1, "Please select a subscription plan"),
-  numberOfStudents: z.array(z.number()),
-});
+// We will inline the schema to support dynamic category validation
 
 const CATEGORY_EXAMPLES: Record<string, string> = {
   "primary": "e.g. Common Entrance",
@@ -82,7 +77,7 @@ const CATEGORY_EXAMPLES: Record<string, string> = {
   "a'level": "e.g. IJMB, JUPEB",
   "post-jamb": "e.g. University Post-UTME",
   "university": "e.g. Course Exams",
-  "professional": "e.g. ICAN, CIPM",
+  "professional": "e.g. NMCN, ICAN, CIPM",
 };
 
 function getCategoryExample(label: string): string | undefined {
@@ -111,6 +106,8 @@ function AddSubscriptionPage() {
   // Track examType separately for hooks
   const [selectedExamType, setSelectedExamType] = useState("");
 
+  const isProfessional = category === "PROFESSIONAL_EXAMS" || category === "PROFESSIONAL";
+
   // TanStack Form for step 2
   const form = useForm({
     defaultValues: {
@@ -120,7 +117,17 @@ function AddSubscriptionPage() {
       numberOfStudents: [4] as number[],
     },
     validators: {
-      onSubmit: examSelectionSchema,
+      onSubmit: z.object({
+        examType: z.string().min(1, "Please select an exam type"),
+        subjects: z.array(z.string()),
+        planId: z.string().min(1, "Please select a subscription plan"),
+        numberOfStudents: z.array(z.number()),
+      }).refine((data) => {
+        if (!isProfessional && data.subjects.length === 0) {
+          return false;
+        }
+        return true;
+      }, { message: "Please select at least one subject", path: ["subjects"] }),
     },
     onSubmit: async () => {
       setStep("checkout");
@@ -134,13 +141,16 @@ function AddSubscriptionPage() {
     useExamTypes(category);
   const { data: availableSubjects, isLoading: isLoadingSubjects } =
     useExamSubjects(selectedExamType);
+  const { data: professionalHierarchy, isLoading: isLoadingHierarchy } =
+    useProfessionalHierarchy(isProfessional ? selectedExamType : "");
 
   const subscriptionType = isInstitutional ? "BODY" : "INDIVIDUAL";
-  const { data: plans, isLoading: isLoadingPlans } = usePaymentPlans(
-    category,
-    selectedExamType,
+  const { data: plans, isLoading: isLoadingPlans } = usePaymentPlans({
+    schoolType: category,
+    examType: selectedExamType,
+    examTypeId,
     subscriptionType,
-  );
+  });
 
   // Save exam selection mutation
   const saveExamSelection = useMutation({
@@ -197,8 +207,8 @@ function AddSubscriptionPage() {
 
   const examTypeOptions =
     examTypes?.map((type) => ({
-      label: type.name,
-      value: type.name,
+      label: type.label || type.name || type.value || "",
+      value: type.name || type.value || type.label || "",
     })) || [];
 
   const handleCategorySelect = (cat: { value: string; label: string }) => {
@@ -241,7 +251,7 @@ function AddSubscriptionPage() {
         subscriptionId: selectedPlan.id,
         amount: totalPrice,
         subscriptionType: isInstitutional ? "BODY" : "INDIVIDUAL",
-        numberOfSubjects: subjects.length,
+        numberOfSubjects: isProfessional ? 1 : subjects.length,
         numberOfStudents,
         schoolType: category,
         examType: selectedExamType,
@@ -469,59 +479,127 @@ function AddSubscriptionPage() {
               }}
             />
 
-            {/* Subjects */}
-            <form.Field
-              name="subjects"
-              children={(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
-                const maxSubjects = getMaxSubjects(selectedExamType);
-                return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldLabel className="text-[#6D6D6D] uppercase text-[11px] sm:text-[12px] font-medium">
-                      Subjects
-                    </FieldLabel>
-                    {!selectedExamType ? (
-                      <p className="text-sm text-gray-500 py-4">
-                        Please select an exam type first
-                      </p>
-                    ) : isLoadingSubjects ? (
-                      <div className="flex items-center gap-2 py-4">
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        <span className="text-gray-500 text-sm">
-                          Loading subjects...
-                        </span>
-                      </div>
-                    ) : availableSubjects && availableSubjects.length > 0 ? (
-                      <>
-                        <p className="text-xs sm:text-sm text-gray-600 mb-3">
-                          Please select your subjects (up to {maxSubjects})
+            {/* Subjects - Hidden for Professional Exams since they unlock full components */}
+            {!isProfessional ? (
+              <form.Field
+                name="subjects"
+                children={(field) => {
+                  const isInvalid =
+                    field.state.meta.isTouched && !field.state.meta.isValid;
+                  const maxSubjects = getMaxSubjects(selectedExamType);
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel className="text-[#6D6D6D] uppercase text-[11px] sm:text-[12px] font-medium">
+                        Subjects
+                      </FieldLabel>
+                      {!selectedExamType ? (
+                        <p className="text-sm text-gray-500 py-4">
+                          Please select an exam type first
                         </p>
-                        <SubjectPicker
-                          subjects={availableSubjects}
-                          value={field.state.value}
-                          onChange={field.handleChange}
-                          maxSubjects={maxSubjects}
-                          className="gap-2 sm:gap-3"
-                        />
-                        {field.state.value.length > 0 && (
-                          <div className="mt-3 text-xs text-[#6B7280]">
-                            Selected: {field.state.value.length}/{maxSubjects}
+                      ) : isLoadingSubjects ? (
+                        <div className="flex items-center gap-2 py-4">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span className="text-gray-500 text-sm">
+                            Loading subjects...
+                          </span>
+                        </div>
+                      ) : availableSubjects && availableSubjects.length > 0 ? (
+                        <>
+                          <p className="text-xs sm:text-sm text-gray-600 mb-3">
+                            Please select your subjects (up to {maxSubjects})
+                          </p>
+                          <SubjectPicker
+                            subjects={availableSubjects}
+                            value={field.state.value}
+                            onChange={field.handleChange}
+                            maxSubjects={maxSubjects}
+                            className="gap-2 sm:gap-3"
+                          />
+                          {field.state.value.length > 0 && (
+                            <div className="mt-3 text-xs text-[#6B7280]">
+                              Selected: {field.state.value.length}/{maxSubjects}
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <p className="text-sm text-gray-500 py-4">
+                          No subjects available for this exam type
+                        </p>
+                      )}
+                      {isInvalid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
+                    </Field>
+                  );
+                }}
+              />
+            ) : (
+              selectedExamType && (
+                <div className="space-y-3">
+                  <FieldLabel className="text-[#6D6D6D] uppercase text-[11px] sm:text-[12px] font-medium">
+                    Exam Structure Preview
+                  </FieldLabel>
+                  <p className="text-xs sm:text-sm text-gray-600">
+                    A subscription unlocks full access to all tracks and components.
+                  </p>
+                  
+                  {isLoadingHierarchy ? (
+                    <div className="flex items-center gap-2 py-4">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span className="text-gray-500 text-sm">
+                        Loading hierarchy...
+                      </span>
+                    </div>
+                  ) : professionalHierarchy?.professionalTracks?.length ? (
+                    <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2 rounded-xl border border-gray-100 p-3 bg-gray-50/50">
+                      {professionalHierarchy.professionalTracks.map((track) => (
+                        <div key={track.id} className="space-y-2">
+                          <h4 className="font-semibold text-sm text-gray-800">{track.name}</h4>
+                          <div className="grid grid-cols-1 gap-2 pl-3 border-l-2 border-gray-200">
+                            {track.components.map((comp) => (
+                              <div key={comp.id} className="bg-white p-2 rounded-lg shadow-sm border border-gray-100 text-xs">
+                                <div className="font-medium text-gray-900 flex justify-between items-center mb-1">
+                                  <span>{comp.name}</span>
+                                  <span className="text-[10px] bg-accent/10 text-accent px-1.5 py-0.5 rounded uppercase tracking-wider font-bold">
+                                    {comp.kind.replace("_", " ")}
+                                  </span>
+                                </div>
+                                {comp.domains && comp.domains.length > 0 && (
+                                  <div className="mt-2 flex flex-wrap gap-1.5" aria-label={`${comp.domains.length} domains covered`}>
+                                    {comp.domains.map((domain, index) => {
+                                      const domainStyles = [
+                                        "bg-amber-50 text-amber-700 border-amber-200",
+                                        "bg-sky-50 text-sky-700 border-sky-200",
+                                        "bg-emerald-50 text-emerald-700 border-emerald-200",
+                                        "bg-rose-50 text-rose-700 border-rose-200",
+                                      ];
+
+                                      return (
+                                        <span
+                                          key={domain.id}
+                                          className={`inline-flex max-w-full items-center rounded-full border px-2 py-1 text-[10px] font-medium leading-tight ${domainStyles[index % domainStyles.length]}`}
+                                          title={domain.name}
+                                        >
+                                          {domain.name}
+                                        </span>
+                                      );
+                                    })}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
                           </div>
-                        )}
-                      </>
-                    ) : (
-                      <p className="text-sm text-gray-500 py-4">
-                        No subjects available for this exam type
-                      </p>
-                    )}
-                    {isInvalid && (
-                      <FieldError errors={field.state.meta.errors} />
-                    )}
-                  </Field>
-                );
-              }}
-            />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500 py-4">
+                      No structure found.
+                    </p>
+                  )}
+                </div>
+              )
+            )}
 
             {/* Number of Students (Institutional) */}
             {isInstitutional && (

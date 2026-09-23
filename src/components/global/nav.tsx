@@ -231,34 +231,53 @@ export default function Nav() {
       </nav>
 
       {/* Mobile nav drawer */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-black/10 px-4 pb-4">
-          <ul className="flex flex-col gap-1 pt-2">
-            {navLinks.map((link) => {
-              const isActive =
-                link.url === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(link.url);
-
-              return (
-                <Link
-                  className={cn(
-                    "capitalize p-3 font-semibold transition-all duration-200 rounded-md",
-                    isActive
-                      ? "text-white bg-primary shadow-md"
-                      : "text-gray-700 hover:bg-gray-100"
-                  )}
-                  to={link.url}
-                  key={link.title}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {link.title}
-                </Link>
-              );
-            })}
-          </ul>
+      <div
+        className={cn(
+          "fixed inset-0 z-[100] bg-black/50 transition-opacity lg:hidden",
+          mobileMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        )}
+        onClick={() => setMobileMenuOpen(false)}
+      />
+      <div
+        className={cn(
+          "fixed inset-y-0 right-0 z-[100] w-64 bg-white shadow-xl transition-transform duration-300 ease-in-out lg:hidden flex flex-col",
+          mobileMenuOpen ? "translate-x-0" : "translate-x-full"
+        )}
+      >
+        <div className="flex items-center justify-between p-4 border-b border-gray-100">
+          <span className="font-semibold text-lg">Menu</span>
+          <button
+            onClick={() => setMobileMenuOpen(false)}
+            className="p-1.5 rounded-md hover:bg-gray-100 transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
-      )}
+        <ul className="flex flex-col gap-1 p-4 overflow-y-auto">
+          {navLinks.map((link) => {
+            const isActive =
+              link.url === "/"
+                ? pathname === "/"
+                : pathname.startsWith(link.url);
+
+            return (
+              <Link
+                className={cn(
+                  "capitalize p-3 font-semibold transition-all duration-200 rounded-md",
+                  isActive
+                    ? "text-white bg-primary shadow-md"
+                    : "text-gray-700 hover:bg-gray-100"
+                )}
+                to={link.url}
+                key={link.title}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {link.title}
+              </Link>
+            );
+          })}
+        </ul>
+      </div>
     </div>
   );
 }

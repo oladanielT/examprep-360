@@ -27,5 +27,9 @@ export interface UserSubscription {
     basePrice: number;
     currency: string;
     duration: number;
+    subscriptionType?: "INDIVIDUAL" | "BODY";
+    schoolType?: string;
+    examType?: string;
+    examTypeId?: string;
   };
 }

@@ -27,7 +27,7 @@ interface ApiError {
 
 // ==================== TUTORIAL QUERIES ====================
 
-export const useTutorials = (params: TutorialListParams = {}) => {
+export const useTutorials = (params: TutorialListParams = {}, options?: { enabled?: boolean }) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   return useQuery<TutorialListItem[]>({
@@ -41,7 +41,7 @@ export const useTutorials = (params: TutorialListParams = {}) => {
       );
       return data.data;
     },
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && (options?.enabled ?? true),
   });
 };
 

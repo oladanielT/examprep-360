@@ -2,9 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import CustomPageHeader from "@/components/global/custom-page-header";
 import { ChevronRight } from "lucide-react";
 import { useExamPreferences } from "@/feature/exams/hooks";
+import { isProfessionalExam } from "@/lib/exam-category";
 
 function TestsPage() {
   const { data, isLoading, error } = useExamPreferences();
+  const isProfessional = isProfessionalExam(data?.examCategory);
 
   return (
     <div className="">
@@ -40,7 +42,9 @@ function TestsPage() {
                   {data.examTypeRecord?.name || data.examSubtype || "Exam"}
                 </h6>
                 <p className="font-medium text-[10px] sm:text-xs text-gray-500">
-                  {data.subjects?.length || 0} Subjects
+                  {isProfessional
+                    ? "Full professional curriculum"
+                    : `${data.subjects?.length || 0} Subjects`}
                 </p>
               </div>
             </div>

@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import CustomPageHeader from "@/components/global/custom-page-header";
-import { useExamPreferences, useAvailableExams } from "@/feature/exams/hooks";
+import { useExamPreferences, useAvailableExams, useStartExam } from "@/feature/exams/hooks";
 import { useStartMockExams } from "@/feature/mock-exam/hooks";
 import {
   groupMocksByPaper,
@@ -18,6 +18,12 @@ import type {
   AvailableExam,
   AvailableExamsGrouped,
 } from "@/api/types/exam.types";
+import { isProfessionalExam } from "@/lib/exam-category";
+import PrimaryButton from "@/components/buttons/primary-button";
+import { CustomDialog } from "@/components/global/custom-dialog";
+import { toast } from "sonner";
+import { Empty, EmptyHeader, EmptyTitle, EmptyDescription } from "@/components/ui/empty";
+
 
 // Per-paper pick for a subject. The chosen mock is frozen when the user
 // selects the subject; switching subjects on/off re-rolls.
@@ -992,6 +998,136 @@ function NceeMockSetup({ subjects }: { subjects: Subject[] }) {
   );
 }
 
+function ProfessionalMockExams() {
+  const [selectedExam, setSelectedExam] = useState<AvailableExam | null>(null);
+  const [open, setOpen] = useState(false);
+  const { data: examsResponse, isLoading } = useAvailableExams({ examTypeEnum: "MOCK" });
+  const startExam = useStartExam();
+  const navigate = useNavigate();
+
+  // Handle both ungrouped array and grouped object responses
+  const exams = Array.isArray(examsResponse) ? examsResponse : [];
+
+  const handleStartExam = () => {
+    if (!selectedExam) return;
+
+    startExam.mutate(selectedExam.id, {
+      onSuccess: (data) => {
+        setOpen(false);
+        navigate({ to: `/exam/${data.id}` });
+      },
+      onError: (error: any) => {
+        const message = error?.response?.data?.message || error?.message || "Failed to start mock exam";
+        toast.error(message);
+      },
+    });
+  };
+
+  const openDialog = (exam: AvailableExam) => {
+    setSelectedExam(exam);
+    setOpen(true);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="py-10">
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="w-8 h-8 animate-spin text-[#F04F54]" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!exams || exams.length === 0) {
+    return (
+      <div className="py-10">
+        <Empty className="border rounded-xl py-8 bg-white shadow-sm">
+          <EmptyHeader>
+            <EmptyTitle>No mock exams available</EmptyTitle>
+            <EmptyDescription>
+              There are no mock exams for your track at the moment. Check back later.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      </div>
+    );
+  }
+
+  return (
+    <div className="py-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {exams.map((exam) => {
+          return (
+            <Card key={exam.id} className="flex flex-col gap-4 p-5 hover:shadow-md transition-all border-gray-100">
+              <img
+                width={2000}
+                height={2000}
+                alt="exam"
+                src={"/img/mock.png"}
+                className="w-full h-40 object-cover rounded-xl shrink-0"
+              />
+              <div className="flex flex-col flex-1">
+                <div>
+                  <h1 className="mb-2 text-sm font-semibold text-gray-900 leading-tight line-clamp-2">{exam.name}</h1>
+                  <p className="opacity-70 text-xs text-gray-600 line-clamp-2">
+                    {exam.description || "Start your mock simulation under real exam conditions."}
+                  </p>
+                </div>
+                <PrimaryButton
+                  title="Take Mock Exam"
+                  className="bg-[#F04F54] h-10 mt-6 hover:bg-[#F04F54]/90 text-white text-xs font-semibold w-full"
+                  onClick={() => openDialog(exam)}
+                />
+              </div>
+            </Card>
+          );
+        })}
+      </div>
+
+      <CustomDialog
+        size="xl"
+        title=""
+        onOpenChange={(isOpen) => setOpen(isOpen)}
+        open={open}
+        trigger={<div />}
+      >
+        {selectedExam && (
+          <div className="max-w-sm space-y-4 mx-auto text-center py-4">
+            <div className="w-20 h-20 mx-auto bg-red-50 rounded-2xl flex items-center justify-center mb-2">
+              <img
+                width={2000}
+                height={2000}
+                alt="exam"
+                src={"/img/mock.png"}
+                className="h-14 w-14 object-contain"
+              />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-gray-900">{selectedExam.name}</h2>
+              <p className="text-sm text-gray-500 mt-2 leading-relaxed">
+                {selectedExam.description || "You are about to start a timed mock simulation. Make sure you have a stable connection and enough time to complete it."}
+              </p>
+              <div className="mt-5 inline-flex flex-wrap items-center justify-center gap-2 text-xs font-medium text-gray-700 bg-gray-50 rounded-xl p-3 border border-gray-100 w-full">
+                <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-[#F04F54]" /> {selectedExam.durationMinutes} mins</span>
+                <span className="text-gray-300">|</span>
+                <span className="flex items-center gap-1.5"><BookOpen className="w-3.5 h-3.5 text-[#F04F54]" /> {selectedExam.numQuestions} q</span>
+                <span className="text-gray-300">|</span>
+                <span>Pass: {selectedExam.passingScore}%</span>
+              </div>
+            </div>
+            <PrimaryButton
+              title={startExam.isPending ? "Starting..." : "Start Simulation"}
+              className="h-12 w-full text-white bg-[#F04F54] hover:bg-[#F04F54]/90 font-semibold shadow-md mt-6"
+              onClick={handleStartExam}
+              disabled={startExam.isPending}
+            />
+          </div>
+        )}
+      </CustomDialog>
+    </div>
+  );
+}
+
 // ============================================================================
 // Setup page — branches on exam type
 // ============================================================================
@@ -1017,6 +1153,7 @@ function MockExamSetupPage() {
   // uses the JAMB flow but only needs 1 subject to start. Matches how the rest
   // of the app detects Post-UTME ("post" also matches /utme/, so check it here).
   const isPostUtme = /post/i.test(examTypeName);
+  const isProfessional = isProfessionalExam(preferences?.examCategory);
 
   if (loadingPrefs || loadingSubs) {
     return (
@@ -1068,21 +1205,25 @@ function MockExamSetupPage() {
         backLink="/tests/exams"
         heading="Exam Simulation"
         subHeading={
-          isNcee
-            ? "Paper 1 & Paper 2 are combined automatically"
-            : isMultiPaperExam
-              ? "Pick a subject — all papers are auto-included"
-              : isPostUtme
-                ? "Select your subject to start a mock exam"
-                : "Select subjects for a combined mock exam"
+          isProfessional
+            ? "Select a mock exam to start your simulation"
+            : isNcee
+              ? "Paper 1 & Paper 2 are combined automatically"
+              : isMultiPaperExam
+                ? "Pick a subject — all papers are auto-included"
+                : isPostUtme
+                  ? "Select your subject to start a mock exam"
+                  : "Select subjects for a combined mock exam"
         }
         searchValue={searchQuery}
         onSearchChange={(e) => setSearchQuery(e.target.value)}
-        searchPlaceholder="Search subjects..."
+        searchPlaceholder={isProfessional ? "Search mock exams..." : "Search subjects..."}
       />
 
       <div className="py-6 sm:py-8">
-        {isNcee ? (
+        {isProfessional ? (
+          <ProfessionalMockExams />
+        ) : isNcee ? (
           <NceeMockSetup subjects={allSubjects} />
         ) : isMultiPaperExam ? (
           <WaecMockSetup subjects={allSubjects} searchQuery={searchQuery} />

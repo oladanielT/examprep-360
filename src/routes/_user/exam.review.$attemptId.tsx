@@ -13,7 +13,7 @@ import {
   ChevronRight,
   MinusCircle,
 } from "lucide-react";
-import { useExamReview } from "@/feature/exams/hooks/useExams";
+import { useExamReview, useReviewTrialAttempt } from "@/feature/exams/hooks/useExams";
 import {
   QuestionCard,
   SingleChoiceQuestion,
@@ -36,7 +36,17 @@ const reviewParamsSchema = z.object({
 
 function ExamReviewPage() {
   const { attemptId } = Route.useParams();
-  const { data: review, isLoading, isError } = useExamReview(attemptId);
+  const search = Route.useSearch();
+  const isTrial = search.isTrial;
+  const entitlementId = search.entitlementId || "";
+
+  // Only enable the hook that matches the exam mode
+  const standardReview = useExamReview(attemptId, !isTrial);
+  const trialReview = useReviewTrialAttempt(entitlementId, attemptId, isTrial);
+
+  const activeQuery = isTrial ? trialReview : standardReview;
+  const { data: review, isLoading, isError } = activeQuery;
+
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // All hooks must be called before any early returns (Rules of Hooks)
@@ -610,4 +620,8 @@ export const Route = createFileRoute("/_user/exam/review/$attemptId")({
     parse: (params) => reviewParamsSchema.parse(params),
     stringify: (params) => params,
   },
+  validateSearch: (search) => z.object({
+    isTrial: z.boolean().optional().catch(false),
+    entitlementId: z.string().optional()
+  }).parse(search),
 });

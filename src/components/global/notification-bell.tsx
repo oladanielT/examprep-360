@@ -114,7 +114,7 @@ export default function NotificationBell({ className }: { className?: string }) 
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 z-50 w-80 sm:w-96 rounded-xl border bg-white shadow-xl">
+        <div className="fixed left-4 right-4 top-[72px] sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-2 z-50 sm:w-96 rounded-xl border bg-white shadow-xl">
           {/* Header */}
           <div className="flex items-center justify-between border-b px-4 py-3">
             <h3 className="text-sm font-semibold">Notifications</h3>

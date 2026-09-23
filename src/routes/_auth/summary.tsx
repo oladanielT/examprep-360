@@ -7,7 +7,7 @@ import PrimaryButton from "@/components/buttons/primary-button";
 import { Alert } from "@/components/ui/alert";
 import { useRegistrationStore } from "@/stores/registrationStore";
 import { useRegister, useLogin } from "@/feature/auth/hooks";
-import { useExamSubjects } from "@/feature/exams/hooks";
+import { useExamSubjects, useProfessionalHierarchy } from "@/feature/exams/hooks";
 import { useValidateReferral } from "@/feature/referral/hooks";
 import { useAuthStore } from "@/stores/authStore";
 import { useMutation } from "@tanstack/react-query";
@@ -15,6 +15,7 @@ import { apiClient } from "@/api/client";
 import { EXAM_SELECTION_ENDPOINTS } from "@/api/endpoints";
 import { toast } from "sonner";
 import { CheckCircle2, XCircle, Loader2, Gift } from "lucide-react";
+import { isProfessionalExam } from "@/lib/exam-category";
 
 type ReferralValidationStatus = "idle" | "checking" | "valid" | "invalid";
 
@@ -98,12 +99,22 @@ function SummaryPage() {
   });
 
   // Fetch subjects to get names
-  const { data: subjects } = useExamSubjects(data.examType);
+  const isProfessional = isProfessionalExam(data.category);
+  const { data: professionalHierarchy } = useProfessionalHierarchy(isProfessional ? data.examTypeId : "");
+  const { data: subjects } = useExamSubjects(isProfessional ? "" : data.examType);
 
   // Get subject labels from IDs
-  const selectedSubjectLabels = data.subjects
-    .map((id) => subjects?.find((s) => s.id === id)?.name)
-    .filter(Boolean);
+  const selectedSubjectLabels = isProfessional
+    ? (professionalHierarchy?.professionalTracks
+        .flatMap((track) => track.components)
+        .flatMap((comp) => comp.domains)
+        .filter((domain) => data.subjects.includes(domain.id))
+        .map((domain) => domain.name) || [])
+    : data.subjects
+        .map((id) => subjects?.find((s) => s.id === id)?.name)
+        .filter(Boolean);
+
+  const examTypeName = isProfessional ? (professionalHierarchy?.name || data.examType) : data.examType;
 
   const handleSubmit = async () => {
     // If a code is in the field, make sure it's been validated as valid
@@ -230,10 +241,10 @@ function SummaryPage() {
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-gray-500">Exam Type</span>
-              <span className="font-medium uppercase">{data.examType}</span>
+              <span className="font-medium uppercase">{examTypeName}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">Subjects</span>
+              <span className="text-gray-500">{isProfessional ? "Topics/Sections" : "Subjects"}</span>
               <span className="font-medium text-right max-w-50">
                 {selectedSubjectLabels.join(", ")}
               </span>

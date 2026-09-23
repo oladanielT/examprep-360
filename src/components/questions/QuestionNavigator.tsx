@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 interface QuestionNavigatorProps {
+  showGradingLegend?: boolean;
   totalQuestions: number;
   currentQuestion: number;
   answeredQuestions: Set<number>; // 0-indexed question numbers that have been answered
@@ -40,6 +41,7 @@ function formatTime(seconds: number): string {
 }
 
 export function QuestionNavigator({
+  showGradingLegend = true,
   totalQuestions,
   currentQuestion,
   answeredQuestions,
@@ -140,8 +142,12 @@ export function QuestionNavigator({
         {/* Legend */}
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] sm:text-xs text-gray-500 mt-2">
           <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block" /> Current</span>
-          <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-green-500 inline-block" /> Correct</span>
-          <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-red-500 inline-block" /> Wrong</span>
+          {showGradingLegend && (
+            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-green-500 inline-block" /> Correct</span>
+          )}
+          {showGradingLegend && (
+            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-red-500 inline-block" /> Wrong</span>
+          )}
           <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-yellow-100 border border-yellow-300 inline-block" /> Answered</span>
           <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-gray-200 inline-block" /> Unanswered</span>
         </div>

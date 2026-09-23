@@ -1,25 +1,64 @@
+import { isProfessionalExam } from "@/lib/exam-category";
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Layers, ChevronRight } from "lucide-react";
 import CustomPageHeader from "@/components/global/custom-page-header";
 import Subjects from "@/feature/tests/components/exams/subjects";
+import TrialDashboard from "@/feature/tests/components/exams/trial-dashboard";
+import { useSubscriptions } from "@/feature/subscription/hooks/useSubscription";
+import { findActivePaidSubscription } from "@/lib/subscription-access";
+import {
+  useAvailableExams,
+  useExamPreferences,
+  useProfessionalHierarchy,
+} from "@/feature/exams/hooks";
 
 function ExamsPage() {
   const [searchQuery, setSearchQuery] = useState("");
+  const { data: preferences, isLoading, isError } = useExamPreferences();
+  const isProfessional = isProfessionalExam(preferences?.examCategory);
+  const {
+    data: subscriptions,
+    isPending: subscriptionsPending,
+    isError: subscriptionsError,
+  } = useSubscriptions(isProfessional);
+  const professionalExamType = preferences?.examTypeId || "";
+  const activePaidSubscription = findActivePaidSubscription(
+    subscriptions,
+    professionalExamType,
+  );
+  useProfessionalHierarchy(isProfessional ? professionalExamType : "");
+  useAvailableExams({ examTypeEnum: "PRACTICE" }, isProfessional);
+  useAvailableExams({ examTypeEnum: "MOCK" }, isProfessional);
+  const unitLabel = isProfessional ? "Topic" : "Subject";
+  const unitLabelPlural = isProfessional ? "Topics/Sections" : "subjects";
+
+  if (isLoading || (isProfessional && subscriptionsPending)) {
+    return <div className="py-10 text-center">Loading exam preferences...</div>;
+  }
+  if (isError || !preferences?.examCategory) {
+    return <div className="py-10 text-center">Could not load your exam preferences.</div>;
+  }
+  if (isProfessional && subscriptionsError) {
+    return <div className="py-10 text-center">Could not verify your subscription access.</div>;
+  }
 
   return (
     <div className="">
       <CustomPageHeader
         backLink="/tests"
         heading="Take a Test"
-        subHeading="Pick a subject and year"
+        subHeading={isProfessional
+          ? "Choose a component and domain to begin practicing"
+          : `Pick a ${unitLabel.toLowerCase()} and year`}
         searchValue={searchQuery}
         onSearchChange={(e) => setSearchQuery(e.target.value)}
-        searchPlaceholder="Search subjects..."
+        searchPlaceholder={`Search ${unitLabelPlural.toLowerCase()}...`}
       />
 
-      {/* Exam Simulation Banner */}
-      <div className="pt-6 sm:pt-8 px-1">
+      {/* Professional simulation is available after paid access is active. */}
+      {(!isProfessional || activePaidSubscription) && (
+        <div className="pt-6 sm:pt-8 px-1">
         <Link
           to="/mock-exam/setup"
           className="flex items-center justify-between gap-4 bg-gradient-to-r from-[#F04F54]/10 to-orange-50 border border-[#F04F54]/20 rounded-2xl p-4 sm:p-5 hover:shadow-md transition-all active:scale-[0.99] group"
@@ -41,7 +80,15 @@ function ExamsPage() {
             <ChevronRight className="text-[#F04F54] w-4 h-4 sm:w-5 sm:h-5" />
           </span>
         </Link>
-      </div>
+        </div>
+      )}
+
+      {/* Trial Dashboard */}
+      {isProfessional && !activePaidSubscription && (
+        <div className="px-1 pt-6 sm:pt-8">
+          <TrialDashboard key={professionalExamType} />
+        </div>
+      )}
 
       <Subjects searchQuery={searchQuery} />
     </div>

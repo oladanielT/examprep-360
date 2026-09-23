@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-type UserType = "secondary" | "undergraduate" | "";
+type UserType = "secondary" | "undergraduate" | "professional" | "";
 
 interface RegistrationData {
   // Step 1: User Type & Category (from welcome page)

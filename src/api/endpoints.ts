@@ -87,7 +87,9 @@ export const TUTORIALS_ENDPOINTS = {
 export const EXAM_SELECTION_ENDPOINTS = {
   CATEGORIES: "/user/exam-selection/categories",
   EXAM_TYPES: (category: string) => `/user/exam-selection/exam-types/${category}`,
+  SUBTYPES: (category: string) => `/user/exam-selection/subtypes/${category}`,
   SUBJECTS: (examType: string) => `/user/exam-selection/subjects/${examType}`,
+  PROFESSIONAL_HIERARCHY: (examType: string) => `/user/exam-selection/professional-hierarchy/${examType}`,
   SAVE: "/user/exam-selection/save",
   SUBSCRIPTIONS: "/user/exam-selection/subscriptions",
   DELETE_SUBSCRIPTION: (id: string) => `/user/exam-selection/subscriptions/${id}`,
@@ -107,7 +109,24 @@ export const PAYMENT_ENDPOINTS = {
   ASSIGN_CODE: (id: string) => `/payment/institutional-codes/${id}/assign`,
   CHANGE_SUBJECTS: (id: string) => `/payment/subscriptions/${id}/subjects`,
   VALIDATE_PROMO: "/payment/promo/validate",
+  VALIDATE_ACCESS_GRANT: "/student/promos/validate",
+  REDEEM_ACCESS_GRANT: "/student/promos/redeem",
 } as const;
+
+// Trial endpoints
+export const TRIAL_ENDPOINTS = {
+  CHECK: (examTypeId: string) => `/student/exam-types/${examTypeId}/trial`,
+  ACTIVATE: (examTypeId: string) => `/student/exam-types/${examTypeId}/trial`,
+  QUESTIONS: (entitlementId: string) => `/student/trials/${entitlementId}/questions`,
+  START_ATTEMPT: (entitlementId: string) => `/student/trials/${entitlementId}/attempts`,
+  PAUSE: (entitlementId: string, attemptId: string) => `/student/trials/${entitlementId}/attempts/${attemptId}/pause`,
+  RESUME: (entitlementId: string, attemptId: string) => `/student/trials/${entitlementId}/attempts/${attemptId}/resume`,
+  SAVE_RESPONSE: (entitlementId: string, attemptId: string) => `/student/trials/${entitlementId}/attempts/${attemptId}/responses`,
+  SUBMIT: (entitlementId: string, attemptId: string) => `/student/trials/${entitlementId}/attempts/${attemptId}/submit`,
+  LIST_ATTEMPTS: (entitlementId: string) => `/student/trials/${entitlementId}/attempts`,
+  REVIEW_ATTEMPT: (entitlementId: string, attemptId: string) => `/student/trials/${entitlementId}/attempts/${attemptId}/review`,
+} as const;
+
 
 // Referral endpoints
 export const REFERRAL_ENDPOINTS = {

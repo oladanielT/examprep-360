@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { z } from "zod";
 import { ArrowLeft } from "@phosphor-icons/react";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { useExamStore } from "@/stores/examStore";
 import { useShallow } from "zustand/react/shallow";
 import {
@@ -102,14 +103,18 @@ function ExamPage() {
     }))
   );
 
+  const search = Route.useSearch();
+  const isTrial = search.isTrial;
+  const entitlementId = search.entitlementId;
+
   // API mutations
-  const submitResponse = useSubmitResponse();
-  const submitResponsesBulk = useSubmitResponsesBulk();
-  const pauseExam = usePauseExam();
-  const resumeExam = useResumeExam();
+  const submitResponse = useSubmitResponse(isTrial, entitlementId);
+  const submitResponsesBulk = useSubmitResponsesBulk(isTrial, entitlementId);
+  const pauseExam = usePauseExam(isTrial, entitlementId);
+  const resumeExam = useResumeExam(isTrial, entitlementId);
   const toggleBookmark = useToggleBookmark();
   const reportQuestion = useReportQuestion();
-  const completeExam = useCompleteExam();
+  const completeExam = useCompleteExam(isTrial, entitlementId);
 
   // Derive submittedQuestions from responses keys array
   const submittedQuestions = useMemo(() => {
@@ -165,6 +170,8 @@ function ExamPage() {
 
   // Check if this is a practice exam
   const isPracticeExam = currentAttempt?.exam?.examTypeEnum === "PRACTICE";
+  // Professional trial attempts reveal grading only in the completed review.
+  const hasImmediateFeedback = isPracticeExam && !isTrial;
 
   // Answered questions tracking
   const answeredQuestions = useMemo(() => {
@@ -261,6 +268,7 @@ function ExamPage() {
       {
         onSuccess: () => {
           // Response is automatically added to store by the hook
+          if (isTrial) toast("Answer saved");
           setErrorMessage(""); // Clear any previous errors
         },
         onError: (error: any) => {
@@ -269,7 +277,7 @@ function ExamPage() {
         },
       }
     );
-  }, [currentAttempt, currentQuestion, answers, submitResponse]);
+  }, [currentAttempt, currentQuestion, answers, submitResponse, isTrial]);
 
   // Check if current question has an answer selected
   const hasCurrentAnswer = useCallback(() => {
@@ -285,7 +293,7 @@ function ExamPage() {
 
   // Check if current question is already submitted
   // For mock exams, don't treat as "submitted" so users can re-submit with a different answer
-  const isCurrentQuestionSubmitted = isPracticeExam && currentQuestion ? submittedQuestions.has(currentQuestion.id) : false;
+  const isCurrentQuestionSubmitted = hasImmediateFeedback && currentQuestion ? submittedQuestions.has(currentQuestion.id) : false;
 
   // Check if there are unanswered questions (for warning)
   const hasUnansweredQuestions = useMemo(() => {
@@ -342,14 +350,14 @@ function ExamPage() {
     setErrorMessage(""); // Clear any previous errors
 
     // Collect answers to submit
-    // For practice: only unsubmitted answers (submitted ones are locked)
-    // For mock: all answered questions (user may have changed answers after submitting)
+    // Include all editable answers so changes made after saving are submitted.
+    // Practice answers with immediate feedback are locked after submission.
     const unsubmittedResponses = questions
       .filter((q) => {
         const answer = answers[q.id];
         const isSubmitted = submittedQuestions.has(q.id);
-        // For practice exams, skip already submitted (they're locked)
-        if (isPracticeExam && isSubmitted) return false;
+        // Skip submitted answers only when they are locked.
+        if (hasImmediateFeedback && isSubmitted) return false;
         if (answer === null || answer === undefined) return false;
         if (Array.isArray(answer)) return answer.length > 0;
         if (typeof answer === "string") return answer.length > 0;
@@ -389,7 +397,11 @@ function ExamPage() {
         },
         {
           onSuccess: () => {
-            navigate({ to: "/exam/review/$attemptId", params: { attemptId: currentAttempt.id } });
+            navigate({ 
+              to: "/exam/review/$attemptId", 
+              params: { attemptId: currentAttempt.id },
+              search: isTrial ? { isTrial: true, entitlementId } : undefined
+            });
           },
           onError: (error: any) => {
             const message = error?.response?.data?.message || error?.message || "Failed to submit responses. Please try again.";
@@ -401,7 +413,11 @@ function ExamPage() {
       // No unsubmitted responses, just complete the exam
       completeExam.mutate(currentAttempt.id, {
         onSuccess: () => {
-            navigate({ to: "/exam/review/$attemptId", params: { attemptId: currentAttempt.id } });
+            navigate({ 
+              to: "/exam/review/$attemptId", 
+              params: { attemptId: currentAttempt.id },
+              search: isTrial ? { isTrial: true, entitlementId } : undefined
+            });
         },
         onError: (error: any) => {
           const message = error?.response?.data?.message || error?.message || "Failed to complete exam. Please try again.";
@@ -409,7 +425,7 @@ function ExamPage() {
         },
       });
     }
-  }, [currentAttempt, questions, answers, submittedQuestions, submitResponsesBulk, completeExam, navigate]);
+  }, [currentAttempt, questions, answers, submittedQuestions, submitResponsesBulk, completeExam, navigate, isTrial, entitlementId, hasImmediateFeedback]);
 
   // Handle complete exam button click
   const handleCompleteExam = useCallback(() => {
@@ -554,9 +570,9 @@ function ExamPage() {
     const questionId = question.id;
     const answer = answers[questionId];
     const isSubmitted = submittedQuestions.has(questionId);
-    // For mock exams, don't lock the question after submission so users can change their answer
-    const isLocked = isPracticeExam && isSubmitted;
-    const showCorrectAnswer = isPracticeExam && isSubmitted;
+    // Answers stay editable until completion when grading is deferred.
+    const isLocked = hasImmediateFeedback && isSubmitted;
+    const showCorrectAnswer = hasImmediateFeedback && isSubmitted;
 
     switch (question.questionType) {
       case "SINGLE_CHOICE":
@@ -720,15 +736,16 @@ function ExamPage() {
         {/* Navigator — top on mobile, right sidebar on desktop */}
         <div className="w-full lg:w-72 lg:order-2 shrink-0">
           <QuestionNavigator
+            showGradingLegend={!isTrial}
             totalQuestions={questions.length}
             currentQuestion={currentQuestionIndex}
             answeredQuestions={answeredQuestions}
-            submittedQuestions={isPracticeExam ? new Set(
+            submittedQuestions={hasImmediateFeedback ? new Set(
               questions
                 .map((q, idx) => (submittedQuestions.has(q.id) ? idx : -1))
                 .filter((idx) => idx !== -1)
             ) : new Set<number>()}
-            correctQuestions={isPracticeExam ? correctQuestions : new Set<number>()}
+            correctQuestions={hasImmediateFeedback ? correctQuestions : new Set<number>()}
             timeRemaining={timeRemaining ?? 0}
             isPaused={!timerRunning}
             isBookmarked={currentQuestion ? bookmarkedQuestions.has(currentQuestion.id) : false}
@@ -755,7 +772,7 @@ function ExamPage() {
               {renderQuestion(currentQuestion)}
 
               {/* Show explanation after submission for practice exams */}
-              {isPracticeExam &&
+              {hasImmediateFeedback &&
                 submittedQuestions.has(currentQuestion.id) &&
                 currentQuestion.explanation && (
                   <Explanation explanation={currentQuestion.explanation} />
@@ -878,4 +895,8 @@ export const Route = createFileRoute("/_user/exam/$attemptId")({
     parse: (params) => examParamsSchema.parse(params),
     stringify: (params) => params,
   },
+  validateSearch: (search) => z.object({
+    isTrial: z.boolean().optional().catch(false),
+    entitlementId: z.string().optional()
+  }).parse(search),
 });

@@ -266,7 +266,9 @@ export interface ExplanationData {
 // ==================== REQUEST TYPES ====================
 
 export interface StartPracticeRequest {
-  subjectId: string;
+  subjectId?: string;
+  professionalComponentId?: string;
+  professionalDomainId?: string;
   courseId?: string;
   topicIds?: string[];
   year?: number;
@@ -275,7 +277,9 @@ export interface StartPracticeRequest {
 }
 
 export interface ConfigurePracticeRequest {
-  subjectId: string;
+  subjectId?: string;
+  professionalComponentId?: string;
+  professionalDomainId?: string;
   courseId?: string;
   questionCount?: number;
   timeLimit?: number;
@@ -632,4 +636,56 @@ export interface ExamSubtype {
   name: string;
   category: string;
   imageUrl?: string;
+}
+
+// ==================== PROFESSIONAL HIERARCHY TYPES ====================
+export interface ProfessionalDomain {
+  id: string;
+  componentId: string;
+  code: string;
+  name: string;
+  position: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  questionCount?: number;
+  _count?: {
+    questions: number;
+  };
+}
+
+export interface ProfessionalComponent {
+  id: string;
+  trackId: string;
+  code: string;
+  name: string;
+  kind: "PAPER" | "OSCE" | "VIVA_PROJECT" | string;
+  position: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  questionCount?: number;
+  _count?: {
+    questions: number;
+  };
+  domains: ProfessionalDomain[];
+}
+
+export interface ProfessionalTrack {
+  id: string;
+  examTypeId: string;
+  code: string;
+  name: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  components: ProfessionalComponent[];
+}
+
+export interface ProfessionalHierarchyResponse {
+  id: string;
+  code: string;
+  slug: string;
+  name: string;
+  professionalTracks: ProfessionalTrack[];
 }

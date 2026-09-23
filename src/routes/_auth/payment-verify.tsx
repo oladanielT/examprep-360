@@ -35,12 +35,10 @@ function PaymentVerifyPage() {
     verifyPaymentMutation.mutate(
       { reference },
       {
-        onSuccess: (data: any) => {
+        onSuccess: (data) => {
           if (
             data.verified ||
             data.transaction?.status === "SUCCESS" ||
-            data.success ||
-            data.status === "success" ||
             (data.message && data.message.toLowerCase().includes("approved"))
           ) {
             setVerificationStatus("success");
@@ -104,17 +102,15 @@ function PaymentVerifyPage() {
               <p className="text-[#667085]">
                 Your subscription has been activated. You can now access all features.
               </p>
-              {verifyPaymentMutation.data?.subscription && (
+              {verifyPaymentMutation.data?.transaction.subscription && (
                 <div className="mt-4 p-4 bg-gray-50 rounded-lg text-sm">
                   <p className="text-gray-600">
-                    <strong>Subscription ID:</strong>{" "}
-                    {verifyPaymentMutation.data.subscription.id}
+                    <strong>Subscription:</strong>{" "}
+                    {verifyPaymentMutation.data.transaction.subscription.name}
                   </p>
                   <p className="text-gray-600">
-                    <strong>Valid Until:</strong>{" "}
-                    {new Date(
-                      verifyPaymentMutation.data.subscription.endDate
-                    ).toLocaleDateString()}
+                    <strong>Duration:</strong>{" "}
+                    {verifyPaymentMutation.data.transaction.subscription.duration} days
                   </p>
                 </div>
               )}

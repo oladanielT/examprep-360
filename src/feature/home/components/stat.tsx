@@ -79,11 +79,16 @@ export default function Stat() {
         <EmptyStat />
       )}
 
-      <Link to="/subscription/add">
-        <Button className="text-base font-semibold text-accent bg-transparent px-8 sm:px-20! py-6 sm:py-8! rounded-full hover:bg-accent/10 border w-full sm:w-auto">
-          + Subscribe to New Exam
-        </Button>
-      </Link>
+      <div className="flex flex-col items-center gap-1 w-full sm:w-auto mt-2 sm:mt-0">
+        <Link to="/subscription/add" className="w-full sm:w-auto">
+          <Button className="text-base font-semibold text-accent bg-transparent px-8 sm:px-20! py-6 sm:py-8! rounded-full hover:bg-accent/10 border w-full sm:w-auto">
+            + Subscribe to New Exam
+          </Button>
+        </Link>
+        <span className="text-[11px] text-gray-500 max-w-[250px] text-center -mt-0.5">
+          (You can subscribe to as many exams as you need)
+        </span>
+      </div>
     </div>
   );
 }

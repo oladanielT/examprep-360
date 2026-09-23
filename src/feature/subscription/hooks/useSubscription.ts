@@ -9,7 +9,7 @@ interface ApiError {
   statusCode?: number;
 }
 
-export const useSubscriptions = () => {
+export const useSubscriptions = (enabled = true) => {
   return useQuery<UserSubscription[]>({
     queryKey: ["subscriptions"],
     queryFn: async () => {
@@ -18,6 +18,7 @@ export const useSubscriptions = () => {
       );
       return data;
     },
+    enabled,
   });
 };
 

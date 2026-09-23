@@ -1,3 +1,4 @@
+import { isProfessionalExam } from "@/lib/exam-category";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Logo } from "@/components/global/logo";
 import PrimaryButton from "@/components/buttons/primary-button";
@@ -8,8 +9,10 @@ import {
   usePaymentPlans,
   useInitializePayment,
   useRedeemLicense,
+  useActivateTrial,
   useStartTrial,
   useValidatePromo,
+  useRedeemPromo,
 } from "@/feature/payment/hooks";
 import { useWalletBalance } from "@/feature/wallet/hooks";
 import { useExamSubjects } from "@/feature/exams/hooks";
@@ -87,6 +90,7 @@ function CheckoutPage() {
 
   const examType = registrationData.examType;
   const examCategory = registrationData.category;
+  const isProfessional = isProfessionalExam(examCategory);
   const numberOfStudents = registrationData.isInstitutional
     ? registrationData.students
     : undefined;
@@ -164,15 +168,18 @@ function CheckoutPage() {
   const subscriptionType = registrationData.isInstitutional
     ? "BODY"
     : "INDIVIDUAL";
-  const { data: plans, isLoading: isLoadingPlans } = usePaymentPlans(
-    examCategory,
+  const { data: plans, isLoading: isLoadingPlans } = usePaymentPlans({
+    schoolType: examCategory,
     examType,
+    examTypeId: registrationData.examTypeId,
     subscriptionType,
-  );
+  });
 
   const initializePaymentMutation = useInitializePayment();
   const redeemLicenseMutation = useRedeemLicense();
-  const startTrialMutation = useStartTrial();
+  const activateTrialMutation = useActivateTrial();
+  const academicTrialMutation = useStartTrial();
+  const trialMutation = isProfessional ? activateTrialMutation : academicTrialMutation;
 
   // Find the selected plan
   const selectedPlan = plans?.find((p) => p.id === selectedPlanId);
@@ -192,7 +199,7 @@ function CheckoutPage() {
   const baseTotalPrice = selectedPlan ? calcPlanTotal(selectedPlan) : 0;
 
   // Apply promo discount
-  const promoValid = !!promoResult?.promo?.isActive;
+  const promoValid = promoResult?.valid !== false && !!promoResult?.promo?.isActive;
   const promoDiscount = promoValid
     ? promoResult!.discountInfo
       ? promoResult!.discountInfo.discountAmount
@@ -367,18 +374,41 @@ function CheckoutPage() {
           description: "Your subscription has been activated.",
         });
         navigationTimerRef.current = setTimeout(() => {
-          resetRegistration();
-          navigate({ to: "/" });
-        }, 1000);
+          navigate({ to: "/tests" }).then(() => resetRegistration());
+        }, 2000);
       } else {
-        toast.error("Payment initialization failed", {
-          description: "Could not get payment URL. Please try again.",
-        });
+        toast.error("Failed to initialize payment properly");
       }
-    } catch (error) {
-      console.error("Payment initialization failed:", error);
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.message || "Failed to initialize payment",
+      );
     }
   };
+
+  const redeemPromoMutation = useRedeemPromo();
+
+  const handleRedeemAccessGrant = async () => {
+    if (!appliedPromo) return;
+    try {
+      await redeemPromoMutation.mutateAsync({
+        code: appliedPromo,
+        idempotencyKey: Math.random().toString(36).substring(7),
+      });
+      toast.success("Promo redeemed successfully!", {
+        description: "Your free access has been activated.",
+      });
+      navigate({ to: "/tests" }).then(() => resetRegistration());
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.message || "Failed to redeem promo code",
+      );
+    }
+  };
+
+  const hasAccessGrant = 
+    promoResult?.promo?.benefitType === "FREE_ACCESS" || 
+    promoResult?.promo?.benefitType === "TEMPORARY_ACCESS";
 
   const handleRedeemLicense = async () => {
     if (!licenseCode || !studentId) return;
@@ -402,8 +432,7 @@ function CheckoutPage() {
           duration: 4000,
         });
         navigationTimerRef.current = setTimeout(() => {
-          resetRegistration();
-          navigate({ to: isAuthenticated ? "/" : "/sign-in" });
+          navigate({ to: isAuthenticated ? "/" : "/sign-in" }).then(() => resetRegistration());
         }, 1000);
       }
     } catch (error: any) {
@@ -432,30 +461,34 @@ function CheckoutPage() {
       return;
     }
 
-    const trialPlan = selectedPlanId
-      ? plans?.find((p) => p.id === selectedPlanId)
-      : plans?.[0];
-    if (!trialPlan) {
-      toast.error("No plans available. Please try again shortly.");
+    if (isProfessional && !registrationData.examTypeId) {
+      toast.error("Missing exam type information. Please go back and select an exam.");
       return;
     }
 
     try {
       // Save updated subjects to backend before starting trial
-      if (isAuthenticated) {
+      if (isAuthenticated && !isProfessional) {
         await saveExamSelection.mutateAsync(registrationData.subjects);
       }
 
-      const response = await startTrialMutation.mutateAsync({
-        subscriptionId: trialPlan.id,
-      });
+      let started = false;
+      if (isProfessional) {
+        const response = await activateTrialMutation.mutateAsync(registrationData.examTypeId);
+        started = response.status === "ACTIVE" && !!response.entitlementId;
+      } else {
+        const trialPlan = selectedPlanId
+          ? plans?.find((plan) => plan.id === selectedPlanId)
+          : plans?.[0];
+        if (!trialPlan) {
+          toast.error("No plans available. Please try again shortly.");
+          return;
+        }
+        const response = await academicTrialMutation.mutateAsync({ subscriptionId: trialPlan.id });
+        started = !!(response && (response.success || response.trialEndDate || (response as { id?: string }).id));
+      }
 
-      if (
-        response &&
-        ((response as any).success ||
-          (response as any).trialEndDate ||
-          (response as any).id)
-      ) {
+      if (started) {
         setTrialStarted(true);
         toast.success("Free trial started!", {
           description: isAuthenticated
@@ -463,8 +496,7 @@ function CheckoutPage() {
             : "You can now sign in to access all features.",
         });
         navigationTimerRef.current = setTimeout(() => {
-          resetRegistration();
-          navigate({ to: isAuthenticated ? "/" : "/sign-in" });
+          navigate({ to: isAuthenticated ? "/" : "/sign-in" }).then(() => resetRegistration());
         }, 1500);
       }
     } catch (error: any) {
@@ -541,9 +573,9 @@ function CheckoutPage() {
           </p>
         </div>
 
-        {startTrialMutation.isError && (
+        {trialMutation.isError && (
           <Alert variant="destructive">
-            {startTrialMutation.error?.response?.data?.message ||
+            {trialMutation.error?.response?.data?.message ||
               "Failed to start trial. Please try again."}
           </Alert>
         )}
@@ -585,14 +617,14 @@ function CheckoutPage() {
             <button
               onClick={handleStartTrial}
               disabled={
-                startTrialMutation.isPending || isLoadingPlans || trialStarted
+                trialMutation.isPending || saveExamSelection.isPending || (!isProfessional && isLoadingPlans) || trialStarted
               }
               className="w-full py-4 px-6 border-2 border-gray-200 rounded-xl text-left hover:border-accent/50 transition-colors disabled:opacity-50"
             >
               <h3 className="font-semibold text-[#101828]">
                 {trialStarted
                   ? "Trial Started!"
-                  : startTrialMutation.isPending
+                  : trialMutation.isPending
                     ? "Starting Trial..."
                     : "Start Free Trial"}
               </h3>
@@ -871,16 +903,27 @@ function CheckoutPage() {
                       )}
                     </div>
                     {appliedPromo && promoResult && (
-                      <p
-                        className={cn(
-                          "text-xs",
-                          promoValid ? "text-green-600" : "text-red-500",
+                      <div className="flex flex-col gap-1">
+                        <p
+                          className={cn(
+                            "text-xs font-medium",
+                            promoValid ? "text-green-600" : "text-red-500",
+                          )}
+                        >
+                          {promoValid
+                            ? hasAccessGrant
+                              ? promoResult.promo?.benefitType === "TEMPORARY_ACCESS"
+                                ? `Temporary Full Access (${promoResult.promo?.durationDays || 0} Days)`
+                                : `Free Access Granted`
+                              : `Discount applied: -${selectedPlan?.currency ?? "NGN"} ${promoDiscount.toLocaleString()}`
+                            : promoResult.message || "Invalid promo code"}
+                        </p>
+                        {promoValid && promoResult.promo?.examType?.name && (
+                          <p className="text-xs text-gray-500">
+                            Valid for: <strong>{promoResult.promo.examType.name}</strong>
+                          </p>
                         )}
-                      >
-                        {promoValid
-                          ? `Discount applied: -${selectedPlan?.currency ?? "NGN"} ${promoDiscount.toLocaleString()}`
-                          : promoResult.message || "Invalid promo code"}
-                      </p>
+                      </div>
                     )}
                   </div>
                 )}
@@ -963,22 +1006,35 @@ function CheckoutPage() {
                     </div>
                   )}
 
-                <PrimaryButton
-                  onClick={handlePayNow}
-                  disabled={
-                    !selectedPlanId || initializePaymentMutation.isPending
-                  }
-                  className="w-full bg-accent hover:bg-accent/80 text-white text-lg disabled:opacity-50"
-                  title={
-                    initializePaymentMutation.isPending
-                      ? "Processing..."
-                      : selectedPlan
-                        ? totalPrice > 0
-                          ? `Pay ${selectedPlan.currency} ${totalPrice.toLocaleString()}`
-                          : "Activate Now"
-                        : "Select a Plan"
-                  }
-                />
+                {hasAccessGrant ? (
+                  <PrimaryButton
+                    onClick={handleRedeemAccessGrant}
+                    disabled={redeemPromoMutation.isPending}
+                    className="w-full bg-accent hover:bg-accent/80 text-white text-lg disabled:opacity-50"
+                    title={
+                      redeemPromoMutation.isPending
+                        ? "Claiming..."
+                        : "Claim Free Access"
+                    }
+                  />
+                ) : (
+                  <PrimaryButton
+                    onClick={handlePayNow}
+                    disabled={
+                      !selectedPlanId || initializePaymentMutation.isPending
+                    }
+                    className="w-full bg-accent hover:bg-accent/80 text-white text-lg disabled:opacity-50"
+                    title={
+                      initializePaymentMutation.isPending
+                        ? "Processing..."
+                        : selectedPlan
+                          ? totalPrice > 0
+                            ? `Pay ${selectedPlan.currency} ${totalPrice.toLocaleString()}`
+                            : "Activate Now"
+                          : "Select a Plan"
+                    }
+                  />
+                )}
 
                 <button
                   onClick={() => {

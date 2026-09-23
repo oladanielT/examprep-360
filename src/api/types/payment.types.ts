@@ -71,12 +71,16 @@ export interface VerifyPaymentResponse {
     currency: string;
     paidAt: string | null;
     failureReason: string | null;
-  };
-  subscription?: {
-    id: string;
-    planId: string;
-    startDate: string;
-    endDate: string;
+    examType?: string;
+    examTypeId?: string;
+    subscription?: {
+      id: string;
+      name: string;
+      examType: string;
+      examTypeId: string;
+      schoolType: string;
+      duration: number;
+    };
   };
 }
 
@@ -145,23 +149,31 @@ export interface CodeRedemption {
 }
 
 export interface ValidatePromoResponse {
+  valid: boolean;
   promo: {
-    id: string;
+    id?: string;
     code: string;
-    discountType: "PERCENTAGE" | "FIXED";
-    discountValue: number;
-    startDate: string;
-    endDate: string;
-    maxUsage: number | null;
-    usageCount: number;
-    perUserLimit: number;
-    eligibleProducts: string[];
-    isStackable: boolean;
-    isActive: boolean;
-    createdAt: string;
-    updatedAt: string;
+    benefitType?: "DISCOUNT" | "FREE_ACCESS" | "TEMPORARY_ACCESS";
+    discountType?: "PERCENTAGE" | "FIXED"; // Legacy support
+    discountValue?: number; // Legacy support
+    discountPercentage?: number | null;
+    scope?: "GLOBAL" | "EXAM_TYPE_SPECIFIC" | "COURSE_SPECIFIC";
+    examTypeId?: string;
+    durationDays?: number | null;
+    examType?: {
+      id: string;
+      name: string;
+    };
+    startDate?: string;
+    endDate?: string;
+    maxUsage?: number | null;
+    usageCount?: number;
+    perUserLimit?: number;
+    eligibleProducts?: string[];
+    isStackable?: boolean;
+    isActive?: boolean;
   } | null;
-  discountInfo: {
+  discountInfo?: {
     discountAmount: number;
     finalPrice: number;
   } | null;

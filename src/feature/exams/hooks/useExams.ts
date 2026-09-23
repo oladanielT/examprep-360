@@ -1,6 +1,7 @@
+import { isProfessionalExam } from "@/lib/exam-category";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/api/client";
-import { EXAM_ENDPOINTS, EXAM_SELECTION_ENDPOINTS } from "@/api/endpoints";
+import { EXAM_ENDPOINTS, EXAM_SELECTION_ENDPOINTS, TRIAL_ENDPOINTS } from "@/api/endpoints";
 import { useAuthStore } from "@/stores/authStore";
 import { useExamStore } from "@/stores/examStore";
 import type {
@@ -48,6 +49,22 @@ export const useExamPreferences = () => {
       const { data } = await apiClient.get<ExamPreferencesResponse>(
         EXAM_ENDPOINTS.PREFERENCES
       );
+      if (import.meta.env.DEV) {
+        console.info("[exam-debug] preferences", {
+          examCategory: data.examCategory,
+          examSubtype: data.examSubtype,
+          examTypeId: data.examTypeId,
+          examTypeRecord: data.examTypeRecord,
+          selectedSubjects: data.selectedSubjects,
+          selectedCourses: data.selectedCourses,
+          subjects: data.subjects?.map((subject) => ({
+            id: subject.id,
+            name: subject.name,
+          })),
+          subjectCount: data.subjects?.length ?? 0,
+          courseCount: data.courses?.length ?? 0,
+        });
+      }
       // Store in Zustand for persistence
       setPreferences(data);
       return data;
@@ -58,7 +75,10 @@ export const useExamPreferences = () => {
 };
 
 // Fetch available exams (for /tests/exams page - list of exams filtered by subject, year, etc.)
-export const useAvailableExams = (params: AvailableExamsParams) => {
+export const useAvailableExams = (
+  params: AvailableExamsParams,
+  enabled = true,
+) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   return useQuery<AvailableExamsResponse>({
@@ -68,9 +88,28 @@ export const useAvailableExams = (params: AvailableExamsParams) => {
         EXAM_ENDPOINTS.AVAILABLE,
         { params }
       );
+      if (import.meta.env.DEV) {
+        const exams = Array.isArray(data)
+          ? data
+          : Object.values(data).flat();
+        console.info("[exam-debug] available exams", {
+          params,
+          examCount: exams.length,
+          exams: exams.map((exam) => ({
+            id: exam.id,
+            name: exam.name,
+            examTypeEnum: exam.examTypeEnum,
+            subjectId: exam.subjectId,
+            subjectName: exam.subject?.name,
+            numQuestions: exam.numQuestions,
+            durationMinutes: exam.durationMinutes,
+            status: exam.status,
+          })),
+        });
+      }
       return data;
     },
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && enabled,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 };
@@ -85,6 +124,13 @@ export const useExamQuestions = (examId: string, enabled = true) => {
       const { data } = await apiClient.get<ExamQuestionsResponse>(
         EXAM_ENDPOINTS.QUESTIONS(examId)
       );
+      if (import.meta.env.DEV) {
+        console.info("[exam-debug] exam questions", {
+          examId,
+          questionCount: data.questions?.length ?? 0,
+          questionIds: data.questions?.map((question) => question.id),
+        });
+      }
       return data;
     },
     enabled: isAuthenticated && !!examId && enabled,
@@ -179,6 +225,32 @@ export const useExamTypes = (category: string) => {
   return useQuery<ExamSubtypeOption[]>({
     queryKey: ["examSelection", "examTypes", category],
     queryFn: async () => {
+      const isProfessional = isProfessionalExam(category);
+      if (isProfessional) {
+        const { data } = await apiClient.get<
+          Array<{
+            id: string;
+            value: string;
+            slug?: string;
+            label: string;
+          }>
+        >(EXAM_SELECTION_ENDPOINTS.SUBTYPES(category));
+
+        if (import.meta.env.DEV) {
+          console.info("[exam-debug] professional subtypes", {
+            category,
+            options: data,
+          });
+        }
+
+        return data.map((subtype) => ({
+          id: subtype.id,
+          name: subtype.value || subtype.label,
+          label: subtype.label,
+          category,
+        }));
+      }
+
       const { data } = await apiClient.get<ExamSubtypeOption[]>(
         EXAM_SELECTION_ENDPOINTS.EXAM_TYPES(category)
       );
@@ -196,6 +268,41 @@ export const useExamSubjects = (examType: string) => {
       const { data } = await apiClient.get<SubjectOption[]>(
         EXAM_SELECTION_ENDPOINTS.SUBJECTS(examType)
       );
+      return data;
+    },
+    enabled: !!examType,
+    staleTime: 1000 * 60 * 60,
+  });
+};
+
+export const useProfessionalHierarchy = (examType: string) => {
+  return useQuery<import("@/api/types/exam.types").ProfessionalHierarchyResponse>({
+    queryKey: ["examSelection", "professional-hierarchy", examType],
+    queryFn: async () => {
+      const { data } = await apiClient.get<import("@/api/types/exam.types").ProfessionalHierarchyResponse>(
+        EXAM_SELECTION_ENDPOINTS.PROFESSIONAL_HIERARCHY(examType)
+      );
+      if (import.meta.env.DEV) {
+        console.info("[exam-debug] professional hierarchy", {
+          examType,
+          trackCount: data.professionalTracks?.length ?? 0,
+          tracks: data.professionalTracks?.map((track) => ({
+            id: track.id,
+            name: track.name,
+            componentCount: track.components?.length ?? 0,
+            components: track.components?.map((component) => ({
+              id: component.id,
+              name: component.name,
+              kind: component.kind,
+              domainCount: component.domains?.length ?? 0,
+              domains: component.domains?.map((domain) => ({
+                id: domain.id,
+                name: domain.name,
+              })),
+            })),
+          })),
+        });
+      }
       return data;
     },
     enabled: !!examType,
@@ -226,12 +333,12 @@ export const useStartPractice = () => {
         const msg = error?.response?.data?.message;
         if (status === 403) {
           if (msg?.includes("active subscription")) {
-            throw new Error("Your free trial has expired. Please upgrade to continue practicing.");
+            throw new Error("You do not have an active subscription for this content.");
           }
           if (msg?.includes("limited to exam year")) {
             const yearMatch = msg.match(/year (\d{4})/);
             const year = yearMatch ? yearMatch[1] : "the configured";
-            throw new Error(`Free trial practice is only available for ${year} questions.`);
+            throw new Error(`Practice is only available for ${year} questions.`);
           }
           if (msg?.includes("has not been configured")) {
             throw new Error("Trial practice is not available yet. Please try again later.");
@@ -273,12 +380,12 @@ export const useConfigurePractice = () => {
         const msg = error?.response?.data?.message;
         if (status === 403) {
           if (msg?.includes("active subscription")) {
-            throw new Error("Your free trial has expired. Please upgrade to continue practicing.");
+            throw new Error("You do not have an active subscription for this content.");
           }
           if (msg?.includes("limited to exam year")) {
             const yearMatch = msg.match(/year (\d{4})/);
             const year = yearMatch ? yearMatch[1] : "the configured";
-            throw new Error(`Free trial practice is only available for ${year} questions.`);
+            throw new Error(`Practice is only available for ${year} questions.`);
           }
           if (msg?.includes("has not been configured")) {
             throw new Error("Trial practice is not available yet. Please try again later.");
@@ -323,7 +430,7 @@ export const useStartExam = () => {
 };
 
 // Submit a response
-export const useSubmitResponse = () => {
+export const useSubmitResponse = (isTrial?: boolean, entitlementId?: string) => {
   const { submitResponse } = useExamStore();
 
   return useMutation<
@@ -332,8 +439,12 @@ export const useSubmitResponse = () => {
     { attemptId: string; request: SubmitResponseRequest }
   >({
     mutationFn: async ({ attemptId, request }) => {
+      const endpoint = isTrial && entitlementId
+        ? `/student/trials/${entitlementId}/attempts/${attemptId}/responses`
+        : EXAM_ENDPOINTS.SUBMIT_RESPONSE(attemptId);
+        
       const { data } = await apiClient.post<AttemptResponse>(
-        EXAM_ENDPOINTS.SUBMIT_RESPONSE(attemptId),
+        endpoint,
         request
       );
       return data;
@@ -345,7 +456,7 @@ export const useSubmitResponse = () => {
 };
 
 // Submit responses in bulk (for completing exams)
-export const useSubmitResponsesBulk = () => {
+export const useSubmitResponsesBulk = (isTrial?: boolean, entitlementId?: string) => {
   const queryClient = useQueryClient();
   const { submitResponse, clearExam } = useExamStore();
 
@@ -355,6 +466,22 @@ export const useSubmitResponsesBulk = () => {
     { attemptId: string; request: SubmitResponsesBulkRequest }
   >({
     mutationFn: async ({ attemptId, request }) => {
+      if (isTrial && entitlementId) {
+        for (const response of request.responses) {
+          await apiClient.post(
+            `/student/trials/${entitlementId}/attempts/${attemptId}/responses`,
+            response,
+          );
+        }
+        if (request.complete) {
+          await apiClient.post(
+            `/student/trials/${entitlementId}/attempts/${attemptId}/submit`,
+          );
+        }
+        // Save-answer responses are not documented as graded AttemptResponses.
+        return { responses: [] } as unknown as SubmitResponsesBulkResponse;
+      }
+
       const { data } = await apiClient.post<SubmitResponsesBulkResponse>(
         EXAM_ENDPOINTS.SUBMIT_RESPONSES_BULK(attemptId),
         request
@@ -368,6 +495,10 @@ export const useSubmitResponsesBulk = () => {
       });
       // If this was a completing bulk submit, clear exam state and invalidate caches
       if (variables.request.complete) {
+        if (isTrial) {
+          queryClient.invalidateQueries({ queryKey: ["trialAttempts"] });
+          queryClient.invalidateQueries({ queryKey: ["trialAvailability"] });
+        }
         clearExam();
         queryClient.invalidateQueries({ queryKey: ["examHistory"] });
         queryClient.invalidateQueries({ queryKey: ["progress"] });
@@ -377,14 +508,15 @@ export const useSubmitResponsesBulk = () => {
 };
 
 // Pause exam
-export const usePauseExam = () => {
+export const usePauseExam = (isTrial?: boolean, entitlementId?: string) => {
   const { pauseTimer } = useExamStore();
 
   return useMutation<ExamAttempt, AxiosError<ApiError>, string>({
     mutationFn: async (attemptId) => {
-      const { data } = await apiClient.patch<ExamAttempt>(
-        EXAM_ENDPOINTS.PAUSE(attemptId)
-      );
+      const endpoint = isTrial && entitlementId
+        ? TRIAL_ENDPOINTS.PAUSE(entitlementId, attemptId)
+        : EXAM_ENDPOINTS.PAUSE(attemptId);
+      const { data } = await apiClient.patch<ExamAttempt>(endpoint);
       return data;
     },
     onSuccess: () => {
@@ -394,14 +526,15 @@ export const usePauseExam = () => {
 };
 
 // Resume exam
-export const useResumeExam = () => {
+export const useResumeExam = (isTrial?: boolean, entitlementId?: string) => {
   const { resumeTimer } = useExamStore();
 
   return useMutation<ExamAttempt, AxiosError<ApiError>, string>({
     mutationFn: async (attemptId) => {
-      const { data } = await apiClient.patch<ExamAttempt>(
-        EXAM_ENDPOINTS.RESUME(attemptId)
-      );
+      const endpoint = isTrial && entitlementId
+        ? TRIAL_ENDPOINTS.RESUME(entitlementId, attemptId)
+        : EXAM_ENDPOINTS.RESUME(attemptId);
+      const { data } = await apiClient.patch<ExamAttempt>(endpoint);
       return data;
     },
     onSuccess: () => {
@@ -411,14 +544,18 @@ export const useResumeExam = () => {
 };
 
 // Complete exam
-export const useCompleteExam = () => {
+export const useCompleteExam = (isTrial?: boolean, entitlementId?: string) => {
   const queryClient = useQueryClient();
   const { clearExam } = useExamStore();
 
   return useMutation<ExamAttempt, AxiosError<ApiError>, string>({
     mutationFn: async (attemptId) => {
+      const endpoint = isTrial && entitlementId
+        ? `/student/trials/${entitlementId}/attempts/${attemptId}/submit`
+        : EXAM_ENDPOINTS.COMPLETE(attemptId);
+        
       const { data } = await apiClient.post<ExamAttempt>(
-        EXAM_ENDPOINTS.COMPLETE(attemptId)
+        endpoint
       );
       return data;
     },
@@ -426,6 +563,10 @@ export const useCompleteExam = () => {
       clearExam();
       queryClient.invalidateQueries({ queryKey: ["examHistory"] });
       queryClient.invalidateQueries({ queryKey: ["progress"] });
+      if (isTrial) {
+        queryClient.invalidateQueries({ queryKey: ["trialAttempts"] });
+        queryClient.invalidateQueries({ queryKey: ["trialAvailability"] });
+      }
     },
   });
 };
@@ -470,7 +611,7 @@ export const useReportQuestion = () => {
 
 // ==================== REVIEW ====================
 
-export const useExamReview = (attemptId: string) => {
+export const useExamReview = (attemptId: string, enabledOverride: boolean = true) => {
   return useQuery<ExamReviewResponse>({
     queryKey: ["examReview", attemptId],
     queryFn: async () => {
@@ -479,6 +620,66 @@ export const useExamReview = (attemptId: string) => {
       );
       return data;
     },
-    enabled: !!attemptId,
+    enabled: !!attemptId && enabledOverride,
   });
 };
+
+// ==================== TRIAL ATTEMPTS ====================
+
+export const useTrialAttempts = (entitlementId: string) => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  return useQuery<any[]>({ // Assuming it returns array of attempts
+    queryKey: ["trialAttempts", entitlementId],
+    queryFn: async () => {
+      const { data } = await apiClient.get<any[]>(
+        `/student/trials/${entitlementId}/attempts`
+      );
+      return data;
+    },
+    enabled: isAuthenticated && !!entitlementId,
+  });
+};
+
+export const useStartTrialAttempt = () => {
+  const { startExam } = useExamStore();
+  const queryClient = useQueryClient();
+
+  return useMutation<any, AxiosError<ApiError>, string>({
+    mutationFn: async (entitlementId: string) => {
+      const { data } = await apiClient.post<any>(
+        `/student/trials/${entitlementId}/attempts`
+      );
+      return data;
+    },
+    onSettled: (_data, _error, entitlementId) => {
+      queryClient.invalidateQueries({ queryKey: ["trialAttempts", entitlementId] });
+      queryClient.invalidateQueries({ queryKey: ["trialAvailability"] });
+    },
+    onSuccess: (data) => {
+      // Assuming data structure matches ExamAttempt response for standard exams
+      if (data.exam && data.exam.questions) {
+        const questions = data.exam.questions.map((eq: any) => eq.question);
+        startExam(
+          data as unknown as ExamAttempt,
+          questions,
+          data.exam.durationMinutes
+        );
+      }
+    },
+  });
+};
+
+export const useReviewTrialAttempt = (entitlementId: string, attemptId: string, enabledOverride: boolean = true) => {
+  return useQuery<any>({
+    queryKey: ["trialReview", entitlementId, attemptId],
+    queryFn: async () => {
+      const { data } = await apiClient.get<any>(
+        `/student/trials/${entitlementId}/attempts/${attemptId}/review`
+      );
+      return data;
+    },
+    enabled: !!entitlementId && !!attemptId && enabledOverride,
+  });
+};
+

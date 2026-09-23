@@ -4,6 +4,20 @@ import { AUTH_ENDPOINTS } from "@/api/endpoints";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
+const EXAM_DEBUG_PATHS = [
+  "/user/exam-selection",
+  "/student/exams",
+  "/student/trials",
+];
+
+function shouldLogExamRequest(url?: string): boolean {
+  return import.meta.env.DEV && !!url && EXAM_DEBUG_PATHS.some((path) => url.includes(path));
+}
+
+function shouldLogExamBody(url?: string): boolean {
+  return import.meta.env.DEV && !!url && url.includes("/student/exams/practice/");
+}
+
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: { "Content-Type": "application/json" },
@@ -51,6 +65,20 @@ apiClient.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
+  if (shouldLogExamRequest(config.url)) {
+    console.info("[exam-debug] request", {
+      method: config.method?.toUpperCase() || "GET",
+      url: config.url,
+      params: config.params,
+      body: shouldLogExamBody(config.url)
+        ? config.data
+        : config.method?.toUpperCase() === "GET"
+          ? undefined
+          : "[omitted]",
+    });
+  }
+
   return config;
 });
 
@@ -62,10 +90,32 @@ let refreshPromise: Promise<any> | null = null;
 
 // Response interceptor - handles token refresh
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (shouldLogExamRequest(response.config.url)) {
+      console.info("[exam-debug] response", {
+        method: response.config.method?.toUpperCase() || "GET",
+        url: response.config.url,
+        params: response.config.params,
+        status: response.status,
+        data: response.data,
+      });
+    }
+    return response;
+  },
   async (error) => {
     const originalRequest = error.config;
     const requestPath = originalRequest?.url || "";
+
+    if (shouldLogExamRequest(requestPath)) {
+      console.error("[exam-debug] response error", {
+        method: originalRequest?.method?.toUpperCase() || "GET",
+        url: requestPath,
+        params: originalRequest?.params,
+        body: shouldLogExamBody(requestPath) ? originalRequest?.data : undefined,
+        status: error.response?.status,
+        data: error.response?.data,
+      });
+    }
 
     // Skip redirect logic for auth endpoints (login, register, refresh, password-reset, etc.)
     const isAuthEndpoint = AUTH_PATHS.some((path) => requestPath.includes(path));

@@ -76,11 +76,12 @@ function UpgradeSubscriptionPage() {
   const [licenseCode, setLicenseCode] = useState("");
 
   // Fetch plans using category from preferences
-  const { data: plans, isLoading: isLoadingPlans } = usePaymentPlans(
-    category,
+  const { data: plans, isLoading: isLoadingPlans } = usePaymentPlans({
+    schoolType: category,
     examType,
-    "INDIVIDUAL"
-  );
+    examTypeId,
+    subscriptionType: "INDIVIDUAL",
+  });
 
   const selectedPlan = plans?.find((p) => p.id === selectedPlanId);
   const numberOfSubjects = subjects.length;

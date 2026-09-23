@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Loader2, Trash2, ArrowRightLeft, Plus, Pencil, Copy, Check, KeyRound, Mail, Crown } from "lucide-react";
 import { toast } from "sonner";
@@ -8,10 +8,10 @@ import {
   useSwitchSubscription,
   useChangeSubscriptionSubjects,
 } from "./hooks/useSubscription";
-import { useInstitutionalCodes, useRedeemLicense, useAssignCode } from "@/feature/payment/hooks";
-import { useExamPreferences, useExamSubjects } from "@/feature/exams/hooks";
+import { useAssignCode, useCheckTrial, useInstitutionalCodes, useRedeemLicense } from "@/feature/payment/hooks";
+import { useExamPreferences, useExamSubjects, useProfessionalHierarchy } from "@/feature/exams/hooks";
 import { useRegistrationStore } from "@/stores/registrationStore";
-import type { InstitutionalCode } from "@/api/types";
+import type { CheckTrialResponse, InstitutionalCode } from "@/api/types";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,6 +34,8 @@ import {
 import { SubjectPicker } from "@/components/subject-picker";
 import type { UserSubscription } from "@/api/types";
 import { SubscriptionTimer } from "./components/subscription-timer";
+import { isProfessionalExam } from "@/lib/exam-category";
+import { findActivePaidSubscription } from "@/lib/subscription-access";
 
 // Max subjects allowed per exam type (matches registration flow)
 function getMaxSubjects(examType: string): number {
@@ -49,10 +51,112 @@ function getMaxSubjects(examType: string): number {
   return 9; // WAEC, NECO, etc.
 }
 
+function ProfessionalTrialSubscriptionCard({
+  trial,
+  examName,
+}: {
+  trial: CheckTrialResponse;
+  examName: string;
+}) {
+  const active = trial.status === "ACTIVE";
+
+  return (
+    <div className="relative overflow-hidden rounded-xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 p-4 sm:p-5 space-y-3">
+      {active && trial.expiresAt && (
+        <SubscriptionTimer endDate={trial.expiresAt} />
+      )}
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate">
+            {examName}
+          </h3>
+          <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
+            Full professional curriculum &middot; Trial access
+          </p>
+        </div>
+        <img
+          src="/svg/note.svg"
+          alt=""
+          className="w-10 h-10 sm:w-12 sm:h-12 shrink-0"
+        />
+      </div>
+      <div className="flex items-center gap-2">
+        <span
+          className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+            active
+              ? "bg-emerald-100 text-emerald-700"
+              : "bg-red-100 text-red-700"
+          }`}
+        >
+          {trial.status}
+        </span>
+        <span className="text-xs text-gray-500">Trial access</span>
+      </div>
+      <div className="flex flex-wrap gap-2 pt-1">
+        {active && (
+          <Link
+            to="/tests/exams"
+            className="inline-flex h-8 items-center rounded-full bg-amber-600 px-3 text-xs font-semibold text-white hover:bg-amber-700"
+          >
+            Continue Practice
+          </Link>
+        )}
+        <Link
+          to="/subscription/add"
+          className="inline-flex h-8 items-center rounded-full border border-amber-300 bg-white px-3 text-xs font-semibold text-amber-800 hover:bg-amber-100"
+        >
+          Choose a Plan
+        </Link>
+      </div>
+    </div>
+  );
+}
+
 export const SubscriptionSection = () => {
   const navigate = useNavigate();
   const { data: subscriptions, isLoading } = useSubscriptions();
   const { data: preferences } = useExamPreferences();
+  const isProfessional = isProfessionalExam(preferences?.examCategory);
+  const examTypeId = preferences?.examTypeId || "";
+  const { data: professionalHierarchy } = useProfessionalHierarchy(isProfessional ? examTypeId : "");
+  const { data: professionalTrial, isPending: trialPending } = useCheckTrial(
+    isProfessional ? examTypeId : "",
+  );
+  const activePaidSubscription = findActivePaidSubscription(
+    subscriptions,
+    examTypeId,
+  );
+  const displayedSubscriptions = useMemo(() => {
+    const academicSubscriptions: UserSubscription[] = [];
+    const professionalByExam = new Map<string, UserSubscription>();
+
+    for (const subscription of subscriptions ?? []) {
+      if (!isProfessionalExam(subscription.subscription.schoolType)) {
+        academicSubscriptions.push(subscription);
+        continue;
+      }
+
+      const current = professionalByExam.get(subscription.examTypeId);
+      const currentEnd = current?.endDate ? Date.parse(current.endDate) : 0;
+      const candidateEnd = subscription.endDate
+        ? Date.parse(subscription.endDate)
+        : 0;
+      const replacesInactive =
+        current?.status !== "ACTIVE" && subscription.status === "ACTIVE";
+      const sameStatusWithLaterEnd =
+        current?.status === subscription.status && candidateEnd > currentEnd;
+      if (!current || replacesInactive || sameStatusWithLaterEnd) {
+        professionalByExam.set(subscription.examTypeId, subscription);
+      }
+    }
+
+    return [...academicSubscriptions, ...professionalByExam.values()];
+  }, [subscriptions]);
+  const showProfessionalTrial =
+    isProfessional &&
+    !activePaidSubscription &&
+    (professionalTrial?.status === "ACTIVE" ||
+      professionalTrial?.status === "EXPIRED");
   const deleteMutation = useDeleteSubscription();
   const switchMutation = useSwitchSubscription();
   const changeSubjects = useChangeSubscriptionSubjects();
@@ -221,7 +325,7 @@ export const SubscriptionSection = () => {
     );
   };
 
-  if (isLoading) {
+  if (isLoading || (isProfessional && trialPending)) {
     return (
       <section className="py-10 flex items-center justify-center">
         <Loader2 className="h-6 w-6 animate-spin text-accent" />
@@ -241,13 +345,27 @@ export const SubscriptionSection = () => {
         </Link>
       </div>
 
-      {!subscriptions || subscriptions.length === 0 ? (
+      {displayedSubscriptions.length === 0 && !showProfessionalTrial ? (
         <p className="text-gray-500 py-6">
           No subscriptions yet. Add one to get started.
         </p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-          {subscriptions.map((sub) => (
+          {showProfessionalTrial && professionalTrial && (
+            <ProfessionalTrialSubscriptionCard
+              trial={professionalTrial}
+              examName={professionalHierarchy?.name || preferences?.examTypeRecord?.name || "Professional Exam"}
+            />
+          )}
+          {displayedSubscriptions.map((sub) => {
+            const professionalSubscription = isProfessionalExam(
+              sub.subscription.schoolType,
+            );
+            const displayName = professionalSubscription
+              ? sub.subscription.name
+              : sub.examType;
+
+            return (
             <div
               key={sub.id}
               className="relative bg-[#FFFBEB] rounded-xl border border-amber-100 p-4 sm:p-5 space-y-3"
@@ -258,12 +376,21 @@ export const SubscriptionSection = () => {
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate">
-                    {sub.examType}
+                    {displayName}
                   </h3>
                   <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
-                    {sub.subjects.length} Subject
-                    {sub.subjects.length !== 1 ? "s" : ""} &middot;{" "}
-                    {sub.subscription.name}
+                    {professionalSubscription ? (
+                      <>
+                        Full professional curriculum &middot;{" "}
+                        {sub.subscription.duration}-day plan
+                      </>
+                    ) : (
+                      <>
+                        {sub.subjects.length} Subject
+                        {sub.subjects.length !== 1 ? "s" : ""} &middot;{" "}
+                        {sub.subscription.name}
+                      </>
+                    )}
                   </p>
                 </div>
                 <img
@@ -316,7 +443,7 @@ export const SubscriptionSection = () => {
                       {switchMutation.isPending ? "Switching..." : "Upgrade"}
                     </button>
                   )}
-                {sub.status === "ACTIVE" && (
+                {sub.status === "ACTIVE" && !professionalSubscription && (
                   <button
                     onClick={() => handleEditSubjects(sub)}
                     className="inline-flex items-center gap-1 h-8 px-3 text-xs font-medium rounded-4xl border border-border bg-input/30 hover:bg-input/50 transition-colors"
@@ -337,7 +464,7 @@ export const SubscriptionSection = () => {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Delete Subscription</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Are you sure you want to delete your {sub.examType}{" "}
+                        Are you sure you want to delete your {displayName}{" "}
                         subscription? This action cannot be undone.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
@@ -354,7 +481,8 @@ export const SubscriptionSection = () => {
                 </AlertDialog>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
@@ -451,10 +579,12 @@ export const SubscriptionSection = () => {
                                       setAssigningCodeId(null);
                                       setAssignEmail("");
                                     },
-                                    onError: (error: any) => {
+                                    onError: (error) => {
+                                      const message = (error as {
+                                        response?: { data?: { message?: string } };
+                                      }).response?.data?.message;
                                       toast.error(
-                                        error.response?.data?.message ||
-                                          "Failed to assign student"
+                                        message || "Failed to assign student"
                                       );
                                     },
                                   }

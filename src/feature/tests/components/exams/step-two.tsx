@@ -58,12 +58,19 @@ const yearOptions = [
 ];
 
 interface ConfigurePracticeFormProps {
-  subject: Subject;
+  subject?: Subject;
+  professionalTarget?: {
+    componentId: string;
+    componentName: string;
+    domainId: string;
+    domainName: string;
+  };
   onClose?: () => void;
 }
 
 export default function ConfigurePracticeForm({
   subject,
+  professionalTarget,
   onClose,
 }: ConfigurePracticeFormProps) {
   const navigate = useNavigate();
@@ -85,7 +92,12 @@ export default function ConfigurePracticeForm({
       setErrorMessage(""); // Clear any previous errors
       configurePractice.mutate(
         {
-          subjectId: subject.id,
+          ...(professionalTarget
+            ? {
+                professionalComponentId: professionalTarget.componentId,
+                professionalDomainId: professionalTarget.domainId,
+              }
+            : { subjectId: subject?.id }),
           questionCount: value.questionCount,
           timeLimit: value.timeLimit ? parseInt(value.timeLimit) : undefined,
           difficulty: value.difficulty
@@ -102,7 +114,7 @@ export default function ConfigurePracticeForm({
               ]
             : undefined,
           year: value.year ? parseInt(value.year) : undefined,
-          title: `${subject.name} Practice`,
+          title: `${professionalTarget?.domainName || subject?.name} Practice`,
         },
         {
           onSuccess: (data) => {
@@ -126,7 +138,9 @@ export default function ConfigurePracticeForm({
         Configure Practice
       </h5>
       <p className="text-sm text-gray-500 text-center mb-4">
-        Subject: {subject.name}
+        {professionalTarget
+          ? `${professionalTarget.componentName} · ${professionalTarget.domainName}`
+          : `Subject: ${subject?.name}`}
       </p>
       <form
         className="w-full space-y-4"

@@ -1,7 +1,7 @@
 import type { RichContentBlock } from "./exam.types";
 
 // Tutorial Types
-export type TutorialType = "VIDEO_TUTORIAL" | "TEXT_TUTORIAL" | "INTERACTIVE";
+export type TutorialType = "VIDEO_TUTORIAL" | "TEXT_TUTORIAL" | "INTERACTIVE" | "OSCE";
 
 // ==================== LIST TUTORIALS (GET /student/tutorials) ====================
 
@@ -29,6 +29,9 @@ export interface TutorialListResponse {
 }
 
 export interface TutorialListParams {
+  examTypeId?: string;
+  professionalComponentId?: string;
+  professionalDomainId?: string;
   subjectId?: string;
   topicId?: string;
   subTopicId?: string;

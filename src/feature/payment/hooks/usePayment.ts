@@ -1,7 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/api/client";
-import { PAYMENT_ENDPOINTS } from "@/api/endpoints";
+import { PAYMENT_ENDPOINTS, TRIAL_ENDPOINTS } from "@/api/endpoints";
 import { useAuthStore } from "@/stores/authStore";
+import { isProfessionalExam } from "@/lib/exam-category";
 import type {
   PaymentPlan,
   PricingPreview,
@@ -16,6 +17,8 @@ import type {
   InstitutionalCode,
   CodeRedemption,
   ValidatePromoResponse,
+  CheckTrialResponse,
+  ActivateTrialResponse,
 } from "@/api/types";
 import type { AxiosError } from "axios";
 
@@ -26,24 +29,52 @@ interface ApiError {
 
 // ==================== QUERIES ====================
 
-// Fetch payment plans
-export const usePaymentPlans = (
-  schoolType: string,
-  examType: string,
-  subscriptionType: "INDIVIDUAL" | "BODY" = "INDIVIDUAL"
-) => {
+export interface PaymentPlanQuery {
+  schoolType: string;
+  examType?: string;
+  examTypeId?: string;
+  departmentId?: string;
+  subscriptionType?: "INDIVIDUAL" | "BODY";
+}
+
+export const getPaymentPlanParams = ({
+  schoolType,
+  examType,
+  examTypeId,
+  departmentId,
+  subscriptionType = "INDIVIDUAL",
+}: PaymentPlanQuery) => {
+  if (isProfessionalExam(schoolType)) {
+    return { examTypeId };
+  }
+
+  return {
+    schoolType,
+    examType,
+    subscriptionType,
+    ...(departmentId ? { departmentId } : {}),
+  };
+};
+
+// Fetch payment plans with the identifiers required by each exam category.
+export const usePaymentPlans = (options: PaymentPlanQuery) => {
+  const params = getPaymentPlanParams(options);
+  const enabled = isProfessionalExam(options.schoolType)
+    ? Boolean(options.examTypeId)
+    : Boolean(options.schoolType && options.examType);
+
   return useQuery<PaymentPlan[]>({
-    queryKey: ["paymentPlans", schoolType, examType, subscriptionType],
+    queryKey: ["paymentPlans", params],
     queryFn: async () => {
       const { data } = await apiClient.get<PaymentPlan[]>(
         PAYMENT_ENDPOINTS.PLANS,
         {
-          params: { schoolType, examType, subscriptionType },
+          params,
         }
       );
       return data;
     },
-    enabled: !!schoolType && !!examType,
+    enabled,
     staleTime: 1000 * 60 * 30, // 30 minutes
   });
 };
@@ -138,9 +169,17 @@ export const useVerifyPayment = () => {
       );
       return data;
     },
-    onSuccess: () => {
-      // Invalidate user profile to reflect subscription changes
-      queryClient.invalidateQueries({ queryKey: ["profile"] });
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["profile"] }),
+        queryClient.invalidateQueries({ queryKey: ["subscriptions"] }),
+        queryClient.invalidateQueries({ queryKey: ["examPreferences"] }),
+        queryClient.invalidateQueries({ queryKey: ["trialAvailability"] }),
+        queryClient.invalidateQueries({ queryKey: ["availableExams"] }),
+        queryClient.invalidateQueries({
+          queryKey: ["examSelection", "professional-hierarchy"],
+        }),
+      ]);
     },
   });
 };
@@ -185,22 +224,96 @@ export const useStartTrial = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profile"] });
+      queryClient.invalidateQueries({ queryKey: ["subscriptions"] });
+      queryClient.invalidateQueries({ queryKey: ["examPreferences"] });
+    },
+  });
+};
+
+// Check specific exam type trial availability
+export const useCheckTrial = (examTypeId: string) => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  return useQuery<CheckTrialResponse>({
+    queryKey: ["trialAvailability", examTypeId],
+    queryFn: async () => {
+      const { data } = await apiClient.get<CheckTrialResponse>(
+        TRIAL_ENDPOINTS.CHECK(examTypeId)
+      );
+      return data;
+    },
+    enabled: isAuthenticated && !!examTypeId,
+  });
+};
+
+// Activate specific exam type trial
+export const useActivateTrial = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    ActivateTrialResponse,
+    AxiosError<ApiError>,
+    string
+  >({
+    mutationFn: async (examTypeId) => {
+      const { data } = await apiClient.post<ActivateTrialResponse>(
+        TRIAL_ENDPOINTS.ACTIVATE(examTypeId)
+      );
+      return data;
+    },
+    onSuccess: (_, examTypeId) => {
+      queryClient.invalidateQueries({ queryKey: ["trialAvailability", examTypeId] });
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
     },
   });
 };
 
 // Validate promo code
-export const useValidatePromo = (code: string, planId: string) => {
+export const useValidatePromo = (code: string, planId?: string, examTypeId?: string) => {
   return useQuery<ValidatePromoResponse>({
-    queryKey: ["validatePromo", code, planId],
+    queryKey: ["validatePromo", code, planId, examTypeId],
     queryFn: async () => {
+      // If we have an examTypeId, we use the new access grants validation endpoint
+      if (examTypeId) {
+        const { data } = await apiClient.get<ValidatePromoResponse>(
+          PAYMENT_ENDPOINTS.VALIDATE_ACCESS_GRANT,
+          { params: { code, examTypeId } }
+        );
+        return data;
+      }
+      // Fallback for legacy generic promos
       const { data } = await apiClient.get<ValidatePromoResponse>(
         PAYMENT_ENDPOINTS.VALIDATE_PROMO,
         { params: { code, planId } }
       );
       return data;
     },
-    enabled: !!code && code.length >= 3 && !!planId,
+    enabled: !!code && code.length >= 3 && (!!planId || !!examTypeId),
+    retry: false, // Don't retry on 404s for invalid codes
+  });
+};
+
+// Redeem access grant promo
+export const useRedeemPromo = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    import("@/api/types").RedeemPromoResponse,
+    AxiosError<ApiError>,
+    import("@/api/types").RedeemPromoRequest
+  >({
+    mutationFn: async (request) => {
+      const { data } = await apiClient.post<import("@/api/types").RedeemPromoResponse>(
+        PAYMENT_ENDPOINTS.REDEEM_ACCESS_GRANT,
+        request
+      );
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
+      // Invalidate trial availability as well if needed
+      queryClient.invalidateQueries({ queryKey: ["trialAvailability"] });
+    },
   });
 };
 

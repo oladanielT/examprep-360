@@ -38,8 +38,11 @@ export interface ExamCategoryOption {
 
 export interface ExamSubtypeOption {
   id: string;
-  name: string;
-  category: string;
+  name?: string;
+  label?: string;
+  value?: string;
+  slug?: string;
+  category?: string;
 }
 
 export interface SubjectOption {

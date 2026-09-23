@@ -23,7 +23,7 @@ const CATEGORY_EXAMPLES: Record<string, string> = {
   "a'level": "e.g. IJMB, JUPEB",
   "post-jamb": "e.g. University Post-UTME",
   "university": "e.g. Course Exams",
-  "professional": "e.g. ICAN, CIPM",
+  "professional": "e.g. NMCN, ICAN, CIPM",
 };
 
 function getCategoryExample(label: string): string | undefined {
@@ -44,7 +44,8 @@ function isCategoryUnlocked(label: string): boolean {
     lower.includes("post-jamb") ||
     lower.includes("post jamb") ||
     lower.includes("post-utme") ||
-    lower.includes("post utme")
+    lower.includes("post utme") ||
+    lower.includes("professional")
   );
 }
 
@@ -77,8 +78,15 @@ function Welcome() {
       category.value === "UNIVERSITY_COURSE" ||
       category.label.toLowerCase().includes("university");
 
+    const isProfessional = 
+      category.label.toLowerCase().includes("professional");
+
+    let userType: "undergraduate" | "secondary" | "professional" = "secondary";
+    if (isUndergraduate) userType = "undergraduate";
+    if (isProfessional) userType = "professional";
+
     // Save both userType and the actual category value for API calls
-    setUserType(isUndergraduate ? "undergraduate" : "secondary", category.value);
+    setUserType(userType, category.value);
 
     // If user is already authenticated (e.g. Google OAuth), skip registration form
     if (isAuthenticated) {

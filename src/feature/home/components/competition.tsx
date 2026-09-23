@@ -77,15 +77,15 @@ export default function Competition() {
                     const isActive = timeRemaining > 0
 
                     return (
-                        <Card key={exam.id} className='flex-row p-5'>
+                        <Card key={exam.id} className='flex flex-col gap-4 p-5 hover:shadow-md transition-all border-gray-100'>
                             <img
                                 width={2000}
                                 height={2000}
                                 alt='exam'
                                 src={"/img/mock.png"}
-                                className='w-full'
+                                className='w-full h-40 object-cover rounded-xl shrink-0'
                             />
-                            <div>
+                            <div className='flex flex-col flex-1'>
                                 <div>
                                     <h1 className='mb-3 text-sm font-medium'>{exam.name}</h1>
                                     <p className='opacity-60 text-xs'>
@@ -99,7 +99,7 @@ export default function Competition() {
                                 </div>
                                 <PrimaryButton
                                     title='Take Mock Exam'
-                                    className='bg-black h-10 mt-4 hover:bg-black/50 text-white'
+                                    className='bg-black h-10 mt-6 hover:bg-black/50 text-white'
                                     onClick={() => openDialog(exam)}
                                     disabled={!isActive}
                                 />

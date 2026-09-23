@@ -1,7 +1,8 @@
 import { useState, useMemo } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import CustomPageHeader from "@/components/global/custom-page-header";
-import { useTutorials } from "@/feature/tutorials/hooks";
+import { useTutorials } from "@/feature/tutorials/hooks/useTutorials";
+import { useExamPreferences } from "@/feature/exams/hooks/useExams";
 import { Play, VideoCamera } from "@phosphor-icons/react";
 import {
   Empty,
@@ -41,7 +42,7 @@ function TutorialCard({ tutorial }: { tutorial: TutorialListItem }) {
         <h6 className="text-sm font-semibold text-gray-900 line-clamp-2 leading-snug">
           {tutorial.name}
         </h6>
-        <p className="text-xs text-gray-500 mt-1">{tutorial.subject?.name}</p>
+        <p className="text-xs text-gray-500 mt-1">{tutorial.topic?.name || tutorial.subject?.name}</p>
         <div className="flex items-center gap-3 mt-3 text-xs text-gray-400">
           {tutorial.chapterCount > 0 && (
             <span>{tutorial.chapterCount} chapters</span>
@@ -59,21 +60,30 @@ function TutorialsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [subjectFilter, setSubjectFilter] = useState("");
 
+  const { data: preferences, isLoading: isLoadingPreferences } = useExamPreferences();
+  const isProfessional = preferences?.examCategory === "PROFESSIONAL";
+
   const {
     data: tutorials,
-    isLoading,
+    isLoading: isLoadingTutorials,
     error,
-  } = useTutorials({ type: "VIDEO_TUTORIAL" });
+  } = useTutorials({ 
+    type: isProfessional ? undefined : "VIDEO_TUTORIAL",
+    examTypeId: isProfessional ? preferences?.examTypeId : undefined,
+  }, { enabled: !isLoadingPreferences });
+
+  const isLoading = isLoadingPreferences || isLoadingTutorials;
 
   const filterOptions: FilterOption[] = useMemo(() => {
     if (!tutorials) return [];
-    const subjects = new Map<string, string>();
+    const filterKey = new Map<string, string>();
     for (const t of tutorials) {
-      if (t.subject?.name) {
-        subjects.set(t.subject.name, t.subject.name);
+      const name = t.topic?.name || t.subject?.name;
+      if (name) {
+        filterKey.set(name, name);
       }
     }
-    return Array.from(subjects.values())
+    return Array.from(filterKey.values())
       .sort()
       .map((name) => ({ label: name, value: name }));
   }, [tutorials]);
@@ -84,8 +94,10 @@ function TutorialsPage() {
       const matchesSearch =
         !searchQuery ||
         t.name.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const filterName = t.topic?.name || t.subject?.name;
       const matchesSubject =
-        !subjectFilter || t.subject?.name === subjectFilter;
+        !subjectFilter || filterName === subjectFilter;
       return matchesSearch && matchesSubject;
     });
   }, [tutorials, searchQuery, subjectFilter]);
@@ -94,12 +106,12 @@ function TutorialsPage() {
     <div>
       <CustomPageHeader
         backLink="/"
-        heading="Video Tutorials"
+        heading={isProfessional ? "OSCE & Viva Support" : "Video Tutorials"}
         filter={true}
-        subHeading="Watch and learn at your own pace"
+        subHeading={isProfessional ? "Clinical skills and project preparation" : "Watch and learn at your own pace"}
         searchValue={searchQuery}
         onSearchChange={(e) => setSearchQuery(e.target.value)}
-        searchPlaceholder="Search tutorials..."
+        searchPlaceholder={isProfessional ? "Search clinical topics..." : "Search tutorials..."}
         filterOptions={filterOptions}
         activeFilter={subjectFilter}
         onFilterChange={setSubjectFilter}
@@ -125,12 +137,12 @@ function TutorialsPage() {
               <EmptyTitle>
                 {tutorials && tutorials.length > 0
                   ? "No Matching Tutorials"
-                  : "No Video Tutorials"}
+                  : isProfessional ? "No Clinical Resources" : "No Video Tutorials"}
               </EmptyTitle>
               <EmptyDescription>
                 {tutorials && tutorials.length > 0
                   ? "Try adjusting your search or filter to find what you're looking for."
-                  : "There are no video tutorials available at the moment. Check back later for new content."}
+                  : "There are no tutorials available at the moment. Check back later for new content."}
               </EmptyDescription>
             </EmptyHeader>
           </Empty>

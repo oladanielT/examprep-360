@@ -1,3 +1,4 @@
+import { isProfessionalExam } from "@/lib/exam-category";
 import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import {
@@ -10,10 +11,15 @@ import PrimaryButton from "@/components/buttons/primary-button";
 import * as z from "zod";
 import { CustomSelect } from "@/components/custom/custom-select";
 import { SubjectPicker } from "@/components/subject-picker";
+import { ProfessionalHierarchyPicker } from "@/feature/auth/components/professional-hierarchy-picker";
 import { Slider } from "@/components/ui/slider";
 import { useNavigate } from "@tanstack/react-router";
 import { useRegistrationStore } from "@/stores/registrationStore";
-import { useExamTypes, useExamSubjects } from "@/feature/exams/hooks";
+import {
+  useExamTypes,
+  useExamSubjects,
+  useProfessionalHierarchy,
+} from "@/feature/exams/hooks";
 import { Loader2 } from "lucide-react";
 
 // Max subjects allowed per exam type
@@ -48,18 +54,28 @@ export const SelectExamForm = () => {
   // Track selected exam type in state for fetching subjects
   const [selectedExamType, setSelectedExamType] = useState(data.examType || "");
   const [selectedExamTypeId, setSelectedExamTypeId] = useState(data.examTypeId || "");
+  const isProfessional = isProfessionalExam(category);
 
   // Fetch exam types based on selected category
   const {
     data: examTypes,
-    isLoading: isLoadingExamTypes
+    isLoading: isLoadingExamTypes,
+    isError: isErrorExamTypes,
   } = useExamTypes(category);
 
   // Fetch subjects based on selected exam type
   const {
     data: subjects,
-    isLoading: isLoadingSubjects
-  } = useExamSubjects(selectedExamType);
+    isLoading: isLoadingSubjects,
+    isError: isErrorSubjects,
+  } = useExamSubjects(isProfessional ? "" : selectedExamType);
+  const {
+    data: professionalHierarchy,
+    isLoading: isLoadingProfessionalHierarchy,
+    isError: isErrorProfessionalHierarchy,
+  } = useProfessionalHierarchy(isProfessional ? selectedExamTypeId : "");
+  const itemLabelText = isProfessional ? "Topics/Sections" : "Subjects";
+  const itemLabelLower = isProfessional ? "topics/sections" : "subjects";
 
   const form = useForm({
     defaultValues: {
@@ -70,10 +86,15 @@ export const SelectExamForm = () => {
     onSubmit: async ({ value }) => {
       // Validate
       const max = getMaxSubjects(value.examType);
-      const schema = selectExamSchema.refine(
-        (data) => data.subjects.length <= max,
-        { message: `You can select maximum ${max} subjects`, path: ["subjects"] }
-      );
+      const schema = isProfessional
+        ? selectExamSchema
+        : selectExamSchema.refine(
+            (data) => data.subjects.length <= max,
+            {
+              message: `You can select maximum ${max} ${itemLabelLower}`,
+              path: ["subjects"],
+            },
+          );
       const result = schema.safeParse(value);
       if (!result.success) {
         return;
@@ -93,10 +114,10 @@ export const SelectExamForm = () => {
 
   const maxSubjects = getMaxSubjects(selectedExamType);
 
-  // Transform exam types for select (use name as both label and value)
+  // Transform exam types for select, keeping the API value separate from its label
   const examTypeOptions = examTypes?.map((type) => ({
-    label: type.name,
-    value: type.name,
+    label: type.label || type.name || type.value || "",
+    value: type.name || type.value || type.label || "",
   })) || [];
 
   return (
@@ -127,6 +148,10 @@ export const SelectExamForm = () => {
                     <div className="flex items-center gap-2 h-14 px-4 border rounded-4xl">
                       <Loader2 className="h-4 w-4 animate-spin" />
                       <span className="text-gray-500">Loading exam types...</span>
+                    </div>
+                  ) : isErrorExamTypes ? (
+                    <div className="h-14 px-4 border border-red-200 bg-red-50 text-red-500 flex items-center rounded-4xl text-sm">
+                      Failed to load exam types. Please try again.
                     </div>
                   ) : (
                     <CustomSelect
@@ -165,22 +190,34 @@ export const SelectExamForm = () => {
                     className="text-[#6D6D6D] uppercase text-[12px]"
                     htmlFor="form-subjects"
                   >
-                    Subjects
+                    {itemLabelText}
                   </FieldLabel>
 
                   {!selectedExamType ? (
                     <p className="text-sm text-gray-500 py-4">
                       Please select an exam type first
                     </p>
+                  ) : isProfessional ? (
+                    <ProfessionalHierarchyPicker
+                      hierarchy={professionalHierarchy}
+                      value={field.state.value}
+                      onChange={field.handleChange}
+                      isLoading={isLoadingProfessionalHierarchy}
+                      isError={isErrorProfessionalHierarchy}
+                    />
                   ) : isLoadingSubjects ? (
                     <div className="flex items-center gap-2 py-4">
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      <span className="text-gray-500">Loading subjects...</span>
+                      <span className="text-gray-500">Loading {itemLabelLower}...</span>
+                    </div>
+                  ) : isErrorSubjects ? (
+                    <div className="text-sm text-red-500 py-4">
+                      Failed to load {itemLabelLower}. Please try again.
                     </div>
                   ) : subjects && subjects.length > 0 ? (
                     <>
                       <p className="text-sm text-gray-600 mb-3">
-                        Please select your subjects (up to {maxSubjects})
+                        Please select your {itemLabelLower} (up to {maxSubjects})
                       </p>
                       <SubjectPicker
                         subjects={subjects}
@@ -197,7 +234,7 @@ export const SelectExamForm = () => {
                     </>
                   ) : (
                     <p className="text-sm text-gray-500 py-4">
-                      No subjects available for this exam type
+                      No {itemLabelLower} available for this exam type
                     </p>
                   )}
 
