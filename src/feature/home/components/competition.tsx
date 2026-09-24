@@ -9,6 +9,7 @@ import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Empty, EmptyHeader, EmptyTitle, EmptyDescription } from '@/components/ui/empty'
 import type { AvailableExam } from '@/api/types'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export default function Competition() {
     const [selectedExam, setSelectedExam] = useState<AvailableExam | null>(null)
@@ -44,8 +45,20 @@ export default function Competition() {
         return (
             <div className='py-10'>
                 <h2 className='font-semibold text-2xl mb-5'>Mock Exam Competition</h2>
-                <div className="flex items-center justify-center py-8">
-                    <Loader2 className="w-8 h-8 animate-spin text-[#F04F54]" />
+                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5'>
+                    {[1, 2, 3].map((i) => (
+                        <Card key={i} className='flex flex-col gap-4 p-5 border-gray-100'>
+                            <Skeleton className='w-full h-40 rounded-xl shrink-0' />
+                            <div className='flex flex-col flex-1 space-y-3'>
+                                <div>
+                                    <Skeleton className='h-4 w-3/4 mb-3' />
+                                    <Skeleton className='h-3 w-full mb-1' />
+                                    <Skeleton className='h-3 w-5/6' />
+                                </div>
+                                <Skeleton className='h-10 w-full mt-6 rounded-md' />
+                            </div>
+                        </Card>
+                    ))}
                 </div>
             </div>
         )

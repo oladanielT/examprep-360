@@ -10,6 +10,7 @@ import { Loader2, PlayCircle, RotateCcw, ShieldAlert, FileText, CheckCircle2 } f
 import { toast } from "sonner";
 import { useSubscriptions } from "@/feature/subscription/hooks/useSubscription";
 import { findActivePaidSubscription } from "@/lib/subscription-access";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function TrialDashboard() {
   const navigate = useNavigate();
@@ -44,6 +45,33 @@ export default function TrialDashboard() {
     subscriptionsError ||
     activePaidSubscription
   ) {
+    if (loadingTrial || subscriptionsPending) {
+      return (
+        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+          <div className="p-5 sm:p-6 border-b border-gray-100 bg-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="space-y-2">
+              <Skeleton className="h-6 w-48" />
+              <Skeleton className="h-4 w-72" />
+            </div>
+            <Skeleton className="h-10 w-36 rounded-xl shrink-0" />
+          </div>
+          <div className="p-0 divide-y divide-gray-100">
+            {[1, 2].map((i) => (
+              <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between p-5 sm:p-6 gap-4">
+                <div className="flex items-center gap-4">
+                  <Skeleton className="w-12 h-12 rounded-full shrink-0" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-5 w-32" />
+                    <Skeleton className="h-4 w-40" />
+                  </div>
+                </div>
+                <Skeleton className="h-9 w-24 rounded-lg" />
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
     return null;
   }
 
@@ -124,8 +152,19 @@ export default function TrialDashboard() {
 
       <div className="p-0">
         {loadingAttempts ? (
-          <div className="flex justify-center p-8">
-            <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+          <div className="divide-y divide-gray-100">
+            {[1, 2].map((i) => (
+              <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between p-5 sm:p-6 gap-4">
+                <div className="flex items-center gap-4">
+                  <Skeleton className="w-12 h-12 rounded-full shrink-0" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-5 w-32" />
+                    <Skeleton className="h-4 w-40" />
+                  </div>
+                </div>
+                <Skeleton className="h-9 w-24 rounded-lg" />
+              </div>
+            ))}
           </div>
         ) : attemptsError ? (
           <div className="p-8 text-center text-sm">

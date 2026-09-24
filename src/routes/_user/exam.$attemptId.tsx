@@ -156,6 +156,7 @@ function ExamPage() {
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportReason, setReportReason] = useState("");
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isNavigatingAway, setIsNavigatingAway] = useState(false);
 
   // Track time spent on each question
   const questionStartTime = useRef<number>(0);
@@ -397,6 +398,7 @@ function ExamPage() {
         },
         {
           onSuccess: () => {
+            setIsNavigatingAway(true);
             navigate({ 
               to: "/exam/review/$attemptId", 
               params: { attemptId: currentAttempt.id },
@@ -413,6 +415,7 @@ function ExamPage() {
       // No unsubmitted responses, just complete the exam
       completeExam.mutate(currentAttempt.id, {
         onSuccess: () => {
+            setIsNavigatingAway(true);
             navigate({ 
               to: "/exam/review/$attemptId", 
               params: { attemptId: currentAttempt.id },
@@ -425,7 +428,7 @@ function ExamPage() {
         },
       });
     }
-  }, [currentAttempt, questions, answers, submittedQuestions, submitResponsesBulk, completeExam, navigate, isTrial, entitlementId, hasImmediateFeedback]);
+  }, [currentAttempt, questions, answers, submittedQuestions, submitResponsesBulk, completeExam, navigate, isTrial, entitlementId, hasImmediateFeedback, setIsNavigatingAway]);
 
   // Handle complete exam button click
   const handleCompleteExam = useCallback(() => {
@@ -529,6 +532,18 @@ function ExamPage() {
       }
     );
   }, [currentQuestion, reportReason, reportQuestion]);
+
+  // Loading state while submitting exam
+  if (isNavigatingAway) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin text-[#F04F54] mx-auto mb-4" />
+          <p className="text-gray-600">Submitting exam...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Loading state while fetching exam from API
   if (isLoadingExam) {

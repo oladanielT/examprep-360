@@ -37,6 +37,7 @@ import type {
   AvailableExam,
   AvailableExamsGrouped,
 } from "@/api/types/exam.types";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const testTypeOptions = [
   {
@@ -96,7 +97,22 @@ function MockSelection({
   }, [mocks, selectedMockId]);
 
   if (isLoading) {
-    return <div className="py-5 text-center">Loading available mocks...</div>;
+    return (
+      <div className="space-y-3 py-4">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="flex items-center justify-between p-4 border rounded-xl">
+            <div className="space-y-2 w-full">
+              <Skeleton className="h-5 w-48" />
+              <div className="flex gap-2">
+                <Skeleton className="h-4 w-16" />
+                <Skeleton className="h-4 w-16" />
+              </div>
+            </div>
+            <Skeleton className="h-8 w-24 rounded-lg shrink-0" />
+          </div>
+        ))}
+      </div>
+    );
   }
 
   if (error) {
@@ -537,7 +553,26 @@ function ProfessionalHierarchy({
   const { data, isLoading, error } = useProfessionalHierarchy(examType);
 
   if (isLoading) {
-    return <div className="py-10 text-center text-sm text-gray-500">Loading professional curriculum...</div>;
+    return (
+      <div className="py-6 sm:py-10 space-y-6">
+        {[1, 2].map((i) => (
+          <div key={i} className="space-y-4">
+            <Skeleton className="h-6 w-48 mb-2" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[1, 2, 3].map((j) => (
+                <div key={j} className="border border-gray-100 rounded-xl p-4 sm:p-5 flex items-center justify-between">
+                  <div className="space-y-2 w-full pr-4">
+                    <Skeleton className="h-5 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                  </div>
+                  <Skeleton className="h-8 w-8 rounded-full shrink-0" />
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
   }
 
   if (error) {
@@ -616,7 +651,16 @@ export default function Subjects({ searchQuery = "" }: { searchQuery?: string })
 
 
   if (isLoading) {
-    return <div className="py-10 text-center">Loading subjects...</div>;
+    return (
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-3 sm:gap-x-5 gap-y-6 sm:gap-y-10 py-6 sm:py-10">
+        {[...Array(10)].map((_, i) => (
+          <div key={i} className="flex flex-col items-center gap-3">
+            <Skeleton className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl" />
+            <Skeleton className="h-4 w-24" />
+          </div>
+        ))}
+      </div>
+    );
   }
 
   if (error) {

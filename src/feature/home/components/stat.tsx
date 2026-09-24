@@ -8,13 +8,15 @@ import { Button } from "@/components/ui/button";
 import { useStreaks, useMyRank } from "@/feature/progress/hooks/useProgress";
 import { ChevronRight } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Stat() {
-  const { data: streaks } = useStreaks();
-  const { data: myRank } = useMyRank({ period: "weekly" });
+  const { data: streaks, isPending: isLoadingStreaks } = useStreaks();
+  const { data: myRank, isPending: isLoadingRank } = useMyRank({ period: "weekly" });
 
   const currentStreak = streaks?.currentStreak || 0;
   const hasData = currentStreak > 0 || (myRank && myRank.rank > 0);
+  const isLoading = isLoadingStreaks || isLoadingRank;
 
   const getRankOrdinal = (rank: number) => {
     if (rank === 1) return "1st";
@@ -25,7 +27,9 @@ export default function Stat() {
 
   return (
     <div className="flex flex-col gap-4 py-6 sm:py-10 sm:flex-row sm:justify-between sm:items-center">
-      {hasData ? (
+      {isLoading ? (
+        <StatSkeleton />
+      ) : hasData ? (
         <Link to="/leaderboard" className="block w-full sm:w-auto">
           <div className="border-2 border-green-500 rounded-2xl sm:rounded-full py-4 px-5 sm:py-5 sm:px-8 flex items-center gap-3 sm:gap-6 hover:shadow-lg transition-all cursor-pointer bg-white overflow-hidden">
             {/* Streak Section */}
@@ -101,5 +105,25 @@ export function EmptyStat() {
       </EmptyHeader>
       <EmptyContent></EmptyContent>
     </Empty>
+  );
+}
+
+export function StatSkeleton() {
+  return (
+    <div className="w-full sm:w-[400px]">
+      <div className="border-2 border-gray-100 rounded-2xl sm:rounded-full py-4 px-5 sm:py-5 sm:px-8 flex items-center gap-3 sm:gap-6 bg-white overflow-hidden">
+        <div className="flex items-center gap-2 shrink-0">
+          <Skeleton className="w-6 h-6 rounded-full" />
+          <Skeleton className="w-8 h-8" />
+          <Skeleton className="w-8 h-4" />
+        </div>
+        <Skeleton className="w-8 h-8 hidden lg:block" />
+        <div className="min-w-0 space-y-2 w-full">
+          <Skeleton className="w-3/4 h-3" />
+          <Skeleton className="w-1/2 h-5" />
+        </div>
+        <Skeleton className="w-6 h-6 rounded-full shrink-0 ml-auto" />
+      </div>
+    </div>
   );
 }

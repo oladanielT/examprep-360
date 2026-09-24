@@ -7,6 +7,7 @@ import { Loader2, Clock, BookOpen } from 'lucide-react'
 import { Empty, EmptyHeader, EmptyTitle, EmptyDescription } from '@/components/ui/empty'
 import { toast } from 'sonner'
 import { useState } from 'react'
+import { Skeleton } from '@/components/ui/skeleton'
 
 function formatTimeSpent(seconds?: number) {
     if (!seconds) return null
@@ -66,8 +67,22 @@ export default function Continue() {
         return (
             <div className="py-10">
                 <h2 className='font-semibold text-2xl mb-5'>Jump back in</h2>
-                <div className="flex items-center justify-center py-8">
-                    <Loader2 className="w-8 h-8 animate-spin text-[#F04F54]" />
+                <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5'>
+                    {[1, 2].map((i) => (
+                        <div key={i} className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm flex items-stretch h-32">
+                            <div className="bg-amber-50/60 p-4 sm:p-5 flex items-center justify-center shrink-0 w-24">
+                                <Skeleton className="w-12 h-12 rounded-lg" />
+                            </div>
+                            <div className="flex-1 p-4 sm:p-5 flex flex-col justify-center space-y-3">
+                                <Skeleton className="h-4 w-3/4" />
+                                <div className="flex items-center gap-3">
+                                    <Skeleton className="h-3 w-16" />
+                                    <Skeleton className="h-3 w-16" />
+                                </div>
+                                <Skeleton className="h-6 w-24 rounded-full mt-2" />
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
         )

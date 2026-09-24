@@ -7,6 +7,7 @@ import { useExamPreferences } from "@/feature/exams/hooks";
 import { useAuthStore } from "@/stores/authStore";
 import { useProfile } from "@/feature/profile/hooks/useProfile";
 import { findActivePaidSubscription } from "@/lib/subscription-access";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ProfessionalTrialBanner() {
   const navigate = useNavigate();
@@ -26,7 +27,22 @@ export default function ProfessionalTrialBanner() {
   const { data: trialInfo, isLoading: loadingTrial } = useCheckTrial(examTypeId);
   const activateTrialMutation = useActivateTrial();
 
-  if (subscriptionsPending || subscriptionsError || loadingTrial) return null;
+  if (subscriptionsError) return null;
+
+  if (subscriptionsPending || loadingTrial) {
+    return (
+      <div className="mt-4 overflow-hidden rounded-2xl border border-gray-100 bg-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <Skeleton className="w-12 h-12 rounded-full shrink-0" />
+          <div className="space-y-2">
+            <Skeleton className="h-5 w-48" />
+            <Skeleton className="h-4 w-72" />
+          </div>
+        </div>
+        <Skeleton className="h-10 w-32 rounded-xl shrink-0" />
+      </div>
+    );
+  }
 
   const activePremium = findActivePaidSubscription(
     subscriptions,

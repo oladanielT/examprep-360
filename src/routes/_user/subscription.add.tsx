@@ -37,6 +37,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Step = "category" | "exam-selection" | "checkout";
 
@@ -340,8 +341,10 @@ function AddSubscriptionPage() {
         {step === "category" && (
           <div className="space-y-4">
             {isLoadingCategories && (
-              <div className="flex items-center justify-center py-16">
-                <Loader2 className="h-8 w-8 animate-spin text-accent" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {[1, 2, 3, 4].map((i) => (
+                  <Skeleton key={i} className="h-[88px] rounded-xl" />
+                ))}
               </div>
             )}
             {categories && (
@@ -446,12 +449,7 @@ function AddSubscriptionPage() {
                       Exam Type
                     </FieldLabel>
                     {isLoadingExamTypes ? (
-                      <div className="flex items-center gap-2 h-12 sm:h-14 px-4 border rounded-4xl">
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        <span className="text-gray-500 text-sm">
-                          Loading exam types...
-                        </span>
-                      </div>
+                      <Skeleton className="h-12 sm:h-14 w-full rounded-4xl" />
                     ) : (
                       <CustomSelect
                         name={field.name}
@@ -497,11 +495,10 @@ function AddSubscriptionPage() {
                           Please select an exam type first
                         </p>
                       ) : isLoadingSubjects ? (
-                        <div className="flex items-center gap-2 py-4">
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          <span className="text-gray-500 text-sm">
-                            Loading subjects...
-                          </span>
+                        <div className="flex flex-wrap gap-2 py-4">
+                          {[1, 2, 3, 4, 5, 6].map((i) => (
+                            <Skeleton key={i} className="h-10 w-24 rounded-full" />
+                          ))}
                         </div>
                       ) : availableSubjects && availableSubjects.length > 0 ? (
                         <>
@@ -544,11 +541,17 @@ function AddSubscriptionPage() {
                   </p>
                   
                   {isLoadingHierarchy ? (
-                    <div className="flex items-center gap-2 py-4">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span className="text-gray-500 text-sm">
-                        Loading hierarchy...
-                      </span>
+                    <div className="space-y-4 py-4 pr-2">
+                      {[1, 2].map((i) => (
+                        <div key={i} className="space-y-2">
+                          <Skeleton className="h-5 w-32" />
+                          <div className="pl-3 border-l-2 border-gray-200 space-y-2">
+                            {[1, 2].map((j) => (
+                              <Skeleton key={j} className="h-12 w-full rounded-lg" />
+                            ))}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   ) : professionalHierarchy?.professionalTracks?.length ? (
                     <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2 rounded-xl border border-gray-100 p-3 bg-gray-50/50">
@@ -648,12 +651,7 @@ function AddSubscriptionPage() {
                         Please select an exam type first
                       </p>
                     ) : isLoadingPlans ? (
-                      <div className="flex items-center gap-2 h-12 sm:h-14 px-4 border rounded-4xl">
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        <span className="text-gray-500 text-sm">
-                          Loading plans...
-                        </span>
-                      </div>
+                      <Skeleton className="h-12 sm:h-14 w-full rounded-4xl" />
                     ) : durationOptions.length > 0 ? (
                       <CustomSelect
                         name={field.name}

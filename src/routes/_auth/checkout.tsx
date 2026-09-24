@@ -15,7 +15,7 @@ import {
   useRedeemPromo,
 } from "@/feature/payment/hooks";
 import { useWalletBalance } from "@/feature/wallet/hooks";
-import { useExamSubjects } from "@/feature/exams/hooks";
+import { useExamSubjects, useExamTypes } from "@/feature/exams/hooks";
 import { useMutation } from "@tanstack/react-query";
 import { apiClient } from "@/api/client";
 import { EXAM_SELECTION_ENDPOINTS } from "@/api/endpoints";
@@ -95,6 +95,13 @@ function CheckoutPage() {
     ? registrationData.students
     : undefined;
   const numberOfSubjects = registrationData.subjects?.length || 1;
+
+  // Fetch available exam types to display the correct label
+  const { data: examTypes } = useExamTypes(examCategory);
+  const matchedExamType = examTypes?.find(
+    (t) => t.id === examType || t.name === examType || t.value === examType
+  );
+  const displayExamType = matchedExamType?.label || matchedExamType?.name || matchedExamType?.value || examType;
 
   // Fetch available subjects for inline editing
   const { data: availableSubjects, isLoading: isLoadingSubjects } =
@@ -565,7 +572,7 @@ function CheckoutPage() {
               Edit Subjects
             </button>
           </div>
-          <p className="text-sm font-semibold text-[#101828]">{examType}</p>
+          <p className="text-sm font-semibold text-[#101828]">{displayExamType}</p>
           <p className="text-xs text-gray-600">
             {selectedSubjectLabels.length > 0
               ? selectedSubjectLabels.join(", ")
@@ -1067,7 +1074,7 @@ function CheckoutPage() {
           <DialogHeader>
             <DialogTitle>Edit Subjects</DialogTitle>
             <DialogDescription>
-              Change your selected subjects for {examType}
+              Change your selected subjects for {displayExamType}
             </DialogDescription>
           </DialogHeader>
 

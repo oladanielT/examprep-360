@@ -3,6 +3,7 @@ import CustomPageHeader from "@/components/global/custom-page-header";
 import { ChevronRight } from "lucide-react";
 import { useExamPreferences } from "@/feature/exams/hooks";
 import { isProfessionalExam } from "@/lib/exam-category";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function TestsPage() {
   const { data, isLoading, error } = useExamPreferences();
@@ -17,7 +18,16 @@ function TestsPage() {
       />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 py-6 sm:py-10 gap-3 sm:gap-5">
         {isLoading && (
-          <div className="col-span-full text-center py-10">Loading...</div>
+          <div className="bg-[#FFF0B333] rounded-2xl sm:rounded-3xl shadow p-4 sm:p-5 items-center flex border justify-between gap-3">
+            <div className="flex items-center gap-3 sm:gap-5 min-w-0 w-full">
+              <Skeleton className="w-10 h-10 sm:w-14 sm:h-14 flex-shrink-0 rounded-lg" />
+              <div className="min-w-0 w-full space-y-2">
+                <Skeleton className="w-1/2 h-5" />
+                <Skeleton className="w-1/3 h-3" />
+              </div>
+            </div>
+            <Skeleton className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0 rounded-full" />
+          </div>
         )}
         {error && (
           <div className="col-span-full text-center py-10 text-red-500">
